@@ -1,4 +1,4 @@
-package skeleton;
+package org.jspec;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
