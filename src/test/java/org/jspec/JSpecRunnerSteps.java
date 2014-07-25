@@ -29,12 +29,11 @@ public final class JSpecRunnerSteps {
 		//Can't simply count tests, because the cucumber tests count too
 		for(Failure f : this.result.getFailures()) {
 			Throwable ex = f.getException();
-			System.out.printf("Looking at a test that failed with %s: %s\n", ex.getClass().getName(), ex);
 			if(JSpecTests.TestRanException.class.equals(ex.getClass())) {
 				return;
 			}
 		}
-	
+		
 		fail("JSpec test was not run, or did not fail as expected");
 	}
 }
