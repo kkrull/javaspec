@@ -9,14 +9,23 @@ import static org.junit.Assert.fail;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
+import org.junit.runners.model.InitializationError;
 
 public class JSpecRunnerTests {
 
-  @Test
-  public void givenNull_throwsExcpetion() {
-    assertThrows(IllegalArgumentException.class, () -> new JSpecRunner(null));
+  static Description descriptionOf(Class<?> testClass) {
+    JSpecRunner runner = runnerFor(testClass);
+    return runner.getDescription();
   }
   
+  static JSpecRunner runnerFor(Class<?> testClass) {
+    try {
+      return new JSpecRunner(testClass);
+    } catch (InitializationError e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   @Test
   public void getDescription_describesTheClass() {
     assertEquals(NoTests.class, descriptionOf(NoTests.class).getTestClass());
@@ -32,13 +41,11 @@ public class JSpecRunnerTests {
     assertNotNull(descriptionOf(IgnoredTests.class).getAnnotation(Ignore.class));
   }
   
-  static Description descriptionOf(Class<?> testClass) {
-    JSpecRunner runner = runnerFor(testClass);
-    return runner.getDescription();
+  @Test
+  public void run_givenAClassWithNoItFields_runsNoTests() {
+    fail("pending");
   }
   
-  static JSpecRunner runnerFor(Class<?> testClass) { return new JSpecRunner(testClass); }
-
   final class NoTests {}
   final class describes_a_context {}
   @Ignore final class IgnoredTests {}
