@@ -2,6 +2,7 @@ package org.jspec;
 
 import static org.junit.Assert.*;
 
+import org.jspec.dsl.It;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -36,8 +37,12 @@ public final class JSpecRunnerSteps {
     assertEquals(1, this.listener.numTestsFinished);
     assertNull(null, this.listener.lastFailure);
   }
+  
+  class JSpecExample {
+    It runs = () -> assertEquals(1, 1);
+  }
 
-  class RunListenerSpy extends RunListener {
+  final class RunListenerSpy extends RunListener {
     public int numTestsStarted;
     public int numTestsFinished;
     public Failure lastFailure;
