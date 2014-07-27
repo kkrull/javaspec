@@ -19,7 +19,7 @@ public final class JSpecRunnerSteps {
 
   @Given("^I have a class with JSpec tests in it$")
   public void i_have_a_class_with_JSpec_tests_in_it() throws Throwable {
-    this.testClass = JSpecTests.class;
+    this.testClass = JSpecExample.class;
   }
 
   @When("^I run the tests with a JUnit runner$")
