@@ -1,6 +1,7 @@
 package org.jspec;
 
 import static org.junit.Assert.*;
+import static org.junit.Assume.*;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -29,6 +30,13 @@ public class ReflectionUtilTests {
       "publicField", "protectedField", "defaultVisibilityField", "privateField");
   }
   
+  @Test
+  public void fieldsOfType_givenAClassWithInheritedFields_excludesThoseFields() {
+    MatchingType value = new MatchingType();
+    assumeTrue("The super type's field should be inherited", new SubType(value).superTypeField == value);
+    assertFieldsOfType(MatchingType.class, SubType.class, "subTypeField");
+  }
+  
   static void assertFieldsOfType(Class<?> fieldType, Class<?> typeToInspect, String... names) {
     final Comparator<String> alphabetical = (x, y) -> x.compareTo(y);
     List<Field> fields = ReflectionUtil.fieldsOfType(fieldType, typeToInspect);
@@ -51,6 +59,17 @@ public class ReflectionUtilTests {
     
     @SuppressWarnings("unused")
     private MatchingType privateField;
+  }
+  
+  class SubType extends SuperType {
+    public MatchingType subTypeField;
+    public SubType(MatchingType superTypeField) {
+      this.superTypeField = superTypeField;
+    }
+  }
+  
+  class SuperType {
+    public MatchingType superTypeField;
   }
   
   class MatchingType {}
