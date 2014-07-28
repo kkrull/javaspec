@@ -1,21 +1,30 @@
 package org.jspec;
 
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import org.jspec.dsl.It;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
+import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
 public class JSpecRunnerTests {
 
+  protected final List<String> testSequence = new LinkedList<String>();
+  
   static Description descriptionOf(Class<?> testClass) {
     JSpecRunner runner = runnerFor(testClass);
     return runner.getDescription();
+  }
+  
+  static void runTests(Class<?> testClass) {
+    JSpecRunner runner = runnerFor(testClass);
+    runner.run(new RunNotifier());
   }
   
   static JSpecRunner runnerFor(Class<?> testClass) {
@@ -42,14 +51,38 @@ public class JSpecRunnerTests {
   }
   
   @Test
-  public void run_givenAClassWithNoItFields_runsNoTests() {
-    fail("pending");
+  public void run_givenAClassWithNoTests_runsNothing() {
+    runTests(NoTests.class);
+    assertTestSequence();
   }
   
-  final class NoTests {}
+  @Test
+  public void run_givenAClassWithItFields_constructsAndRunsEachTest() {
+    runTests(OneTest.class);
+    assertTestSequence("constuctor", "test1");
+  }
+  
   final class describes_a_context {}
   @Ignore final class IgnoredTests {}
 
+  public class NoTests {
+    public NoTests() {
+      testSequence.add("constructor");
+    }
+  }
+  
+  public class OneTest {
+    public OneTest() {
+      testSequence.add("constructor");
+    }
+    
+    It runs = () -> testSequence.add("test1");
+  }
+  
+  void assertTestSequence(String... testIds) {
+    assertArrayEquals(testIds, testSequence.toArray(new String[0]));
+  }
+  
   static void assertThrows(Class<? extends Exception> exceptionClass, Thunk thunk) {
     try {
       thunk.run();
