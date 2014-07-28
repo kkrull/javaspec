@@ -38,6 +38,18 @@ public class JSpecRunnerTests {
     }
   }
   
+  @Ignore final class IgnoredTests {}
+
+  class NoTests {
+    public NoTests() {}
+  }
+  
+  class TwoTests {
+    public TwoTests() {}
+    It first_test = () -> assertEquals(1, 1);
+    It second_test = () -> assertEquals(2, 2);
+  }
+  
   /* getDescription */
 
   @Test
@@ -69,16 +81,11 @@ public class JSpecRunnerTests {
       "second_test(org.jspec.JSpecRunnerTests$TwoTests)"),
       names);
   }
-
-  @Ignore final class IgnoredTests {}
-
-  public class NoTests {
-    public NoTests() {}
-  }
   
-  public class TwoTests {
-    public TwoTests() {}
-    It first_test = () -> assertEquals(1, 1);
-    It second_test = () -> assertEquals(2, 2);
+  /* getChildren */
+  
+  @Test
+  public void getChildren_works() {
+    fail("pending");
   }
 }
