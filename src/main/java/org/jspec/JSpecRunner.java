@@ -20,7 +20,7 @@ public final class JSpecRunner extends ParentRunner<Example> {
     Class<?> contextClass = getTestClass().getJavaClass();
     Description contextDescription = Description.createSuiteDescription(contextClass);
     for(Field itField : ReflectionUtil.fieldsOfType(It.class, contextClass)) {
-      Description childDescription = Description.createTestDescription(Object.class, "no name");
+      Description childDescription = Description.createTestDescription(contextClass, itField.getName());
       contextDescription.addChild(childDescription);
     }
     

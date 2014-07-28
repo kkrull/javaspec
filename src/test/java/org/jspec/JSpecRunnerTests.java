@@ -1,11 +1,11 @@
 package org.jspec;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.jspec.dsl.It;
 import org.junit.Ignore;
@@ -62,19 +62,23 @@ public class JSpecRunnerTests {
   
   @Test
   public void getDescription_givenAClassWith1OrMoreItFields_hasAChildForEach() {
-    List<Description> children = descriptionOf(OneTest.class).getChildren();
-    List<String> names = Lists.transform(children, Description::getDisplayName);
-    assertEquals(Lists.newArrayList("first_test"), names);
+    List<Description> children = descriptionOf(TwoTests.class).getChildren();
+    List<String> names = children.stream().map(Description::getDisplayName).sorted().collect(Collectors.toList());
+    assertEquals(Lists.newArrayList(
+      "first_test(org.jspec.JSpecRunnerTests$TwoTests)",
+      "second_test(org.jspec.JSpecRunnerTests$TwoTests)"),
+      names);
   }
-  
+
   @Ignore final class IgnoredTests {}
 
   public class NoTests {
     public NoTests() {}
   }
   
-  public class OneTest {
-    public OneTest() {}
+  public class TwoTests {
+    public TwoTests() {}
     It first_test = () -> assertEquals(1, 1);
+    It second_test = () -> assertEquals(2, 2);
   }
 }
