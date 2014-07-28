@@ -3,6 +3,7 @@ package org.jspec;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -62,6 +63,10 @@ public class JSpecRunnerTests {
     assertTestSequence("constuctor", "test1");
   }
   
+  void assertTestSequence(String... testIds) {
+    assertEquals(Arrays.asList(testIds), testSequence);
+  }
+  
   final class describes_a_context {}
   @Ignore final class IgnoredTests {}
 
@@ -77,25 +82,5 @@ public class JSpecRunnerTests {
     }
     
     It runs = () -> testSequence.add("test1");
-  }
-  
-  void assertTestSequence(String... testIds) {
-    assertArrayEquals(testIds, testSequence.toArray(new String[0]));
-  }
-  
-  static void assertThrows(Class<? extends Exception> exceptionClass, Thunk thunk) {
-    try {
-      thunk.run();
-    } catch (Exception e) {
-      assertEquals("Unexpected type of exception thrown", exceptionClass, e.getClass());
-      return;
-    }
-
-    fail(String.format("Expected %s to be thrown, but no exception was thrown", exceptionClass));
-  }
-  
-  @FunctionalInterface
-  interface Thunk {
-    void run();
   }
 }
