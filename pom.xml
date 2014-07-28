@@ -28,7 +28,13 @@
       <version>4.11</version>
       <scope>compile</scope>
     </dependency>
-    
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>17.0</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>info.cukes</groupId>
       <artifactId>cucumber-java</artifactId>

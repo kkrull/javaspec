@@ -7,7 +7,15 @@ import java.util.List;
 public final class ReflectionUtil {
 
   public static List<Field> fieldsOfType(Class<?> fieldType, Class<?> typeToInspect) {
-    return new LinkedList<Field>();
-//    throw new UnsupportedOperationException();
+    List<Field> matchingFields = new LinkedList<Field>();
+    for (Field field : typeToInspect.getDeclaredFields()) {
+      if (field.getType() != fieldType) {
+        continue;
+      }
+
+      matchingFields.add(field);
+    }
+    
+    return matchingFields;
   }
 }

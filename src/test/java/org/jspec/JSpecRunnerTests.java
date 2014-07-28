@@ -14,6 +14,8 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
+import com.google.common.collect.Lists;
+
 public class JSpecRunnerTests {
 
   protected final List<String> testSequence = new LinkedList<String>();
@@ -60,7 +62,9 @@ public class JSpecRunnerTests {
   
   @Test
   public void getDescription_givenAClassWith1OrMoreItFields_hasAChildForEach() {
-    assertEquals(1, descriptionOf(OneTest.class).getChildren().size());
+    List<Description> children = descriptionOf(OneTest.class).getChildren();
+    List<String> names = Lists.transform(children, Description::getDisplayName);
+    assertEquals(Lists.newArrayList("first_test"), names);
   }
   
   @Ignore final class IgnoredTests {}
@@ -71,6 +75,6 @@ public class JSpecRunnerTests {
   
   public class OneTest {
     public OneTest() {}
-    It runs = () -> assertEquals(1, 1);
+    It first_test = () -> assertEquals(1, 1);
   }
 }
