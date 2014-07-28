@@ -1,8 +1,9 @@
 package org.jspec;
 
-import java.util.LinkedList;
+import java.lang.reflect.Field;
 import java.util.List;
 
+import org.jspec.dsl.It;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -16,14 +17,19 @@ public final class JSpecRunner extends ParentRunner<Example> {
 
   @Override
   public Description getDescription() {
-    String context = getTestClass().getName().replace('_', ' ');
-    return Description.createSuiteDescription(context, getTestClass().getAnnotations());
+    Class<?> contextClass = getTestClass().getJavaClass();
+    Description contextDescription = Description.createSuiteDescription(contextClass);
+    for(Field itField : ReflectionUtil.fieldsOfType(It.class, contextClass)) {
+      Description childDescription = Description.createTestDescription(Object.class, "no name");
+      contextDescription.addChild(childDescription);
+    }
+    
+    return contextDescription;
   }
 
   @Override
   protected List<Example> getChildren() {
-    LinkedList<Example> examples = new LinkedList<Example>();
-    return examples;
+    throw new UnsupportedOperationException();
   }
 
   @Override

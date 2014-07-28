@@ -1,9 +1,9 @@
 package org.jspec;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,52 +35,42 @@ public class JSpecRunnerTests {
       throw new RuntimeException(e);
     }
   }
+  
+  /* getDescription */
 
   @Test
-  public void getDescription_describesTheClass() {
+  public void getDescription_hasTheGivenTestClass() {
     assertEquals(NoTests.class, descriptionOf(NoTests.class).getTestClass());
   }
   
   @Test
-  public void getDescription_givenAClassWithUnderscores_convertsDescriptionToWords() {
-    assertThat(descriptionOf(describes_a_context.class).getDisplayName(), endsWith("describes a context"));
+  public void getDescription_givenAClassWithoutAnnotations_hasEmptyAnnotations() {
+    assertEquals(Collections.emptyList(), descriptionOf(NoTests.class).getAnnotations());
   }
   
   @Test
-  public void getDescription_givenAClassWithAnnotations_includesThoseAnnotations() {
+  public void getDescription_givenAClassWithAnnotations_hasThoseAnnotations() {
     assertNotNull(descriptionOf(IgnoredTests.class).getAnnotation(Ignore.class));
   }
   
   @Test
-  public void run_givenAClassWithNoTests_runsNothing() {
-    runTests(NoTests.class);
-    assertTestSequence();
+  public void getDescription_givenAClassWithNoItFields_hasNoChildren() {
+    assertEquals(Collections.emptyList(), descriptionOf(NoTests.class).getChildren());
   }
   
   @Test
-  public void run_givenAClassWithItFields_constructsAndRunsEachTest() {
-    runTests(OneTest.class);
-    assertTestSequence("constuctor", "test1");
+  public void getDescription_givenAClassWith1OrMoreItFields_hasAChildForEach() {
+    assertEquals(1, descriptionOf(OneTest.class).getChildren().size());
   }
   
-  void assertTestSequence(String... testIds) {
-    assertEquals(Arrays.asList(testIds), testSequence);
-  }
-  
-  final class describes_a_context {}
   @Ignore final class IgnoredTests {}
 
   public class NoTests {
-    public NoTests() {
-      testSequence.add("constructor");
-    }
+    public NoTests() {}
   }
   
   public class OneTest {
-    public OneTest() {
-      testSequence.add("constructor");
-    }
-    
-    It runs = () -> testSequence.add("test1");
+    public OneTest() {}
+    It runs = () -> assertEquals(1, 1);
   }
 }
