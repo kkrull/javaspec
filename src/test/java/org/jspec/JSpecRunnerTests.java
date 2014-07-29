@@ -8,7 +8,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.hamcrest.Matchers;
-import org.jspec.JSpecRunner.ContextClassMissingExamples;
+import org.jspec.JSpecRunner.NoExamplesError;
+import org.jspec.JSpecRunner.InvalidConstructorError;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
@@ -25,21 +26,24 @@ import static org.junit.Assert.*;
 public class JSpecRunnerTests {
   public class constructor {
     @Test
-    public void givenAClassWithNoItFields_raisesInitializationError() {
-      try {
-        new JSpecRunner(JSpecTests.Empty.class);
-      } catch (InitializationError ex) {
-        //TODO KDK: Clean this up
-        Stream<Class<?>> initializationErrors = unearthInitializationErrors(ex).map(Object::getClass);
-        assertTrue(initializationErrors.anyMatch(x -> x == ContextClassMissingExamples.class));
-        return;
-      }
-      fail("Expected InitializationError");
+    public void givenAClassWithNoItFields_raisesNoExamplesError() {
+      assertInitializationError(JSpecTests.Empty.class, NoExamplesError.class);
     }
     
     @Test
-    public void givenAClassWithAnyOtherConstructor_raisesInitializationError() { 
-      fail("pending");
+    public void givenAClassWithAnyOtherConstructor_raisesInvalidConstructorError() {
+      assertInitializationError(JSpecTests.PrivateConstructor.class, InvalidConstructorError.class);
+    }
+    
+    void assertInitializationError(Class<?> context, Class<? extends InitializationError> expected) {
+      try {
+        new JSpecRunner(context);
+      } catch (InitializationError ex) {
+        Stream<Class<?>> initializationErrors = unearthInitializationErrors(ex).map(Object::getClass);
+        assertTrue(initializationErrors.anyMatch(x -> x == expected));
+        return;
+      }
+      fail(String.format("Expected initialization error of type %s, but none was thrown", expected));
     }
     
     Stream<InitializationError> unearthInitializationErrors(InitializationError bigKahuna) {
@@ -143,7 +147,9 @@ public class JSpecRunnerTests {
     try {
       return new JSpecRunner(testClass);
     } catch (InitializationError e) {
-      throw new RuntimeException(e);
+      e.printStackTrace();
+      fail("Failed to create JSpecRunner");
+      return null;
     }
   }
 }

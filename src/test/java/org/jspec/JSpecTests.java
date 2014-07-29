@@ -25,4 +25,9 @@ class JSpecTests {
   static class IgnoredClass {
     It gets_ignored = () -> assertEquals(1, 2);
   }
+  
+  static class PrivateConstructor {
+    private PrivateConstructor() {}
+    It is_otherwise_valid = () -> assertEquals(1, 1);
+  }
 }

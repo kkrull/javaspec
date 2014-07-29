@@ -20,8 +20,14 @@ public final class JSpecRunner extends ParentRunner<Example> {
   @Override
   protected void collectInitializationErrors(List<Throwable> errors) {
     super.collectInitializationErrors(errors);
+    try {
+      System.out.printf("Constructors for %s: %s\n", getTestClass().getJavaClass(), getTestClass().getJavaClass().getConstructors());
+      getTestClass().getOnlyConstructor();
+    } catch (Throwable t) {
+      errors.add(new InvalidConstructorError());
+    }
     if (!readExamples().findAny().isPresent()) {
-      errors.add(new ContextClassMissingExamples());
+      errors.add(new NoExamplesError());
     }
   }
 
@@ -62,9 +68,19 @@ public final class JSpecRunner extends ParentRunner<Example> {
     return getTestClass().getJavaClass();
   }
   
-  static class ContextClassMissingExamples extends InitializationError {
-    public ContextClassMissingExamples() {
+  static class NoExamplesError extends InitializationError {
+    private static final long serialVersionUID = -4731749974843465573L;
+
+    public NoExamplesError() {
       super("A JSpec class must declare 1 or more It fields");
+    }
+  }
+  
+  static class InvalidConstructorError extends InitializationError {
+    private static final long serialVersionUID = 7403176586548921108L;
+
+    public InvalidConstructorError() {
+      super("A JSpec test must have a public, no-arg constructor and no others");
     }
   }
 }
