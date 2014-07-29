@@ -1,8 +1,9 @@
 package org.jspec;
 
 import java.lang.reflect.Field;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jspec.dsl.It;
 import org.junit.runner.Description;
@@ -19,7 +20,7 @@ public final class JSpecRunner extends ParentRunner<Example> {
   @Override
   protected void collectInitializationErrors(List<Throwable> errors) {
     super.collectInitializationErrors(errors);
-    if (readBehaviorFields().isEmpty()) {
+    if (!readExamples().findAny().isPresent()) {
       errors.add(new InitializationError("A JSpec class must declare 1 or more It fields"));
     }
   }
@@ -27,40 +28,33 @@ public final class JSpecRunner extends ParentRunner<Example> {
   @Override
   public Description getDescription() {
     Description context = Description.createSuiteDescription(getContextClass());
-    for (Field exampleField : readBehaviorFields()) {
-      Example example = new Example(exampleField);
-      context.addChild(example.getDescription());
-    }
-
+    readExamples().map(Example::getDescription).forEach(context::addChild);
     return context;
   }
 
   @Override
   protected List<Example> getChildren() {
-    System.out.println("getChildren");
-    List<Example> tests = new LinkedList<Example>();
-    for (Field exampleField : readBehaviorFields()) {
-      tests.add(new Example(exampleField));
-    }
-    return tests;
+//    System.out.println("getChildren");
+    return readExamples().collect(Collectors.toList());
   }
 
   @Override
   protected Description describeChild(Example child) {
-    System.out.println("describeChild");
+//    System.out.println("describeChild");
     throw new UnsupportedOperationException();
   }
 
   @Override
   protected void runChild(Example child, RunNotifier notifier) {
-    System.out.println("runChild");
+//    System.out.println("runChild");
     Description description = child.getDescription();
     notifier.fireTestStarted(description);
     notifier.fireTestFinished(description);
   }
-
-  List<Field> readBehaviorFields() {
-    return ReflectionUtil.fieldsOfType(It.class, getContextClass());
+  
+  Stream<Example> readExamples() {
+    List<Field> behaviors = ReflectionUtil.fieldsOfType(It.class, getContextClass());
+    return behaviors.stream().map(x -> new Example(x));
   }
 
   Class<?> getContextClass() {
