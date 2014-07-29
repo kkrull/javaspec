@@ -1,7 +1,5 @@
 package org.jspec;
 
-import static org.junit.Assert.*;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,11 +9,16 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
 import com.google.common.collect.Lists;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 @RunWith(HierarchicalContextRunner.class)
 public class JSpecRunnerTests {
@@ -75,6 +78,22 @@ public class JSpecRunnerTests {
     }
   }
 
+  public class run {
+    public class givenAClassWith1OrMoreItFields {
+      
+      JSpecRunner runner = runnerFor(TwoTests.class);
+      
+      @Test
+      public void runsTheFunctionAssignedToEachItField() {
+        RunNotifier notifier = new RunNotifier();
+        RunListenerSpy listener = new RunListenerSpy();
+        notifier.addListener(listener);
+        runner.run(notifier);
+        assertEquals(2, listener.numTestsStarted);
+      }
+    }
+  }
+  
   static JSpecRunner runnerFor(Class<?> testClass) {
     try {
       return new JSpecRunner(testClass);

@@ -38,6 +38,7 @@ public final class JSpecRunner extends ParentRunner<Example> {
 
   @Override
   protected List<Example> getChildren() {
+    System.out.println("getChildren");
     throw new UnsupportedOperationException();
   }
 
