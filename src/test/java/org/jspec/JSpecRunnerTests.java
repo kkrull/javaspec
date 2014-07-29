@@ -19,34 +19,35 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 @RunWith(HierarchicalContextRunner.class)
 public class JSpecRunnerTests {
+  public class constructor {
+    @Test
+    public void givenAClassWithNoItFields_raisesInitializationError() {
+      try {
+        new JSpecRunner(NoTests.class);
+      } catch (InitializationError ex) {
+        //InitializationError buries the message so deep, it's useless (read: no assertion on the detail message)
+        return;
+      }
+      fail("Expected InitializationError");
+    }
+    
+    class NoTests {}
+  }
+  
   public class getDescription {
     @Test
     public void givenAClass_hasTheGivenTestClass() {
-      assertEquals(NoTests.class, descriptionOf(NoTests.class).getTestClass());
+      assertEquals(TwoTests.class, descriptionOf(TwoTests.class).getTestClass());
     }
 
     @Test
     public void givenAClassWithoutAnnotations_hasEmptyAnnotations() {
-      assertEquals(Collections.emptyList(), descriptionOf(NoTests.class).getAnnotations());
+      assertEquals(Collections.emptyList(), descriptionOf(TwoTests.class).getAnnotations());
     }
 
     @Test
     public void givenAClassWithAnnotations_hasThoseAnnotations() {
       assertNotNull(descriptionOf(IgnoredTests.class).getAnnotation(Ignore.class));
-    }
-
-    public class givenAClassWithNoItFields {
-      Description description = descriptionOf(NoTests.class);
-
-      @Test
-      public void hasNoChildren() {
-        assertEquals(Collections.emptyList(), description.getChildren());
-      }
-
-      @Test
-      public void hasTestCount0() {
-        assertEquals(0, description.testCount());
-      }
     }
 
     public class givenAClassWith1OrMoreItFields {
@@ -83,9 +84,9 @@ public class JSpecRunnerTests {
   }
 
   @Ignore
-  class IgnoredTests {}
-
-  class NoTests {}
+  class IgnoredTests {
+    It gets_ignored = () -> assertEquals(1, 2);
+  }
 
   class TwoTests {
     It first_test = () -> assertEquals(1, 1);
