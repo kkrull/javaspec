@@ -11,12 +11,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
-@RunWith(Enclosed.class)
+import de.bechte.junit.runners.context.HierarchicalContextRunner;
+
+@RunWith(HierarchicalContextRunner.class)
 public class ReflectionUtilTests {
-  public static class fieldsOfType {
+  public class fieldsOfType {
     @Test
     public void givenClassWithNoMatchingFields_returnsEmptyList() {
       assertFieldsOfType(MatchingType.class, EmptyClass.class);
@@ -41,7 +42,7 @@ public class ReflectionUtilTests {
       assertFieldsOfType(MatchingType.class, SubType.class, "subTypeField");
     }
     
-    static void assertFieldsOfType(Class<?> fieldType, Class<?> typeToInspect, String... names) {
+    void assertFieldsOfType(Class<?> fieldType, Class<?> typeToInspect, String... names) {
       final Comparator<String> alphabetical = (x, y) -> x.compareTo(y);
       List<Field> fields = ReflectionUtil.fieldsOfType(fieldType, typeToInspect);
       List<String> actualNames = fields.stream().map(Field::getName).sorted(alphabetical).collect(Collectors.toList());

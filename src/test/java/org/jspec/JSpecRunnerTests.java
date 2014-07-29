@@ -9,16 +9,17 @@ import java.util.stream.Collectors;
 import org.jspec.dsl.It;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runners.model.InitializationError;
 
 import com.google.common.collect.Lists;
 
-//@RunWith(Enclosed.class)
+import de.bechte.junit.runners.context.HierarchicalContextRunner;
+
+@RunWith(HierarchicalContextRunner.class)
 public class JSpecRunnerTests {
-  public static class getDescription {
+  public class getDescription {
     @Test
     public void givenAClass_hasTheGivenTestClass() {
       assertEquals(NoTests.class, descriptionOf(NoTests.class).getTestClass());
@@ -34,7 +35,7 @@ public class JSpecRunnerTests {
       assertNotNull(descriptionOf(IgnoredTests.class).getAnnotation(Ignore.class));
     }
 
-    public static class givenAClassWithNoItFields {
+    public class givenAClassWithNoItFields {
       Description description = descriptionOf(NoTests.class);
 
       @Test
@@ -48,7 +49,7 @@ public class JSpecRunnerTests {
       }
     }
 
-    public static class givenAClassWith1OrMoreItFields {
+    public class givenAClassWith1OrMoreItFields {
       Description description = descriptionOf(TwoTests.class);
 
       @Test
@@ -67,7 +68,7 @@ public class JSpecRunnerTests {
       }
     }
 
-    static Description descriptionOf(Class<?> testClass) {
+    Description descriptionOf(Class<?> testClass) {
       JSpecRunner runner = runnerFor(testClass);
       return runner.getDescription();
     }
