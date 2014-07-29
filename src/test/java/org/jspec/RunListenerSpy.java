@@ -16,6 +16,10 @@ public final class RunListenerSpy extends RunListener {
     this.notifications = new LinkedList<String>();
   }
   
+  public RunListenerSpy(List<String> notificationQueue) {
+    this.notifications = notificationQueue; //Don't copy; need to update a shared resource
+  }
+  
   public List<String> notifications() {
     return new ArrayList<String>(notifications);
   }

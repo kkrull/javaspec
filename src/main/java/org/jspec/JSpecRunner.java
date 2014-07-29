@@ -48,6 +48,7 @@ public final class JSpecRunner extends ParentRunner<Example> {
   protected void runChild(Example child, RunNotifier notifier) {
 //    System.out.println("runChild");
     Description description = child.getDescription();
+    
     notifier.fireTestStarted(description);
     notifier.fireTestFinished(description);
   }
@@ -56,7 +57,7 @@ public final class JSpecRunner extends ParentRunner<Example> {
     List<Field> behaviors = ReflectionUtil.fieldsOfType(It.class, getContextClass());
     return behaviors.stream().map(x -> new Example(x));
   }
-
+  
   Class<?> getContextClass() {
     return getTestClass().getJavaClass();
   }
