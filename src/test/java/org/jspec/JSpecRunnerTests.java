@@ -80,16 +80,21 @@ public class JSpecRunnerTests {
 
   public class run {
     public class givenAClassWith1OrMoreItFields {
-      
-      JSpecRunner runner = runnerFor(TwoTests.class);
-      
+
       @Test
-      public void runsTheFunctionAssignedToEachItField() {
+      public void notifiesListenersWhenTestsStartAndFinish() {
+        RunListenerSpy listener = runTests(OneTest.class);
+        assertEquals(1, listener.numTestsStarted);
+        assertEquals(1, listener.numTestsFinished);
+      }
+      
+      RunListenerSpy runTests(Class<?> testClass) {
         RunNotifier notifier = new RunNotifier();
         RunListenerSpy listener = new RunListenerSpy();
         notifier.addListener(listener);
+        JSpecRunner runner = runnerFor(testClass);
         runner.run(notifier);
-        assertEquals(2, listener.numTestsStarted);
+        return listener;
       }
     }
   }
@@ -105,6 +110,10 @@ public class JSpecRunnerTests {
   @Ignore
   class IgnoredTests {
     It gets_ignored = () -> assertEquals(1, 2);
+  }
+  
+  class OneTest {
+    It only_test = () -> assertEquals(1, 1);
   }
 
   class TwoTests {
