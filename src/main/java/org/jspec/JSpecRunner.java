@@ -21,7 +21,7 @@ public final class JSpecRunner extends ParentRunner<Example> {
   protected void collectInitializationErrors(List<Throwable> errors) {
     super.collectInitializationErrors(errors);
     if (!readExamples().findAny().isPresent()) {
-      errors.add(new InitializationError("A JSpec class must declare 1 or more It fields"));
+      errors.add(new ContextClassMissingExamples());
     }
   }
 
@@ -60,5 +60,11 @@ public final class JSpecRunner extends ParentRunner<Example> {
   
   Class<?> getContextClass() {
     return getTestClass().getJavaClass();
+  }
+  
+  static class ContextClassMissingExamples extends InitializationError {
+    public ContextClassMissingExamples() {
+      super("A JSpec class must declare 1 or more It fields");
+    }
   }
 }

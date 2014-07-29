@@ -3,9 +3,12 @@ package org.jspec;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.hamcrest.Matchers;
+import org.jspec.JSpecRunner.ContextClassMissingExamples;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
@@ -26,14 +29,32 @@ public class JSpecRunnerTests {
       try {
         new JSpecRunner(JSpecTests.Empty.class);
       } catch (InitializationError ex) {
-        //InitializationError buries the message so deep, it's useless (read: no assertion on the detail message)
+        //TODO KDK: Clean this up
+        Stream<Class<?>> initializationErrors = unearthInitializationErrors(ex).map(Object::getClass);
+        assertTrue(initializationErrors.anyMatch(x -> x == ContextClassMissingExamples.class));
         return;
       }
       fail("Expected InitializationError");
     }
     
-    @Test @Ignore
-    public void givenAClassWithAnyOtherConstructor_raisesInitializationError() { }
+    @Test
+    public void givenAClassWithAnyOtherConstructor_raisesInitializationError() { 
+      fail("pending");
+    }
+    
+    Stream<InitializationError> unearthInitializationErrors(InitializationError bigKahuna) {
+      List<InitializationError> acc = new LinkedList<InitializationError>();
+      Stack<InitializationError> toVisit = new Stack<InitializationError>();
+      toVisit.push(bigKahuna);
+      while(!toVisit.isEmpty()) {
+        InitializationError parent = toVisit.pop();
+        acc.add(parent);
+        parent.getCauses().stream()
+          .filter(x -> x instanceof InitializationError)
+          .forEach(x -> toVisit.push((InitializationError) x));
+      }
+      return acc.stream();
+    }
   }
   
   public class getDescription {
