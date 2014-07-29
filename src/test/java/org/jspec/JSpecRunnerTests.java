@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
-import com.google.common.collect.Lists;
+import static com.google.common.collect.Lists.*;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
@@ -60,7 +60,7 @@ public class JSpecRunnerTests {
       public void hasAChildForEach() {
         List<Description> children = description.getChildren();
         List<String> names = children.stream().map(Description::getDisplayName).sorted().collect(Collectors.toList());
-        assertEquals(Lists.newArrayList(
+        assertEquals(newArrayList(
           "first_test(org.jspec.JSpecRunnerTests$TwoTests)",
           "second_test(org.jspec.JSpecRunnerTests$TwoTests)"),
           names);
@@ -83,19 +83,25 @@ public class JSpecRunnerTests {
 
       @Test
       public void notifiesListenersWhenTestsStartAndFinish() {
-        RunListenerSpy listener = runTests(OneTest.class);
-        assertEquals(1, listener.numTestsStarted);
-        assertEquals(1, listener.numTestsFinished);
-      }
-      
-      RunListenerSpy runTests(Class<?> testClass) {
         RunNotifier notifier = new RunNotifier();
         RunListenerSpy listener = new RunListenerSpy();
         notifier.addListener(listener);
-        JSpecRunner runner = runnerFor(testClass);
+        JSpecRunner runner = runnerFor(OneTest.class);
         runner.run(notifier);
-        return listener;
+        
+        assertEquals(newArrayList("testStarted", "testFinished"), listener.notifications);
       }
+      
+      @Test @Ignore
+      public void runsTheTest() {
+        fail("pending");
+      }
+      
+      @Test @Ignore
+      public void notifiesListenersOfTestFailure() { }
+      
+      @Test @Ignore
+      public void notifiesListenersOfIgnoredTests() { }
     }
   }
   

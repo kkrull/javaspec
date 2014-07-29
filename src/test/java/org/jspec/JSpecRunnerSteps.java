@@ -9,7 +9,8 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 public final class JSpecRunnerSteps {
   Class<?> testClass;
@@ -25,15 +26,13 @@ public final class JSpecRunnerSteps {
   public void i_run_the_tests_with_a_JUnit_runner() throws Throwable {
     JUnitCore junit = new JUnitCore();
     this.listener = new RunListenerSpy();
-    junit.addListener(this.listener);
-    this.result = junit.run(this.testClass);
+    junit.addListener(listener);
+    this.result = junit.run(testClass);
   }
 
   @Then("^the test runner should run all the tests in the class$")
   public void the_test_runner_should_run_all_the_tests_in_the_class() throws Throwable {
-    assertEquals(1, this.listener.numTestsStarted);
-    assertEquals(1, this.listener.numTestsFinished);
-    assertNull(null, this.listener.lastFailure);
+    assertThat(listener.notifications, hasItems("testStarted::JSpecExample::runs", "testFinished::JSpecExample::runs"));
   }
   
   class JSpecExample {
