@@ -44,7 +44,7 @@ public class ReflectionUtilTests {
     
     void assertFieldsOfType(Class<?> fieldType, Class<?> typeToInspect, String... names) {
       final Comparator<String> alphabetical = (x, y) -> x.compareTo(y);
-      List<Field> fields = ReflectionUtil.fieldsOfType(fieldType, typeToInspect);
+      List<Field> fields = ReflectionUtil.fieldsOfType(fieldType, typeToInspect).collect(Collectors.toList());
       List<String> actualNames = fields.stream().map(Field::getName).sorted(alphabetical).collect(Collectors.toList());
       List<String> expectedNames = Arrays.asList(names).stream().sorted(alphabetical).collect(Collectors.toList());
       assertEquals(expectedNames, actualNames);

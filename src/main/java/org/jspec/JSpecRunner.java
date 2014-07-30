@@ -1,6 +1,5 @@
 package org.jspec;
 
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -47,7 +46,6 @@ public final class JSpecRunner extends ParentRunner<Example> {
 
   @Override
   protected List<Example> getChildren() {
-//    System.out.println("getChildren");
     return readExamples().collect(Collectors.toList());
   }
 
@@ -66,8 +64,7 @@ public final class JSpecRunner extends ParentRunner<Example> {
   }
   
   Stream<Example> readExamples() {
-    List<Field> behaviors = ReflectionUtil.fieldsOfType(It.class, getContextClass());
-    return behaviors.stream().map(x -> new Example(x));
+    return ReflectionUtil.fieldsOfType(It.class, getContextClass()).map(Example::new);
   }
   
   Class<?> getContextClass() {
