@@ -1,6 +1,11 @@
 package org.jspec;
 
-import java.util.Collections;
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Collections.emptyList;
+import static org.hamcrest.Matchers.*;
+import static org.jspec.util.Assertions.assertThrows;
+import static org.junit.Assert.*;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
@@ -19,37 +24,33 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import static com.google.common.collect.Lists.newArrayList;
-import static org.hamcrest.Matchers.*;
-import static org.jspec.util.Assertions.assertThrows;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 @RunWith(HierarchicalContextRunner.class)
 public class JSpecRunnerTests {
   public class constructor {
     @Test
-    public void givenAClassWithNoItFields_raisesNoExamplesError() {
-      assertInitializationError(JSpecTests.Empty.class, NoExamplesError.class);
+    public void givenAClassWithoutAPublicConstructor_raisesInvalidConstructorError() {
+      assertInitializationError(JSpecTests.HiddenConstructor.class, InvalidConstructorError.class);
+    }
+    
+    @Test
+    public void givenAClassWithAConstructorThatThrows_raisesNoErrorToAllowTheTestToFail() {
+      runnerFor(JSpecTests.FaultyConstructor.class);
     }
     
     @Test
     public void givenAClassWithAPublicConstructorTakingArguments_raisesInvalidConstructorError() {
-      assertInitializationError(JSpecTests.PublicArgConstructor.class, InvalidConstructorError.class);
+      assertInitializationError(JSpecTests.PublicConstructorWithArgs.class, InvalidConstructorError.class);
     }
 
     @Test
-    public void givenAClassWithoutAPublicConstructor_raisesInvalidConstructorError() {
-      assertInitializationError(JSpecTests.PrivateConstructor.class, InvalidConstructorError.class);
+    public void givenAClassWithTwoOrMoreConstuctors_raisesIllegalArgumentException() {
+      assertThrows(IllegalArgumentException.class, () -> runnerFor(JSpecTests.MultiplePublicConstructors.class));
     }
     
     @Test
-    public void givenAClassWithTwoOrMoreConstuctors_raisesIllegalArgumentException() {
-      assertThrows(IllegalArgumentException.class, () -> runnerFor(JSpecTests.MultiplePublicConstructors.class));
+    public void givenAClassWithNoItFields_raisesNoExamplesError() {
+      assertInitializationError(JSpecTests.Empty.class, NoExamplesError.class);
     }
     
     void assertInitializationError(Class<?> context, Class<? extends InitializationError> expected) {
@@ -72,7 +73,7 @@ public class JSpecRunnerTests {
 
     @Test
     public void givenAClassWithoutAnnotations_hasEmptyAnnotations() {
-      assertEquals(Collections.emptyList(), descriptionOf(JSpecTests.Two.class).getAnnotations());
+      assertEquals(emptyList(), descriptionOf(JSpecTests.Two.class).getAnnotations());
     }
 
     @Test
@@ -81,7 +82,7 @@ public class JSpecRunnerTests {
     }
 
     public class givenAClassWith1OrMoreItFields {
-      Description description = descriptionOf(JSpecTests.Two.class);
+      final Description description = descriptionOf(JSpecTests.Two.class);
 
       @Test
       public void hasAChildForEach() {
@@ -106,10 +107,10 @@ public class JSpecRunnerTests {
   }
 
   public class run {
+    final List<String> notifications = new LinkedList<String>();
+
     public class givenAClassWith1OrMoreItFields {
       
-      final List<String> notifications = new LinkedList<String>();
-
       @Before
       public void setupTestExecutionSpy() {
         JSpecTests.One.notifyEvent = notifications::add;
@@ -122,28 +123,20 @@ public class JSpecRunnerTests {
       
       @Test
       public void runsTheTest() {
-        RunNotifier notifier = new RunNotifier();
-        RunListenerSpy listener = new RunListenerSpy(notifications::add);
-        notifier.addListener(listener);
-        JSpecRunner runner = runnerFor(JSpecTests.One.class);
-        runner.run(notifier);
-        
-        assertThat(notifications, hasItem("JSpecTests.One::only_test"));
+        assertThat(
+          runtimeEvents(JSpecTests.One.class),
+          hasItem("JSpecTests.One::only_test"));
       }
       
       @Test
+      @SuppressWarnings("unchecked")
       public void notifiesListenersWhenTestsStartAndFinish() {
-        RunNotifier notifier = new RunNotifier();
-        RunListenerSpy listener = new RunListenerSpy(notifications::add);
-        notifier.addListener(listener);
-        JSpecRunner runner = runnerFor(JSpecTests.One.class);
-        runner.run(notifier);
-        
-        assertThat(notifications,
+        assertThat(
+          runtimeEvents(JSpecTests.One.class),
           contains(is("testStarted"), anything(), is("testFinished")));
       }
       
-      @Test
+      @Test @Ignore
       public void givenABadTestConstructor_failsTheTest() {
         fail("pending");
       }
@@ -159,6 +152,14 @@ public class JSpecRunnerTests {
       
       @Test @Ignore
       public void whenATestConstructorThrowsAnException_reportsTheException() { }
+    }
+    
+    List<String> runtimeEvents(Class<?> testClass) {
+      RunNotifier notifier = new RunNotifier();
+      notifier.addListener(new RunListenerSpy(notifications::add));
+      JSpecRunner runner = runnerFor(testClass);
+      runner.run(notifier);
+      return notifications;
     }
   }
   

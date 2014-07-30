@@ -13,15 +13,17 @@ import static org.junit.Assert.assertEquals;
  */
 public class JSpecTests {
   public static class Empty {}
-
-  public static class One {
-    public static Consumer<String> notifyEvent;
-    It only_test = () -> notifyEvent.accept("JSpecTests.One::only_test");
+  
+  public static class FaultyConstructor {
+    private FaultyConstructor() {
+      throw new IllegalArgumentException("just because");
+    }
+    It is_otherwise_valid = () -> assertEquals(1, 1);
   }
-
-  public static class Two {
-    It first_test = () -> assertEquals(1, 1);
-    It second_test = () -> assertEquals(2, 2);
+  
+  public static class HiddenConstructor {
+    private HiddenConstructor() {}
+    It is_otherwise_valid = () -> assertEquals(1, 1);
   }
   
   @Ignore
@@ -43,13 +45,18 @@ public class JSpecTests {
     It is_otherwise_valid = () -> assertEquals(1, 1);
   }
   
-  public static class PublicArgConstructor {
-    private PublicArgConstructor(int id) {}
+  public static class One {
+    public static Consumer<String> notifyEvent;
+    It only_test = () -> notifyEvent.accept("JSpecTests.One::only_test");
+  }
+  
+  public static class PublicConstructorWithArgs {
+    private PublicConstructorWithArgs(int id) {}
     It is_otherwise_valid = () -> assertEquals(1, 1);
   }
   
-  public static class PrivateConstructor {
-    private PrivateConstructor() {}
-    It is_otherwise_valid = () -> assertEquals(1, 1);
+  public static class Two {
+    It first_test = () -> assertEquals(1, 1);
+    It second_test = () -> assertEquals(2, 2);
   }
 }
