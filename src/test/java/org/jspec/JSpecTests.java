@@ -15,7 +15,7 @@ public class JSpecTests {
   public static class Empty {}
   
   public static class FaultyConstructor {
-    private FaultyConstructor() {
+    public FaultyConstructor() {
       throw new IllegalArgumentException("just because");
     }
     It is_otherwise_valid = () -> assertEquals(1, 1);

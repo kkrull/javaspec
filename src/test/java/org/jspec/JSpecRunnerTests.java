@@ -28,40 +28,45 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 @RunWith(HierarchicalContextRunner.class)
 public class JSpecRunnerTests {
   public class constructor {
-    @Test
-    public void givenAClassWithoutAPublicConstructor_raisesInvalidConstructorError() {
-      assertInitializationError(JSpecTests.HiddenConstructor.class, InvalidConstructorError.class);
-    }
-    
-    @Test
-    public void givenAClassWithAConstructorThatThrows_raisesNoErrorToAllowTheTestToFail() {
-      runnerFor(JSpecTests.FaultyConstructor.class);
-    }
-    
-    @Test
-    public void givenAClassWithAPublicConstructorTakingArguments_raisesInvalidConstructorError() {
-      assertInitializationError(JSpecTests.PublicConstructorWithArgs.class, InvalidConstructorError.class);
-    }
-
-    @Test
-    public void givenAClassWithTwoOrMoreConstuctors_raisesIllegalArgumentException() {
-      assertThrows(IllegalArgumentException.class, () -> runnerFor(JSpecTests.MultiplePublicConstructors.class));
-    }
-    
-    @Test
-    public void givenAClassWithNoItFields_raisesNoExamplesError() {
-      assertInitializationError(JSpecTests.Empty.class, NoExamplesError.class);
-    }
-    
-    void assertInitializationError(Class<?> context, Class<? extends InitializationError> expected) {
-      try {
-        new JSpecRunner(context);
-      } catch (InitializationError ex) {
-        Stream<Class<?>> initializationErrors = unearthInitializationErrors(ex).map(Object::getClass);
-        assertTrue(initializationErrors.anyMatch(x -> x == expected));
-        return;
+    public class givenAnInvalidTestClass {
+      @Test
+      public void givenAClassWithoutAPublicConstructor_raisesInvalidConstructorError() {
+        assertInitializationError(JSpecTests.HiddenConstructor.class, InvalidConstructorError.class);
       }
-      fail(String.format("Expected initialization error of type %s, but none was thrown", expected));
+      
+      @Test
+      public void givenAClassWithAPublicConstructorTakingArguments_raisesInvalidConstructorError() {
+        assertInitializationError(JSpecTests.PublicConstructorWithArgs.class, InvalidConstructorError.class);
+      }
+
+      @Test
+      public void givenAClassWithTwoOrMoreConstuctors_raisesIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> runnerFor(JSpecTests.MultiplePublicConstructors.class));
+      }
+      
+      @Test
+      public void givenAClassWithNoItFields_raisesNoExamplesError() {
+        assertInitializationError(JSpecTests.Empty.class, NoExamplesError.class);
+      }
+      
+      void assertInitializationError(Class<?> context, Class<? extends InitializationError> expected) {
+        try {
+          new JSpecRunner(context);
+        } catch (InitializationError ex) {
+          Stream<Class<?>> initializationErrors = unearthInitializationErrors(ex).map(Object::getClass);
+          assertTrue(initializationErrors.anyMatch(x -> x == expected));
+          return;
+        }
+        fail(String.format("Expected initialization error of type %s, but none was thrown", expected));
+      }
+    }
+    
+    public class givenAClassWhoseOnlyPublicConstructorIsNoArg {
+      @Test
+      public void itDoesNotInvokeTheConstructor() {
+        //Allow the test to run and fail instead of bringing down the whole suite
+        runnerFor(JSpecTests.FaultyConstructor.class);
+      }
     }
   }
   
@@ -170,7 +175,7 @@ public class JSpecRunnerTests {
       System.out.println("\nInitialization error(s)");
       unearthInitializationErrors(e).forEach(x -> {
         System.out.printf("[%s]\n", x.getClass());
-        System.out.printf("%s\n", x.getMessage());
+        x.printStackTrace(System.out);
       });
       fail("Failed to create JSpecRunner");
       return null;

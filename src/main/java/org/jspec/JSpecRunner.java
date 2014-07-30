@@ -26,9 +26,9 @@ public final class JSpecRunner extends ParentRunner<Example> {
   
   InitializationError findInvalidConstructorError() {
     try {
-      getContextInstance();
+      getTestClass().getOnlyConstructor();
       return null;
-    } catch (AssertionError | ReflectiveOperationException _ex) {
+    } catch (AssertionError _ex) {
       return new InvalidConstructorError();
     }
   }
