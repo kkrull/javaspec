@@ -7,9 +7,8 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.hamcrest.Matchers;
-import org.jspec.JSpecRunner.NoExamplesError;
 import org.jspec.JSpecRunner.InvalidConstructorError;
+import org.jspec.JSpecRunner.NoExamplesError;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -19,11 +18,16 @@ import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
-import static com.google.common.collect.Lists.*;
-import static org.jspec.util.Assertions.*;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
+import static com.google.common.collect.Lists.newArrayList;
+import static org.hamcrest.Matchers.*;
+import static org.jspec.util.Assertions.assertThrows;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @RunWith(HierarchicalContextRunner.class)
 public class JSpecRunnerTests {
@@ -104,39 +108,48 @@ public class JSpecRunnerTests {
   public class run {
     public class givenAClassWith1OrMoreItFields {
       
-      final List<String> notifications = new LinkedList<String>(); //TODO KDK: Pass a notification function around instead of the queue itself.
+      final List<String> notifications = new LinkedList<String>();
 
       @Before
       public void setupTestExecutionSpy() {
-        JSpecTests.One.notificationQueue = notifications;
+        JSpecTests.One.notifyEvent = notifications::add;
       }
       
       @After
       public void recallSpies() {
-        JSpecTests.One.notificationQueue = null;
+        JSpecTests.One.notifyEvent = null;
       }
       
       @Test
       public void runsTheTest() {
         RunNotifier notifier = new RunNotifier();
-        RunListenerSpy listener = new RunListenerSpy(notifications);
+        RunListenerSpy listener = new RunListenerSpy(notifications::add);
         notifier.addListener(listener);
         JSpecRunner runner = runnerFor(JSpecTests.One.class);
         runner.run(notifier);
         
-        assertThat(notifications, Matchers.hasItem("JSpecTests.One::only_test"));
+        assertThat(notifications, hasItem("JSpecTests.One::only_test"));
       }
       
       @Test
       public void notifiesListenersWhenTestsStartAndFinish() {
         RunNotifier notifier = new RunNotifier();
-        RunListenerSpy listener = new RunListenerSpy();
+        RunListenerSpy listener = new RunListenerSpy(notifications::add);
         notifier.addListener(listener);
         JSpecRunner runner = runnerFor(JSpecTests.One.class);
         runner.run(notifier);
         
-        assertEquals(newArrayList("testStarted", "testFinished"), listener.notifications);
+        assertThat(notifications,
+          contains(is("testStarted"), anything(), is("testFinished")));
       }
+      
+      @Test
+      public void givenABadTestConstructor_failsTheTest() {
+        fail("pending");
+      }
+      
+      @Test
+      public void givenAFailingTest_runsAllTestsInTheClass() { }
       
       @Test @Ignore
       public void notifiesStartRunsThenNotifiesFinish() { }

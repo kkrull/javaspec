@@ -1,6 +1,6 @@
 package org.jspec;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 import org.jspec.dsl.It;
 import org.junit.Ignore;
@@ -15,8 +15,8 @@ public class JSpecTests {
   public static class Empty {}
 
   public static class One {
-    public static List<String> notificationQueue;
-    It only_test = () -> notificationQueue.add("JSpecTests.One::only_test");
+    public static Consumer<String> notifyEvent;
+    It only_test = () -> notifyEvent.accept("JSpecTests.One::only_test");
   }
 
   public static class Two {
