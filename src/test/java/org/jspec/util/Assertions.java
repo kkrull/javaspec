@@ -16,7 +16,7 @@ public class Assertions {
   }
   
   @FunctionalInterface
-  interface Thunk {
+  public interface Thunk {
     void run();
   }
 }

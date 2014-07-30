@@ -20,12 +20,7 @@ public final class JSpecRunner extends ParentRunner<Example> {
   @Override
   protected void collectInitializationErrors(List<Throwable> errors) {
     super.collectInitializationErrors(errors);
-    try {
-      System.out.printf("Constructors for %s: %s\n", getTestClass().getJavaClass(), getTestClass().getJavaClass().getConstructors());
-      getTestClass().getOnlyConstructor();
-    } catch (Throwable t) {
-      errors.add(new InvalidConstructorError());
-    }
+    checkTestConstructor(errors);
     if (!readExamples().findAny().isPresent()) {
       errors.add(new NoExamplesError());
     }
@@ -59,6 +54,14 @@ public final class JSpecRunner extends ParentRunner<Example> {
     notifier.fireTestFinished(description);
   }
   
+  void checkTestConstructor(List<Throwable> errors) {
+    try {
+      getTestClass().getOnlyConstructor().newInstance();
+    } catch (AssertionError | ReflectiveOperationException _ex) {
+      errors.add(new InvalidConstructorError());
+    }
+  }
+
   Stream<Example> readExamples() {
     List<Field> behaviors = ReflectionUtil.fieldsOfType(It.class, getContextClass());
     return behaviors.stream().map(x -> new Example(x));

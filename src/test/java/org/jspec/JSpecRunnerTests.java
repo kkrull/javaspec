@@ -18,6 +18,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
 import static com.google.common.collect.Lists.*;
+import static org.jspec.util.Assertions.*;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 import static org.junit.Assert.*;
@@ -31,8 +32,18 @@ public class JSpecRunnerTests {
     }
     
     @Test
-    public void givenAClassWithAnyOtherConstructor_raisesInvalidConstructorError() {
+    public void givenAClassWithAPublicConstructorTakingArguments_raisesInvalidConstructorError() {
+      assertInitializationError(JSpecTests.PublicArgConstructor.class, InvalidConstructorError.class);
+    }
+
+    @Test
+    public void givenAClassWithoutAPublicConstructor_raisesInvalidConstructorError() {
       assertInitializationError(JSpecTests.PrivateConstructor.class, InvalidConstructorError.class);
+    }
+    
+    @Test
+    public void givenAClassWithTwoOrMoreConstuctors_raisesIllegalArgumentException() {
+      assertThrows(IllegalArgumentException.class, () -> runnerFor(JSpecTests.MultiplePublicConstructors.class));
     }
     
     void assertInitializationError(Class<?> context, Class<? extends InitializationError> expected) {
@@ -44,20 +55,6 @@ public class JSpecRunnerTests {
         return;
       }
       fail(String.format("Expected initialization error of type %s, but none was thrown", expected));
-    }
-    
-    Stream<InitializationError> unearthInitializationErrors(InitializationError bigKahuna) {
-      List<InitializationError> acc = new LinkedList<InitializationError>();
-      Stack<InitializationError> toVisit = new Stack<InitializationError>();
-      toVisit.push(bigKahuna);
-      while(!toVisit.isEmpty()) {
-        InitializationError parent = toVisit.pop();
-        acc.add(parent);
-        parent.getCauses().stream()
-          .filter(x -> x instanceof InitializationError)
-          .forEach(x -> toVisit.push((InitializationError) x));
-      }
-      return acc.stream();
     }
   }
   
@@ -107,7 +104,7 @@ public class JSpecRunnerTests {
       
       final List<String> notifications = new LinkedList<String>();
 
-      @Test @Ignore("wip")
+      @Test
       public void runsTheTest() {
         RunNotifier notifier = new RunNotifier();
         RunListenerSpy listener = new RunListenerSpy(notifications);
@@ -136,9 +133,6 @@ public class JSpecRunnerTests {
       public void notifiesListenersOfTestFailure() { }
       
       @Test @Ignore
-      public void notifiesListenersOfIgnoredTests() { }
-      
-      @Test @Ignore
       public void whenATestConstructorThrowsAnException_reportsTheException() { }
     }
   }
@@ -147,9 +141,27 @@ public class JSpecRunnerTests {
     try {
       return new JSpecRunner(testClass);
     } catch (InitializationError e) {
-      e.printStackTrace();
+      System.out.println("\nInitialization error(s)");
+      unearthInitializationErrors(e).forEach(x -> {
+        System.out.printf("[%s]\n", x.getClass());
+        System.out.printf("%s\n", x.getMessage());
+      });
       fail("Failed to create JSpecRunner");
       return null;
     }
+  }
+  
+  static Stream<InitializationError> unearthInitializationErrors(InitializationError bigKahuna) {
+    List<InitializationError> acc = new LinkedList<InitializationError>();
+    Stack<InitializationError> toVisit = new Stack<InitializationError>();
+    toVisit.push(bigKahuna);
+    while(!toVisit.isEmpty()) {
+      InitializationError parent = toVisit.pop();
+      acc.add(parent);
+      parent.getCauses().stream()
+        .filter(x -> x instanceof InitializationError)
+        .forEach(x -> toVisit.push((InitializationError) x));
+    }
+    return acc.stream();
   }
 }
