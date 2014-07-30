@@ -20,10 +20,22 @@ public final class JSpecRunner extends ParentRunner<Example> {
   @Override
   protected void collectInitializationErrors(List<Throwable> errors) {
     super.collectInitializationErrors(errors);
-    checkTestConstructor(errors);
-    if (!readExamples().findAny().isPresent()) {
-      errors.add(new NoExamplesError());
+    Stream.of(findInvalidConstructorError(), findNoExampleError())
+      .filter(x -> x != null)
+      .forEach(errors::add);
+  }
+  
+  InitializationError findInvalidConstructorError() {
+    try {
+      getTestClass().getOnlyConstructor().newInstance();
+      return null;
+    } catch (AssertionError | ReflectiveOperationException _ex) {
+      return new InvalidConstructorError();
     }
+  }
+  
+  InitializationError findNoExampleError() {
+    return readExamples().findAny().isPresent() ? null : new NoExamplesError();
   }
 
   @Override
@@ -49,19 +61,10 @@ public final class JSpecRunner extends ParentRunner<Example> {
   protected void runChild(Example child, RunNotifier notifier) {
 //    System.out.println("runChild");
     Description description = child.getDescription();
-    
     notifier.fireTestStarted(description);
     notifier.fireTestFinished(description);
   }
   
-  void checkTestConstructor(List<Throwable> errors) {
-    try {
-      getTestClass().getOnlyConstructor().newInstance();
-    } catch (AssertionError | ReflectiveOperationException _ex) {
-      errors.add(new InvalidConstructorError());
-    }
-  }
-
   Stream<Example> readExamples() {
     List<Field> behaviors = ReflectionUtil.fieldsOfType(It.class, getContextClass());
     return behaviors.stream().map(x -> new Example(x));
