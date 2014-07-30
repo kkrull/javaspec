@@ -114,11 +114,11 @@ public class JSpecRunnerTests {
   public class run {
     final List<String> notifications = new LinkedList<String>();
 
-    public class givenAClassWith1OrMoreItFields {
-      
+    public class givenATestInAnItField {
       @Before
       public void setupTestExecutionSpy() {
         JSpecTests.One.notifyEvent = notifications::add;
+        runTests(JSpecTests.One.class);
       }
       
       @After
@@ -127,39 +127,60 @@ public class JSpecRunnerTests {
       }
       
       @Test
-      public void runsTheTest() {
-        assertThat(
-          runtimeEvents(JSpecTests.One.class),
-          hasItem("JSpecTests.One::only_test"));
+      public void notifiesListenersBeforeRunningTheTest() {
+        assertThat(notifications.get(0), equalTo("testStarted"));
       }
       
       @Test
-      @SuppressWarnings("unchecked")
-      public void notifiesListenersWhenTestsStartAndFinish() {
-        assertThat(
-          runtimeEvents(JSpecTests.One.class),
-          contains(is("testStarted"), anything(), is("testFinished")));
-      }
-      
-      @Test @Ignore
-      public void givenABadTestConstructor_failsTheTest() {
-        fail("pending");
+      public void createsAnInstanceOfTheTestClass() {
+        assertThat(notifications.get(1), equalTo("JSpecTests.One::new"));
       }
       
       @Test
-      public void givenAFailingTest_runsAllTestsInTheClass() { }
+      public void runsTheThunkAssignedToTheItField() {
+        assertThat(notifications.get(2), equalTo("JSpecTests.One::only_test"));
+      }
       
-      @Test @Ignore
-      public void notifiesStartRunsThenNotifiesFinish() { }
-      
-      @Test @Ignore
-      public void notifiesListenersOfTestFailure() { }
-      
-      @Test @Ignore
-      public void whenATestConstructorThrowsAnException_reportsTheException() { }
+      @Test
+      public void notifiesListenersWhenTheTestIsFinished() {
+        assertThat(notifications.get(3), equalTo("testFinished"));
+      }
     }
     
-    List<String> runtimeEvents(Class<?> testClass) {
+    public class givenMultipleTestsAndOneOrMoreFail {
+      @Before
+      public void setupTestExecutionSpy() {
+        JSpecTests.OnePassOneFail.notifyEvent = notifications::add;
+        runTests(JSpecTests.OnePassOneFail.class);
+      }
+      
+      @After
+      public void recallSpies() {
+        JSpecTests.OnePassOneFail.notifyEvent = null;
+      }
+      
+      @Test
+      public void runsRemainingTests() {
+        assertThat(notifications,
+          hasItems("JSpecTests.OnePassOneFail::fail", "JSpecTests.OnePassOneFail::pass"));
+      }
+    }
+    
+    @Test
+    public void whenATestConstructorThrows_notifiesListenersOfAFailedTest() {
+      assertThat(
+        runTests(JSpecTests.FaultyConstructor.class),
+        contains("testStarted", "testFailure", "testFinished"));
+    }
+    
+    @Test
+    public void whenATestThunkThrows_notifiesListenersOfAFailedTest() {
+      assertThat(
+        runTests(JSpecTests.FailingTest.class),
+        contains("testStarted", "testFailure", "testFinished"));
+    }
+    
+    List<String> runTests(Class<?> testClass) {
       RunNotifier notifier = new RunNotifier();
       notifier.addListener(new RunListenerSpy(notifications::add));
       JSpecRunner runner = runnerFor(testClass);

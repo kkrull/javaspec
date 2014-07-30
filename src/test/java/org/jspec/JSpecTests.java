@@ -14,9 +14,13 @@ import static org.junit.Assert.assertEquals;
 public class JSpecTests {
   public static class Empty {}
   
+  public static class FailingTest {
+    It fails = () -> assertEquals("the answer", 42);
+  }
+  
   public static class FaultyConstructor {
-    public FaultyConstructor() {
-      throw new IllegalArgumentException("just because");
+    public FaultyConstructor() throws HardToFindThrowable {
+      throw new HardToFindThrowable();
     }
     It is_otherwise_valid = () -> assertEquals(1, 1);
   }
@@ -47,7 +51,24 @@ public class JSpecTests {
   
   public static class One {
     public static Consumer<String> notifyEvent;
+    public One() {
+      notifyEvent.accept("JSpecTests.One::new");
+    }
     It only_test = () -> notifyEvent.accept("JSpecTests.One::only_test");
+  }
+  
+  public static class OnePassOneFail {
+    public static Consumer<String> notifyEvent;
+    public OnePassOneFail() {
+      notifyEvent.accept("JSpecTests.OnePassOneFail::new");
+    }
+    
+    It fail = () -> {
+      notifyEvent.accept("JSpecTests.OnePassOneFail::fail");
+      assertEquals("apples", "oranges");
+    };
+    
+    It pass = () -> notifyEvent.accept("JSpecTests.OnePassOneFail::pass");
   }
   
   public static class PublicConstructorWithArgs {
@@ -59,4 +80,7 @@ public class JSpecTests {
     It first_test = () -> assertEquals(1, 1);
     It second_test = () -> assertEquals(2, 2);
   }
+  
+  @SuppressWarnings("serial")
+  public static class HardToFindThrowable extends Throwable {}
 }

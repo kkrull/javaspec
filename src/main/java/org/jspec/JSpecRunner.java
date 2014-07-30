@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import org.jspec.dsl.It;
 import org.junit.runner.Description;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
@@ -51,25 +52,21 @@ public final class JSpecRunner extends ParentRunner<Example> {
 
   @Override
   protected Description describeChild(Example child) {
-//    System.out.println("describeChild");
+    System.out.println("describeChild");
     throw new UnsupportedOperationException();
   }
 
   @Override
   protected void runChild(Example child, RunNotifier notifier) {
-//    System.out.println("runChild");
     Description description = child.getDescription();
     notifier.fireTestStarted(description);
     try {
       child.run(getContextInstance());
-    } catch (ReflectiveOperationException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+    } catch (Throwable t) { //Gotta catch 'em all (especially AssertionErrors; you know they're tricksy)
+      notifier.fireTestFailure(new Failure(description, t));
+    } finally {
+      notifier.fireTestFinished(description);
     }
-    notifier.fireTestFinished(description);
   }
   
   Stream<Example> readExamples() {
