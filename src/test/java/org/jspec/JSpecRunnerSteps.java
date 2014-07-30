@@ -34,7 +34,7 @@ public final class JSpecRunnerSteps {
     this.testClass = JSpecTests.One.class;
   }
 
-  @When("^I run the tests with a JUnit runner$")
+  @When("^I run the tests with a JSpec runner$")
   public void i_run_the_tests_with_a_JUnit_runner() throws Throwable {
     RunNotifier notifier = new RunNotifier();
     notifier.addListener(new RunListenerSpy(events::add));
