@@ -1,5 +1,7 @@
 package org.jspec;
 
+import java.util.List;
+
 import org.jspec.dsl.It;
 import org.junit.Ignore;
 
@@ -13,7 +15,8 @@ public class JSpecTests {
   public static class Empty {}
 
   public static class One {
-    It only_test = () -> assertEquals(1, 1);
+    public static List<String> notificationQueue;
+    It only_test = () -> notificationQueue.add("JSpecTests.One::only_test");
   }
 
   public static class Two {

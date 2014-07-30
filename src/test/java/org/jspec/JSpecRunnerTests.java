@@ -10,6 +10,8 @@ import java.util.stream.Stream;
 import org.hamcrest.Matchers;
 import org.jspec.JSpecRunner.NoExamplesError;
 import org.jspec.JSpecRunner.InvalidConstructorError;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
@@ -102,8 +104,18 @@ public class JSpecRunnerTests {
   public class run {
     public class givenAClassWith1OrMoreItFields {
       
-      final List<String> notifications = new LinkedList<String>();
+      final List<String> notifications = new LinkedList<String>(); //TODO KDK: Pass a notification function around instead of the queue itself.
 
+      @Before
+      public void setupTestExecutionSpy() {
+        JSpecTests.One.notificationQueue = notifications;
+      }
+      
+      @After
+      public void recallSpies() {
+        JSpecTests.One.notificationQueue = null;
+      }
+      
       @Test
       public void runsTheTest() {
         RunNotifier notifier = new RunNotifier();
@@ -112,7 +124,7 @@ public class JSpecRunnerTests {
         JSpecRunner runner = runnerFor(JSpecTests.One.class);
         runner.run(notifier);
         
-        assertThat(notifications, Matchers.hasItem("JSpecTests$One.only_test::run"));
+        assertThat(notifications, Matchers.hasItem("JSpecTests.One::only_test"));
       }
       
       @Test

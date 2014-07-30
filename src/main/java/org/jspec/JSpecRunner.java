@@ -26,13 +26,13 @@ public final class JSpecRunner extends ParentRunner<Example> {
   
   InitializationError findInvalidConstructorError() {
     try {
-      getTestClass().getOnlyConstructor().newInstance();
+      getContextInstance();
       return null;
     } catch (AssertionError | ReflectiveOperationException _ex) {
       return new InvalidConstructorError();
     }
   }
-  
+
   InitializationError findNoExampleError() {
     return readExamples().findAny().isPresent() ? null : new NoExamplesError();
   }
@@ -60,11 +60,24 @@ public final class JSpecRunner extends ParentRunner<Example> {
 //    System.out.println("runChild");
     Description description = child.getDescription();
     notifier.fireTestStarted(description);
+    try {
+      child.run(getContextInstance());
+    } catch (ReflectiveOperationException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     notifier.fireTestFinished(description);
   }
   
   Stream<Example> readExamples() {
     return ReflectionUtil.fieldsOfType(It.class, getContextClass()).map(Example::new);
+  }
+  
+  Object getContextInstance() throws ReflectiveOperationException {
+    return getTestClass().getOnlyConstructor().newInstance();
   }
   
   Class<?> getContextClass() {
