@@ -1,21 +1,32 @@
 package org.jspec;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItems;
+
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
+import org.junit.runner.notification.RunNotifier;
 
+import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItems;
 
 public final class JSpecRunnerSteps {
   final List<String> events = new LinkedList<String> ();
   Class<?> testClass;
-  Result result;
+  
+  @Before
+  public void setupTestExecutionSpy() {
+    JSpecTests.One.notifyEvent = events::add;
+  }
+  
+  @After
+  public void recallSpies() {
+    JSpecTests.One.notifyEvent = null;
+  }
 
   @Given("^I have a class with JSpec tests in it$")
   public void i_have_a_class_with_JSpec_tests_in_it() throws Throwable {
@@ -25,9 +36,10 @@ public final class JSpecRunnerSteps {
 
   @When("^I run the tests with a JUnit runner$")
   public void i_run_the_tests_with_a_JUnit_runner() throws Throwable {
-    JUnitCore junit = new JUnitCore();
-    junit.addListener(new RunListenerSpy(events::add));
-    this.result = junit.run(testClass);
+    RunNotifier notifier = new RunNotifier();
+    notifier.addListener(new RunListenerSpy(events::add));
+    JSpecRunner runner = new JSpecRunner(testClass);
+    runner.run(notifier);
   }
 
   @Then("^the test runner should run all the tests in the class$")
