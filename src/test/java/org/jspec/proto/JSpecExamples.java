@@ -33,17 +33,18 @@ public class JSpecExamples {
   }
   
   public static class MultiplePublicConstructors {
-    private final int id;
+    @SuppressWarnings("unused")
+    private final int _id; //Only used as a means of getting two constructors
     
     public MultiplePublicConstructors() {
       this(42);
     }
     
-    public MultiplePublicConstructors(int id) {
-      this.id = id;
+    public MultiplePublicConstructors(int _id) {
+      this._id = _id;
     }
     
-    It is_otherwise_valid = () -> assertEquals(42, id);
+    It is_otherwise_valid = () -> assertEquals(1, 1);
   }
   
   public static class One {
