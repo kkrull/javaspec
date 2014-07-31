@@ -17,6 +17,7 @@ final class Example {
   }
   
   public void run(Object objectDeclaringBehavior) throws Exception {
+    behavior.setAccessible(true);
     It thunk = (It)behavior.get(objectDeclaringBehavior);
     thunk.run();
   }
