@@ -1,5 +1,6 @@
 package org.jspec;
 
+import static java.util.Collections.synchronizedList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 
@@ -16,7 +17,7 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
 public final class JSpecRunnerSteps {
-  final List<String> events = new LinkedList<String> ();
+  final List<String> events = synchronizedList(new LinkedList<String> ()); //In case JUnit uses threads per test
   Class<?> testClass;
   
   @Before

@@ -2,6 +2,7 @@ package org.jspec;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.synchronizedList;
 import static org.hamcrest.Matchers.*;
 import static org.jspec.util.Assertions.assertThrows;
 import static org.junit.Assert.*;
@@ -112,7 +113,7 @@ public class JSpecRunnerTests {
   }
 
   public class run {
-    final List<String> notifications = new LinkedList<String>();
+    final List<String> notifications = synchronizedList(new LinkedList<String>()); //In case JUnit uses threads per test
 
     public class givenATestInAnItField {
       @Before
