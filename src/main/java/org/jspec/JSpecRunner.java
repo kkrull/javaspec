@@ -12,6 +12,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
+/** A JUnit4 runner for JSpec test classes containing 1 or more It fields */
 public final class JSpecRunner extends ParentRunner<Example> {
 
   public JSpecRunner(Class<?> testClass) throws InitializationError {
