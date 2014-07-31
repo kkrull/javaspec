@@ -62,7 +62,7 @@ public final class JSpecRunner extends ParentRunner<Example> {
     notifier.fireTestStarted(description);
     try {
       child.run(getContextInstance());
-    } catch (Throwable t) { //Gotta catch 'em all (especially AssertionErrors; you know they're tricksy)
+    } catch (Throwable t) { //Gotta catch 'em all, especially AssertionErrors (I told you he was tricksy)
       notifier.fireTestFailure(new Failure(description, t));
     } finally {
       notifier.fireTestFinished(description);
