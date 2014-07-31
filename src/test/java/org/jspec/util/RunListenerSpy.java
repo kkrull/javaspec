@@ -1,4 +1,4 @@
-package org.jspec;
+package org.jspec.util;
 
 import java.util.function.Consumer;
 

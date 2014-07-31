@@ -1,4 +1,4 @@
-package org.jspec;
+package org.jspec.steps;
 
 import static java.util.Collections.synchronizedList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -7,6 +7,10 @@ import static org.hamcrest.Matchers.hasItems;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.jspec.JSpecRunner;
+import org.jspec.JSpecTests;
+import org.jspec.RunWithJSpecRunner;
+import org.jspec.util.RunListenerSpy;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.notification.RunNotifier;
 

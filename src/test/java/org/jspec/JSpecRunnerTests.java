@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 
 import org.jspec.JSpecRunner.InvalidConstructorError;
 import org.jspec.JSpecRunner.NoExamplesError;
+import org.jspec.util.RunListenerSpy;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;

@@ -1,7 +1,6 @@
 package org.jspec;
 
 import static org.junit.Assert.*;
-
 import static org.junit.Assume.*;
 
 import java.lang.reflect.Field;
@@ -10,6 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.jspec.proto.EmptyClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

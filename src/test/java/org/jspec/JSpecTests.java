@@ -7,10 +7,7 @@ import java.util.function.Consumer;
 import org.jspec.dsl.It;
 import org.junit.Ignore;
 
-/**
- * Prototypical test classes used when testing JSpec itself; not meant to be run by themselves.
- * Inner classes are declared static to avoid the gaze of HierarchicalContextRunner when testing JSpec. 
- */
+/** Inner classes are declared static to avoid the gaze of HierarchicalContextRunner when testing JSpec. */
 public class JSpecTests {
   public static class Empty {}
   
