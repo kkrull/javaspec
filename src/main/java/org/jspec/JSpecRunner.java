@@ -13,7 +13,7 @@ import org.junit.runners.model.InitializationError;
 
 public final class JSpecRunner extends ParentRunner<Example> {
 
-  protected JSpecRunner(Class<?> testClass) throws InitializationError {
+  public JSpecRunner(Class<?> testClass) throws InitializationError {
     super(testClass);
   }
 
@@ -52,8 +52,7 @@ public final class JSpecRunner extends ParentRunner<Example> {
 
   @Override
   protected Description describeChild(Example child) {
-    System.out.println("describeChild");
-    throw new UnsupportedOperationException();
+    throw new UnsupportedOperationException("Nobody has needed this method to work yet"); //TODO KDK: Seriously?
   }
 
   @Override

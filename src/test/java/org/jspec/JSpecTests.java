@@ -1,11 +1,11 @@
 package org.jspec;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.function.Consumer;
 
 import org.jspec.dsl.It;
 import org.junit.Ignore;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Prototypical test classes used when testing JSpec itself; not meant to be run by themselves.
