@@ -29,7 +29,7 @@ import org.junit.runners.model.InitializationError;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 @RunWith(HierarchicalContextRunner.class)
-public class JSpecRunnerTests {
+public class JSpecRunnerTest {
   public class constructor {
     public class givenAnInvalidTestClass {
       @Test

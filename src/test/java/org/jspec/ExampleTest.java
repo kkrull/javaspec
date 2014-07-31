@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 @RunWith(HierarchicalContextRunner.class)
-public class ExampleTests {
+public class ExampleTest {
   public class run {
     public class givenAnItFieldDeclaredInAClass {
       private final List<String> events = new LinkedList<String>();

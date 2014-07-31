@@ -16,7 +16,7 @@ import org.junit.runner.RunWith;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 @RunWith(HierarchicalContextRunner.class)
-public class ReflectionUtilTests {
+public class ReflectionUtilTest {
   public class fieldsOfType {
     @Test
     public void givenClassWithNoMatchingFields_returnsEmptyList() {
