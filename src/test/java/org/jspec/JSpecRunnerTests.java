@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 
 import org.jspec.JSpecRunner.InvalidConstructorError;
 import org.jspec.JSpecRunner.NoExamplesError;
+import org.jspec.proto.JSpecExamples;
 import org.jspec.util.RunListenerSpy;
 import org.junit.After;
 import org.junit.Before;
@@ -33,22 +34,22 @@ public class JSpecRunnerTests {
     public class givenAnInvalidTestClass {
       @Test
       public void givenAClassWithoutAPublicConstructor_raisesInvalidConstructorError() {
-        assertInitializationError(JSpecTests.HiddenConstructor.class, InvalidConstructorError.class);
+        assertInitializationError(JSpecExamples.HiddenConstructor.class, InvalidConstructorError.class);
       }
       
       @Test
       public void givenAClassWithAPublicConstructorTakingArguments_raisesInvalidConstructorError() {
-        assertInitializationError(JSpecTests.PublicConstructorWithArgs.class, InvalidConstructorError.class);
+        assertInitializationError(JSpecExamples.PublicConstructorWithArgs.class, InvalidConstructorError.class);
       }
 
       @Test
       public void givenAClassWithTwoOrMoreConstuctors_raisesIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class, () -> runnerFor(JSpecTests.MultiplePublicConstructors.class));
+        assertThrows(IllegalArgumentException.class, () -> runnerFor(JSpecExamples.MultiplePublicConstructors.class));
       }
       
       @Test
       public void givenAClassWithNoItFields_raisesNoExamplesError() {
-        assertInitializationError(JSpecTests.Empty.class, NoExamplesError.class);
+        assertInitializationError(JSpecExamples.Empty.class, NoExamplesError.class);
       }
       
       void assertInitializationError(Class<?> context, Class<? extends InitializationError> expected) {
@@ -67,7 +68,7 @@ public class JSpecRunnerTests {
       @Test
       public void itDoesNotInvokeTheConstructor() {
         //Allow the test to run and fail instead of bringing down the whole suite
-        runnerFor(JSpecTests.FaultyConstructor.class);
+        runnerFor(JSpecExamples.FaultyConstructor.class);
       }
     }
   }
@@ -75,29 +76,29 @@ public class JSpecRunnerTests {
   public class getDescription {
     @Test
     public void givenAClass_hasTheGivenTestClass() {
-      assertEquals(JSpecTests.Two.class, descriptionOf(JSpecTests.Two.class).getTestClass());
+      assertEquals(JSpecExamples.Two.class, descriptionOf(JSpecExamples.Two.class).getTestClass());
     }
 
     @Test
     public void givenAClassWithoutAnnotations_hasEmptyAnnotations() {
-      assertEquals(emptyList(), descriptionOf(JSpecTests.Two.class).getAnnotations());
+      assertEquals(emptyList(), descriptionOf(JSpecExamples.Two.class).getAnnotations());
     }
 
     @Test
     public void givenAClassWithAnnotations_hasThoseAnnotations() {
-      assertNotNull(descriptionOf(JSpecTests.IgnoredClass.class).getAnnotation(Ignore.class));
+      assertNotNull(descriptionOf(JSpecExamples.IgnoredClass.class).getAnnotation(Ignore.class));
     }
 
     public class givenAClassWith1OrMoreItFields {
-      final Description description = descriptionOf(JSpecTests.Two.class);
+      final Description description = descriptionOf(JSpecExamples.Two.class);
 
       @Test
       public void hasAChildForEach() {
         List<Description> children = description.getChildren();
         List<String> names = children.stream().map(Description::getDisplayName).sorted().collect(Collectors.toList());
         assertEquals(newArrayList(
-          "first_test(org.jspec.JSpecTests$Two)",
-          "second_test(org.jspec.JSpecTests$Two)"),
+          "first_test(org.jspec.proto.JSpecExamples$Two)",
+          "second_test(org.jspec.proto.JSpecExamples$Two)"),
           names);
       }
 
@@ -119,13 +120,13 @@ public class JSpecRunnerTests {
     public class givenATestInAnItField {
       @Before
       public void setupTestExecutionSpy() {
-        JSpecTests.One.setEventListener(notifications::add);
-        runTests(JSpecTests.One.class);
+        JSpecExamples.One.setEventListener(notifications::add);
+        runTests(JSpecExamples.One.class);
       }
       
       @After
       public void recallSpies() {
-        JSpecTests.One.setEventListener(null);
+        JSpecExamples.One.setEventListener(null);
       }
       
       @Test
@@ -135,12 +136,12 @@ public class JSpecRunnerTests {
       
       @Test
       public void createsAnInstanceOfTheTestClass() {
-        assertThat(notifications.get(1), equalTo("JSpecTests.One::new"));
+        assertThat(notifications.get(1), equalTo("JSpecExamples.One::new"));
       }
       
       @Test
       public void runsTheThunkAssignedToTheItField() {
-        assertThat(notifications.get(2), equalTo("JSpecTests.One::only_test"));
+        assertThat(notifications.get(2), equalTo("JSpecExamples.One::only_test"));
       }
       
       @Test
@@ -152,33 +153,33 @@ public class JSpecRunnerTests {
     public class givenMultipleTestsAndOneOrMoreFail {
       @Before
       public void setupTestExecutionSpy() {
-        JSpecTests.OnePassOneFail.setEventListener(notifications::add);
-        runTests(JSpecTests.OnePassOneFail.class);
+        JSpecExamples.OnePassOneFail.setEventListener(notifications::add);
+        runTests(JSpecExamples.OnePassOneFail.class);
       }
       
       @After
       public void recallSpies() {
-        JSpecTests.OnePassOneFail.setEventListener(null);
+        JSpecExamples.OnePassOneFail.setEventListener(null);
       }
       
       @Test
       public void runsRemainingTests() {
         assertThat(notifications,
-          hasItems("JSpecTests.OnePassOneFail::fail", "JSpecTests.OnePassOneFail::pass"));
+          hasItems("JSpecExamples.OnePassOneFail::fail", "JSpecExamples.OnePassOneFail::pass"));
       }
     }
     
     @Test
     public void whenATestConstructorThrows_notifiesListenersOfAFailedTest() {
       assertThat(
-        runTests(JSpecTests.FaultyConstructor.class),
+        runTests(JSpecExamples.FaultyConstructor.class),
         contains("testStarted", "testFailure", "testFinished"));
     }
     
     @Test
     public void whenATestThunkThrows_notifiesListenersOfAFailedTest() {
       assertThat(
-        runTests(JSpecTests.FailingTest.class),
+        runTests(JSpecExamples.FailingTest.class),
         contains("testStarted", "testFailure", "testFinished"));
     }
     

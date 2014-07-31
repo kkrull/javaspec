@@ -8,8 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.jspec.JSpecRunner;
-import org.jspec.JSpecTests;
-import org.jspec.RunWithJSpecRunner;
+import org.jspec.proto.JSpecExamples;
+import org.jspec.proto.RunWithJSpecRunner;
 import org.jspec.util.RunListenerSpy;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.notification.RunNotifier;
@@ -26,19 +26,19 @@ public final class JSpecRunnerSteps {
   
   @Before
   public void setupTestExecutionSpy() {
-    JSpecTests.One.setEventListener(events::add);
+    JSpecExamples.One.setEventListener(events::add);
     RunWithJSpecRunner.setEventListener(events::add);
   }
   
   @After
   public void recallSpies() {
-    JSpecTests.One.setEventListener(null);
+    JSpecExamples.One.setEventListener(null);
     RunWithJSpecRunner.setEventListener(null);
   }
 
   @Given("^I have a class with JSpec tests in it$")
   public void i_have_a_class_with_JSpec_tests_in_it() throws Throwable {
-    this.testClass = JSpecTests.One.class;
+    this.testClass = JSpecExamples.One.class;
   }
   
   @When("^I run the tests with a JSpec runner$")
@@ -54,7 +54,7 @@ public final class JSpecRunnerSteps {
     assertThat(
       String.format("\nActual: %s", events),
       events, 
-      hasItems("JSpecTests.One::only_test"));
+      hasItems("JSpecExamples.One::only_test"));
   }
   
   @Given("^I have a class with JSpec tests in it that is marked to run with a JSpec runner$")

@@ -1,4 +1,4 @@
-package org.jspec;
+package org.jspec.proto;
 
 import static org.junit.Assert.assertEquals;
 
@@ -8,7 +8,7 @@ import org.jspec.dsl.It;
 import org.junit.Ignore;
 
 /** Inner classes are declared static to avoid the gaze of HierarchicalContextRunner when testing JSpec. */
-public class JSpecTests {
+public class JSpecExamples {
   public static class Empty {}
   
   public static class FailingTest {
@@ -55,9 +55,9 @@ public class JSpecTests {
     }
     
     public One() {
-      notifyEvent.accept("JSpecTests.One::new");
+      notifyEvent.accept("JSpecExamples.One::new");
     }
-    It only_test = () -> notifyEvent.accept("JSpecTests.One::only_test");
+    It only_test = () -> notifyEvent.accept("JSpecExamples.One::only_test");
   }
   
   public static class OnePassOneFail {
@@ -69,15 +69,15 @@ public class JSpecTests {
     }
     
     public OnePassOneFail() {
-      notifyEvent.accept("JSpecTests.OnePassOneFail::new");
+      notifyEvent.accept("JSpecExamples.OnePassOneFail::new");
     }
     
     It fail = () -> {
-      notifyEvent.accept("JSpecTests.OnePassOneFail::fail");
+      notifyEvent.accept("JSpecExamples.OnePassOneFail::fail");
       assertEquals("apples", "oranges");
     };
     
-    It pass = () -> notifyEvent.accept("JSpecTests.OnePassOneFail::pass");
+    It pass = () -> notifyEvent.accept("JSpecExamples.OnePassOneFail::pass");
   }
   
   public static class PublicConstructorWithArgs {
