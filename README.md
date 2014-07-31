@@ -13,5 +13,8 @@ Not to be confused with similarly named frameworks that test JavaScript.  These 
 - Do any test setup you want to do in a public, no-arg constructor (similar to JUnit).
 - Include 1 or more `It` fields in the class and assign a thunk (a no-arg, anonymous function) like so:
 
-    It does_something_cool = () -> assertEquals("hello", widget.sayHello());
+```java
+It does_something_cool = () -> assertEquals("hello", widget.sayHello());
+```
+
 - Run this test anywhere you run JUnit.
