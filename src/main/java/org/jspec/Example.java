@@ -6,7 +6,7 @@ import org.jspec.dsl.It;
 import org.junit.runner.Description;
 
 final class Example {
-  final Field behavior;
+  private final Field behavior;
   
   public Example(Field behavior) {
     this.behavior = behavior;

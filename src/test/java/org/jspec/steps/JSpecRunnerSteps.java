@@ -21,8 +21,8 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
 public final class JSpecRunnerSteps {
-  final List<String> events = synchronizedList(new LinkedList<String> ()); //In case JUnit uses threads per test
-  Class<?> testClass;
+  private final List<String> events = synchronizedList(new LinkedList<String> ()); //In case JUnit uses threads per test
+  private Class<?> testClass;
   
   @Before
   public void setupTestExecutionSpy() {

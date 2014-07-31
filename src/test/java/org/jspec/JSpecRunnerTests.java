@@ -52,7 +52,7 @@ public class JSpecRunnerTests {
         assertInitializationError(JSpecExamples.Empty.class, NoExamplesError.class);
       }
       
-      void assertInitializationError(Class<?> context, Class<? extends InitializationError> expected) {
+      private void assertInitializationError(Class<?> context, Class<? extends InitializationError> expected) {
         try {
           new JSpecRunner(context);
         } catch (InitializationError ex) {
@@ -90,7 +90,7 @@ public class JSpecRunnerTests {
     }
 
     public class givenAClassWith1OrMoreItFields {
-      final Description description = descriptionOf(JSpecExamples.Two.class);
+      private final Description description = descriptionOf(JSpecExamples.Two.class);
 
       @Test
       public void hasAChildForEach() {
@@ -108,14 +108,14 @@ public class JSpecRunnerTests {
       }
     }
 
-    Description descriptionOf(Class<?> testClass) {
+    private Description descriptionOf(Class<?> testClass) {
       JSpecRunner runner = runnerFor(testClass);
       return runner.getDescription();
     }
   }
 
   public class run {
-    final List<String> notifications = synchronizedList(new LinkedList<String>()); //In case JUnit uses threads per test
+    private final List<String> notifications = synchronizedList(new LinkedList<String>()); //In case JUnit uses threads per test
 
     public class givenATestInAnItField {
       @Before
@@ -192,7 +192,7 @@ public class JSpecRunnerTests {
     }
   }
   
-  static JSpecRunner runnerFor(Class<?> testClass) {
+  private static JSpecRunner runnerFor(Class<?> testClass) {
     try {
       return new JSpecRunner(testClass);
     } catch (InitializationError e) {
@@ -206,7 +206,7 @@ public class JSpecRunnerTests {
     }
   }
   
-  static Stream<InitializationError> unearthInitializationErrors(InitializationError bigKahuna) {
+  private static Stream<InitializationError> unearthInitializationErrors(InitializationError bigKahuna) {
     List<InitializationError> acc = new LinkedList<InitializationError>();
     Stack<InitializationError> toVisit = new Stack<InitializationError>();
     toVisit.push(bigKahuna);

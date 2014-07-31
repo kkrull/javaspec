@@ -3,7 +3,7 @@ package org.jspec.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class Assertions {
+public final class Assertions {
   public static void assertThrows(Class<? extends Exception> exceptionClass, Thunk thunk) {
     try {
       thunk.run();

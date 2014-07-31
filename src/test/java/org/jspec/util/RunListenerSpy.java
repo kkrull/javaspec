@@ -8,7 +8,7 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
 public final class RunListenerSpy extends RunListener {
-  final Consumer<String> notifyEvent;
+  private final Consumer<String> notifyEvent;
   
   public RunListenerSpy(Consumer<String> notifyEvent) {
     this.notifyEvent = notifyEvent;

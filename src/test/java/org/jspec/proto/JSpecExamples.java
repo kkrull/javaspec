@@ -33,7 +33,7 @@ public class JSpecExamples {
   }
   
   public static class MultiplePublicConstructors {
-    final int id;
+    private final int id;
     
     public MultiplePublicConstructors() {
       this(42);
@@ -43,7 +43,7 @@ public class JSpecExamples {
       this.id = id;
     }
     
-    It is_otherwise_valid = () -> assertEquals(1, 1);
+    It is_otherwise_valid = () -> assertEquals(42, id);
   }
   
   public static class One {
@@ -81,7 +81,7 @@ public class JSpecExamples {
   }
   
   public static class PublicConstructorWithArgs {
-    private PublicConstructorWithArgs(int id) {}
+    public PublicConstructorWithArgs(int id) {}
     It is_otherwise_valid = () -> assertEquals(1, 1);
   }
   

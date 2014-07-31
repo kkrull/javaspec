@@ -16,7 +16,7 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 public class ExampleTests {
   public class run {
     public class givenAnItFieldDeclaredInAClass {
-      final List<String> events = new LinkedList<String>();
+      private final List<String> events = new LinkedList<String>();
       It visibleThunk = () -> events.add("visibleThunk ran");
       
       @SuppressWarnings("unused")

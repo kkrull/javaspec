@@ -1,5 +1,6 @@
 package org.jspec;
 
+import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,16 +26,18 @@ public final class JSpecRunner extends ParentRunner<Example> {
       .forEach(errors::add);
   }
   
-  InitializationError findInvalidConstructorError() {
+  private InitializationError findInvalidConstructorError() {
+    Constructor<?> constructor;
     try {
-      getTestClass().getOnlyConstructor();
-      return null;
+      constructor = getTestClass().getOnlyConstructor();
     } catch (AssertionError _ex) {
       return new InvalidConstructorError();
     }
+    
+    return constructor.getParameterCount() == 0 ? null : new InvalidConstructorError();
   }
 
-  InitializationError findNoExampleError() {
+  private InitializationError findNoExampleError() {
     return readExamples().findAny().isPresent() ? null : new NoExamplesError();
   }
 
@@ -68,30 +71,30 @@ public final class JSpecRunner extends ParentRunner<Example> {
     }
   }
   
-  Stream<Example> readExamples() {
+  private Stream<Example> readExamples() {
     return ReflectionUtil.fieldsOfType(It.class, getContextClass()).map(Example::new);
   }
   
-  Object getContextInstance() throws ReflectiveOperationException {
+  private Object getContextInstance() throws ReflectiveOperationException {
     return getTestClass().getOnlyConstructor().newInstance();
   }
   
-  Class<?> getContextClass() {
+  private Class<?> getContextClass() {
     return getTestClass().getJavaClass();
   }
   
-  static class NoExamplesError extends InitializationError {
+  public static class NoExamplesError extends InitializationError {
     private static final long serialVersionUID = -4731749974843465573L;
 
-    public NoExamplesError() {
+    NoExamplesError() {
       super("A JSpec class must declare 1 or more It fields");
     }
   }
   
-  static class InvalidConstructorError extends InitializationError {
+  public static class InvalidConstructorError extends InitializationError {
     private static final long serialVersionUID = 7403176586548921108L;
 
-    public InvalidConstructorError() {
+    InvalidConstructorError() {
       super("A JSpec test must have a public, no-arg constructor and no others");
     }
   }
