@@ -22,14 +22,14 @@ public final class JSpecRunnerSteps {
   
   @Before
   public void setupTestExecutionSpy() {
-    JSpecTests.One.notifyEvent = events::add;
-    RunWithJSpecRunner.notifyEvent = events::add;
+    JSpecTests.One.setEventListener(events::add);
+    RunWithJSpecRunner.setEventListener(events::add);
   }
   
   @After
   public void recallSpies() {
-    JSpecTests.One.notifyEvent = null;
-    RunWithJSpecRunner.notifyEvent = null;
+    JSpecTests.One.setEventListener(null);
+    RunWithJSpecRunner.setEventListener(null);
   }
 
   @Given("^I have a class with JSpec tests in it$")

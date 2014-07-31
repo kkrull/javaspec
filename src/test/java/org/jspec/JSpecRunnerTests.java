@@ -118,13 +118,13 @@ public class JSpecRunnerTests {
     public class givenATestInAnItField {
       @Before
       public void setupTestExecutionSpy() {
-        JSpecTests.One.notifyEvent = notifications::add;
+        JSpecTests.One.setEventListener(notifications::add);
         runTests(JSpecTests.One.class);
       }
       
       @After
       public void recallSpies() {
-        JSpecTests.One.notifyEvent = null;
+        JSpecTests.One.setEventListener(null);
       }
       
       @Test
@@ -151,13 +151,13 @@ public class JSpecRunnerTests {
     public class givenMultipleTestsAndOneOrMoreFail {
       @Before
       public void setupTestExecutionSpy() {
-        JSpecTests.OnePassOneFail.notifyEvent = notifications::add;
+        JSpecTests.OnePassOneFail.setEventListener(notifications::add);
         runTests(JSpecTests.OnePassOneFail.class);
       }
       
       @After
       public void recallSpies() {
-        JSpecTests.OnePassOneFail.notifyEvent = null;
+        JSpecTests.OnePassOneFail.setEventListener(null);
       }
       
       @Test

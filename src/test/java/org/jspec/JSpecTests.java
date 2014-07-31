@@ -50,7 +50,13 @@ public class JSpecTests {
   }
   
   public static class One {
-    public static Consumer<String> notifyEvent;
+    private static final Consumer<String> NOP = x -> { return; };
+    private static Consumer<String> notifyEvent = NOP;
+    
+    public static void setEventListener(Consumer<String> newConsumer) {
+      notifyEvent = newConsumer == null ? NOP : newConsumer;
+    }
+    
     public One() {
       notifyEvent.accept("JSpecTests.One::new");
     }
@@ -58,7 +64,13 @@ public class JSpecTests {
   }
   
   public static class OnePassOneFail {
-    public static Consumer<String> notifyEvent;
+    private static final Consumer<String> NOP = x -> { return; };
+    private static Consumer<String> notifyEvent = NOP;
+    
+    public static void setEventListener(Consumer<String> newConsumer) {
+      notifyEvent = newConsumer == null ? NOP : newConsumer;
+    }
+    
     public OnePassOneFail() {
       notifyEvent.accept("JSpecTests.OnePassOneFail::new");
     }

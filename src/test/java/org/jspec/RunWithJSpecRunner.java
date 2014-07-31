@@ -7,10 +7,12 @@ import org.junit.runner.RunWith;
 
 @RunWith(JSpecRunner.class)
 public class RunWithJSpecRunner {
-  public static final Consumer<String> NOP = x -> {
-    return;
-  };
-  public static Consumer<String> notifyEvent = NOP;
+  private static final Consumer<String> NOP = x -> { return; };
+  private static Consumer<String> notifyEvent = NOP;
+  
+  public static void setEventListener(Consumer<String> newConsumer) {
+    notifyEvent = newConsumer == null ? NOP : newConsumer;
+  }
   
   public RunWithJSpecRunner() {
     notifyEvent.accept("RunWithJSpecRunner::new");
