@@ -15,22 +15,14 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 @RunWith(HierarchicalContextRunner.class)
 public class ExampleTest {
   public class run {
-    public class givenAnItFieldDeclaredInAClass {
+    public class givenAnItFieldOfAnyVisibilityDeclaredInAClass {
       private final List<String> events = new LinkedList<String>();
-      It visibleThunk = () -> events.add("visibleThunk ran");
       
       @SuppressWarnings("unused")
       private It inaccessibleThunk = () -> events.add("inaccessibleThunk ran");
       
       @Test
       public void runsTheFunctionAssignedToTheSpecifiedFieldInTheGivenObject() throws Exception {
-        Example example = new Example(getClass().getDeclaredField("visibleThunk"));
-        example.run(this);
-        assertThat(events, contains("visibleThunk ran"));
-      }
-      
-      @Test
-      public void canRunAFunctionAssignedToAnInaccessibleFieldToo() throws Exception {
         Example example = new Example(getClass().getDeclaredField("inaccessibleThunk"));
         example.run(this);
         assertThat(events, contains("inaccessibleThunk ran"));

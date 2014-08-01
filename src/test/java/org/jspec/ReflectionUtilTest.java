@@ -25,21 +25,15 @@ public class ReflectionUtilTest {
     }
     
     @Test
-    public void givenClassWith1OrMoreMatchingFields_returnsEachField() {
-      assertFieldsOfType(MatchingType.class, MixedFields.class, "matching");
-    }
-    
-    @Test
-    public void givenAnyFieldVisibility_returnsTheField() {
-      assertFieldsOfType(MatchingType.class, FieldVisibility.class,
-        "publicField", "protectedField", "defaultVisibilityField", "privateField");
-    }
-    
-    @Test
     public void givenAClassWithInheritedFields_excludesThoseFields() {
       MatchingType value = new MatchingType();
       assumeTrue("The super type's field should be inherited", new SubType(value).superTypeField == value);
       assertFieldsOfType(MatchingType.class, SubType.class, "subTypeField");
+    }
+    
+    @Test
+    public void givenClassWith1OrMoreMatchingFieldsOfAnyVisibility_returnsEachField() {
+      assertFieldsOfType(MatchingType.class, MixedFields.class, "matching");
     }
     
     void assertFieldsOfType(Class<?> fieldType, Class<?> typeToInspect, String... names) {
@@ -53,17 +47,9 @@ public class ReflectionUtilTest {
     class EmptyNestedClass { /* Not devoid of fields; there is 1 pointing to the containing class */ }
     
     class MixedFields {
-      public MatchingType matching;
-      public NonMatchingType nonMatching;
-    }
-    
-    class FieldVisibility {
-      public MatchingType publicField;
-      protected MatchingType protectedField;
-      MatchingType defaultVisibilityField;
-      
       @SuppressWarnings("unused")
-      private MatchingType privateField;
+      private MatchingType matching;
+      public NonMatchingType nonMatching;
     }
     
     class SubType extends SuperType {
