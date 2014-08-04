@@ -2,6 +2,7 @@ package org.jspec.steps;
 
 import static java.util.Collections.synchronizedList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasItems;
 
 import java.util.LinkedList;
@@ -13,6 +14,7 @@ import org.jspec.proto.RunWithJSpecRunner;
 import org.jspec.util.RunListenerSpy;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.InitializationError;
 
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
@@ -43,10 +45,7 @@ public final class JSpecRunnerSteps {
   
   @When("^I run the tests with a JSpec runner$")
   public void i_run_the_tests_with_a_JSpec_runner() throws Throwable {
-    RunNotifier notifier = new RunNotifier();
-    notifier.addListener(new RunListenerSpy(events::add));
-    JSpecRunner runner = new JSpecRunner(testClass);
-    runner.run(notifier);
+    runWithJSpecRunner();
   }
 
   @Then("^the test runner should run all the tests in the class$")
@@ -73,5 +72,30 @@ public final class JSpecRunnerSteps {
       String.format("\nActual: %s", events),
       events,
       hasItems("RunWithJSpecRunner::only_test"));
+  }
+  
+  @Given("^I have JSpec tests with an Establish block$")
+  public void i_have_JSpec_tests_with_an_Establish_block() throws Throwable {
+    this.testClass = JSpecExamples.EstablishTest.class;
+  }
+  
+  @When("^I run the tests$")
+  public void i_run_the_tests() throws Throwable {
+    runWithJSpecRunner();
+  }  
+
+  @Then("^the test runner should run the Establish block before each test$")
+  public void the_test_runner_should_run_the_Establish_block_before_each_test() throws Throwable {
+    assertThat(
+      String.format("\nActual: %s", events),
+      events,
+      contains("testStarted", "testFinished"));
+  }
+
+  private void runWithJSpecRunner() throws InitializationError {
+    RunNotifier notifier = new RunNotifier();
+    notifier.addListener(new RunListenerSpy(events::add));
+    JSpecRunner runner = new JSpecRunner(testClass);
+    runner.run(notifier);
   }
 }

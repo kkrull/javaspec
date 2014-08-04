@@ -4,12 +4,18 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.function.Consumer;
 
-import org.jspec.dsl.It;
+import org.jspec.dsl.*;
 import org.junit.Ignore;
 
 /** Inner classes are declared static to avoid the gaze of HierarchicalContextRunner when testing JSpec. */
 public class JSpecExamples {
   public static class Empty {}
+  
+  public static class EstablishTest {
+    private String subject;
+    Establish that = () -> subject = "established";
+    It runs = () -> assertEquals("established", subject);
+  }
   
   public static class FailingTest {
     It fails = () -> assertEquals("the answer", 42);
