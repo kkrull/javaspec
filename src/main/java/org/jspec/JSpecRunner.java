@@ -56,7 +56,7 @@ public final class JSpecRunner extends ParentRunner<Example> {
 
   @Override
   protected Description describeChild(Example child) {
-    throw new UnsupportedOperationException("Nobody has needed this method to work yet"); //TODO KDK: Seriously?
+    return child.getDescription();
   }
 
   @Override
