@@ -1,6 +1,7 @@
 package org.jspec.runner;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.jspec.util.Assertions.assertListEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -56,22 +57,31 @@ public class NewJSpecRunnerTest {
   
   public class getDescription {
     public class givenAContextClass {
-      private final NewJSpecRunner runner = runnerFor(JSpecExamples.One.class);
-      private final Description description = runner.getDescription();
-      
-      @Test @Ignore("wip")
-      public void describesTheConfiguredClass() {
-        assertThat(description.getTestClass(), equalTo(JSpecExamples.One.class));
-      }
-    }
-    
-    public class givenATestConfiguration {
-      private final NewJSpecRunner runner = runnerFor(configOf(JSpecExamples.One.class));
+      private final NewJSpecRunner runner = runnerFor(JSpecExamples.IgnoredClass.class);
       private final Description description = runner.getDescription();
       
       @Test
       public void describesTheConfiguredClass() {
-        assertThat(description.getTestClass(), equalTo(JSpecExamples.One.class));
+        assertThat(description.getTestClass(), equalTo(JSpecExamples.IgnoredClass.class));
+        assertThat(description.getAnnotation(Ignore.class), notNullValue());
+      }
+    }
+    
+    public class givenATestConfiguration {
+      private final NewJSpecRunner runner = runnerFor(configOf(JSpecExamples.IgnoredClass.class));
+      private final Description description = runner.getDescription();
+      
+      @Test
+      public void describesTheConfiguredClass() {
+        assertThat(description.getTestClass(), equalTo(JSpecExamples.IgnoredClass.class));
+        assertThat(description.getAnnotation(Ignore.class), notNullValue());
+      }
+    }
+  
+    public class givenATestConfigurationWith1OrMoreChildren {
+      @Test
+      public void describesChildrenUsingTheProtectedMethods() {
+        fail("pending");
       }
     }
   }
