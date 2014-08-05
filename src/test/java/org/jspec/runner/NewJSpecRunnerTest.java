@@ -1,6 +1,5 @@
 package org.jspec.runner;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static org.jspec.util.Assertions.assertListEquals;
 import static org.junit.Assert.fail;
 
@@ -32,7 +31,10 @@ public class NewJSpecRunnerTest {
 
       @Test
       public void givenAConfigurationWithErrors_raisesInitializationErrorWithThoseErrors() {
-        assertInitializationError(config, newArrayList(IllegalArgumentException.class, AssertionError.class));
+        assertInitializationError(config, new LinkedList<Class<? extends Throwable>>() {{
+          add(IllegalArgumentException.class);
+          add(AssertionError.class);
+        }});
       }
     }
 
