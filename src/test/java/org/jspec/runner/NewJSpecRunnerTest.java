@@ -38,7 +38,7 @@ public class NewJSpecRunnerTest {
       assertInitializationError(config, ImmutableList.of(IllegalArgumentException.class, AssertionError.class));
     }
     
-    @Test @Ignore("wip") //Need ContextTestConfiguration to work first
+    @Test
     public void givenAContextClassSuitableForJSpecButNotForJUnit_raisesNoError() {
       runnerFor(JSpecExamples.MultiplePublicConstructors.class);
     }

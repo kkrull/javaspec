@@ -4,8 +4,14 @@ import java.util.List;
 
 final class ContextTestConfiguration implements TestConfiguration {
 
+  private final Class<?> contextClass;
+  
   public static ContextTestConfiguration forClass(Class<?> contextClass) {
-    return new ContextTestConfiguration();
+    return new ContextTestConfiguration(contextClass);
+  }
+  
+  private ContextTestConfiguration(Class<?> contextClass) {
+    this.contextClass = contextClass;
   }
   
   @Override
@@ -15,11 +21,11 @@ final class ContextTestConfiguration implements TestConfiguration {
 
   @Override
   public boolean hasInitializationErrors() {
-    throw new UnsupportedOperationException();
+    return false;
   }
 
   @Override
   public Class<?> getContextClass() {
-    throw new UnsupportedOperationException();
+    return contextClass;
   }
 }
