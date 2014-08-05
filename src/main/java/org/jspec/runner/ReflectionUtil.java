@@ -1,4 +1,4 @@
-package org.jspec;
+package org.jspec.runner;
 
 import java.lang.reflect.Field;
 import java.util.stream.Stream;

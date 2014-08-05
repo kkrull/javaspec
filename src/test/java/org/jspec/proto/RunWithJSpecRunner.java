@@ -2,8 +2,8 @@ package org.jspec.proto;
 
 import java.util.function.Consumer;
 
-import org.jspec.JSpecRunner;
 import org.jspec.dsl.It;
+import org.jspec.runner.JSpecRunner;
 import org.junit.runner.RunWith;
 
 @RunWith(JSpecRunner.class)

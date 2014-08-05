@@ -1,4 +1,4 @@
-package org.jspec;
+package org.jspec.runner;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.emptyList;
@@ -13,9 +13,10 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jspec.JSpecRunner.InvalidConstructorError;
-import org.jspec.JSpecRunner.NoExamplesError;
 import org.jspec.proto.JSpecExamples;
+import org.jspec.runner.JSpecRunner;
+import org.jspec.runner.JSpecRunner.InvalidConstructorError;
+import org.jspec.runner.JSpecRunner.NoExamplesError;
 import org.jspec.util.RunListenerSpy;
 import org.junit.After;
 import org.junit.Before;

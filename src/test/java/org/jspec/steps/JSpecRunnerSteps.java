@@ -8,9 +8,9 @@ import static org.hamcrest.Matchers.hasItems;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.jspec.JSpecRunner;
 import org.jspec.proto.JSpecExamples;
 import org.jspec.proto.RunWithJSpecRunner;
+import org.jspec.runner.JSpecRunner;
 import org.jspec.util.RunListenerSpy;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.notification.RunNotifier;

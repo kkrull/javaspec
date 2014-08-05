@@ -1,4 +1,4 @@
-package org.jspec;
+package org.jspec.runner;
 
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.jspec.dsl.It;
+import org.jspec.runner.Example;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
