@@ -1,9 +1,12 @@
 package org.jspec.runner;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.jspec.util.Assertions.assertListEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
@@ -13,6 +16,7 @@ import java.util.stream.Stream;
 import org.jspec.proto.JSpecExamples;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runners.model.InitializationError;
 
@@ -35,18 +39,8 @@ public class NewJSpecRunnerTest {
     }
     
     @Test
-    public void givenAContextClassWithNoErrors_raisesNoError() {
-      runnerFor(JSpecExamples.One.class);
-    }
-    
-    private TestConfiguration configFinding(Throwable... errors) {
-      return new TestConfiguration() {
-        @Override
-        public List<Throwable> findInitializationErrors() { return Arrays.asList(errors); }
-
-        @Override
-        public boolean hasInitializationErrors() { return errors.length > 0; }
-      };
+    public void givenAContextClassSuitableForJSpecButNotForJUnit_raisesNoError() {
+      runnerFor(JSpecExamples.MultiplePublicConstructors.class);
     }
 
     private void assertInitializationError(TestConfiguration config, List<Class<? extends Throwable>> expectedCauses) {
@@ -60,6 +54,28 @@ public class NewJSpecRunnerTest {
     }
   }
   
+  public class getDescription {
+    public class givenAContextClass {
+      private final NewJSpecRunner runner = runnerFor(JSpecExamples.One.class);
+      private final Description description = runner.getDescription();
+      
+      @Test
+      public void describesTheConfiguredClass() {
+        assertThat(description.getTestClass(), equalTo(JSpecExamples.One.class));
+      }
+    }
+    
+    public class givenATestConfiguration {
+      private final NewJSpecRunner runner = runnerFor(configOf(JSpecExamples.One.class));
+      private final Description description = runner.getDescription();
+      
+      @Test
+      public void describesTheConfiguredClass() {
+        assertThat(description.getTestClass(), equalTo(JSpecExamples.One.class));
+      }
+    }
+  }
+  
   public class run {
     public class givenAContextClass {
       @Test @Ignore
@@ -69,6 +85,32 @@ public class NewJSpecRunnerTest {
     }
   }
   
+  private static TestConfiguration configOf(Class<?> contextClass) {
+    return new TestConfiguration() {
+      @Override
+      public List<Throwable> findInitializationErrors() { return Collections.emptyList(); }
+
+      @Override
+      public boolean hasInitializationErrors() { return false; }
+      
+      @Override
+      public Class<?> getContextClass() { return contextClass; }
+    };
+  }
+  
+  private static TestConfiguration configFinding(Throwable... errors) {
+    return new TestConfiguration() {
+      @Override
+      public List<Throwable> findInitializationErrors() { return Arrays.asList(errors); }
+
+      @Override
+      public boolean hasInitializationErrors() { return errors.length > 0; }
+
+      @Override
+      public Class<?> getContextClass() { return JSpecExamples.One.class; }
+    };
+  }
+    
   private static NewJSpecRunner runnerFor(Class<?> contextClass) {
     try {
       return new NewJSpecRunner(contextClass);

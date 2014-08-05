@@ -1,5 +1,6 @@
 package org.jspec.runner;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.runner.Description;
@@ -14,22 +15,27 @@ public class NewJSpecRunner extends ParentRunner<Example> {
   }
   
   NewJSpecRunner(TestConfiguration config) throws InitializationError {
-    super(null); //TODO KDK: Is any ParentRunner functionality missing if this stays null?
+    super(null); //Bypass JUnit's requirements for a context class
     if(config.hasInitializationErrors()) {
       throw new InitializationError(config.findInitializationErrors());
     }
   }
+  
+  @Override
+  public Description getDescription() {
+    throw new UnsupportedOperationException();
+  };
 
   @Override
   protected List<Example> getChildren() {
-    throw new UnsupportedOperationException();
+    return new LinkedList<Example>();
   }
-
+  
   @Override
   protected Description describeChild(Example child) {
     throw new UnsupportedOperationException();
   }
-
+  
   @Override
   protected void runChild(Example child, RunNotifier notifier) {
     throw new UnsupportedOperationException();
