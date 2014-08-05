@@ -1,4 +1,4 @@
-# JSpec
+# Javaspec
 
 Spec-style testing for Java, inspired by [RSpec](http://rspec.info) for Ruby and similar in fashion to
 [Machine.Specifications](https://github.com/machine/machine.specifications) for C#.
