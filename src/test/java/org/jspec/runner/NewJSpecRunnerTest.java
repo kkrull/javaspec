@@ -10,6 +10,8 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jspec.proto.JSpecExamples;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.model.InitializationError;
@@ -32,6 +34,11 @@ public class NewJSpecRunnerTest {
       assertInitializationError(config, ImmutableList.of(IllegalArgumentException.class, AssertionError.class));
     }
     
+    @Test
+    public void givenAContextClassWithNoErrors_raisesNoError() {
+      runnerFor(JSpecExamples.One.class);
+    }
+    
     private TestConfiguration configFinding(Throwable... errors) {
       return new TestConfiguration() {
         @Override
@@ -52,19 +59,40 @@ public class NewJSpecRunnerTest {
       fail(String.format("Expected causes of initialization error to be <%s>, but nothing was thrown", expectedCauses));
     }
   }
+  
+  public class run {
+    public class givenAContextClass {
+      @Test @Ignore
+      public void createsAClassTestConfigurationForTheGivenClass() {
+        fail("pending");
+      }
+    }
+  }
+  
+  private static NewJSpecRunner runnerFor(Class<?> contextClass) {
+    try {
+      return new NewJSpecRunner(contextClass);
+    } catch (InitializationError e) {
+      return failForInitializationError(e);
+    }
+  }
 
   private static NewJSpecRunner runnerFor(TestConfiguration config) {
     try {
       return new NewJSpecRunner(config);
     } catch (InitializationError e) {
-      System.out.println("\nInitialization error(s)");
-      flattenCauses(e).forEach(x -> {
-        System.out.printf("[%s]\n", x.getClass());
-        x.printStackTrace(System.out);
-      });
-      fail("Failed to create JSpecRunner");
-      return null;
+      return failForInitializationError(e);
     }
+  }
+
+  private static NewJSpecRunner failForInitializationError(InitializationError e) {
+    System.out.println("\nInitialization error(s)");
+    flattenCauses(e).forEach(x -> {
+      System.out.printf("[%s]\n", x.getClass());
+      x.printStackTrace(System.out);
+    });
+    fail("Failed to create JSpecRunner");
+    return null;
   }
 
   private static Stream<Throwable> flattenCauses(InitializationError root) {
