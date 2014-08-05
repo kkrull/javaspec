@@ -14,30 +14,24 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.model.InitializationError;
 
+import com.google.common.collect.ImmutableList;
+
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 @RunWith(HierarchicalContextRunner.class)
 public class NewJSpecRunnerTest {
   public class constructor {
-    public class givenAConfigurationWithoutErrors {
-      @Test
-      public void raisesNoError() {
-        runnerFor(configFinding());
-      }
+    @Test
+    public void givenAConfigurationWithoutErrors_raisesNoError() {
+      runnerFor(configFinding());
     }
 
-    public class givenAConfigurationWith1OrMoreErrors {
-      private final TestConfiguration config = configFinding(new IllegalArgumentException(), new AssertionError());
-
-      @Test
-      public void givenAConfigurationWithErrors_raisesInitializationErrorWithThoseErrors() {
-        assertInitializationError(config, new LinkedList<Class<? extends Throwable>>() {{
-          add(IllegalArgumentException.class);
-          add(AssertionError.class);
-        }});
-      }
+    @Test
+    public void givenAConfigurationWith1OrMoreErrors_raisesInitializationErrorWithThoseErrors() {
+      TestConfiguration config = configFinding(new IllegalArgumentException(), new AssertionError());
+      assertInitializationError(config, ImmutableList.of(IllegalArgumentException.class, AssertionError.class));
     }
-
+    
     private TestConfiguration configFinding(Throwable... errors) {
       return new TestConfiguration() {
         @Override
