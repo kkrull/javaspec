@@ -1,4 +1,8 @@
 package org.jspec.runner;
 
-public interface TestConfiguration {
+import java.util.List;
+
+interface TestConfiguration {
+  List<Throwable> findInitializationErrors();
+  boolean hasInitializationErrors();
 }
