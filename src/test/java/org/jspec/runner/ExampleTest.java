@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.jspec.dsl.It;
-import org.jspec.runner.Example;
+import org.jspec.runner.FieldExample;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -24,7 +24,7 @@ public class ExampleTest {
       
       @Test
       public void runsTheFunctionAssignedToTheSpecifiedFieldInTheGivenObject() throws Exception {
-        Example example = new Example(getClass().getDeclaredField("inaccessibleThunk"));
+        Example example = new FieldExample(getClass().getDeclaredField("inaccessibleThunk"));
         example.run(this);
         assertThat(events, contains("inaccessibleThunk ran"));
       }

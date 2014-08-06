@@ -13,7 +13,7 @@ import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
 /** A JUnit4 runner for JSpec test classes containing 1 or more It fields */
-public final class JSpecRunner extends ParentRunner<Example> {
+public final class JSpecRunner extends ParentRunner<FieldExample> {
 
   public JSpecRunner(Class<?> testClass) throws InitializationError {
     super(testClass);
@@ -45,22 +45,22 @@ public final class JSpecRunner extends ParentRunner<Example> {
   @Override
   public Description getDescription() {
     Description context = Description.createSuiteDescription(getContextClass());
-    readExamples().map(Example::getDescription).forEach(context::addChild);
+    readExamples().map(FieldExample::getDescription).forEach(context::addChild);
     return context;
   }
 
   @Override
-  protected List<Example> getChildren() {
+  protected List<FieldExample> getChildren() {
     return readExamples().collect(Collectors.toList());
   }
 
   @Override
-  protected Description describeChild(Example child) {
+  protected Description describeChild(FieldExample child) {
     return child.getDescription();
   }
 
   @Override
-  protected void runChild(Example child, RunNotifier notifier) {
+  protected void runChild(FieldExample child, RunNotifier notifier) {
     Description description = child.getDescription();
     notifier.fireTestStarted(description);
     try {
@@ -72,8 +72,8 @@ public final class JSpecRunner extends ParentRunner<Example> {
     }
   }
   
-  private Stream<Example> readExamples() {
-    return ReflectionUtil.fieldsOfType(It.class, getContextClass()).map(Example::new);
+  private Stream<FieldExample> readExamples() {
+    return ReflectionUtil.fieldsOfType(It.class, getContextClass()).map(FieldExample::new);
   }
   
   private Object getContextInstance() throws ReflectiveOperationException {
