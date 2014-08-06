@@ -1,5 +1,6 @@
 package org.jspec.runner;
 
+import java.util.LinkedList;
 import java.util.List;
 
 final class ContextTestConfiguration implements TestConfiguration {
@@ -27,5 +28,10 @@ final class ContextTestConfiguration implements TestConfiguration {
   @Override
   public Class<?> getContextClass() {
     return contextClass;
+  }
+
+  @Override
+  public List<Example> getExamples() {
+    return new LinkedList<Example>();
   }
 }

@@ -1,6 +1,5 @@
 package org.jspec.runner;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.runner.Description;
@@ -18,7 +17,6 @@ public class NewJSpecRunner extends ParentRunner<Example> {
   NewJSpecRunner(TestConfiguration config) throws InitializationError {
     super(null); //Bypass JUnit's requirements for a context class
     this.config = config;
-    
     if(config.hasInitializationErrors()) {
       throw new InitializationError(config.findInitializationErrors());
     }
@@ -26,17 +24,19 @@ public class NewJSpecRunner extends ParentRunner<Example> {
   
   @Override
   public Description getDescription() {
-    return Description.createSuiteDescription(config.getContextClass());
+    Description context = Description.createSuiteDescription(config.getContextClass());
+    getChildren().stream().map(this::describeChild).forEach(context::addChild);
+    return context;
   };
 
   @Override
   protected List<Example> getChildren() {
-    throw new UnsupportedOperationException();
+    return config.getExamples();
   }
   
   @Override
   protected Description describeChild(Example child) {
-    throw new UnsupportedOperationException();
+    return Description.createTestDescription(config.getContextClass(), child.describeBehavior());
   }
   
   @Override

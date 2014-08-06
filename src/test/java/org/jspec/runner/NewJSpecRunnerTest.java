@@ -6,6 +6,7 @@ import static org.jspec.util.Assertions.assertListEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -19,6 +20,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.junit.runner.Runner;
 import org.junit.runners.model.InitializationError;
 
 import com.google.common.collect.ImmutableList;
@@ -30,7 +32,7 @@ public class NewJSpecRunnerTest {
   public class constructor {
     @Test
     public void givenAConfigurationWithoutErrors_raisesNoError() {
-      runnerFor(configFinding());
+      runnerFor(configOf(JSpecExamples.One.class));
     }
 
     @Test
@@ -57,45 +59,62 @@ public class NewJSpecRunnerTest {
   
   public class getDescription {
     public class givenAContextClass {
-      private final NewJSpecRunner runner = runnerFor(JSpecExamples.IgnoredClass.class);
-      private final Description description = runner.getDescription();
+      private final NewJSpecRunner subject = runnerFor(JSpecExamples.IgnoredClass.class);
       
       @Test
       public void describesTheConfiguredClass() {
-        assertThat(description.getTestClass(), equalTo(JSpecExamples.IgnoredClass.class));
-        assertThat(description.getAnnotation(Ignore.class), notNullValue());
+        assertDescribesIgnoredClass(subject.getDescription());
       }
     }
     
     public class givenATestConfiguration {
-      private final NewJSpecRunner runner = runnerFor(configOf(JSpecExamples.IgnoredClass.class));
-      private final Description description = runner.getDescription();
+      private final NewJSpecRunner subject = runnerFor(configOf(JSpecExamples.IgnoredClass.class));
       
       @Test
       public void describesTheConfiguredClass() {
-        assertThat(description.getTestClass(), equalTo(JSpecExamples.IgnoredClass.class));
-        assertThat(description.getAnnotation(Ignore.class), notNullValue());
+        assertDescribesIgnoredClass(subject.getDescription());
       }
     }
   
-    public class givenATestConfigurationWith1OrMoreChildren {
-      @Test
-      public void describesChildrenUsingTheProtectedMethods() {
-        fail("pending");
+    public class givenATestConfigurationWith1OrMoreExamples {
+      private final Description subject;
+      
+      public givenATestConfigurationWith1OrMoreExamples() throws ReflectiveOperationException {
+        Class<?> context = JSpecExamples.Two.class;
+        Runner runner = runnerFor(configOf(context,
+          new Example(context.getDeclaredField("first_test")),
+          new Example(context.getDeclaredField("second_test"))));
+        this.subject = runner.getDescription();
       }
+      
+      @Test
+      public void hasAChildDescriptionForEachExample() {
+        ArrayList<Description> children = subject.getChildren();
+        assertListEquals(
+          ImmutableList.of(JSpecExamples.Two.class, JSpecExamples.Two.class),
+          children.stream().map(Description::getTestClass).collect(Collectors.toList()));
+        assertListEquals(
+          ImmutableList.of("first_test(org.jspec.proto.JSpecExamples$Two)", "second_test(org.jspec.proto.JSpecExamples$Two)"), 
+          children.stream().map(Description::getDisplayName).collect(Collectors.toList()));
+      }
+    }
+    
+    private void assertDescribesIgnoredClass(Description description) {
+      assertThat(description.getTestClass(), equalTo(JSpecExamples.IgnoredClass.class));
+      assertThat(description.getAnnotation(Ignore.class), notNullValue());
     }
   }
   
   public class run {
-    public class givenAContextClass {
-      @Test @Ignore
-      public void createsAClassTestConfigurationForTheGivenClass() {
+    public class givenAContextClassWith1OrMoreExamples {
+      @Test
+      public void runsTheExampleBehaviorThunk() {
         fail("pending");
       }
     }
   }
   
-  private static TestConfiguration configOf(Class<?> contextClass) {
+  private static TestConfiguration configOf(Class<?> contextClass, Example... examples) {
     return new TestConfiguration() {
       @Override
       public List<Throwable> findInitializationErrors() { return Collections.emptyList(); }
@@ -105,6 +124,9 @@ public class NewJSpecRunnerTest {
       
       @Override
       public Class<?> getContextClass() { return contextClass; }
+
+      @Override
+      public List<Example> getExamples() { return Arrays.asList(examples); }
     };
   }
   
@@ -118,9 +140,15 @@ public class NewJSpecRunnerTest {
 
       @Override
       public Class<?> getContextClass() { return JSpecExamples.One.class; }
+
+      @Override
+      public List<Example> getExamples() { 
+        String msg = String.format("This configuration is invalid, finding %s", findInitializationErrors());
+        throw new IllegalStateException(msg);
+      }
     };
   }
-    
+  
   private static NewJSpecRunner runnerFor(Class<?> contextClass) {
     try {
       return new NewJSpecRunner(contextClass);

@@ -12,6 +12,10 @@ final class Example {
     this.behavior = behavior;
   }
   
+  public String describeBehavior() {
+    return behavior.getName();
+  }
+  
   public Description getDescription() {
     return Description.createTestDescription(behavior.getDeclaringClass(), behavior.getName());
   }
