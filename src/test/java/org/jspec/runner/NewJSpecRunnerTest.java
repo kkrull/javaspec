@@ -58,21 +58,17 @@ public class NewJSpecRunnerTest {
   }
   
   public class getDescription {
-    public class givenAContextClass {
-      private final NewJSpecRunner subject = runnerFor(JSpecExamples.IgnoredClass.class);
-      
+    public class givenATestConfigurationOrContextClass {
       @Test
       public void describesTheConfiguredClass() {
-        assertDescribesIgnoredClass(subject.getDescription());
+        assertDescribesIgnoredClass(runnerFor(JSpecExamples.IgnoredClass.class));
+        assertDescribesIgnoredClass(runnerFor(configOf(JSpecExamples.IgnoredClass.class)));
       }
-    }
-    
-    public class givenATestConfiguration {
-      private final NewJSpecRunner subject = runnerFor(configOf(JSpecExamples.IgnoredClass.class));
       
-      @Test
-      public void describesTheConfiguredClass() {
-        assertDescribesIgnoredClass(subject.getDescription());
+      private void assertDescribesIgnoredClass(Runner runner) {
+        Description description = runner.getDescription();
+        assertThat(description.getTestClass(), equalTo(JSpecExamples.IgnoredClass.class));
+        assertThat(description.getAnnotation(Ignore.class), notNullValue());
       }
     }
   
@@ -97,11 +93,6 @@ public class NewJSpecRunnerTest {
           ImmutableList.of("first_test(org.jspec.proto.JSpecExamples$Two)", "second_test(org.jspec.proto.JSpecExamples$Two)"), 
           children.stream().map(Description::getDisplayName).collect(Collectors.toList()));
       }
-    }
-    
-    private void assertDescribesIgnoredClass(Description description) {
-      assertThat(description.getTestClass(), equalTo(JSpecExamples.IgnoredClass.class));
-      assertThat(description.getAnnotation(Ignore.class), notNullValue());
     }
   }
   
@@ -130,6 +121,7 @@ public class NewJSpecRunnerTest {
     };
   }
   
+  
   private static TestConfiguration configFinding(Throwable... errors) {
     return new TestConfiguration() {
       @Override
@@ -149,6 +141,7 @@ public class NewJSpecRunnerTest {
     };
   }
   
+  
   private static NewJSpecRunner runnerFor(Class<?> contextClass) {
     try {
       return new NewJSpecRunner(contextClass);
@@ -156,6 +149,7 @@ public class NewJSpecRunnerTest {
       return failForInitializationError(e);
     }
   }
+  
 
   private static NewJSpecRunner runnerFor(TestConfiguration config) {
     try {
@@ -164,6 +158,7 @@ public class NewJSpecRunnerTest {
       return failForInitializationError(e);
     }
   }
+  
 
   private static NewJSpecRunner failForInitializationError(InitializationError e) {
     System.out.println("\nInitialization error(s)");
@@ -174,6 +169,7 @@ public class NewJSpecRunnerTest {
     fail("Failed to create JSpecRunner");
     return null;
   }
+  
 
   private static Stream<Throwable> flattenCauses(InitializationError root) {
     List<Throwable> causes = new LinkedList<Throwable>();
