@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -80,9 +81,7 @@ public class NewJSpecRunnerTest {
       
       public givenATestConfigurationWith1OrMoreExamples() throws ReflectiveOperationException {
         Class<?> context = JSpecExamples.Two.class;
-        Runner runner = runnerFor(configOf(context,
-          new FieldExample(context.getDeclaredField("first_test")),
-          new FieldExample(context.getDeclaredField("second_test"))));
+        Runner runner = runnerFor(configOf(context, exampleNamed("one"), exampleNamed("another")));
         this.subject = runner.getDescription();
       }
       
@@ -93,7 +92,7 @@ public class NewJSpecRunnerTest {
           ImmutableList.of(JSpecExamples.Two.class, JSpecExamples.Two.class),
           children.stream().map(Description::getTestClass).collect(Collectors.toList()));
         assertListEquals(
-          ImmutableList.of("first_test(org.jspec.proto.JSpecExamples$Two)", "second_test(org.jspec.proto.JSpecExamples$Two)"), 
+          ImmutableList.of("one(org.jspec.proto.JSpecExamples$Two)", "another(org.jspec.proto.JSpecExamples$Two)"), 
           children.stream().map(Description::getDisplayName).collect(Collectors.toList()));
       }
     }
@@ -108,24 +107,13 @@ public class NewJSpecRunnerTest {
         
         @Before
         public void setup() throws Exception {
-          Runner runner = runnerFor(configOf(context,
-            new FieldExample(context.getDeclaredField("only_test"))));
+          Runner runner = runnerFor(configOf(context, exampleSpy("only_test", events::add)));
           runTests(runner);
         }
 
         @Test
-        public void notifiesStartAndFinishOfTheExample() {
-          assertThat(events, contains(is("testStarted"),
-//            anything(), anything(), 
-            is("testFinished")));
-        }
-        
-        @Test
-        public void constructsAndRunsTheTest() {
-          assertThat(events, 
-            contains(anything(),
-//              is("JSpecExamples.One::new"), is("JSpecExamples.One::only_test"),
-              anything()));
+        public void notifiesStartRunsTheExampleThenNotifiesFinish() {
+          assertThat(events, contains(is("testStarted"), is("run"),  is("testFinished")));
         }
       }
     }
@@ -171,7 +159,27 @@ public class NewJSpecRunnerTest {
       }
     };
   }
+  
+  private static Example exampleNamed(String behaviorName) {
+    return new Example() {
+      @Override
+      public String describeBehavior() { return behaviorName; }
+      
+      @Override
+      public void run(Object objectDeclaringBehavior) throws Exception { return; }
+    };
+  }
     
+  private static Example exampleSpy(String behaviorName, Consumer<String> notify) {
+    return new Example() {
+      @Override
+      public String describeBehavior() { return behaviorName; }
+
+      @Override
+      public void run(Object objectDeclaringBehavior) throws Exception { notify.accept("run"); }
+    };
+  }
+  
   private static NewJSpecRunner runnerFor(Class<?> contextClass) {
     try {
       return new NewJSpecRunner(contextClass);
