@@ -158,7 +158,7 @@ public class JSpecRunnerTest {
       }
     }
     
-    List<String> runTests(Class<?> testClass) {
+    private List<String> runTests(Class<?> testClass) {
       RunNotifier notifier = new RunNotifier();
       notifier.addListener(new RunListenerSpy(notifications::add));
       JSpecRunner runner = runnerFor(testClass);

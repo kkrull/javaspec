@@ -1,7 +1,7 @@
 package org.jspec.runner;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static java.util.Collections.synchronizedList;
+import static org.hamcrest.Matchers.*;
 import static org.jspec.util.Assertions.assertListEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -16,11 +16,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jspec.proto.JSpecExamples;
+import org.jspec.util.RunListenerSpy;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
+import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
 import com.google.common.collect.ImmutableList;
@@ -97,11 +100,36 @@ public class NewJSpecRunnerTest {
   }
   
   public class run {
+    private final List<String> events = synchronizedList(new LinkedList<String>()); //JUnit may use multiple threads
+    
     public class givenAContextClassWith1OrMoreExamples {
-      @Test
-      public void runsTheExampleBehaviorThunk() {
-        fail("pending");
+      public class whenTheExampleThrowsNoException {
+        private final Class<?> context = JSpecExamples.One.class;
+        
+        @Before
+        public void setup() throws Exception {
+          Runner runner = runnerFor(configOf(context,
+            new Example(context.getDeclaredField("only_test"))));
+          runTests(runner);
+        }
+
+        @Test
+        public void notifiesStartAndFinishOfTheExample() {
+          assertThat(events, contains(is("testStarted"), anything(), anything(), is("testFinished")));
+        }
+        
+        @Test
+        public void constructsAndRunsTheTest() {
+          assertThat(events, 
+            contains(anything(), is("JSpecExamples.One::new"), is("JSpecExamples.One::only_test"), anything()));
+        }
       }
+    }
+    
+    private void runTests(Runner runner) {
+      RunNotifier notifier = new RunNotifier();
+      notifier.addListener(new RunListenerSpy(events::add));
+      runner.run(notifier);
     }
   }
   

@@ -41,6 +41,8 @@ public class NewJSpecRunner extends ParentRunner<Example> {
   
   @Override
   protected void runChild(Example child, RunNotifier notifier) {
-    throw new UnsupportedOperationException();
+//    Description description = describeChild(child);
+    notifier.fireTestStarted(null);
+    notifier.fireTestFinished(null);
   }
 }
