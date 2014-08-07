@@ -64,5 +64,10 @@ public final class RunListenerSpy extends RunListener {
       this.name = name;
       this.description = description;
     }
+    
+    @Override
+    public String toString() {
+      return String.format("<%s name=%s, description=%s>", getClass().getName(), name, description);
+    }
   }
 }
