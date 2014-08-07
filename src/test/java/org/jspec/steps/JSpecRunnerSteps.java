@@ -7,11 +7,13 @@ import static org.hamcrest.Matchers.hasItems;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.jspec.proto.JSpecExamples;
 import org.jspec.proto.RunWithJSpecRunner;
 import org.jspec.runner.JSpecRunner;
 import org.jspec.util.RunListenerSpy;
+import org.jspec.util.RunListenerSpy.Event;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
@@ -24,6 +26,7 @@ import cucumber.api.java.en.When;
 
 public final class JSpecRunnerSteps {
   private final List<String> events = synchronizedList(new LinkedList<String> ()); //In case JUnit uses threads per test
+  private final Consumer<Event> notifyEventName = x -> events.add(x.name);
   private Class<?> testClass;
   
   @Before
@@ -50,10 +53,8 @@ public final class JSpecRunnerSteps {
 
   @Then("^the test runner should run all the tests in the class$")
   public void the_test_runner_should_run_all_the_tests_in_the_class() throws Throwable {
-    assertThat(
-      String.format("\nActual: %s", events),
-      events, 
-      hasItems("JSpecExamples.One::only_test"));
+    assertThat(String.format("\nActual: %s", events),
+      events, hasItems("JSpecExamples.One::only_test"));
   }
   
   @Given("^I have a class with JSpec tests in it that is marked to run with a JSpec runner$")
@@ -68,10 +69,8 @@ public final class JSpecRunnerSteps {
   
   @Then("^the test runner should run all the tests in the marked class$")
   public void the_test_runner_should_run_all_the_tests_in_the_marked_class() throws Throwable {
-    assertThat(
-      String.format("\nActual: %s", events),
-      events,
-      hasItems("RunWithJSpecRunner::only_test"));
+    assertThat(String.format("\nActual: %s", events),
+      events, hasItems("RunWithJSpecRunner::only_test"));
   }
   
   @Given("^I have JSpec tests with an Establish block$")
@@ -82,19 +81,17 @@ public final class JSpecRunnerSteps {
   @When("^I run the tests$")
   public void i_run_the_tests() throws Throwable {
     runWithJSpecRunner();
-  }  
+  }
 
   @Then("^the test runner should run the Establish block before each test$")
   public void the_test_runner_should_run_the_Establish_block_before_each_test() throws Throwable {
-    assertThat(
-      String.format("\nActual: %s", events),
-      events,
-      contains("testStarted", "testFinished"));
+    assertThat(String.format("\nActual: %s", events),
+      events, contains("testStarted", "testFinished"));
   }
 
   private void runWithJSpecRunner() throws InitializationError {
     RunNotifier notifier = new RunNotifier();
-    notifier.addListener(new RunListenerSpy(events::add));
+    notifier.addListener(new RunListenerSpy(notifyEventName));
     JSpecRunner runner = new JSpecRunner(testClass);
     runner.run(notifier);
   }

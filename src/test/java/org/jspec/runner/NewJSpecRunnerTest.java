@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 
 import org.jspec.proto.JSpecExamples;
 import org.jspec.util.RunListenerSpy;
+import org.jspec.util.RunListenerSpy.Event;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -99,7 +100,7 @@ public class NewJSpecRunnerTest {
   }
   
   public class run {
-    private final List<String> events = synchronizedList(new LinkedList<String>()); //JUnit may use multiple threads
+    private final List<Event> events = synchronizedList(new LinkedList<Event>());
     
     public class givenAContextClassWith1OrMoreExamples {
       public class whenTheExampleThrowsNoException {
@@ -113,7 +114,8 @@ public class NewJSpecRunnerTest {
 
         @Test
         public void notifiesStartRunsTheExampleThenNotifiesFinish() {
-          assertThat(events, contains(is("testStarted"), is("run"),  is("testFinished")));
+          assertThat(events.stream().map(x -> x.name).collect(Collectors.toList()), 
+            contains(is("testStarted"), is("run"), is("testFinished")));
         }
       }
     }
@@ -170,13 +172,15 @@ public class NewJSpecRunnerTest {
     };
   }
     
-  private static Example exampleSpy(String behaviorName, Consumer<String> notify) {
+  private static Example exampleSpy(String behaviorName, Consumer<RunListenerSpy.Event> notify) {
     return new Example() {
       @Override
       public String describeBehavior() { return behaviorName; }
 
       @Override
-      public void run(Object objectDeclaringBehavior) throws Exception { notify.accept("run"); }
+      public void run(Object objectDeclaringBehavior) throws Exception { 
+        notify.accept(new RunListenerSpy.Event("run", null));
+      }
     };
   }
   

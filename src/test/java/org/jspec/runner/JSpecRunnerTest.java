@@ -10,6 +10,7 @@ import static org.junit.Assert.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,6 +19,7 @@ import org.jspec.runner.JSpecRunner;
 import org.jspec.runner.JSpecRunner.InvalidConstructorError;
 import org.jspec.runner.JSpecRunner.NoExamplesError;
 import org.jspec.util.RunListenerSpy;
+import org.jspec.util.RunListenerSpy.Event;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -104,26 +106,25 @@ public class JSpecRunnerTest {
   }
 
   public class run {
-    private final List<String> notifications = synchronizedList(new LinkedList<String>()); //In case JUnit uses threads per test
+    private final List<Event> events = synchronizedList(new LinkedList<Event>());
+    private final Consumer<String> notifyEventName = name -> events.add(new Event(name, null));
 
     @Test
     public void whenATestConstructorThrows_notifiesListenersOfAFailedTest() {
-      assertThat(
-        runTests(JSpecExamples.FaultyConstructor.class),
-        contains("testStarted", "testFailure", "testFinished"));
+      runTests(JSpecExamples.FaultyConstructor.class);
+      assertThat(getEventNames(), contains("testStarted", "testFailure", "testFinished"));
     }
-    
+
     @Test
     public void whenATestThunkThrows_notifiesListenersOfAFailedTest() {
-      assertThat(
-        runTests(JSpecExamples.FailingTest.class),
-        contains("testStarted", "testFailure", "testFinished"));
+      runTests(JSpecExamples.FailingTest.class);
+      assertThat(getEventNames(), contains("testStarted", "testFailure", "testFinished"));
     }
     
     public class givenATestInAnItField {
       @Before
       public void setupTestExecutionSpy() {
-        JSpecExamples.One.setEventListener(notifications::add);
+        JSpecExamples.One.setEventListener(notifyEventName);
         runTests(JSpecExamples.One.class);
       }
       
@@ -134,7 +135,7 @@ public class JSpecRunnerTest {
       
       @Test
       public void notifiesStartThenConstructsAndRunsTheTestThenNotifiesFinish() {
-        assertThat(notifications, 
+        assertThat(getEventNames(), 
           contains("testStarted", "JSpecExamples.One::new", "JSpecExamples.One::only_test", "testFinished"));
       }
     }
@@ -142,7 +143,7 @@ public class JSpecRunnerTest {
     public class givenMultipleTestsAndOneOrMoreFail {
       @Before
       public void setupTestExecutionSpy() {
-        JSpecExamples.OnePassOneFail.setEventListener(notifications::add);
+        JSpecExamples.OnePassOneFail.setEventListener(notifyEventName);
         runTests(JSpecExamples.OnePassOneFail.class);
       }
       
@@ -153,17 +154,20 @@ public class JSpecRunnerTest {
       
       @Test
       public void runsRemainingTests() {
-        assertThat(notifications,
+        assertThat(getEventNames(),
           hasItems("JSpecExamples.OnePassOneFail::fail", "JSpecExamples.OnePassOneFail::pass"));
       }
     }
     
-    private List<String> runTests(Class<?> testClass) {
+    private void runTests(Class<?> testClass) {
       RunNotifier notifier = new RunNotifier();
-      notifier.addListener(new RunListenerSpy(notifications::add));
+      notifier.addListener(new RunListenerSpy(events::add));
       JSpecRunner runner = runnerFor(testClass);
       runner.run(notifier);
-      return notifications;
+    }
+    
+    private List<String> getEventNames() {
+      return events.stream().map(x -> x.name).collect(Collectors.toList());
     }
   }
   
