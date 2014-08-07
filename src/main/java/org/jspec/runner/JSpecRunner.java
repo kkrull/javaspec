@@ -45,7 +45,7 @@ public class JSpecRunner extends ParentRunner<Example> {
     Description description = describeChild(child);
     notifier.fireTestStarted(description);
     try {
-      child.run(null);
+      child.run();
     } catch (Exception | AssertionError e) {
       notifier.fireTestFailure(new Failure(description, e));
     } finally {

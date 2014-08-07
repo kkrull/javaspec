@@ -191,7 +191,7 @@ public class JSpecRunnerTest {
       public String describeBehavior() { return behaviorName; }
       
       @Override
-      public void run(Object objectDeclaringBehavior) throws Exception { return; }
+      public void run() throws Exception { return; }
     };
   }
 
@@ -201,7 +201,7 @@ public class JSpecRunnerTest {
       public String describeBehavior() { return behaviorName; }
       
       @Override
-      public void run(Object objectDeclaringBehavior) throws Exception { assertEquals(1, 2); }
+      public void run() throws Exception { assertEquals(1, 2); }
     };
   }
     
@@ -211,7 +211,7 @@ public class JSpecRunnerTest {
       public String describeBehavior() { return behaviorName; }
 
       @Override
-      public void run(Object objectDeclaringBehavior) throws Exception { 
+      public void run() throws Exception { 
         notify.accept(Event.named("run::" + behaviorName));
       }
     };
