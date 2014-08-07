@@ -1,102 +1,55 @@
 package org.jspec.runner;
 
-import java.lang.reflect.Constructor;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import org.jspec.dsl.It;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
-/** A JUnit4 runner for JSpec test classes containing 1 or more It fields */
-public final class JSpecRunner extends ParentRunner<FieldExample> {
-
-  public JSpecRunner(Class<?> testClass) throws InitializationError {
-    super(testClass);
-  }
-
-  @Override
-  protected void collectInitializationErrors(List<Throwable> errors) {
-    super.collectInitializationErrors(errors);
-    Stream.of(findInvalidConstructorError(), findNoExampleError())
-      .filter(x -> x != null)
-      .forEach(errors::add);
+public class JSpecRunner extends ParentRunner<Example> {
+  private final TestConfiguration config;
+  
+  public JSpecRunner(Class<?> contextClass) throws InitializationError {
+    this(ContextTestConfiguration.forClass(contextClass));
   }
   
-  private InitializationError findInvalidConstructorError() {
-    Constructor<?> constructor;
-    try {
-      constructor = getTestClass().getOnlyConstructor();
-    } catch (AssertionError _ex) {
-      return new InvalidConstructorError();
+  JSpecRunner(TestConfiguration config) throws InitializationError {
+    super(null); //Bypass JUnit's requirements for a context class; throw our own errors instead
+    this.config = config;
+    if(config.hasInitializationErrors()) {
+      throw new InitializationError(config.findInitializationErrors());
     }
-    
-    return constructor.getParameterCount() == 0 ? null : new InvalidConstructorError();
   }
-
-  private InitializationError findNoExampleError() {
-    return readExamples().findAny().isPresent() ? null : new NoExamplesError();
-  }
-
+  
   @Override
   public Description getDescription() {
-    Description context = Description.createSuiteDescription(getContextClass());
-    readExamples().map(FieldExample::getDescription).forEach(context::addChild);
+    Description context = Description.createSuiteDescription(config.getContextClass());
+    getChildren().stream().map(this::describeChild).forEach(context::addChild);
     return context;
-  }
+  };
 
   @Override
-  protected List<FieldExample> getChildren() {
-    return readExamples().collect(Collectors.toList());
+  protected List<Example> getChildren() {
+    return config.getExamples();
   }
-
+  
   @Override
-  protected Description describeChild(FieldExample child) {
-    return child.getDescription();
+  protected Description describeChild(Example child) {
+    return Description.createTestDescription(config.getContextClass(), child.describeBehavior());
   }
-
+  
   @Override
-  protected void runChild(FieldExample child, RunNotifier notifier) {
-    Description description = child.getDescription();
+  protected void runChild(Example child, RunNotifier notifier) {
+    Description description = describeChild(child);
     notifier.fireTestStarted(description);
     try {
-      child.run(getContextInstance());
-    } catch (Throwable t) { //Gotta catch 'em all, especially AssertionErrors (I told you he was tricksy)
-      notifier.fireTestFailure(new Failure(description, t));
+      child.run(null);
+    } catch (Exception | AssertionError e) {
+      notifier.fireTestFailure(new Failure(description, e));
     } finally {
       notifier.fireTestFinished(description);
-    }
-  }
-  
-  private Stream<FieldExample> readExamples() {
-    return ReflectionUtil.fieldsOfType(It.class, getContextClass()).map(FieldExample::new);
-  }
-  
-  private Object getContextInstance() throws ReflectiveOperationException {
-    return getTestClass().getOnlyConstructor().newInstance();
-  }
-  
-  private Class<?> getContextClass() {
-    return getTestClass().getJavaClass();
-  }
-  
-  public static class NoExamplesError extends InitializationError {
-    private static final long serialVersionUID = -4731749974843465573L;
-
-    NoExamplesError() {
-      super("A JSpec class must declare 1 or more It fields");
-    }
-  }
-  
-  public static class InvalidConstructorError extends InitializationError {
-    private static final long serialVersionUID = 7403176586548921108L;
-
-    InvalidConstructorError() {
-      super("A JSpec test must have a public, no-arg constructor and no others");
     }
   }
 }

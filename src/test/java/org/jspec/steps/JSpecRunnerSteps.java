@@ -15,6 +15,7 @@ import org.jspec.runner.JSpecRunner;
 import org.jspec.util.RunListenerSpy;
 import org.jspec.util.RunListenerSpy.Event;
 import org.junit.runner.JUnitCore;
+import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
@@ -92,7 +93,7 @@ public final class JSpecRunnerSteps {
   private void runWithJSpecRunner() throws InitializationError {
     RunNotifier notifier = new RunNotifier();
     notifier.addListener(new RunListenerSpy(notifyEventName));
-    JSpecRunner runner = new JSpecRunner(testClass);
+    Runner runner = new JSpecRunner(testClass);
     runner.run(notifier);
   }
 }
