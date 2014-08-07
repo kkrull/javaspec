@@ -79,18 +79,14 @@ public class NewJSpecRunnerTest {
     public class givenATestConfigurationWith1OrMoreExamples {
       private final Description subject;
       
-      public givenATestConfigurationWith1OrMoreExamples() throws ReflectiveOperationException {
-        Class<?> context = JSpecExamples.Two.class;
-        Runner runner = runnerFor(configOf(context, exampleNamed("one"), exampleNamed("another")));
+      public givenATestConfigurationWith1OrMoreExamples() throws Exception {
+        Runner runner = runnerFor(configOf(JSpecExamples.Two.class, exampleNamed("one"), exampleNamed("another")));
         this.subject = runner.getDescription();
       }
       
       @Test
       public void hasAChildDescriptionForEachExample() {
         ArrayList<Description> children = subject.getChildren();
-        assertListEquals(
-          ImmutableList.of(JSpecExamples.Two.class, JSpecExamples.Two.class),
-          children.stream().map(Description::getTestClass).collect(Collectors.toList()));
         assertListEquals(
           ImmutableList.of("one(org.jspec.proto.JSpecExamples$Two)", "another(org.jspec.proto.JSpecExamples$Two)"), 
           children.stream().map(Description::getDisplayName).collect(Collectors.toList()));
@@ -126,6 +122,7 @@ public class NewJSpecRunnerTest {
       @Test
       public void notifiesTestFailed() {
         assertThat(eventNames(), hasItem(is("testFailure")));
+        assertThat(events.stream().map(x -> x.failure).collect(Collectors.toList()), hasItem(notNullValue()));
       }
       
       @Test
@@ -215,7 +212,7 @@ public class NewJSpecRunnerTest {
 
       @Override
       public void run(Object objectDeclaringBehavior) throws Exception { 
-        notify.accept(new Event("run::" + behaviorName, null));
+        notify.accept(Event.named("run::" + behaviorName));
       }
     };
   }

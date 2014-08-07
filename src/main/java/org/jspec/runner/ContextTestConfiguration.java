@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 final class ContextTestConfiguration implements TestConfiguration {
-
   private final Class<?> contextClass;
   
   public static ContextTestConfiguration forClass(Class<?> contextClass) {

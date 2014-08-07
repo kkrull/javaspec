@@ -107,7 +107,7 @@ public class JSpecRunnerTest {
 
   public class run {
     private final List<Event> events = synchronizedList(new LinkedList<Event>());
-    private final Consumer<String> notifyEventName = name -> events.add(new Event(name, null));
+    private final Consumer<String> notifyEventName = name -> events.add(Event.named(name));
 
     @Test
     public void whenATestConstructorThrows_notifiesListenersOfAFailedTest() {

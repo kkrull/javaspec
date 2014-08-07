@@ -3,6 +3,7 @@ package org.jspec.runner;
 import java.util.List;
 
 import org.junit.runner.Description;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
@@ -15,7 +16,7 @@ public class NewJSpecRunner extends ParentRunner<Example> {
   }
   
   NewJSpecRunner(TestConfiguration config) throws InitializationError {
-    super(null); //Bypass JUnit's requirements for a context class
+    super(null); //Bypass JUnit's requirements for a context class; throw our own errors instead
     this.config = config;
     if(config.hasInitializationErrors()) {
       throw new InitializationError(config.findInitializationErrors());
@@ -46,8 +47,9 @@ public class NewJSpecRunner extends ParentRunner<Example> {
     try {
       child.run(null);
     } catch (Exception | AssertionError e) {
-      notifier.fireTestFailure(null);
+      notifier.fireTestFailure(new Failure(description, e));
+    } finally {
+      notifier.fireTestFinished(description);
     }
-    notifier.fireTestFinished(description);
   }
 }
