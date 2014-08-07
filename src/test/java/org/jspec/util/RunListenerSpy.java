@@ -79,6 +79,9 @@ public final class RunListenerSpy extends RunListener {
       this.failure = failure;
     }
     
+    public String getName() { return name; }
+    public String getDisplayName() { return description == null ? null : description.getDisplayName(); }
+    
     @Override
     public String toString() {
       return String.format("<%s name=%s, description=%s>", getClass().getName(), name, description);

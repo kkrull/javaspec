@@ -1,6 +1,7 @@
 package org.jspec.runner;
 
 import static java.util.Collections.synchronizedList;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
 import static org.jspec.util.Assertions.assertListEquals;
 import static org.junit.Assert.*;
@@ -12,7 +13,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jspec.proto.JSpecExamples;
@@ -54,7 +54,7 @@ public class JSpecRunnerTest {
       try {
         new JSpecRunner(config);
       } catch (InitializationError ex) {
-        assertListEquals(expectedCauses, flattenCauses(ex).map(Throwable::getClass).collect(Collectors.toList()));
+        assertListEquals(expectedCauses, flattenCauses(ex).map(Throwable::getClass).collect(toList()));
         return;
       }
       fail(String.format("Expected causes of initialization error to be <%s>, but nothing was thrown", expectedCauses));
@@ -89,7 +89,7 @@ public class JSpecRunnerTest {
         ArrayList<Description> children = subject.getChildren();
         assertListEquals(
           ImmutableList.of("one(org.jspec.proto.JSpecExamples$Two)", "another(org.jspec.proto.JSpecExamples$Two)"), 
-          children.stream().map(Description::getDisplayName).collect(Collectors.toList()));
+          children.stream().map(Description::getDisplayName).collect(toList()));
       }
     }
   }
@@ -107,8 +107,10 @@ public class JSpecRunnerTest {
       
       @Test
       public void runsBetweenNotifyStartAndFinish() {
-        assertThat(eventNames(), contains(is("testStarted"), is("run::passing"), is("testFinished")));
-        assertThat(eventDescriptionNames(), contains(startsWith("passing"), anything(), startsWith("passing")));
+        assertThat(events.stream().map(Event::getName).collect(toList()), 
+          contains(is("testStarted"), is("run::passing"), is("testFinished")));
+        assertThat(events.stream().map(Event::getDisplayName).collect(toList()), 
+          contains(startsWith("passing"), anything(), startsWith("passing")));
       }
     }
     
@@ -121,13 +123,13 @@ public class JSpecRunnerTest {
       
       @Test
       public void notifiesTestFailed() {
-        assertThat(eventNames(), hasItem(is("testFailure")));
-        assertThat(events.stream().map(x -> x.failure).collect(Collectors.toList()), hasItem(notNullValue()));
+        assertThat(events.stream().map(Event::getName).collect(toList()), hasItem(is("testFailure")));
+        assertThat(events.stream().map(x -> x.failure).collect(toList()), hasItem(notNullValue()));
       }
       
       @Test
       public void continuesRunningSuccessiveTests() {
-        assertThat(eventNames(), contains(
+        assertThat(events.stream().map(Event::getName).collect(toList()), contains(
           "testStarted", "testFailure", "testFinished",
           "testStarted", "run::successor", "testFinished"));
       }
@@ -137,16 +139,6 @@ public class JSpecRunnerTest {
       RunNotifier notifier = new RunNotifier();
       notifier.addListener(new RunListenerSpy(events::add));
       runner.run(notifier);
-    }
-    
-    private List<String> eventDescriptionNames() {
-      return events.stream()
-        .map(x -> x.description == null ? null : x.description.getDisplayName())
-        .collect(Collectors.toList());
-    }
-    
-    private List<String> eventNames() {
-      return events.stream().map(x -> x.name).collect(Collectors.toList());
     }
   }
   
