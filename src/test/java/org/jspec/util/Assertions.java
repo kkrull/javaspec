@@ -1,7 +1,6 @@
 package org.jspec.util;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.util.List;
@@ -19,15 +18,16 @@ public final class Assertions {
     }
   }
 
-  public static void assertThrows(Class<? extends Exception> exceptionClass, Thunk thunk) {
+  public static void assertThrows(Class<? extends Exception> expectedType, String expectedMessage, Thunk thunk) {
     try {
       thunk.run();
     } catch (Exception e) {
-      assertEquals("Unexpected type of exception thrown", exceptionClass, e.getClass());
+      assertThat(e.getClass(), equalTo(expectedType));
+      assertThat(e.getMessage(), equalTo(expectedMessage));
       return;
     }
 
-    fail(String.format("Expected %s to be thrown, but no exception was thrown", exceptionClass));
+    fail(String.format("Expected %s to be thrown, but no exception was thrown", expectedType));
   }
 
   @FunctionalInterface
