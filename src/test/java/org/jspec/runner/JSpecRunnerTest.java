@@ -11,12 +11,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 import org.jspec.proto.JSpecExamples;
-import org.jspec.util.RunListenerSpy;
 import org.jspec.util.RunListenerSpy.Event;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -24,7 +21,6 @@ import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
-import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
 import com.google.common.collect.ImmutableList;
@@ -36,7 +32,7 @@ public class JSpecRunnerTest {
   public class constructor {
     @Test
     public void givenAConfigurationWithoutErrors_raisesNoError() {
-      runnerFor(configOf(JSpecExamples.One.class));
+      Runners.of(configOf(JSpecExamples.One.class));
     }
 
     @Test
@@ -47,14 +43,14 @@ public class JSpecRunnerTest {
     
     @Test
     public void givenAContextClassSuitableForJSpecButNotForJUnit_raisesNoError() {
-      runnerFor(JSpecExamples.MultiplePublicConstructors.class);
+      Runners.of(JSpecExamples.MultiplePublicConstructors.class);
     }
 
     private void assertInitializationError(TestConfiguration config, List<Class<? extends Throwable>> expectedCauses) {
       try {
         new JSpecRunner(config);
       } catch (InitializationError ex) {
-        assertListEquals(expectedCauses, flattenCauses(ex).map(Throwable::getClass).collect(toList()));
+        assertListEquals(expectedCauses, Runners.flattenCauses(ex).map(Throwable::getClass).collect(toList()));
         return;
       }
       fail(String.format("Expected causes of initialization error to be <%s>, but nothing was thrown", expectedCauses));
@@ -65,8 +61,8 @@ public class JSpecRunnerTest {
     public class givenATestConfigurationOrContextClass {
       @Test
       public void describesTheConfiguredClass() {
-        assertDescribesIgnoredClass(runnerFor(JSpecExamples.IgnoredClass.class));
-        assertDescribesIgnoredClass(runnerFor(configOf(JSpecExamples.IgnoredClass.class)));
+        assertDescribesIgnoredClass(Runners.of(JSpecExamples.IgnoredClass.class));
+        assertDescribesIgnoredClass(Runners.of(configOf(JSpecExamples.IgnoredClass.class)));
       }
       
       private void assertDescribesIgnoredClass(Runner runner) {
@@ -80,7 +76,7 @@ public class JSpecRunnerTest {
       private final Description subject;
       
       public givenATestConfigurationWith1OrMoreExamples() throws Exception {
-        Runner runner = runnerFor(configOf(JSpecExamples.Two.class, exampleNamed("one"), exampleNamed("another")));
+        Runner runner = Runners.of(configOf(JSpecExamples.Two.class, exampleNamed("one"), exampleNamed("another")));
         this.subject = runner.getDescription();
       }
       
@@ -101,8 +97,8 @@ public class JSpecRunnerTest {
     public class givenAPassingExample {
       @Before
       public void setup() throws Exception {
-        Runner runner = runnerFor(configOf(context, exampleSpy("passing", events::add)));
-        runTests(runner);
+        Runner runner = Runners.of(configOf(context, exampleSpy("passing", events::add)));
+        Runners.runAll(runner, events::add);
       }
       
       @Test
@@ -117,8 +113,8 @@ public class JSpecRunnerTest {
     public class givenAFailingExample {
       @Before
       public void setup() throws Exception {
-        Runner runner = runnerFor(configOf(context, exampleFailing("boom"), exampleSpy("successor", events::add)));
-        runTests(runner);
+        Runner runner = Runners.of(configOf(context, exampleFailing("boom"), exampleSpy("successor", events::add)));
+        Runners.runAll(runner, events::add);
       }
       
       @Test
@@ -133,12 +129,6 @@ public class JSpecRunnerTest {
           "testStarted", "testFailure", "testFinished",
           "testStarted", "run::successor", "testFinished"));
       }
-    }
-    
-    private void runTests(Runner runner) {
-      RunNotifier notifier = new RunNotifier();
-      notifier.addListener(new RunListenerSpy(events::add));
-      runner.run(notifier);
     }
   }
   
@@ -207,48 +197,5 @@ public class JSpecRunnerTest {
         notify.accept(Event.named("run::" + behaviorName));
       }
     };
-  }
-  
-  private static JSpecRunner runnerFor(Class<?> contextClass) {
-    try {
-      return new JSpecRunner(contextClass);
-    } catch (InitializationError e) {
-      return failForInitializationError(e);
-    }
-  }
-  
-  private static JSpecRunner runnerFor(TestConfiguration config) {
-    try {
-      return new JSpecRunner(config);
-    } catch (InitializationError e) {
-      return failForInitializationError(e);
-    }
-  }
-  
-  private static JSpecRunner failForInitializationError(InitializationError e) {
-    System.out.println("\nInitialization error(s)");
-    flattenCauses(e).forEach(x -> {
-      System.out.printf("[%s]\n", x.getClass());
-      x.printStackTrace(System.out);
-    });
-    fail("Failed to create JSpecRunner");
-    return null;
-  }
-  
-  private static Stream<Throwable> flattenCauses(InitializationError root) {
-    List<Throwable> causes = new LinkedList<Throwable>();
-    Stack<InitializationError> nodesWithChildren = new Stack<InitializationError>();
-    nodesWithChildren.push(root);
-    while (!nodesWithChildren.isEmpty()) {
-      InitializationError parent = nodesWithChildren.pop();
-      for(Throwable child : parent.getCauses()) {
-        if(child instanceof InitializationError) {
-          nodesWithChildren.push((InitializationError) child);
-        } else {
-          causes.add(child);
-        }
-      }
-    }
-    return causes.stream();
   }
 }

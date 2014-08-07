@@ -11,13 +11,9 @@ import java.util.function.Consumer;
 
 import org.jspec.proto.JSpecExamples;
 import org.jspec.proto.RunWithJSpecRunner;
-import org.jspec.runner.JSpecRunner;
-import org.jspec.util.RunListenerSpy;
+import org.jspec.runner.Runners;
 import org.jspec.util.RunListenerSpy.Event;
 import org.junit.runner.JUnitCore;
-import org.junit.runner.Runner;
-import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.model.InitializationError;
 
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
@@ -49,7 +45,7 @@ public final class JSpecRunnerSteps {
   
   @When("^I run the tests with a JSpec runner$")
   public void i_run_the_tests_with_a_JSpec_runner() throws Throwable {
-    runWithJSpecRunner();
+    Runners.runAll(Runners.of(testClass), notifyEventName);
   }
 
   @Then("^the test runner should run all the tests in the class$")
@@ -81,19 +77,12 @@ public final class JSpecRunnerSteps {
   
   @When("^I run the tests$")
   public void i_run_the_tests() throws Throwable {
-    runWithJSpecRunner();
+    Runners.runAll(Runners.of(testClass), notifyEventName);
   }
 
   @Then("^the test runner should run the Establish block before each test$")
   public void the_test_runner_should_run_the_Establish_block_before_each_test() throws Throwable {
     assertThat(String.format("\nActual: %s", events),
       events, contains("testStarted", "testFinished"));
-  }
-
-  private void runWithJSpecRunner() throws InitializationError {
-    RunNotifier notifier = new RunNotifier();
-    notifier.addListener(new RunListenerSpy(notifyEventName));
-    Runner runner = new JSpecRunner(testClass);
-    runner.run(notifier);
   }
 }
