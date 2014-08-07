@@ -41,8 +41,13 @@ public class NewJSpecRunner extends ParentRunner<Example> {
   
   @Override
   protected void runChild(Example child, RunNotifier notifier) {
-//    Description description = describeChild(child);
-    notifier.fireTestStarted(null);
-    notifier.fireTestFinished(null);
+    Description description = describeChild(child);
+    notifier.fireTestStarted(description);
+    try {
+      child.run(null);
+    } catch (Exception | AssertionError e) {
+      notifier.fireTestFailure(null);
+    }
+    notifier.fireTestFinished(description);
   }
 }

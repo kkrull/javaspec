@@ -3,8 +3,7 @@ package org.jspec.runner;
 import static java.util.Collections.synchronizedList;
 import static org.hamcrest.Matchers.*;
 import static org.jspec.util.Assertions.assertListEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -101,22 +100,39 @@ public class NewJSpecRunnerTest {
   
   public class run {
     private final List<Event> events = synchronizedList(new LinkedList<Event>());
+    private final Class<?> context = JSpecExamples.One.class;
     
-    public class givenAContextClassWith1OrMoreExamples {
-      public class whenTheExampleThrowsNoException {
-        private final Class<?> context = JSpecExamples.One.class;
-        
-        @Before
-        public void setup() throws Exception {
-          Runner runner = runnerFor(configOf(context, exampleSpy("only_test", events::add)));
-          runTests(runner);
-        }
-
-        @Test
-        public void notifiesStartRunsTheExampleThenNotifiesFinish() {
-          assertThat(events.stream().map(x -> x.name).collect(Collectors.toList()), 
-            contains(is("testStarted"), is("run"), is("testFinished")));
-        }
+    public class givenAPassingExample {
+      @Before
+      public void setup() throws Exception {
+        Runner runner = runnerFor(configOf(context, exampleSpy("passing", events::add)));
+        runTests(runner);
+      }
+      
+      @Test
+      public void runsBetweenNotifyStartAndFinish() {
+        assertThat(eventNames(), contains(is("testStarted"), is("run::passing"), is("testFinished")));
+        assertThat(eventDescriptionNames(), contains(startsWith("passing"), anything(), startsWith("passing")));
+      }
+    }
+    
+    public class givenAFailingExample {
+      @Before
+      public void setup() throws Exception {
+        Runner runner = runnerFor(configOf(context, exampleFailing("boom"), exampleSpy("successor", events::add)));
+        runTests(runner);
+      }
+      
+      @Test
+      public void notifiesTestFailed() {
+        assertThat(eventNames(), hasItem(is("testFailure")));
+      }
+      
+      @Test
+      public void continuesRunningSuccessiveTests() {
+        assertThat(eventNames(), contains(
+          "testStarted", "testFailure", "testFinished",
+          "testStarted", "run::successor", "testFinished"));
       }
     }
     
@@ -124,6 +140,16 @@ public class NewJSpecRunnerTest {
       RunNotifier notifier = new RunNotifier();
       notifier.addListener(new RunListenerSpy(events::add));
       runner.run(notifier);
+    }
+    
+    private List<String> eventDescriptionNames() {
+      return events.stream()
+        .map(x -> x.description == null ? null : x.description.getDisplayName())
+        .collect(Collectors.toList());
+    }
+    
+    private List<String> eventNames() {
+      return events.stream().map(x -> x.name).collect(Collectors.toList());
     }
   }
   
@@ -171,15 +197,25 @@ public class NewJSpecRunnerTest {
       public void run(Object objectDeclaringBehavior) throws Exception { return; }
     };
   }
+
+  private static Example exampleFailing(String behaviorName) {
+    return new Example() {
+      @Override
+      public String describeBehavior() { return behaviorName; }
+      
+      @Override
+      public void run(Object objectDeclaringBehavior) throws Exception { assertEquals(1, 2); }
+    };
+  }
     
-  private static Example exampleSpy(String behaviorName, Consumer<RunListenerSpy.Event> notify) {
+  private static Example exampleSpy(String behaviorName, Consumer<Event> notify) {
     return new Example() {
       @Override
       public String describeBehavior() { return behaviorName; }
 
       @Override
       public void run(Object objectDeclaringBehavior) throws Exception { 
-        notify.accept(new RunListenerSpy.Event("run", null));
+        notify.accept(new Event("run::" + behaviorName, null));
       }
     };
   }
