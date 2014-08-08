@@ -33,30 +33,24 @@ final class FieldExample implements Example {
     Object context;
     try {
       context = noArgConstructor.newInstance();
-    } catch (Exception e) {
+    } catch (Exception e) { //TODO KDK: Have to at least catch AssertionError in case constructor has assertThat/assumeThat
       throw new TestSetupException(noArgConstructor.getDeclaringClass(), e);
     }
 
     It thunk;
-    try {
-      // behavior.setAccessible(true);
+//    try {
+      behavior.setAccessible(true);
       thunk = (It) behavior.get(context);
-    } catch (Exception e) {
-      throw new TestRunException(behavior, e);
-    }
-    
-    // try {
-    // thunk.run();
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // throw new UnsupportedOperationException(e);
-    // }
+//    } catch (Throwable t) {
+//      throw new TestRunException(behavior, t);
+//    }
+     thunk.run();
   }
   
   public static final class TestRunException extends RuntimeException {
     private static final long serialVersionUID = 1L;
     
-    public TestRunException(Field exampleField, Exception cause) {
+    public TestRunException(Field exampleField, Throwable cause) {
       super(String.format("Failed to access example behavior defined by %s.%s", 
         exampleField.getDeclaringClass().getName(), exampleField.getName()), cause);
     }

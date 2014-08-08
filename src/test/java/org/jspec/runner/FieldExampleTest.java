@@ -28,7 +28,7 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 public class FieldExampleTest {
   public class constructor {
     public class givenABehaviorFieldOfSomeOtherType {
-      private final Class<?> contextClass = UnsupportedBehaviorField.class;
+      private final Class<?> contextClass = JSpecExamples.WrongTypeOfBehaviorField.class;
       private final Field field;
       
       public givenABehaviorFieldOfSomeOtherType() throws Exception {
@@ -77,6 +77,13 @@ public class FieldExampleTest {
       }
     }
     
+    public class givenAFaultyClassInitializer {
+      @Test @Ignore("wip")
+      public void throwsTestSetupException() {
+        fail("pending");
+      }
+    }
+    
     public class givenAFaultyConstructor {
       private final Example subject;
       
@@ -94,28 +101,18 @@ public class FieldExampleTest {
       }
     }
     
-    public class givenAnItFieldThatCannotBeAccessed {
+    public class givenAnAccessibleItField {
       private final Example subject;
       
-      public givenAnItFieldThatCannotBeAccessed() throws Exception {
-        Field field = JSpecExamples.HiddenExample.class.getDeclaredField("can_not_be_accessed");
+      public givenAnAccessibleItField() throws Exception {
+        Field field = JSpecExamples.One.class.getDeclaredField("only_test");
         this.subject = new FieldExample(field);
       }
       
-      @Test
-      public void throwsTestSetupExceptionCausedByTheConstructorInvocation() {
-        assertThrows(TestRunException.class, 
-          is("Failed to access example behavior defined by org.jspec.proto.JSpecExamples$HiddenExample.can_not_be_accessed"),
-          IllegalAccessException.class,
-          subject::run);
-      }
-    }
-    
-    public class givenAnAccessibleItField {
       @Before
-      public void spy() {
+      public void spy() throws Exception {
         JSpecExamples.One.setEventListener(events::add);
-//        this.subject.run();
+        this.subject.run();
       }
       
       @After
@@ -123,14 +120,42 @@ public class FieldExampleTest {
         JSpecExamples.One.setEventListener(null);
       }
       
-      @Test @Ignore("wip")
+      @Test
       public void constructsTheContextClassThenRunsTheFunctionAssignedToTheGivenField() {
         assertThat(events, contains("JSpecExamples.One::new", "JSpecExamples.One::only_test"));
       }
     }
-  }
-  
-  public static class UnsupportedBehaviorField {
-    Integer notAnItField;
+    
+    public class whenAnItFieldCanNotBeAccessed {
+      private final Example subject;
+      
+      public whenAnItFieldCanNotBeAccessed() throws Exception {
+        Field field = JSpecExamples.One.class.getDeclaredField("only_test");
+        this.subject = new FieldExample(field);
+      }
+      
+      @Test @Ignore("wip")
+      public void throwsTestSetupExceptionCausedByTheConstructorInvocation() {
+        fail("Pending - May be able to generate SecurityException by stubbing a SecurityManager for the duration of the test");
+        assertThrows(TestRunException.class, 
+          is("Failed to access example behavior defined by org.jspec.proto.JSpecExamples$One.only_test"),
+          IllegalAccessException.class,
+          subject::run);
+      }
+    }
+    
+    public class whenABehaviorThrows {
+      private final Example subject;
+      
+      public whenABehaviorThrows() throws Exception {
+        Field field = JSpecExamples.FailingTest.class.getDeclaredField("fails");
+        this.subject = new FieldExample(field);
+      }
+      
+      @Test
+      public void throwsWhateverTheExampleThrew() {
+        assertThrows(AssertionError.class, anything(), subject::run);
+      }
+    }
   }
 }

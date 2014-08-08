@@ -28,12 +28,12 @@ public final class Assertions {
     Class<? extends Throwable> expectedCause, Thunk thunk) {
     try {
       thunk.run();
-    } catch (Exception e) {
-      assertThat(e.getClass(), equalTo(expectedType));
-      assertThat(e.getMessage(), expectedMessage);
+    } catch (Throwable t) {
+      assertThat(t.getClass(), equalTo(expectedType));
+      assertThat(t.getMessage(), expectedMessage);
       if (expectedCause != null) {
-        assertThat(e.getCause(), notNullValue());
-        assertThat(e.getCause().getClass(), equalTo(expectedCause));
+        assertThat(t.getCause(), notNullValue());
+        assertThat(t.getCause().getClass(), equalTo(expectedCause));
       }
       
       return;

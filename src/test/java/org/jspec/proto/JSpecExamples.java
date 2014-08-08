@@ -38,11 +38,6 @@ public class JSpecExamples {
     It is_otherwise_valid = () -> assertEquals(1, 1);
   }
   
-  public static class HiddenExample {
-    @SuppressWarnings("unused")
-    private It can_not_be_accessed = () -> assertEquals("the answer", 42);
-  }
-  
   @Ignore
   public static class IgnoredClass {
     It gets_ignored = () -> assertEquals(1, 2);
@@ -105,6 +100,10 @@ public class JSpecExamples {
   public static class Two {
     It first_test = () -> assertEquals(1, 1);
     It second_test = () -> assertEquals(2, 2);
+  }
+  
+  public static class WrongTypeOfBehaviorField {
+    Integer notAnItField;
   }
   
   @SuppressWarnings("serial")
