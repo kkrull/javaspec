@@ -20,20 +20,30 @@ public final class Assertions {
     }
   }
 
-  public static void assertThrows(Class<? extends Exception> expectedType, Matcher<String> expectedMessage, Thunk thunk) {
+  public static void assertThrows(Class<? extends Throwable> expectedType, Matcher<? super String> expectedMessage, Thunk thunk) {
+    assertThrows(expectedType, expectedMessage, null, thunk);
+  }
+
+  public static void assertThrows(Class<? extends Throwable> expectedType, Matcher<? super String> expectedMessage, 
+    Class<? extends Throwable> expectedCause, Thunk thunk) {
     try {
       thunk.run();
     } catch (Exception e) {
       assertThat(e.getClass(), equalTo(expectedType));
       assertThat(e.getMessage(), expectedMessage);
+      if (expectedCause != null) {
+        assertThat(e.getCause(), notNullValue());
+        assertThat(e.getCause().getClass(), equalTo(expectedCause));
+      }
+      
       return;
     }
 
     fail(String.format("Expected %s to be thrown, but no exception was thrown", expectedType));
   }
-
+  
   @FunctionalInterface
   public interface Thunk {
-    void run();
+    void run() throws Exception;
   }
 }

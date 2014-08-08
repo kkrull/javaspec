@@ -6,11 +6,13 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.jspec.dsl.It;
 import org.jspec.proto.JSpecExamples;
+import org.jspec.runner.FieldExample.TestSetupException;
 import org.jspec.runner.FieldExample.UnsupportedConstructorException;
 import org.jspec.runner.FieldExample.UnsupportedFieldException;
 import org.junit.After;
@@ -75,9 +77,19 @@ public class FieldExampleTest {
     }
     
     public class givenAFaultyConstructor {
+      private final Example subject;
+      
+      public givenAFaultyConstructor() throws Exception {
+        Field field = JSpecExamples.FaultyConstructor.class.getDeclaredField("is_otherwise_valid");
+        this.subject = new FieldExample(field);
+      }
+      
       @Test
-      public void failsTheTestByThrowingTestSetupFailedException() {
-        fail("pending");
+      public void throwsTestSetupExceptionCausedByTheConstructorInvocation() {
+        assertThrows(TestSetupException.class, 
+          is("Failed to construct test context org.jspec.proto.JSpecExamples$FaultyConstructor"),
+          InvocationTargetException.class,
+          subject::run);
       }
     }
     

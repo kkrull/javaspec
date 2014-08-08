@@ -2,7 +2,6 @@ package org.jspec.runner;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.util.stream.Stream;
 
 import org.jspec.dsl.It;
 
@@ -22,30 +21,44 @@ final class FieldExample implements Example {
   }
   
   @Override
-  public void run() {
-    Object context;
+  public void run() throws Exception {
+    Constructor<?> noArgConstructor;
     try {
       Class<?> contextClass = behavior.getDeclaringClass();
-      Constructor<?> noArgConstructor = contextClass.getConstructor();
-//      context = noArgConstructor.newInstance();
+      noArgConstructor = contextClass.getConstructor();
     } catch (Exception e) {
       throw new UnsupportedConstructorException(behavior.getDeclaringClass());
     }
-    
-//    It thunk;
-//    try {
-//      behavior.setAccessible(true);
-//      thunk = (It)behavior.get(context);
-//    } catch (Exception e) {
-//      throw new UnsupportedFieldException(behavior);
-//    }
-//    
-//    try {
-//      thunk.run();
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//      throw new UnsupportedOperationException(e);
-//    }
+
+    Object context;
+    try {
+      context = noArgConstructor.newInstance();
+    } catch (Exception e) {
+      throw new TestSetupException(noArgConstructor.getDeclaringClass(), e);
+    }
+
+    // It thunk;
+    // try {
+    // behavior.setAccessible(true);
+    // thunk = (It)behavior.get(context);
+    // } catch (Exception e) {
+    // throw new UnsupportedFieldException(behavior);
+    // }
+    //
+    // try {
+    // thunk.run();
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // throw new UnsupportedOperationException(e);
+    // }
+  }
+  
+  public static final class TestSetupException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
+
+    public TestSetupException(Class<?> context, Exception cause) {
+      super(String.format("Failed to construct test context %s", context.getName()), cause);
+    }
   }
   
   public static final class UnsupportedConstructorException extends RuntimeException {
