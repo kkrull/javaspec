@@ -33,6 +33,11 @@ public class JSpecExamples {
     It is_otherwise_valid = () -> assertEquals(1, 1);
   }
   
+  public static class FaultyClassInitializer {
+    static { assertEquals(1, 2); }
+    It is_otherwise_valid = () -> assertEquals(1, 1);
+  }
+  
   public static class HiddenConstructor {
     private HiddenConstructor() {}
     It is_otherwise_valid = () -> assertEquals(1, 1);

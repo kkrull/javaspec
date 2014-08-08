@@ -73,31 +73,28 @@ public class FieldExampleTest {
         Example subject = new FieldExample(field);
         assertThrows(UnsupportedConstructorException.class,
           is(String.format("Unable to find a no-argument constructor for class %s", context.getName())),
-          () -> subject.run());
+          NoSuchMethodException.class, subject::run);
       }
     }
     
-    public class givenAFaultyClassInitializer {
-      @Test @Ignore("wip")
-      public void throwsTestSetupException() {
-        fail("pending");
-      }
-    }
-    
-    public class givenAFaultyConstructor {
-      private final Example subject;
-      
-      public givenAFaultyConstructor() throws Exception {
-        Field field = JSpecExamples.FaultyConstructor.class.getDeclaredField("is_otherwise_valid");
-        this.subject = new FieldExample(field);
+    public class givenAFaultyConstructorOrInitializer {
+      @Test
+      public void throwsTestSetupExceptionCausedByAFaultyConstructor() throws Exception {
+        assertTestSetupException(JSpecExamples.FaultyConstructor.class.getDeclaredField("is_otherwise_valid"),
+          InvocationTargetException.class);
       }
       
       @Test
-      public void throwsTestSetupExceptionCausedByTheConstructorInvocation() {
+      public void throwsTestSetupExceptionCausedByAFaultyInitializer() throws Exception {
+        assertTestSetupException(JSpecExamples.FaultyClassInitializer.class.getDeclaredField("is_otherwise_valid"),
+          AssertionError.class);
+      }
+      
+      private void assertTestSetupException(Field field, Class<? extends Throwable> expectedCause) {
+        Example subject = new FieldExample(field);
         assertThrows(TestSetupException.class, 
-          is("Failed to construct test context org.jspec.proto.JSpecExamples$FaultyConstructor"),
-          InvocationTargetException.class,
-          subject::run);
+          is(String.format("Failed to construct test context %s", field.getDeclaringClass().getName())),
+          expectedCause, subject::run);
       }
     }
     
@@ -134,7 +131,7 @@ public class FieldExampleTest {
         this.subject = new FieldExample(field);
       }
       
-      @Test @Ignore("wip")
+      @Test
       public void throwsTestSetupExceptionCausedByTheConstructorInvocation() {
         fail("Pending - May be able to generate SecurityException by stubbing a SecurityManager for the duration of the test");
         assertThrows(TestRunException.class, 

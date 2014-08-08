@@ -27,13 +27,13 @@ final class FieldExample implements Example {
       Class<?> contextClass = behavior.getDeclaringClass();
       noArgConstructor = contextClass.getConstructor();
     } catch (Exception e) {
-      throw new UnsupportedConstructorException(behavior.getDeclaringClass());
+      throw new UnsupportedConstructorException(behavior.getDeclaringClass(), e);
     }
 
     Object context;
     try {
       context = noArgConstructor.newInstance();
-    } catch (Exception e) { //TODO KDK: Have to at least catch AssertionError in case constructor has assertThat/assumeThat
+    } catch (Exception | AssertionError e) {
       throw new TestSetupException(noArgConstructor.getDeclaringClass(), e);
     }
 
@@ -59,7 +59,7 @@ final class FieldExample implements Example {
   public static final class TestSetupException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public TestSetupException(Class<?> context, Exception cause) {
+    public TestSetupException(Class<?> context, Throwable cause) {
       super(String.format("Failed to construct test context %s", context.getName()), cause);
     }
   }
@@ -67,8 +67,8 @@ final class FieldExample implements Example {
   public static final class UnsupportedConstructorException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public UnsupportedConstructorException(Class<?> context) {
-      super(String.format("Unable to find a no-argument constructor for class %s", context.getName()));
+    public UnsupportedConstructorException(Class<?> context, Throwable cause) {
+      super(String.format("Unable to find a no-argument constructor for class %s", context.getName()), cause);
     }
   }
   
