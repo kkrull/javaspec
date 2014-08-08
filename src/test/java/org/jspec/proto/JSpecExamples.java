@@ -38,6 +38,11 @@ public class JSpecExamples {
     It is_otherwise_valid = () -> assertEquals(1, 1);
   }
   
+  public static class HiddenExample {
+    @SuppressWarnings("unused")
+    private It can_not_be_accessed = () -> assertEquals("the answer", 42);
+  }
+  
   @Ignore
   public static class IgnoredClass {
     It gets_ignored = () -> assertEquals(1, 2);

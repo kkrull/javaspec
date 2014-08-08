@@ -37,20 +37,29 @@ final class FieldExample implements Example {
       throw new TestSetupException(noArgConstructor.getDeclaringClass(), e);
     }
 
-    // It thunk;
-    // try {
-    // behavior.setAccessible(true);
-    // thunk = (It)behavior.get(context);
-    // } catch (Exception e) {
-    // throw new UnsupportedFieldException(behavior);
-    // }
-    //
+    It thunk;
+    try {
+      // behavior.setAccessible(true);
+      thunk = (It) behavior.get(context);
+    } catch (Exception e) {
+      throw new TestRunException(behavior, e);
+    }
+    
     // try {
     // thunk.run();
     // } catch (Exception e) {
     // e.printStackTrace();
     // throw new UnsupportedOperationException(e);
     // }
+  }
+  
+  public static final class TestRunException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
+    
+    public TestRunException(Field exampleField, Exception cause) {
+      super(String.format("Failed to access example behavior defined by %s.%s", 
+        exampleField.getDeclaringClass().getName(), exampleField.getName()), cause);
+    }
   }
   
   public static final class TestSetupException extends RuntimeException {

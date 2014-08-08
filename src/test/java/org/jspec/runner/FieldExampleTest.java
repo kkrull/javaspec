@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.jspec.dsl.It;
 import org.jspec.proto.JSpecExamples;
+import org.jspec.runner.FieldExample.TestRunException;
 import org.jspec.runner.FieldExample.TestSetupException;
 import org.jspec.runner.FieldExample.UnsupportedConstructorException;
 import org.jspec.runner.FieldExample.UnsupportedFieldException;
@@ -93,7 +94,24 @@ public class FieldExampleTest {
       }
     }
     
-    public class givenAnItField {
+    public class givenAnItFieldThatCannotBeAccessed {
+      private final Example subject;
+      
+      public givenAnItFieldThatCannotBeAccessed() throws Exception {
+        Field field = JSpecExamples.HiddenExample.class.getDeclaredField("can_not_be_accessed");
+        this.subject = new FieldExample(field);
+      }
+      
+      @Test
+      public void throwsTestSetupExceptionCausedByTheConstructorInvocation() {
+        assertThrows(TestRunException.class, 
+          is("Failed to access example behavior defined by org.jspec.proto.JSpecExamples$HiddenExample.can_not_be_accessed"),
+          IllegalAccessException.class,
+          subject::run);
+      }
+    }
+    
+    public class givenAnAccessibleItField {
       @Before
       public void spy() {
         JSpecExamples.One.setEventListener(events::add);
