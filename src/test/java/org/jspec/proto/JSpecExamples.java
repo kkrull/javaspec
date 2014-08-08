@@ -9,6 +9,11 @@ import org.junit.Ignore;
 
 /** Inner classes are declared static to avoid the gaze of HierarchicalContextRunner when testing JSpec. */
 public class JSpecExamples {
+  public static class ConstructorHasArguments {
+    public ConstructorHasArguments(int _id) { }
+    It is_otherwise_valid = () -> assertEquals(1, 1);
+  }
+  
   public static class Empty {}
   
   public static class EstablishTest {

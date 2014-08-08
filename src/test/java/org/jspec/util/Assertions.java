@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
+import org.hamcrest.Matcher;
+
 public final class Assertions {
   public static <T> void assertListEquals(List<T> expecteds, List<T> actuals) {
     assertThat(actuals, notNullValue());
@@ -18,12 +20,12 @@ public final class Assertions {
     }
   }
 
-  public static void assertThrows(Class<? extends Exception> expectedType, String expectedMessage, Thunk thunk) {
+  public static void assertThrows(Class<? extends Exception> expectedType, Matcher<String> expectedMessage, Thunk thunk) {
     try {
       thunk.run();
     } catch (Exception e) {
       assertThat(e.getClass(), equalTo(expectedType));
-      assertThat(e.getMessage(), equalTo(expectedMessage));
+      assertThat(e.getMessage(), expectedMessage);
       return;
     }
 

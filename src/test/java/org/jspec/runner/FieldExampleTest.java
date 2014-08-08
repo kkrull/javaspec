@@ -1,7 +1,6 @@
 package org.jspec.runner;
 
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.jspec.util.Assertions.assertThrows;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -36,7 +35,7 @@ public class FieldExampleTest {
       @Test
       public void throwsUnsupportedFieldException() {
         assertThrows(UnsupportedFieldException.class, 
-          String.format("Invalid type for %s.notAnItField: java.lang.Integer", contextClass.getName()),
+          is(String.format("Invalid type for %s.notAnItField: java.lang.Integer", contextClass.getName())),
           () -> new FieldExample(field));
       }
     }
@@ -63,13 +62,14 @@ public class FieldExampleTest {
       @Test
       public void ThrowsUnsupportedConstructorException() throws Exception  {
         assertThrowsUnsupportedConstructorException(JSpecExamples.HiddenConstructor.class, "is_otherwise_valid");
+        assertThrowsUnsupportedConstructorException(JSpecExamples.ConstructorHasArguments.class, "is_otherwise_valid");
       }
       
       private void assertThrowsUnsupportedConstructorException(Class<?> context, String itFieldName) throws Exception {
         Field field = context.getDeclaredField(itFieldName);
         Example subject = new FieldExample(field);
         assertThrows(UnsupportedConstructorException.class,
-          "Unable to find a no-argument constructor for class org.jspec.proto.JSpecExamples$HiddenConstructor",
+          is(String.format("Unable to find a no-argument constructor for class %s", context.getName())),
           () -> subject.run());
       }
     }
