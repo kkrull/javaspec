@@ -1,9 +1,9 @@
 package org.jspec.runner;
 
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.jspec.util.Assertions.assertThrows;
 import static org.junit.Assert.assertThat;
 
 import java.util.Collections;
@@ -32,16 +32,15 @@ public class ContextTestConfigurationTest {
 
     @Test
     public void findsInitializationErrors_containsNoExamplesException() {
-      List<Throwable> initializationErrors = subject.findInitializationErrors();
-      assertThat(initializationErrors.stream().map(x -> x.getClass()).collect(toList()),
+      assertThat(subject.findInitializationErrors().stream().map(x -> x.getClass()).collect(toList()),
         contains(NoExamplesException.class));
-      assertThat(initializationErrors.get(0).getMessage(),
-        equalTo("Test context org.jspec.proto.JSpecExamples$Empty must contain at least 1 example in an It field"));
     }
 
     @Test
-    public void getExamples_returnsEmpty() {
-      assertThat(subject.getExamples().collect(toList()), equalTo(emptyList()));
+    public void getExamples_throwsNoExamplesException() {
+      assertThrows(NoExamplesException.class,
+        equalTo("Test context org.jspec.proto.JSpecExamples$Empty must contain at least 1 example in an It field"), 
+        subject::getExamples);
     }
     
     @Test
