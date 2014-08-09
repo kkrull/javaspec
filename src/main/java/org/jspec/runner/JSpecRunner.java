@@ -1,5 +1,7 @@
 package org.jspec.runner;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.List;
 
 import org.junit.runner.Description;
@@ -32,7 +34,7 @@ public class JSpecRunner extends ParentRunner<Example> {
 
   @Override
   protected List<Example> getChildren() {
-    return config.getExamples();
+    return config.getExamples().collect(toList());
   }
   
   @Override

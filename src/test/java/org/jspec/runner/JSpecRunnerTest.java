@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import org.jspec.proto.JSpecExamples;
 import org.jspec.util.RunListenerSpy.Event;
@@ -144,7 +145,7 @@ public class JSpecRunnerTest {
       public Class<?> getContextClass() { return contextClass; }
 
       @Override
-      public List<Example> getExamples() { return Arrays.asList(examples); }
+      public Stream<Example> getExamples() { return Stream.of(examples); }
     };
   }
   
@@ -160,7 +161,7 @@ public class JSpecRunnerTest {
       public Class<?> getContextClass() { return JSpecExamples.One.class; }
 
       @Override
-      public List<Example> getExamples() { 
+      public Stream<Example> getExamples() { 
         String msg = String.format("This configuration is invalid, finding %s", findInitializationErrors());
         throw new IllegalStateException(msg);
       }

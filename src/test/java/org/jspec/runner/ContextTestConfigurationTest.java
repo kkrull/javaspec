@@ -41,7 +41,7 @@ public class ContextTestConfigurationTest {
 
     @Test
     public void getExamples_returnsEmpty() {
-      assertThat(subject.getExamples(), equalTo(emptyList()));
+      assertThat(subject.getExamples().collect(toList()), equalTo(emptyList()));
     }
     
     @Test
@@ -60,7 +60,7 @@ public class ContextTestConfigurationTest {
 
     @Test
     public void getExamples_returnsAFieldExampleForEachItField() {
-      List<Example> examples = subject.getExamples();
+      List<Example> examples = subject.getExamples().collect(toList());
       assertThat(examples.stream().map(Example::getClass).collect(toList()),
         contains(FieldExample.class, FieldExample.class));
       assertThat(examples.stream().map(Example::describeBehavior).collect(toList()),

@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toList;
 import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.jspec.dsl.It;
 
@@ -41,8 +42,8 @@ final class ContextTestConfiguration implements TestConfiguration {
   }
 
   @Override
-  public List<Example> getExamples() {
-    return ReflectionUtil.fieldsOfType(It.class, contextClass).map(FieldExample::new).collect(toList());
+  public Stream<Example> getExamples() {
+    return ReflectionUtil.fieldsOfType(It.class, contextClass).map(FieldExample::new);
   }
   
   public static class NoExamplesException extends Exception {
