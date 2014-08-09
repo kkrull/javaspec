@@ -1,18 +1,20 @@
 package org.jspec.dsl;
 
 /**
- * The basic building block for a single test.  Include lots of these in each test class, like so:
+ * The basic building block for a single test.  Include one or more of these in each test class, like so:
  * <code>
  * @RunWith(JSpecRunner.class)
  * public class WidgetFooTest {
- *   private final Widget subject;
+ *   private final PrintStreamSpy printStreamSpy = new PrintStreamSpy();
+ *   private final String returned;
  *   
  *   public SpecTests() {
- *     this.subject = new Widget();
+ *     Widget subject = new Widget(printStreamSpy);
+ *     this.returned = subject.foo();
  *   }
  *   
- *   It returns_bar = () -> assertEquals("bar", subject.foo());
- *   It ...
+ *   It returns_bar = () -> assertEquals("bar", returned);
+ *   It prints_baz = () -> assertEquals("baz", printStreamSpy.getWhatWasPrinted());
  * }
  * </code>
  */
