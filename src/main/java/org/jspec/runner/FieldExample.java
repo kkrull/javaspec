@@ -22,6 +22,18 @@ final class FieldExample implements Example {
   
   @Override
   public void run() throws Exception {
+    Object context = newContextObject();
+    It thunk;
+    try {
+      behavior.setAccessible(true);
+      thunk = (It) behavior.get(context);
+    } catch (Throwable t) {
+      throw new TestRunException(behavior, t);
+    }
+    thunk.run();
+  }
+
+  private Object newContextObject() {
     Constructor<?> noArgConstructor;
     try {
       Class<?> contextClass = behavior.getDeclaringClass();
@@ -36,15 +48,7 @@ final class FieldExample implements Example {
     } catch (Exception | AssertionError e) {
       throw new TestSetupException(noArgConstructor.getDeclaringClass(), e);
     }
-
-    It thunk;
-    try {
-      behavior.setAccessible(true);
-      thunk = (It) behavior.get(context);
-    } catch (Throwable t) {
-      throw new TestRunException(behavior, t);
-    }
-    thunk.run();
+    return context;
   }
   
   public static final class TestRunException extends RuntimeException {
