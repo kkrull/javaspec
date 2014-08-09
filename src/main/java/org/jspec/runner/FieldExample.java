@@ -38,13 +38,13 @@ final class FieldExample implements Example {
     }
 
     It thunk;
-//    try {
+    try {
       behavior.setAccessible(true);
       thunk = (It) behavior.get(context);
-//    } catch (Throwable t) {
-//      throw new TestRunException(behavior, t);
-//    }
-     thunk.run();
+    } catch (Throwable t) {
+      throw new TestRunException(behavior, t);
+    }
+    thunk.run();
   }
   
   public static final class TestRunException extends RuntimeException {

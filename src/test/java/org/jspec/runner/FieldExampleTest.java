@@ -3,10 +3,12 @@ package org.jspec.runner;
 import static org.hamcrest.Matchers.*;
 import static org.jspec.util.Assertions.assertThrows;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ReflectPermission;
+import java.security.AccessControlException;
+import java.security.Permission;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,7 +20,6 @@ import org.jspec.runner.FieldExample.UnsupportedConstructorException;
 import org.jspec.runner.FieldExample.UnsupportedFieldException;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -125,18 +126,29 @@ public class FieldExampleTest {
     
     public class whenAnItFieldCanNotBeAccessed {
       private final Example subject;
+      SecurityManager originalManager;
       
       public whenAnItFieldCanNotBeAccessed() throws Exception {
         Field field = JSpecExamples.One.class.getDeclaredField("only_test");
         this.subject = new FieldExample(field);
       }
       
+      @Before
+      public void stubSecurityManager() {
+        this.originalManager = System.getSecurityManager();
+        System.setSecurityManager(new NoReflectionForYouSecurityManager());
+      }
+      
+      @After
+      public void unstub() {
+        System.setSecurityManager(null);
+      }
+      
       @Test
       public void throwsTestSetupExceptionCausedByTheConstructorInvocation() {
-        fail("Pending - May be able to generate SecurityException by stubbing a SecurityManager for the duration of the test");
-        assertThrows(TestRunException.class, 
+        assertThrows(TestRunException.class,
           is("Failed to access example behavior defined by org.jspec.proto.JSpecExamples$One.only_test"),
-          IllegalAccessException.class,
+          AccessControlException.class,
           subject::run);
       }
     }
@@ -153,6 +165,14 @@ public class FieldExampleTest {
       public void throwsWhateverTheExampleThrew() {
         assertThrows(AssertionError.class, anything(), subject::run);
       }
+    }
+  }
+  
+  static class NoReflectionForYouSecurityManager extends SecurityManager {
+    @Override
+    public void checkPermission(Permission perm) {
+      if(perm instanceof ReflectPermission)
+        throw new AccessControlException("No reflection for you!!!", perm);
     }
   }
 }
