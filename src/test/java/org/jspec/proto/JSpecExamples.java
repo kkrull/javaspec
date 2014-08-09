@@ -77,31 +77,6 @@ public class JSpecExamples {
     It only_test = () -> notifyEvent.accept("JSpecExamples.One::only_test");
   }
   
-  public static class OnePassOneFail {
-    private static final Consumer<String> NOP = x -> { return; };
-    private static Consumer<String> notifyEvent = NOP;
-    
-    public static void setEventListener(Consumer<String> newConsumer) {
-      notifyEvent = newConsumer == null ? NOP : newConsumer;
-    }
-    
-    public OnePassOneFail() {
-      notifyEvent.accept("JSpecExamples.OnePassOneFail::new");
-    }
-    
-    It fail = () -> {
-      notifyEvent.accept("JSpecExamples.OnePassOneFail::fail");
-      assertEquals("apples", "oranges");
-    };
-    
-    It pass = () -> notifyEvent.accept("JSpecExamples.OnePassOneFail::pass");
-  }
-  
-  public static class PublicConstructorWithArgs {
-    public PublicConstructorWithArgs(int id) {}
-    It is_otherwise_valid = () -> assertEquals(1, 1);
-  }
-  
   public static class Two {
     It first_test = () -> assertEquals(1, 1);
     It second_test = () -> assertEquals(2, 2);
