@@ -10,6 +10,7 @@ Feature: JSpec runner
     When I run the tests with a JUnit runner
     Then the test runner should run all the tests in the marked class
     
+  @wip  
   Scenario: Run JSpec tests with Establish blocks
     Given I have JSpec tests with an Establish block
     When I run the tests
