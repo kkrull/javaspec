@@ -17,7 +17,6 @@ import org.jspec.proto.JSpecExamples;
 import org.jspec.runner.FieldExample.TestRunException;
 import org.jspec.runner.FieldExample.TestSetupException;
 import org.jspec.runner.FieldExample.UnsupportedConstructorException;
-import org.jspec.runner.FieldExample.UnsupportedFieldException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,34 +26,12 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 @RunWith(HierarchicalContextRunner.class)
 public class FieldExampleTest {
-  public class constructor {
-    public class givenABehaviorFieldOfSomeOtherType {
-      private final Class<?> contextClass = JSpecExamples.WrongTypeOfBehaviorField.class;
-      private final Field field;
-      
-      public givenABehaviorFieldOfSomeOtherType() throws Exception {
-        this.field = contextClass.getDeclaredField("notAnItField");
-      }
-      
-      @Test
-      public void throwsUnsupportedFieldException() {
-        assertThrows(UnsupportedFieldException.class, 
-          is(String.format("Invalid type for %s.notAnItField: java.lang.Integer", contextClass.getName())),
-          () -> new FieldExample(field));
-      }
-    }
-  }
-  
   public class describeBehavior {
-    private final Example subject;
     It describesADesiredBehavior;
     
-    public describeBehavior() throws Exception {
-      this.subject = new FieldExample(getClass().getDeclaredField("describesADesiredBehavior"));
-    }
-    
     @Test
-    public void returnsTheNameOfTheField() {
+    public void returnsTheNameOfTheField() throws Exception {
+      Example subject = new FieldExample(getClass().getDeclaredField("describesADesiredBehavior"));
       assertThat(subject.describeBehavior(), is("describesADesiredBehavior"));
     }
   }
@@ -80,15 +57,11 @@ public class FieldExampleTest {
     
     public class givenAFaultyConstructorOrInitializer {
       @Test
-      public void throwsTestSetupExceptionCausedByAFaultyConstructor() throws Exception {
-        assertTestSetupException(JSpecExamples.FaultyConstructor.class.getDeclaredField("is_otherwise_valid"),
-          InvocationTargetException.class);
-      }
-      
-      @Test
-      public void throwsTestSetupExceptionCausedByAFaultyInitializer() throws Exception {
+      public void throwsTestSetupException() throws Exception {
         assertTestSetupException(JSpecExamples.FaultyClassInitializer.class.getDeclaredField("is_otherwise_valid"),
           AssertionError.class);
+        assertTestSetupException(JSpecExamples.FaultyConstructor.class.getDeclaredField("is_otherwise_valid"),
+          InvocationTargetException.class);
       }
       
       private void assertTestSetupException(Field field, Class<? extends Throwable> expectedCause) {
@@ -154,15 +127,10 @@ public class FieldExampleTest {
     }
     
     public class whenABehaviorThrows {
-      private final Example subject;
-      
-      public whenABehaviorThrows() throws Exception {
-        Field field = JSpecExamples.FailingTest.class.getDeclaredField("fails");
-        this.subject = new FieldExample(field);
-      }
-      
       @Test
-      public void throwsWhateverTheExampleThrew() {
+      public void throwsWhateverTheExampleThrew() throws Exception {
+        Field field = JSpecExamples.FailingTest.class.getDeclaredField("fails");
+        Example subject = new FieldExample(field);
         assertThrows(AssertionError.class, anything(), subject::run);
       }
     }

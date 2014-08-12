@@ -4,9 +4,9 @@ import static java.util.Collections.synchronizedList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
 import static org.jspec.util.Assertions.assertListEquals;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -22,7 +22,6 @@ import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
-import org.junit.runners.model.InitializationError;
 
 import com.google.common.collect.ImmutableList;
 
@@ -32,61 +31,34 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 public class JSpecRunnerTest {
   public class constructor {
     @Test
-    public void givenAConfigurationWithoutErrors_raisesNoError() {
-      Runners.of(configOf(JSpecExamples.One.class));
+    public void givenAContextClassSuitableForJSpecButNotForJUnit_raisesNoError() {
+      Runners.of(JSpecExamples.MultiplePublicConstructors.class);
     }
 
     @Test
     public void givenAConfigurationWith1OrMoreErrors_raisesInitializationErrorWithThoseErrors() {
       TestConfiguration config = configFinding(new IllegalArgumentException(), new AssertionError());
-      assertInitializationError(config, ImmutableList.of(IllegalArgumentException.class, AssertionError.class));
-    }
-    
-    @Test
-    public void givenAContextClassSuitableForJSpecButNotForJUnit_raisesNoError() {
-      Runners.of(JSpecExamples.MultiplePublicConstructors.class);
-    }
-
-    private void assertInitializationError(TestConfiguration config, List<Class<? extends Throwable>> expectedCauses) {
-      try {
-        new JSpecRunner(config);
-      } catch (InitializationError ex) {
-        assertListEquals(expectedCauses, Runners.flattenCauses(ex).map(Throwable::getClass).collect(toList()));
-        return;
-      }
-      fail(String.format("Expected causes of initialization error to be <%s>, but nothing was thrown", expectedCauses));
+      assertListEquals(Runners.initializationErrorCauses(config).stream().map(Throwable::getClass).collect(toList()),
+        ImmutableList.of(IllegalArgumentException.class, AssertionError.class));
     }
   }
   
   public class getDescription {
-    public class givenATestConfigurationOrContextClass {
+    public class givenATestConfigurationOrContextClassWith1OrMoreExamples {
       @Test
       public void describesTheConfiguredClass() {
-        assertDescribesIgnoredClass(Runners.of(JSpecExamples.IgnoredClass.class));
-        assertDescribesIgnoredClass(Runners.of(configOf(JSpecExamples.IgnoredClass.class)));
-      }
-      
-      private void assertDescribesIgnoredClass(Runner runner) {
-        Description description = runner.getDescription();
+        Description description = Runners.of(JSpecExamples.IgnoredClass.class).getDescription();
         assertThat(description.getTestClass(), equalTo(JSpecExamples.IgnoredClass.class));
         assertThat(description.getAnnotation(Ignore.class), notNullValue());
-      }
-    }
-  
-    public class givenATestConfigurationWith1OrMoreExamples {
-      private final Description subject;
-      
-      public givenATestConfigurationWith1OrMoreExamples() throws Exception {
-        Runner runner = Runners.of(configOf(JSpecExamples.Two.class, exampleNamed("one"), exampleNamed("another")));
-        this.subject = runner.getDescription();
       }
       
       @Test
       public void hasAChildDescriptionForEachExample() {
-        ArrayList<Description> children = subject.getChildren();
+        Runner runner = Runners.of(configOf(JSpecExamples.Two.class, exampleNamed("one"), exampleNamed("another")));
+        Description subject = runner.getDescription();
         assertListEquals(
           ImmutableList.of("one(org.jspec.proto.JSpecExamples$Two)", "another(org.jspec.proto.JSpecExamples$Two)"), 
-          children.stream().map(Description::getDisplayName).collect(toList()));
+          subject.getChildren().stream().map(Description::getDisplayName).collect(toList()));
       }
     }
   }
@@ -133,13 +105,11 @@ public class JSpecRunnerTest {
     }
   }
   
+  //TODO KDK: Try using a library like EasyMock to make these
   private static TestConfiguration configOf(Class<?> contextClass, Example... examples) {
     return new TestConfiguration() {
       @Override
       public List<Throwable> findInitializationErrors() { return Collections.emptyList(); }
-
-      @Override
-      public boolean hasInitializationErrors() { return false; }
       
       @Override
       public Class<?> getContextClass() { return contextClass; }
@@ -153,9 +123,6 @@ public class JSpecRunnerTest {
     return new TestConfiguration() {
       @Override
       public List<Throwable> findInitializationErrors() { return Arrays.asList(errors); }
-
-      @Override
-      public boolean hasInitializationErrors() { return errors.length > 0; }
 
       @Override
       public Class<?> getContextClass() { return JSpecExamples.One.class; }

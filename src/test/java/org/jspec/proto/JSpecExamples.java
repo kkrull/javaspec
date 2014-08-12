@@ -82,10 +82,6 @@ public class JSpecExamples {
     It second_test = () -> assertEquals(2, 2);
   }
   
-  public static class WrongTypeOfBehaviorField {
-    Integer notAnItField;
-  }
-  
   @SuppressWarnings("serial")
   public static class HardToFindThrowable extends Throwable {}
 }

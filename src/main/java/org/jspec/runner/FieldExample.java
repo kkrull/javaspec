@@ -8,10 +8,7 @@ import org.jspec.dsl.It;
 final class FieldExample implements Example {
   private final Field behavior;
   
-  public FieldExample(Field behavior) {
-    if(!It.class.equals(behavior.getType()))
-      throw new UnsupportedFieldException(behavior);
-    
+  FieldExample(Field behavior) {
     this.behavior = behavior;
   }
   
@@ -73,17 +70,6 @@ final class FieldExample implements Example {
 
     public UnsupportedConstructorException(Class<?> context, Throwable cause) {
       super(String.format("Unable to find a no-argument constructor for class %s", context.getName()), cause);
-    }
-  }
-  
-  public static final class UnsupportedFieldException extends RuntimeException {
-    private static final long serialVersionUID = 1L;
-
-    public UnsupportedFieldException(Field f) {
-      super(String.format("Invalid type for %s.%s: %s", 
-        f.getDeclaringClass().getName(), 
-        f.getName(),
-        f.getType().getName()));
     }
   }
 }

@@ -9,11 +9,7 @@ import org.jspec.dsl.It;
 final class ContextTestConfiguration implements TestConfiguration {
   private final Class<?> contextClass;
   
-  public static ContextTestConfiguration forClass(Class<?> contextClass) {
-    return new ContextTestConfiguration(contextClass);
-  }
-  
-  private ContextTestConfiguration(Class<?> contextClass) {
+  ContextTestConfiguration(Class<?> contextClass) {
     this.contextClass = contextClass;
   }
   
@@ -24,11 +20,6 @@ final class ContextTestConfiguration implements TestConfiguration {
       list.add(new NoExamplesException(contextClass));
     }
     return list;
-  }
-
-  @Override
-  public boolean hasInitializationErrors() {
-    return !findInitializationErrors().isEmpty();
   }
 
   @Override

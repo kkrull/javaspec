@@ -10,18 +10,20 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
-public class JSpecRunner extends ParentRunner<Example> {
+public final class JSpecRunner extends ParentRunner<Example> {
   private final TestConfiguration config;
   
   public JSpecRunner(Class<?> contextClass) throws InitializationError {
-    this(ContextTestConfiguration.forClass(contextClass));
+    this(new ContextTestConfiguration(contextClass));
   }
   
   JSpecRunner(TestConfiguration config) throws InitializationError {
     super(null); //Bypass JUnit's requirements for a context class; throw our own errors instead
     this.config = config;
-    if(config.hasInitializationErrors()) {
-      throw new InitializationError(config.findInitializationErrors());
+    
+    List<Throwable> initializationErrors = config.findInitializationErrors();
+    if(!initializationErrors.isEmpty()) {
+      throw new InitializationError(initializationErrors);
     }
   }
   
