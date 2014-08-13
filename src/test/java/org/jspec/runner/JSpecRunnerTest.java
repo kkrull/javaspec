@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
+import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableList;
 
@@ -121,7 +122,8 @@ public class JSpecRunnerTest {
   
   private static TestConfiguration configFinding(Throwable... errors) {
     TestConfiguration stub = mock(TestConfiguration.class);
-    when(stub.findInitializationErrors()).thenReturn(Arrays.asList(errors));
+    stub(stub.findInitializationErrors()).toReturn(Arrays.asList(errors));
+    doThrow(new UnsupportedOperationException("invalid context class")).when(stub).getExamples();
     return stub;
   }
 
@@ -133,7 +135,7 @@ public class JSpecRunnerTest {
   
   private static Example exampleNamed(String behaviorName) {
     Example stub = mock(Example.class);
-    when(stub.describeBehavior()).thenReturn(behaviorName);
+    stub(stub.describeBehavior()).toReturn(behaviorName);
     return stub;
   }
     
