@@ -4,8 +4,8 @@ import static java.util.Collections.synchronizedList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
 import static org.jspec.util.Assertions.assertListEquals;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import org.hamcrest.Matchers;
 import org.jspec.proto.JSpecExamples;
 import org.jspec.util.RunListenerSpy.Event;
 import org.junit.Before;
@@ -77,9 +78,9 @@ public class JSpecRunnerTest {
       @Test
       public void runsBetweenNotifyStartAndFinish() {
         assertThat(events.stream().map(Event::getName).collect(toList()), 
-          contains(is("testStarted"), is("run::passing"), is("testFinished")));
+          contains(equalTo("testStarted"), equalTo("run::passing"), equalTo("testFinished")));
         assertThat(events.stream().map(Event::getDisplayName).collect(toList()), 
-          contains(startsWith("passing"), anything(), startsWith("passing")));
+          contains(Matchers.startsWith("passing"), anything(), Matchers.startsWith("passing")));
       }
     }
     
@@ -92,7 +93,7 @@ public class JSpecRunnerTest {
       
       @Test
       public void notifiesTestFailed() {
-        assertThat(events.stream().map(Event::getName).collect(toList()), hasItem(is("testFailure")));
+        assertThat(events.stream().map(Event::getName).collect(toList()), hasItem(equalTo("testFailure")));
         assertThat(events.stream().map(x -> x.failure).collect(toList()), hasItem(notNullValue()));
       }
       
@@ -105,7 +106,6 @@ public class JSpecRunnerTest {
     }
   }
   
-  //TODO KDK: Try using a library like EasyMock to make these
   private static TestConfiguration configOf(Class<?> contextClass, Example... examples) {
     return new TestConfiguration() {
       @Override
@@ -120,39 +120,21 @@ public class JSpecRunnerTest {
   }
   
   private static TestConfiguration configFinding(Throwable... errors) {
-    return new TestConfiguration() {
-      @Override
-      public List<Throwable> findInitializationErrors() { return Arrays.asList(errors); }
+    TestConfiguration stub = mock(TestConfiguration.class);
+    when(stub.findInitializationErrors()).thenReturn(Arrays.asList(errors));
+    return stub;
+  }
 
-      @Override
-      public Class<?> getContextClass() { return JSpecExamples.One.class; }
-
-      @Override
-      public Stream<Example> getExamples() { 
-        String msg = String.format("This configuration is invalid, finding %s", findInitializationErrors());
-        throw new IllegalStateException(msg);
-      }
-    };
+  private static Example exampleFailing(String behaviorName) throws Exception {
+    Example stub = exampleNamed(behaviorName);
+    doThrow(new AssertionError("bang!")).when(stub).run();
+    return stub;
   }
   
   private static Example exampleNamed(String behaviorName) {
-    return new Example() {
-      @Override
-      public String describeBehavior() { return behaviorName; }
-      
-      @Override
-      public void run() { return; }
-    };
-  }
-
-  private static Example exampleFailing(String behaviorName) {
-    return new Example() {
-      @Override
-      public String describeBehavior() { return behaviorName; }
-      
-      @Override
-      public void run() { assertEquals(1, 2); }
-    };
+    Example stub = mock(Example.class);
+    when(stub.describeBehavior()).thenReturn(behaviorName);
+    return stub;
   }
     
   private static Example exampleSpy(String behaviorName, Consumer<Event> notify) {
