@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.jspec.dsl.Because;
 import org.jspec.dsl.Establish;
 import org.jspec.dsl.It;
 
@@ -20,13 +21,12 @@ final class ContextTestConfiguration implements TestConfiguration {
   @Override
   public List<Throwable> findInitializationErrors() {
     List<Throwable> list = new LinkedList<Throwable>();
-    if(!ReflectionUtil.hasFieldsOfType(It.class, contextClass))
+    if(hasNoTests())
       list.add(new NoExamplesException(contextClass));
-    
-    List<Field> establishFields = ReflectionUtil.fieldsOfType(Establish.class, contextClass).collect(toList());
-    if(establishFields.size() > 1) 
-      list.add(new MultipleSetupFunctionsException(contextClass));
-    
+    if(isStepSequenceAmbiguous(Establish.class))
+      list.add(new UnknownStepExecutionSequenceException(contextClass, Establish.class.getSimpleName()));
+    if(isStepSequenceAmbiguous(Because.class))
+      list.add(new UnknownStepExecutionSequenceException(contextClass, Because.class.getSimpleName()));
     return list;
   }
 
@@ -43,16 +43,31 @@ final class ContextTestConfiguration implements TestConfiguration {
       throw new IllegalStateException(msg, initializationErrors.get(0));
     }
     
-    List<Field> establishFields = ReflectionUtil.fieldsOfType(Establish.class, contextClass).collect(toList());
-    Field establish = establishFields.isEmpty() ? null : establishFields.get(0);
-    return ReflectionUtil.fieldsOfType(It.class, contextClass).map(it -> new FieldExample(establish, it));
+    Field establish = onlyFieldOrNull(Establish.class);
+    Field because = onlyFieldOrNull(Because.class);
+    return ReflectionUtil.fieldsOfType(It.class, contextClass).map(it -> new FieldExample(establish, because, it));
   }
   
-  public static class MultipleSetupFunctionsException extends RuntimeException {
+  private boolean hasNoTests() {
+    return !ReflectionUtil.hasFieldsOfType(It.class, contextClass);
+  }
+  
+  private boolean isStepSequenceAmbiguous(Class<?> typeOfStep) {
+    //No guarantee that reflection will sort fields by order of declaration; running them out of order could fail
+    List<Field> thereCanBeOnlyOne = ReflectionUtil.fieldsOfType(typeOfStep, contextClass).collect(toList());
+    return thereCanBeOnlyOne.size() > 1; 
+  }
+  
+  private Field onlyFieldOrNull(Class<?> typeOfField) {
+    List<Field> matchingFields = ReflectionUtil.fieldsOfType(typeOfField, contextClass).collect(toList());
+    return matchingFields.isEmpty() ? null : matchingFields.get(0);
+  }
+  
+  public static class UnknownStepExecutionSequenceException extends RuntimeException {
     private static final long serialVersionUID = 1L;
-    public MultipleSetupFunctionsException(Class<?> contextClass) {
-      super(String.format("Impossible to determine running order of multiple Establish functions in test context %s",
-        contextClass.getName()));
+    public UnknownStepExecutionSequenceException(Class<?> contextClass, String whatStepIsAmbiguous) {
+      super(String.format("Impossible to determine running order of multiple %s functions in test context %s",
+        whatStepIsAmbiguous, contextClass.getName()));
     }
   }
   

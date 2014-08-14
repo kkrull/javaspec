@@ -8,21 +8,28 @@ import org.jspec.dsl.It;
 
 final class FieldExample implements Example {
   private final Field setup; //TODO KDK: Flag-style class to support optional setup kind of kludgy; try something else like Decorator or Template Methods
+  private final Field action; 
   private final Field behavior; 
   
-  FieldExample(Field setup, Field behavior) {
+  FieldExample(Field setup, Field action, Field behavior) {
     this.setup = setup;
+    this.action = action;
     this.behavior = behavior;
-  }
-  
-  @Override
-  public String describeBehavior() {
-    return behavior.getName();
   }
   
   @Override
   public String describeSetup() {
     return setup == null ? "" : setup.getName();
+  }
+  
+  @Override
+  public String describeAction() {
+    return action == null ? "" : action.getName();
+  }
+  
+  @Override
+  public String describeBehavior() {
+    return behavior.getName();
   }
   
   @Override

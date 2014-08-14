@@ -90,9 +90,13 @@ public class JSpecExamples {
       notifyEvent.accept("JSpecExamples.FullFixture::arrange");
       subject = "established";
     };
+    Because acts = () -> {
+      notifyEvent.accept("JSpecExamples.FullFixture::act");
+      subject += " and acted upon";
+    };
     It asserts = () -> {
       notifyEvent.accept("JSpecExamples.FullFixture::assert");
-      assertEquals("established", subject);
+      assertEquals("established and acted upon", subject);
     };
   }
   

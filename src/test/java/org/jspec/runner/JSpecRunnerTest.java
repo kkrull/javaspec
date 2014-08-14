@@ -141,10 +141,13 @@ public class JSpecRunnerTest {
   private static Example exampleSpy(String behaviorName, Consumer<Event> notify) {
     return new Example() {
       @Override
-      public String describeBehavior() { return behaviorName; }
+      public String describeSetup() { return ""; }
       
       @Override
-      public String describeSetup() { return ""; }
+      public String describeAction() { return ""; }
+      
+      @Override
+      public String describeBehavior() { return behaviorName; }
 
       @Override
       public void run() { notify.accept(Event.named("run::" + behaviorName)); }
