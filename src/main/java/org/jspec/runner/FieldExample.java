@@ -8,6 +8,9 @@ import org.jspec.dsl.Establish;
 import org.jspec.dsl.It;
 
 final class FieldExample implements Example {
+  private static final Establish NOP_ESTABLISH = () -> { return; };
+  private static final Because NOP_BECAUSE = () -> { return; };
+  
   private final Field arrangeField; //TODO KDK: Flag-style class to support optional setup kind of kludgy; try something else like Decorator or Template Methods
   private final Field actionField; 
   private final Field assertionField; 
@@ -36,22 +39,12 @@ final class FieldExample implements Example {
   @Override
   public void run() throws Exception {
     Object context = newContextObject();
-    Establish arrange = null;
-    Because action = null;
-    It assertion = null;
-    try {
-      arrange = arrangeField == null ? () -> { return; } : (Establish)readField(context, arrangeField);
-      action = actionField == null ? () -> { return; } : (Because)readField(context, actionField);
-      assertion = (It)readField(context, assertionField);
-    } catch (Throwable t) {
-      throw new TestSetupException(context.getClass(), t);
-    }
-    
-    arrange.run();
-    action.run();
-    assertion.run();
+    TestFunction test = readTestFunctions(context);
+    test.arrange.run();
+    test.action.run();
+    test.assertion.run();
   }
-
+  
   private Object newContextObject() {
     Constructor<?> noArgConstructor;
     try {
@@ -70,7 +63,18 @@ final class FieldExample implements Example {
     return context;
   }
   
-  private Object readField(Object context, Field field) throws IllegalAccessException {
+  private TestFunction readTestFunctions(Object context) {
+    try {
+      return new TestFunction(
+        arrangeField == null ? NOP_ESTABLISH : (Establish)assignedValue(arrangeField, context),
+        actionField == null ? NOP_BECAUSE : (Because)assignedValue(actionField, context),
+        (It)assignedValue(assertionField, context));
+    } catch (Throwable t) {
+      throw new TestSetupException(context.getClass(), t);
+    }
+  }
+  
+  private Object assignedValue(Field field, Object context) throws IllegalAccessException {
     field.setAccessible(true);
     return field.get(context);
   }
@@ -83,11 +87,25 @@ final class FieldExample implements Example {
     }
   }
   
+  
   public static final class UnsupportedConstructorException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     public UnsupportedConstructorException(Class<?> context, Throwable cause) {
       super(String.format("Unable to find a no-argument constructor for class %s", context.getName()), cause);
+    }
+  }
+  
+  
+  private static class TestFunction {
+    public final Establish arrange;
+    public final Because action;
+    public final It assertion;
+    
+    public TestFunction(Establish arrange, Because action, It assertion) {
+      this.arrange = arrange;
+      this.action = action;
+      this.assertion = assertion;
     }
   }
 }
