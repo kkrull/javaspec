@@ -37,8 +37,11 @@ final class ContextTestConfiguration implements TestConfiguration {
 
   @Override
   public Stream<Example> getExamples() {
-    if(!ReflectionUtil.hasFieldsOfType(It.class, contextClass))
-      throw new NoExamplesException(contextClass);
+    List<Throwable> initializationErrors = findInitializationErrors();
+    if(!initializationErrors.isEmpty()) {
+      String msg = String.format("Test context %s has one or more initialization errors", contextClass.getName());
+      throw new IllegalStateException(msg, initializationErrors.get(0));
+    }
     
     List<Field> establishFields = ReflectionUtil.fieldsOfType(Establish.class, contextClass).collect(toList());
     Field establish = establishFields.isEmpty() ? null : establishFields.get(0);
@@ -48,7 +51,8 @@ final class ContextTestConfiguration implements TestConfiguration {
   public static class MultipleSetupFunctionsException extends RuntimeException {
     private static final long serialVersionUID = 1L;
     public MultipleSetupFunctionsException(Class<?> contextClass) {
-      super(String.format("", contextClass.getName()));
+      super(String.format("Impossible to determine running order of multiple Establish functions in test context %s",
+        contextClass.getName()));
     }
   }
   

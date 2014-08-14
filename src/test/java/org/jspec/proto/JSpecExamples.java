@@ -22,6 +22,13 @@ public class JSpecExamples {
     It runs = () -> assertEquals("established", subject);
   }
   
+  public static class EstablishOnceRunTwice {
+    private String subject;
+    Establish that = () -> subject = "established";
+    It does_one_thing = () -> assertEquals("established", subject);
+    It does_something_else = () -> assertEquals("established", subject);
+  }
+  
   public static class EstablishTwice {
     private int numTimesEstablished;
     Establish setup_part_one = () -> numTimesEstablished++;

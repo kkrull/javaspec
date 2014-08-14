@@ -18,6 +18,7 @@ import org.jspec.runner.FieldExample.TestRunException;
 import org.jspec.runner.FieldExample.TestSetupException;
 import org.jspec.runner.FieldExample.UnsupportedConstructorException;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +27,11 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 @RunWith(HierarchicalContextRunner.class)
 public class FieldExampleTest {
+  @Test
+  public void givenAnEstablishField_describesAndRunsIt() {
+    Assert.fail("pending");
+  }
+  
   public class describeBehavior {
     It describesADesiredBehavior;
     

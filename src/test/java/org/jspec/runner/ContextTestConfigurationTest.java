@@ -19,71 +19,81 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 @RunWith(HierarchicalContextRunner.class)
 public class ContextTestConfigurationTest {
-  public class givenAClassWithNoItFields {
-    private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.Empty.class);
-
+  public class findInitializationErrors {
     @Test
-    public void findsInitializationErrors_containsNoExamplesException() {
+    public void givenAClassWithNoItFields_containsNoExamplesException() {
+      TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.Empty.class);
       assertThat(subject.findInitializationErrors().stream().map(x -> x.getClass()).collect(toList()),
         contains(equalTo(NoExamplesException.class)));
+      assertThat(subject.findInitializationErrors().stream().map(Throwable::getMessage).collect(toList()),
+        contains(equalTo("Test context org.jspec.proto.JSpecExamples$Empty must contain at least 1 example in an It field")));
     }
-
-    @Test
-    public void getExamples_throwsNoExamplesException() {
-      assertThrows(NoExamplesException.class,
-        equalTo("Test context org.jspec.proto.JSpecExamples$Empty must contain at least 1 example in an It field"), 
-        subject::getExamples);
-    }
-  }
-
-  public class givenAClassWith2OrMoreEstablishFields {
-    private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.EstablishTwice.class);
     
     @Test
-    public void findsInitializationErrors_containsMultipleSetupFunctionsException() {
+    public void givenAClassWith2OrMoreEstablishFields_containsMultipleSetupFunctionsException() {
+      TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.EstablishTwice.class);
       assertThat(subject.findInitializationErrors().stream().map(x -> x.getClass()).collect(toList()),
         contains(equalTo(MultipleSetupFunctionsException.class)));
+      assertThat(subject.findInitializationErrors().stream().map(Throwable::getMessage).collect(toList()),
+        contains(equalTo("Impossible to determine running order of multiple Establish functions in test context org.jspec.proto.JSpecExamples$EstablishTwice")));
     }
-  }
-  
-  public class givenAClassWith1OrMoreItFields {
-    private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.Two.class);
-
+    
     @Test
-    public void findInitializationErrors_returnsEmptyList() {
+    public void givenAClassWith1OrMoreItFieldsAndMeetsRemainingCriteria_returnsEmptyList() {
+      TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.Two.class);
       assertThat(subject.findInitializationErrors(), equalTo(Collections.emptyList()));
     }
-
+  }
+  
+  public class getContextClass {
     @Test
-    public void getContextClass_returnsTheGivenClass() {
+    public void returnsTheGivenClass() {
+      TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.Two.class);
       assertThat(subject.getContextClass(), equalTo(JSpecExamples.Two.class));
     }
-    
-    @Test
-    public void getExamples_returnsAFieldExampleForEachItField() {
-      List<Example> examples = subject.getExamples().collect(toList());
-      assertThat(examples.stream().map(Example::getClass).collect(toList()),
-        contains(FieldExample.class, FieldExample.class));
-      assertThat(examples.stream().map(Example::describeBehavior).collect(toList()),
-        contains("first_test", "second_test"));
-    }
   }
   
-  public class givenAClassWithNoEstablishFields {
-    private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.One.class);
-    
-    @Test
-    public void getExamples_associatesANoOperationSetupFieldWithEachExample() {
-      assertThat(subject.getExamples().map(Example::describeSetup).collect(toList()), contains(equalTo("")));
+  public class getExamples {
+    public class givenAClassWith1OrMoreInitializationErrors {
+      private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.Empty.class);
+      
+      @Test
+      public void throwsIllegalStateExceptionContainingOneOfThem() {
+        assertThrows(IllegalStateException.class,
+          equalTo("Test context org.jspec.proto.JSpecExamples$Empty has one or more initialization errors"), 
+          NoExamplesException.class,
+          subject::getExamples);
+      }
     }
-  }
-  
-  public class givenAClassWith1EstablishField {
-    private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.EstablishOnce.class);
     
-    @Test
-    public void getExamples_associatesTheEstablishFieldWithEachExample() {
-      assertThat(subject.getExamples().map(Example::describeSetup).collect(toList()), contains(equalTo("that")));
+    public class givenAClassWithNoEstablishFields {
+      @Test
+      public void associatesANoOperationSetupFieldWithEachExample() {
+        TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.One.class);
+        assertThat(subject.getExamples().map(Example::describeSetup).collect(toList()), contains(equalTo("")));
+      }
+    }
+    
+    public class givenAClassWith1EstablishField {
+      @Test
+      public void associatesTheEstablishFieldWithEachExample() {
+        TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.EstablishOnceRunTwice.class);
+        assertThat(subject.getExamples().map(Example::describeSetup).collect(toList()), 
+          contains(equalTo("that"), equalTo("that")));
+      }
+    }
+    
+    public class givenAClassWith1OrMoreItFields {
+      private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.Two.class);
+      
+      @Test
+      public void returnsAFieldExampleForEachItField() {
+        List<Example> examples = subject.getExamples().collect(toList());
+        assertThat(examples.stream().map(Example::getClass).collect(toList()),
+          contains(FieldExample.class, FieldExample.class));
+        assertThat(examples.stream().map(Example::describeBehavior).collect(toList()),
+          contains("first_test", "second_test"));
+      }
     }
   }
 }
