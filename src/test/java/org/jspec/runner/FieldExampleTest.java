@@ -3,7 +3,6 @@ package org.jspec.runner;
 import static org.hamcrest.Matchers.*;
 import static org.jspec.util.Assertions.assertThrows;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -159,6 +158,7 @@ public class FieldExampleTest {
         Example subject = new FieldExample(arrangeField, actionField, assertionField);
         subject.run();
         assertThat(events, contains(
+          "JSpecExamples.FullFixture::new",
           "JSpecExamples.FullFixture::arrange",
           "JSpecExamples.FullFixture::act",
           "JSpecExamples.FullFixture::assert"));

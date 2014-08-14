@@ -84,31 +84,31 @@ public final class JSpecRunnerSteps {
   
   @Then("^the test runner should run the test within the context of the test fixture$")
   public void the_test_runner_should_run_the_test_within_the_context_of_the_test_fixture() throws Throwable {
-    assertThat(String.format("\nActual: %s", events), executedMethods(), hasSize(3));
+    assertThat(String.format("\nActual: %s", events), executedMethods(), hasSize(4));
   }
 
   @Then("^the test runner should run the Establish function first,.*$")
   public void the_test_runner_should_run_the_Establish_function_first() throws Throwable {
     assertThat(String.format("\nActual: %s", events),
-      executedMethods().get(0), equalTo("JSpecExamples.FullFixture::arrange"));
+      executedMethods().get(1), equalTo("JSpecExamples.FullFixture::arrange"));
   }
 
   @Then("^the test runner should run the Because function second,.*$")
   public void the_test_runner_should_run_the_Because_function_second() throws Throwable {
     assertThat(String.format("\nActual: %s", events),
-      executedMethods().get(1), equalTo("JSpecExamples.FullFixture::act"));
+      executedMethods().get(2), equalTo("JSpecExamples.FullFixture::act"));
   }
 
   @Then("^the test runner should run the It function third,.*$")
   public void the_test_runner_should_run_the_It_function_third() throws Throwable {
     assertThat(String.format("\nActual: %s", events),
-      executedMethods().get(2), equalTo("JSpecExamples.FullFixture::assert"));
+      executedMethods().get(3), equalTo("JSpecExamples.FullFixture::assert"));
   }
 
   @Then("^the test runner should run the Cleanup function fourth,.*$")
   public void the_test_runner_should_run_the_Cleanup_function_fourth() throws Throwable {
     assertThat(String.format("\nActual: %s", events),
-      executedMethods().get(42), equalTo("JSpecExamples.FullFixture::cleanup"));
+      executedMethods().get(4), equalTo("JSpecExamples.FullFixture::cleanup"));
   }
   
   private List<String> executedMethods() {
