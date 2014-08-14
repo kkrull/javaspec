@@ -16,10 +16,17 @@ public class JSpecExamples {
   
   public static class Empty {}
   
-  public static class EstablishTest {
+  public static class EstablishOnce {
     private String subject;
     Establish that = () -> subject = "established";
     It runs = () -> assertEquals("established", subject);
+  }
+  
+  public static class EstablishTwice {
+    private int numTimesEstablished;
+    Establish setup_part_one = () -> numTimesEstablished++;
+    Establish setup_part_two_not_allowed = () -> numTimesEstablished++;
+    It runs = () -> assertEquals(2, numTimesEstablished);
   }
   
   public static class FailingTest {

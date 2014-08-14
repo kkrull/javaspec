@@ -72,7 +72,7 @@ public final class JSpecRunnerSteps {
   
   @Given("^I have JSpec tests with an Establish block$")
   public void i_have_JSpec_tests_with_an_Establish_block() throws Throwable {
-    this.testClass = JSpecExamples.EstablishTest.class;
+    this.testClass = JSpecExamples.EstablishOnce.class;
   }
   
   @When("^I run the tests$")
