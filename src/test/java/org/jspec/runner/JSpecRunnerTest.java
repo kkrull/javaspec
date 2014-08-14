@@ -77,8 +77,8 @@ public class JSpecRunnerTest {
       
       @Test
       public void runsBetweenNotifyStartAndFinish() {
-        assertThat(events.stream().map(Event::getName).collect(toList()), 
-          contains(equalTo("testStarted"), equalTo("run::passing"), equalTo("testFinished")));
+        assertListEquals(ImmutableList.of("testStarted", "run::passing", "testFinished"),
+          events.stream().map(Event::getName).collect(toList()));
         assertThat(events.stream().map(Event::getDisplayName).collect(toList()), 
           contains(Matchers.startsWith("passing"), anything(), Matchers.startsWith("passing")));
       }

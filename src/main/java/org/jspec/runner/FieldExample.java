@@ -7,8 +7,8 @@ import org.jspec.dsl.Establish;
 import org.jspec.dsl.It;
 
 final class FieldExample implements Example {
-  private final Field setup;
-  private final Field behavior;
+  private final Field setup; //TODO KDK: Flag-style class to support optional setup kind of kludgy; try something else like Decorator or Template Methods
+  private final Field behavior; 
   
   FieldExample(Field setup, Field behavior) {
     this.setup = setup;

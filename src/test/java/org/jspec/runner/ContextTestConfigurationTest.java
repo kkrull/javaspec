@@ -3,6 +3,7 @@ package org.jspec.runner;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.jspec.util.Assertions.assertListEquals;
 import static org.jspec.util.Assertions.assertThrows;
 import static org.junit.Assert.assertThat;
 
@@ -14,6 +15,8 @@ import org.jspec.runner.ContextTestConfiguration.MultipleSetupFunctionsException
 import org.jspec.runner.ContextTestConfiguration.NoExamplesException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import com.google.common.collect.ImmutableList;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
@@ -78,8 +81,8 @@ public class ContextTestConfigurationTest {
       @Test
       public void associatesTheEstablishFieldWithEachExample() {
         TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.EstablishOnceRunTwice.class);
-        assertThat(subject.getExamples().map(Example::describeSetup).collect(toList()), 
-          contains(equalTo("that"), equalTo("that")));
+        assertListEquals(ImmutableList.of("that", "that"),
+          subject.getExamples().map(Example::describeSetup).collect(toList()));
       }
     }
     
@@ -89,10 +92,9 @@ public class ContextTestConfigurationTest {
       @Test
       public void returnsAFieldExampleForEachItField() {
         List<Example> examples = subject.getExamples().collect(toList());
-        assertThat(examples.stream().map(Example::getClass).collect(toList()),
-          contains(FieldExample.class, FieldExample.class));
         assertThat(examples.stream().map(Example::describeBehavior).collect(toList()),
           contains("first_test", "second_test"));
+        examples.stream().map(Example::getClass).forEach(x -> assertThat(x, equalTo(FieldExample.class)));
       }
     }
   }

@@ -152,6 +152,7 @@ public class FieldExampleTest {
       
       @Test
       public void accessingEstablishField_throwsTestSetupExceptionCausedByReflectionError() {
+        //No way for security manager to deny access to fields selectively => will fail if subject reflects on It first 
         Example subject = new FieldExample(establishField, itField);
         assertThrows(TestSetupException.class,
           is("Failed to access test function org.jspec.proto.JSpecExamples$EstablishOnce.that"),
