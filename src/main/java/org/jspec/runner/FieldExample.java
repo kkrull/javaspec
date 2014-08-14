@@ -3,6 +3,7 @@ package org.jspec.runner;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
+import org.jspec.dsl.Establish;
 import org.jspec.dsl.It;
 
 final class FieldExample implements Example {
@@ -27,6 +28,8 @@ final class FieldExample implements Example {
   @Override
   public void run() throws Exception {
     Object context = newContextObject();
+    Establish setupThunk = readSetupThunk(context);
+    
     It thunk;
     try {
       behavior.setAccessible(true);
@@ -34,6 +37,7 @@ final class FieldExample implements Example {
     } catch (Throwable t) {
       throw new TestRunException(behavior, t);
     }
+    setupThunk.run();
     thunk.run();
   }
 
@@ -55,6 +59,20 @@ final class FieldExample implements Example {
     return context;
   }
   
+  private Establish readSetupThunk(Object context) {
+    if(setup == null)
+      return () -> { return; };
+    
+    Establish thunk;
+    try {
+      setup.setAccessible(true);
+      thunk = (Establish) setup.get(context);
+    } catch (Throwable t) {
+      throw new TestSetupException(setup, t);
+    }
+    return thunk;
+  }
+  
   public static final class TestRunException extends RuntimeException {
     private static final long serialVersionUID = 1L;
     
@@ -69,6 +87,11 @@ final class FieldExample implements Example {
 
     public TestSetupException(Class<?> context, Throwable cause) {
       super(String.format("Failed to construct test context %s", context.getName()), cause);
+    }
+    
+    public TestSetupException(Field exampleField, Throwable cause) {
+      super(String.format("Failed to access example setup defined by %s.%s", 
+        exampleField.getDeclaringClass().getName(), exampleField.getName()), cause);
     }
   }
   

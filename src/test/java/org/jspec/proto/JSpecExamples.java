@@ -17,9 +17,22 @@ public class JSpecExamples {
   public static class Empty {}
   
   public static class EstablishOnce {
+    private static final Consumer<String> NOP = x -> { return; };
+    private static Consumer<String> notifyEvent = NOP;
+    
+    public static void setEventListener(Consumer<String> newConsumer) {
+      notifyEvent = newConsumer == null ? NOP : newConsumer;
+    }
+    
     private String subject;
-    Establish that = () -> subject = "established";
-    It runs = () -> assertEquals("established", subject);
+    Establish that = () -> {
+      notifyEvent.accept("JSpecExamples.EstablishOnce::that");
+      subject = "established";
+    };
+    It runs = () -> {
+      notifyEvent.accept("JSpecExamples.EstablishOnce::runs");
+      assertEquals("established", subject);
+    };
   }
   
   public static class EstablishOnceRunTwice {
@@ -34,6 +47,11 @@ public class JSpecExamples {
     Establish setup_part_one = () -> numTimesEstablished++;
     Establish setup_part_two_not_allowed = () -> numTimesEstablished++;
     It runs = () -> assertEquals(2, numTimesEstablished);
+  }
+  
+  public static class FailingEstablish {
+    Establish flawed_setup = () -> { throw new UnsupportedOperationException("flawed_setup"); };
+    It will_never_run = () -> assertEquals(42, 42);
   }
   
   public static class FailingTest {

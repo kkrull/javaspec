@@ -12,13 +12,13 @@ import java.security.Permission;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.jspec.dsl.Establish;
 import org.jspec.dsl.It;
 import org.jspec.proto.JSpecExamples;
 import org.jspec.runner.FieldExample.TestRunException;
 import org.jspec.runner.FieldExample.TestSetupException;
 import org.jspec.runner.FieldExample.UnsupportedConstructorException;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,18 +27,31 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 @RunWith(HierarchicalContextRunner.class)
 public class FieldExampleTest {
-  @Test
-  public void givenAnEstablishField_describesAndRunsIt() {
-    Assert.fail("pending");
-  }
-  
   public class describeBehavior {
     It describesADesiredBehavior;
     
     @Test
     public void returnsTheNameOfTheField() throws Exception {
       Example subject = new FieldExample(null, getClass().getDeclaredField("describesADesiredBehavior"));
-      assertThat(subject.describeBehavior(), is("describesADesiredBehavior"));
+      assertThat(subject.describeBehavior(), equalTo("describesADesiredBehavior"));
+    }
+  }
+  
+  public class describeSetup {
+    Establish somethingINeedToRunMyTest;
+    It describesADesiredBehavior;
+    
+    @Test
+    public void givenNoSetup_returnsEmptyString() throws Exception {
+      Example subject = new FieldExample(null, getClass().getDeclaredField("describesADesiredBehavior"));
+      assertThat(subject.describeBehavior(), equalTo("describesADesiredBehavior"));
+    }
+    
+    @Test
+    public void givenAField_returnsTheNameOfTheField() throws Exception {
+      Example subject = new FieldExample(getClass().getDeclaredField("somethingINeedToRunMyTest"),
+        getClass().getDeclaredField("describesADesiredBehavior"));
+      assertThat(subject.describeSetup(), equalTo("somethingINeedToRunMyTest"));
     }
   }
   
@@ -78,38 +91,52 @@ public class FieldExampleTest {
       }
     }
     
-    public class givenAnAccessibleItField {
-      private final Example subject;
+    public class givenAccessibleFields {
+      private Field establishField;
+      private Field establishedItField;
+      private Field itField;
       
-      public givenAnAccessibleItField() throws Exception {
-        Field field = JSpecExamples.One.class.getDeclaredField("only_test");
-        this.subject = new FieldExample(null, field);
+      public givenAccessibleFields() throws Exception {
+        this.establishField = JSpecExamples.EstablishOnce.class.getDeclaredField("that");
+        this.establishedItField = JSpecExamples.EstablishOnce.class.getDeclaredField("runs");
+        this.itField = JSpecExamples.One.class.getDeclaredField("only_test");
       }
       
       @Before
       public void spy() throws Exception {
         JSpecExamples.One.setEventListener(events::add);
-        this.subject.run();
+        JSpecExamples.EstablishOnce.setEventListener(events::add);
       }
       
       @After
       public void releaseSpy() {
         JSpecExamples.One.setEventListener(null);
+        JSpecExamples.EstablishOnce.setEventListener(null);
       }
       
       @Test
-      public void constructsTheContextClassThenRunsTheFunctionAssignedToTheGivenField() {
+      public void constructsTheContextClassThenRunsTheFunctionAssignedToTheItField() throws Exception {
+        Example subject = new FieldExample(null, itField);
+        subject.run();
         assertThat(events, contains("JSpecExamples.One::new", "JSpecExamples.One::only_test"));
+      }
+      
+      @Test
+      public void runsTheSetupFunctionBeforeTheItFunction() throws Exception {
+        Example subject = new FieldExample(establishField, establishedItField);
+        subject.run();
+        assertThat(events, contains("JSpecExamples.EstablishOnce::that", "JSpecExamples.EstablishOnce::runs"));
       }
     }
     
-    public class whenAnItFieldCanNotBeAccessed {
-      private final Example subject;
-      SecurityManager originalManager;
+    public class whenAFieldCanNotBeAccessed {
+      private SecurityManager originalManager;
+      private final Field establishField;
+      private final Field itField;
       
-      public whenAnItFieldCanNotBeAccessed() throws Exception {
-        Field field = JSpecExamples.One.class.getDeclaredField("only_test");
-        this.subject = new FieldExample(null, field);
+      public whenAFieldCanNotBeAccessed() throws Exception {
+        this.establishField = JSpecExamples.EstablishOnce.class.getDeclaredField("that");
+        this.itField = JSpecExamples.One.class.getDeclaredField("only_test");
       }
       
       @Before
@@ -120,11 +147,21 @@ public class FieldExampleTest {
       
       @After
       public void unstub() {
-        System.setSecurityManager(null);
+        System.setSecurityManager(originalManager);
       }
       
       @Test
-      public void throwsTestSetupExceptionCausedByTheConstructorInvocation() {
+      public void accessingEstablishField_throwsTestSetupExceptionCausedByReflectionError() {
+        Example subject = new FieldExample(establishField, itField);
+        assertThrows(TestSetupException.class,
+          is("Failed to access example setup defined by org.jspec.proto.JSpecExamples$EstablishOnce.that"),
+          AccessControlException.class,
+          subject::run);
+      }
+      
+      @Test
+      public void accessingItField_throwsTestSetupExceptionCausedByReflectionError() {
+        Example subject = new FieldExample(null, itField);
         assertThrows(TestRunException.class,
           is("Failed to access example behavior defined by org.jspec.proto.JSpecExamples$One.only_test"),
           AccessControlException.class,
@@ -132,9 +169,19 @@ public class FieldExampleTest {
       }
     }
     
-    public class whenABehaviorThrows {
+    public class whenAnEstablishFunctionThrows {
       @Test
-      public void throwsWhateverTheExampleThrew() throws Exception {
+      public void throwsWhateverTheFunctionThrew() throws Exception {
+        Example subject = new FieldExample(
+          JSpecExamples.FailingEstablish.class.getDeclaredField("flawed_setup"),
+          JSpecExamples.FailingEstablish.class.getDeclaredField("will_never_run"));
+        assertThrows(UnsupportedOperationException.class, equalTo("flawed_setup"), subject::run);
+      }
+    }
+    
+    public class whenAnItFunctionThrows {
+      @Test
+      public void throwsWhateverTheFunctionThrew() throws Exception {
         Field field = JSpecExamples.FailingTest.class.getDeclaredField("fails");
         Example subject = new FieldExample(null, field);
         assertThrows(AssertionError.class, anything(), subject::run);
