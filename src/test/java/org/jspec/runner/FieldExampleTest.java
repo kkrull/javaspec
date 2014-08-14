@@ -3,13 +3,9 @@ package org.jspec.runner;
 import static org.hamcrest.Matchers.*;
 import static org.jspec.util.Assertions.assertThrows;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assume.assumeThat;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.ReflectPermission;
-import java.security.AccessControlException;
-import java.security.Permission;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,7 +16,6 @@ import org.jspec.proto.JSpecExamples;
 import org.jspec.runner.FieldExample.TestSetupException;
 import org.jspec.runner.FieldExample.UnsupportedConstructorException;
 import org.junit.After;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -114,10 +109,10 @@ public class FieldExampleTest {
       private final Example subject;
       
       public givenAccessibleFields() throws Exception {
-        Field arrangeField = JSpecExamples.FullFixture.class.getDeclaredField("arranges");
-        Field actionField = JSpecExamples.FullFixture.class.getDeclaredField("acts");
-        Field assertionField = JSpecExamples.FullFixture.class.getDeclaredField("asserts");
-        this.subject = new FieldExample(arrangeField, actionField, assertionField);
+        this.subject = new FieldExample(
+          JSpecExamples.FullFixture.class.getDeclaredField("arranges"),
+          JSpecExamples.FullFixture.class.getDeclaredField("acts"), 
+          JSpecExamples.FullFixture.class.getDeclaredField("asserts"));
       }
       
       @Before
@@ -156,19 +151,25 @@ public class FieldExampleTest {
       }
     }
     
-    public class whenAnEstablishFunctionThrows {
+    public class whenATestFunctionThrows {
       @Test
-      public void throwsWhateverTheFunctionThrew() throws Exception {
+      public void throwsWhateverEstablishThrows() throws Exception {
         Example subject = new FieldExample(
           JSpecExamples.FailingEstablish.class.getDeclaredField("flawed_setup"), null,
           JSpecExamples.FailingEstablish.class.getDeclaredField("will_never_run"));
         assertThrows(UnsupportedOperationException.class, equalTo("flawed_setup"), subject::run);
       }
-    }
-    
-    public class whenAnItFunctionThrows {
+      
       @Test
-      public void throwsWhateverTheFunctionThrew() throws Exception {
+      public void throwsWhateverBecauseThrows() throws Exception {
+        Example subject = new FieldExample(
+          null, JSpecExamples.FailingBecause.class.getDeclaredField("flawed_action"),
+          JSpecExamples.FailingBecause.class.getDeclaredField("will_never_run"));
+        assertThrows(UnsupportedOperationException.class, equalTo("flawed_action"), subject::run);
+      }
+      
+      @Test
+      public void throwsWhateverItThrows() throws Exception {
         Field field = JSpecExamples.FailingTest.class.getDeclaredField("fails");
         Example subject = new FieldExample(null, null, field);
         assertThrows(AssertionError.class, anything(), subject::run);
