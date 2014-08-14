@@ -9,6 +9,13 @@ import org.junit.Ignore;
 
 /** Inner classes are declared static to avoid the gaze of HierarchicalContextRunner when testing JSpec. */
 public class JSpecExamples {
+  public static class BecauseTwice {
+    private int numActions;
+    Because act_part_one = () -> numActions++;
+    Because act_part_two_or_is_this_part_one = () -> numActions++;
+    It runs = () -> assertEquals(2, numActions);
+  }
+  
   public static class ConstructorHasArguments {
     public ConstructorHasArguments(int _id) { }
     It is_otherwise_valid = () -> assertEquals(1, 1);
@@ -68,6 +75,25 @@ public class JSpecExamples {
   public static class FaultyClassInitializer {
     static { assertEquals(1, 2); }
     It is_otherwise_valid = () -> assertEquals(1, 1);
+  }
+  
+  public static class FullFixture { //TODO KDK: Maybe these can all extend an abstract base class to share the notification behavior; then all of them could log w/ minimal effort
+    private static final Consumer<String> NOP = x -> { return; };
+    private static Consumer<String> notifyEvent = NOP;
+    
+    public static void setEventListener(Consumer<String> newConsumer) {
+      notifyEvent = newConsumer == null ? NOP : newConsumer;
+    }
+    
+    private String subject;
+    Establish arranges = () -> {
+      notifyEvent.accept("JSpecExamples.FullFixture::arrange");
+      subject = "established";
+    };
+    It asserts = () -> {
+      notifyEvent.accept("JSpecExamples.FullFixture::assert");
+      assertEquals("established", subject);
+    };
   }
   
   public static class HiddenConstructor {

@@ -1,9 +1,9 @@
 package org.jspec.steps;
 
 import static java.util.Collections.synchronizedList;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,12 +30,14 @@ public final class JSpecRunnerSteps {
   public void setupTestExecutionSpy() {
     JSpecExamples.One.setEventListener(events::add);
     RunWithJSpecRunner.setEventListener(events::add);
+    JSpecExamples.FullFixture.setEventListener(events::add);
   }
   
   @After
   public void recallSpies() {
     JSpecExamples.One.setEventListener(null);
     RunWithJSpecRunner.setEventListener(null);
+    JSpecExamples.FullFixture.setEventListener(null);
   }
 
   @Given("^I have a class with JSpec tests in it$")
@@ -70,19 +72,46 @@ public final class JSpecRunnerSteps {
       events, hasItems("RunWithJSpecRunner::only_test"));
   }
   
-  @Given("^I have JSpec tests with an Establish block$")
-  public void i_have_JSpec_tests_with_an_Establish_block() throws Throwable {
-    this.testClass = JSpecExamples.EstablishOnce.class;
-  }
-  
-  @When("^I run the tests$")
-  public void i_run_the_tests() throws Throwable {
-    Runners.runAll(Runners.of(testClass), notifyEventName);
+  @Given("^I have JSpec test with test fixture functions$")
+  public void i_have_JSpec_test_with_test_fixture_functions() throws Throwable {
+    this.testClass = JSpecExamples.FullFixture.class;
   }
 
-  @Then("^the test runner should run the Establish block before each test$")
-  public void the_test_runner_should_run_the_Establish_block_before_each_test() throws Throwable {
+  @When("^I run the test$")
+  public void i_run_the_test() throws Throwable {
+    Runners.runAll(Runners.of(testClass), notifyEventName);
+  }
+  
+  @Then("^the test runner should run the test within the context of the test fixture$")
+  public void the_test_runner_should_run_the_test_within_the_context_of_the_test_fixture() throws Throwable {
+    assertThat(String.format("\nActual: %s", events), executedMethods(), hasSize(3));
+  }
+
+  @Then("^the test runner should run the Establish function first,.*$")
+  public void the_test_runner_should_run_the_Establish_function_first() throws Throwable {
     assertThat(String.format("\nActual: %s", events),
-      events, contains("testStarted", "testFinished"));
+      executedMethods().get(0), equalTo("JSpecExamples.FullFixture::arrange"));
+  }
+
+  @Then("^the test runner should run the Because function second,.*$")
+  public void the_test_runner_should_run_the_Because_function_second() throws Throwable {
+    assertThat(String.format("\nActual: %s", events),
+      executedMethods().get(1), equalTo("JSpecExamples.FullFixture::act"));
+  }
+
+  @Then("^the test runner should run the It function third,.*$")
+  public void the_test_runner_should_run_the_It_function_third() throws Throwable {
+    assertThat(String.format("\nActual: %s", events),
+      executedMethods().get(2), equalTo("JSpecExamples.FullFixture::assert"));
+  }
+
+  @Then("^the test runner should run the Cleanup function fourth,.*$")
+  public void the_test_runner_should_run_the_Cleanup_function_fourth() throws Throwable {
+    assertThat(String.format("\nActual: %s", events),
+      executedMethods().get(42), equalTo("JSpecExamples.FullFixture::cleanup"));
+  }
+  
+  private List<String> executedMethods() {
+    return events.stream().filter(x -> !x.startsWith("test")).collect(toList());
   }
 }

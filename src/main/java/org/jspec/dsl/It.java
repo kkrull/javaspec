@@ -1,7 +1,7 @@
 package org.jspec.dsl;
 
 /**
- * The basic building block for a single test.  Include one or more of these in each test class, like so:
+ * The Assert part of running a test.  Include one or more of these in each test class, like so:
  * <code>
  * @RunWith(JSpecRunner.class)
  * public class WidgetFooTest {
@@ -9,8 +9,8 @@ package org.jspec.dsl;
  *   private final String returned;
  *   
  *   public SpecTests() {
- *     Widget subject = new Widget(printStreamSpy);
- *     this.returned = subject.foo();
+ *     Widget subject = new Widget(printStreamSpy); //NB: You can also do this in an Establish block
+ *     this.returned = subject.foo(); //NB: You can also do this in a Because block
  *   }
  *   
  *   It returns_bar = () -> assertEquals("bar", returned);
