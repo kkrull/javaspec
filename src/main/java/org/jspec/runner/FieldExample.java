@@ -28,17 +28,11 @@ final class FieldExample implements Example {
   @Override
   public void run() throws Exception {
     Object context = newContextObject();
-    Establish setupThunk = readSetupThunk(context);
+    Establish setupThunk = setup == null ? () -> { return; } : (Establish)readField(context, setup);
+    It behaviorThunk = (It)readField(context, behavior);
     
-    It thunk;
-    try {
-      behavior.setAccessible(true);
-      thunk = (It) behavior.get(context);
-    } catch (Throwable t) {
-      throw new TestRunException(behavior, t);
-    }
     setupThunk.run();
-    thunk.run();
+    behaviorThunk.run();
   }
 
   private Object newContextObject() {
@@ -59,27 +53,15 @@ final class FieldExample implements Example {
     return context;
   }
   
-  private Establish readSetupThunk(Object context) {
-    if(setup == null)
-      return () -> { return; };
-    
-    Establish thunk;
+  private Object readField(Object context, Field field) {
+    Object thunk;
     try {
-      setup.setAccessible(true);
-      thunk = (Establish) setup.get(context);
+      field.setAccessible(true);
+      thunk = field.get(context);
     } catch (Throwable t) {
-      throw new TestSetupException(setup, t);
+      throw new TestSetupException(field, t);
     }
     return thunk;
-  }
-  
-  public static final class TestRunException extends RuntimeException {
-    private static final long serialVersionUID = 1L;
-    
-    public TestRunException(Field exampleField, Throwable cause) {
-      super(String.format("Failed to access example behavior defined by %s.%s", 
-        exampleField.getDeclaringClass().getName(), exampleField.getName()), cause);
-    }
   }
   
   public static final class TestSetupException extends RuntimeException {
@@ -90,7 +72,7 @@ final class FieldExample implements Example {
     }
     
     public TestSetupException(Field exampleField, Throwable cause) {
-      super(String.format("Failed to access example setup defined by %s.%s", 
+      super(String.format("Failed to access test function %s.%s", 
         exampleField.getDeclaringClass().getName(), exampleField.getName()), cause);
     }
   }

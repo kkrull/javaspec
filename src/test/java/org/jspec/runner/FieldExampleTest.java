@@ -15,7 +15,6 @@ import java.util.List;
 import org.jspec.dsl.Establish;
 import org.jspec.dsl.It;
 import org.jspec.proto.JSpecExamples;
-import org.jspec.runner.FieldExample.TestRunException;
 import org.jspec.runner.FieldExample.TestSetupException;
 import org.jspec.runner.FieldExample.UnsupportedConstructorException;
 import org.junit.After;
@@ -135,6 +134,7 @@ public class FieldExampleTest {
       private final Field itField;
       
       public whenAFieldCanNotBeAccessed() throws Exception {
+        //Access the fields *before* putting in the restricted security manager
         this.establishField = JSpecExamples.EstablishOnce.class.getDeclaredField("that");
         this.itField = JSpecExamples.One.class.getDeclaredField("only_test");
       }
@@ -154,7 +154,7 @@ public class FieldExampleTest {
       public void accessingEstablishField_throwsTestSetupExceptionCausedByReflectionError() {
         Example subject = new FieldExample(establishField, itField);
         assertThrows(TestSetupException.class,
-          is("Failed to access example setup defined by org.jspec.proto.JSpecExamples$EstablishOnce.that"),
+          is("Failed to access test function org.jspec.proto.JSpecExamples$EstablishOnce.that"),
           AccessControlException.class,
           subject::run);
       }
@@ -162,8 +162,8 @@ public class FieldExampleTest {
       @Test
       public void accessingItField_throwsTestSetupExceptionCausedByReflectionError() {
         Example subject = new FieldExample(null, itField);
-        assertThrows(TestRunException.class,
-          is("Failed to access example behavior defined by org.jspec.proto.JSpecExamples$One.only_test"),
+        assertThrows(TestSetupException.class,
+          is("Failed to access test function org.jspec.proto.JSpecExamples$One.only_test"),
           AccessControlException.class,
           subject::run);
       }
