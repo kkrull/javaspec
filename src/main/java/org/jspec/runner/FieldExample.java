@@ -6,15 +6,22 @@ import java.lang.reflect.Field;
 import org.jspec.dsl.It;
 
 final class FieldExample implements Example {
+  private final Field setup;
   private final Field behavior;
   
-  FieldExample(Field behavior) {
+  FieldExample(Field setup, Field behavior) {
+    this.setup = setup;
     this.behavior = behavior;
   }
   
   @Override
   public String describeBehavior() {
     return behavior.getName();
+  }
+  
+  @Override
+  public String describeSetup() {
+    return setup == null ? "" : setup.getName();
   }
   
   @Override

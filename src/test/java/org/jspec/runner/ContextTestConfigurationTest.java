@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jspec.proto.JSpecExamples;
+import org.jspec.runner.ContextTestConfiguration.MultipleSetupFunctionsException;
 import org.jspec.runner.ContextTestConfiguration.NoExamplesException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +25,7 @@ public class ContextTestConfigurationTest {
     @Test
     public void findsInitializationErrors_containsNoExamplesException() {
       assertThat(subject.findInitializationErrors().stream().map(x -> x.getClass()).collect(toList()),
-        contains(NoExamplesException.class));
+        contains(equalTo(NoExamplesException.class)));
     }
 
     @Test
@@ -35,7 +36,17 @@ public class ContextTestConfigurationTest {
     }
   }
 
-  public class givenAClassWithOneOrMoreItFields {
+  public class givenAClassWith2OrMoreEstablishFields {
+    private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.EstablishTwice.class);
+    
+    @Test
+    public void findsInitializationErrors_containsMultipleSetupFunctionsException() {
+      assertThat(subject.findInitializationErrors().stream().map(x -> x.getClass()).collect(toList()),
+        contains(equalTo(MultipleSetupFunctionsException.class)));
+    }
+  }
+  
+  public class givenAClassWith1OrMoreItFields {
     private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.Two.class);
 
     @Test
@@ -55,6 +66,24 @@ public class ContextTestConfigurationTest {
         contains(FieldExample.class, FieldExample.class));
       assertThat(examples.stream().map(Example::describeBehavior).collect(toList()),
         contains("first_test", "second_test"));
+    }
+  }
+  
+  public class givenAClassWithNoEstablishFields {
+    private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.One.class);
+    
+    @Test
+    public void getExamples_associatesANoOperationSetupFieldWithEachExample() {
+      assertThat(subject.getExamples().map(Example::describeSetup).collect(toList()), contains(equalTo("")));
+    }
+  }
+  
+  public class givenAClassWith1EstablishField {
+    private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.EstablishOnce.class);
+    
+    @Test
+    public void getExamples_associatesTheEstablishFieldWithEachExample() {
+      assertThat(subject.getExamples().map(Example::describeSetup).collect(toList()), contains(equalTo("that")));
     }
   }
 }

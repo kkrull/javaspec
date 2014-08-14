@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
-import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableList;
 
@@ -143,6 +142,9 @@ public class JSpecRunnerTest {
     return new Example() {
       @Override
       public String describeBehavior() { return behaviorName; }
+      
+      @Override
+      public String describeSetup() { return ""; }
 
       @Override
       public void run() { notify.accept(Event.named("run::" + behaviorName)); }

@@ -31,7 +31,7 @@ public class FieldExampleTest {
     
     @Test
     public void returnsTheNameOfTheField() throws Exception {
-      Example subject = new FieldExample(getClass().getDeclaredField("describesADesiredBehavior"));
+      Example subject = new FieldExample(null, getClass().getDeclaredField("describesADesiredBehavior"));
       assertThat(subject.describeBehavior(), is("describesADesiredBehavior"));
     }
   }
@@ -48,7 +48,7 @@ public class FieldExampleTest {
       
       private void assertThrowsUnsupportedConstructorException(Class<?> context, String itFieldName) throws Exception {
         Field field = context.getDeclaredField(itFieldName);
-        Example subject = new FieldExample(field);
+        Example subject = new FieldExample(null, field);
         assertThrows(UnsupportedConstructorException.class,
           is(String.format("Unable to find a no-argument constructor for class %s", context.getName())),
           NoSuchMethodException.class, subject::run);
@@ -65,7 +65,7 @@ public class FieldExampleTest {
       }
       
       private void assertTestSetupException(Field field, Class<? extends Throwable> expectedCause) {
-        Example subject = new FieldExample(field);
+        Example subject = new FieldExample(null, field);
         assertThrows(TestSetupException.class, 
           is(String.format("Failed to construct test context %s", field.getDeclaringClass().getName())),
           expectedCause, subject::run);
@@ -77,7 +77,7 @@ public class FieldExampleTest {
       
       public givenAnAccessibleItField() throws Exception {
         Field field = JSpecExamples.One.class.getDeclaredField("only_test");
-        this.subject = new FieldExample(field);
+        this.subject = new FieldExample(null, field);
       }
       
       @Before
@@ -103,7 +103,7 @@ public class FieldExampleTest {
       
       public whenAnItFieldCanNotBeAccessed() throws Exception {
         Field field = JSpecExamples.One.class.getDeclaredField("only_test");
-        this.subject = new FieldExample(field);
+        this.subject = new FieldExample(null, field);
       }
       
       @Before
@@ -130,7 +130,7 @@ public class FieldExampleTest {
       @Test
       public void throwsWhateverTheExampleThrew() throws Exception {
         Field field = JSpecExamples.FailingTest.class.getDeclaredField("fails");
-        Example subject = new FieldExample(field);
+        Example subject = new FieldExample(null, field);
         assertThrows(AssertionError.class, anything(), subject::run);
       }
     }
