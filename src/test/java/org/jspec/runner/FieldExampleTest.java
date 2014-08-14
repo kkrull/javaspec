@@ -114,23 +114,30 @@ public class FieldExampleTest {
       private Field establishField;
       private Field establishedItField;
       private Field itField;
+      private final Field arrangeField, actionField, assertionField;
       
       public givenAccessibleFields() throws Exception {
         this.establishField = JSpecExamples.EstablishOnce.class.getDeclaredField("that");
         this.establishedItField = JSpecExamples.EstablishOnce.class.getDeclaredField("runs");
         this.itField = JSpecExamples.One.class.getDeclaredField("only_test");
+        
+        this.arrangeField = JSpecExamples.FullFixture.class.getDeclaredField("arranges");
+        this.actionField = JSpecExamples.FullFixture.class.getDeclaredField("acts");
+        this.assertionField = JSpecExamples.FullFixture.class.getDeclaredField("asserts");
       }
       
       @Before
       public void spy() throws Exception {
         JSpecExamples.One.setEventListener(events::add);
         JSpecExamples.EstablishOnce.setEventListener(events::add);
+        JSpecExamples.FullFixture.setEventListener(events::add);
       }
       
       @After
       public void releaseSpy() {
         JSpecExamples.One.setEventListener(null);
         JSpecExamples.EstablishOnce.setEventListener(null);
+        JSpecExamples.FullFixture.setEventListener(null);
       }
       
       @Test
@@ -149,7 +156,12 @@ public class FieldExampleTest {
       
       @Test
       public void runsTheActionFunctionBeforeTheItFunction() throws Exception {
-        fail("pending");
+        Example subject = new FieldExample(arrangeField, actionField, assertionField);
+        subject.run();
+        assertThat(events, contains(
+          "JSpecExamples.FullFixture::arrange",
+          "JSpecExamples.FullFixture::act",
+          "JSpecExamples.FullFixture::assert"));
       }
     }
     

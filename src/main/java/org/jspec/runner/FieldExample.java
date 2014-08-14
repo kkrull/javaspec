@@ -3,52 +3,55 @@ package org.jspec.runner;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
+import org.jspec.dsl.Because;
 import org.jspec.dsl.Establish;
 import org.jspec.dsl.It;
 
 final class FieldExample implements Example {
-  private final Field setup; //TODO KDK: Flag-style class to support optional setup kind of kludgy; try something else like Decorator or Template Methods
-  private final Field action; 
-  private final Field behavior; 
+  private final Field arrangeField; //TODO KDK: Flag-style class to support optional setup kind of kludgy; try something else like Decorator or Template Methods
+  private final Field actionField; 
+  private final Field assertionField; 
   
-  FieldExample(Field setup, Field action, Field behavior) {
-    this.setup = setup;
-    this.action = action;
-    this.behavior = behavior;
+  FieldExample(Field arrangeField, Field actionField, Field assertionField) {
+    this.arrangeField = arrangeField;
+    this.actionField = actionField;
+    this.assertionField = assertionField;
   }
   
   @Override
   public String describeSetup() {
-    return setup == null ? "" : setup.getName();
+    return arrangeField == null ? "" : arrangeField.getName();
   }
   
   @Override
   public String describeAction() {
-    return action == null ? "" : action.getName();
+    return actionField == null ? "" : actionField.getName();
   }
   
   @Override
   public String describeBehavior() {
-    return behavior.getName();
+    return assertionField.getName();
   }
   
   @Override
   public void run() throws Exception {
     Object context = newContextObject();
-    Establish setupThunk = setup == null ? () -> { return; } : (Establish)readField(context, setup);
-    It behaviorThunk = (It)readField(context, behavior);
+    Establish arrange = arrangeField == null ? () -> { return; } : (Establish)readField(context, arrangeField);
+    Because action = actionField == null ? () -> { return; } : (Because)readField(context, actionField);
+    It assertion = (It)readField(context, assertionField);
     
-    setupThunk.run();
-    behaviorThunk.run();
+    arrange.run();
+    action.run();
+    assertion.run();
   }
 
   private Object newContextObject() {
     Constructor<?> noArgConstructor;
     try {
-      Class<?> contextClass = behavior.getDeclaringClass();
+      Class<?> contextClass = assertionField.getDeclaringClass();
       noArgConstructor = contextClass.getConstructor();
     } catch (Exception e) {
-      throw new UnsupportedConstructorException(behavior.getDeclaringClass(), e);
+      throw new UnsupportedConstructorException(assertionField.getDeclaringClass(), e);
     }
 
     Object context;

@@ -43,9 +43,9 @@ final class ContextTestConfiguration implements TestConfiguration {
       throw new IllegalStateException(msg, initializationErrors.get(0));
     }
     
-    Field establish = onlyFieldOrNull(Establish.class);
-    Field because = onlyFieldOrNull(Because.class);
-    return ReflectionUtil.fieldsOfType(It.class, contextClass).map(it -> new FieldExample(establish, because, it));
+    Field arrange = onlyFieldOrNull(Establish.class);
+    Field act = onlyFieldOrNull(Because.class);
+    return ReflectionUtil.fieldsOfType(It.class, contextClass).map(it -> new FieldExample(arrange, act, it));
   }
   
   private boolean hasNoTests() {
