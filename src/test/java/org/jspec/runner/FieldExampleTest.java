@@ -3,6 +3,7 @@ package org.jspec.runner;
 import static org.hamcrest.Matchers.*;
 import static org.jspec.util.Assertions.assertThrows;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeThat;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -19,6 +20,7 @@ import org.jspec.proto.JSpecExamples;
 import org.jspec.runner.FieldExample.TestSetupException;
 import org.jspec.runner.FieldExample.UnsupportedConstructorException;
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -74,8 +76,6 @@ public class FieldExampleTest {
   }
   
   public class run {
-    protected final List<String> events = new LinkedList<String>();
-    
     public class givenAClassWithoutACallableNoArgConstructor {
       @Test
       public void ThrowsUnsupportedConstructorException() throws Exception  {
@@ -104,59 +104,35 @@ public class FieldExampleTest {
       private void assertTestSetupException(Field field, Class<? extends Throwable> expectedCause) {
         Example subject = new FieldExample(null, null, field);
         assertThrows(TestSetupException.class, 
-          is(String.format("Failed to construct test context %s", field.getDeclaringClass().getName())),
+          is(String.format("Failed to create test context %s", field.getDeclaringClass().getName())),
           expectedCause, subject::run);
       }
     }
     
     public class givenAccessibleFields {
-      private Field establishField;
-      private Field establishedItField;
-      private Field itField;
-      private final Field arrangeField, actionField, assertionField;
+      private final List<String> events = new LinkedList<String>();
+      private final Example subject;
       
       public givenAccessibleFields() throws Exception {
-        this.establishField = JSpecExamples.EstablishOnce.class.getDeclaredField("that");
-        this.establishedItField = JSpecExamples.EstablishOnce.class.getDeclaredField("runs");
-        this.itField = JSpecExamples.One.class.getDeclaredField("only_test");
-        
-        this.arrangeField = JSpecExamples.FullFixture.class.getDeclaredField("arranges");
-        this.actionField = JSpecExamples.FullFixture.class.getDeclaredField("acts");
-        this.assertionField = JSpecExamples.FullFixture.class.getDeclaredField("asserts");
+        Field arrangeField = JSpecExamples.FullFixture.class.getDeclaredField("arranges");
+        Field actionField = JSpecExamples.FullFixture.class.getDeclaredField("acts");
+        Field assertionField = JSpecExamples.FullFixture.class.getDeclaredField("asserts");
+        this.subject = new FieldExample(arrangeField, actionField, assertionField);
       }
       
       @Before
       public void spy() throws Exception {
-        JSpecExamples.One.setEventListener(events::add);
-        JSpecExamples.EstablishOnce.setEventListener(events::add);
         JSpecExamples.FullFixture.setEventListener(events::add);
+        subject.run();
       }
       
       @After
       public void releaseSpy() {
-        JSpecExamples.One.setEventListener(null);
-        JSpecExamples.EstablishOnce.setEventListener(null);
         JSpecExamples.FullFixture.setEventListener(null);
       }
       
       @Test
-      public void constructsTheContextClassThenRunsTheFunctionAssignedToTheItField() throws Exception {
-        Example subject = new FieldExample(null, null, itField);
-        subject.run();
-        assertThat(events, contains("JSpecExamples.One::new", "JSpecExamples.One::only_test"));
-      }
-      
-      @Test
-      public void runsTheSetupFunctionBeforeTheItFunction() throws Exception {
-        Example subject = new FieldExample(establishField, null, establishedItField);
-        subject.run();
-        assertThat(events, contains("JSpecExamples.EstablishOnce::that", "JSpecExamples.EstablishOnce::runs"));
-      }
-      
-      @Test
       public void runsTheActionFunctionBeforeTheItFunction() throws Exception {
-        Example subject = new FieldExample(arrangeField, actionField, assertionField);
-        subject.run();
         assertThat(events, contains(
           "JSpecExamples.FullFixture::new",
           "JSpecExamples.FullFixture::arrange",
@@ -166,43 +142,16 @@ public class FieldExampleTest {
     }
     
     public class whenAFieldCanNotBeAccessed {
-      private SecurityManager originalManager;
-      private final Field establishField;
-      private final Field itField;
+      private final Example subject;
       
       public whenAFieldCanNotBeAccessed() throws Exception {
-        //Access the fields *before* putting in the restricted security manager
-        this.establishField = JSpecExamples.EstablishOnce.class.getDeclaredField("that");
-        this.itField = JSpecExamples.One.class.getDeclaredField("only_test");
-      }
-      
-      @Before
-      public void stubSecurityManager() {
-        this.originalManager = System.getSecurityManager();
-        System.setSecurityManager(new NoReflectionForYouSecurityManager());
-      }
-      
-      @After
-      public void unstub() {
-        System.setSecurityManager(originalManager);
+        this.subject = new FieldExample(null, null, HasWrongType.class.getDeclaredField("inaccessibleAsIt"));
       }
       
       @Test
-      public void accessingEstablishField_throwsTestSetupExceptionCausedByReflectionError() {
-        //No way for security manager to deny access to fields selectively => will fail if subject reflects on It first 
-        Example subject = new FieldExample(establishField, null, itField);
-        assertThrows(TestSetupException.class,
-          is("Failed to access test function org.jspec.proto.JSpecExamples$EstablishOnce.that"),
-          AccessControlException.class,
-          subject::run);
-      }
-      
-      @Test
-      public void accessingItField_throwsTestSetupExceptionCausedByReflectionError() {
-        Example subject = new FieldExample(null, null, itField);
-        assertThrows(TestSetupException.class,
-          is("Failed to access test function org.jspec.proto.JSpecExamples$One.only_test"),
-          AccessControlException.class,
+      public void throwsTestSetupExceptionCausedByReflectionError() {
+        //Intended to catch ReflectiveOperationException, but causing that with a fake SecurityManager was not reliable
+        assertThrows(TestSetupException.class, startsWith("Failed to create test context"), ClassCastException.class,
           subject::run);
       }
     }
@@ -227,11 +176,7 @@ public class FieldExampleTest {
     }
   }
   
-  static class NoReflectionForYouSecurityManager extends SecurityManager {
-    @Override
-    public void checkPermission(Permission perm) {
-      if(perm instanceof ReflectPermission)
-        throw new AccessControlException("No reflection for you!!!", perm);
-    }
+  public static class HasWrongType {
+    public Object inaccessibleAsIt = new Object();
   }
 }

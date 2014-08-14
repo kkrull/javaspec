@@ -56,6 +56,11 @@ public class JSpecExamples {
     It runs = () -> assertEquals(2, numTimesEstablished);
   }
   
+  public static class FailingBecause {
+    Because flawed_action = () -> { throw new UnsupportedOperationException("flawed_action"); };
+    It will_never_run = () -> assertEquals(42, 42);
+  }
+  
   public static class FailingEstablish {
     Establish flawed_setup = () -> { throw new UnsupportedOperationException("flawed_setup"); };
     It will_never_run = () -> assertEquals(42, 42);
@@ -85,19 +90,10 @@ public class JSpecExamples {
       notifyEvent = newConsumer == null ? NOP : newConsumer;
     }
     
-    private String subject;
-    Establish arranges = () -> {
-      notifyEvent.accept("JSpecExamples.FullFixture::arrange");
-      subject = "established";
-    };
-    Because acts = () -> {
-      notifyEvent.accept("JSpecExamples.FullFixture::act");
-      subject += " and acted upon";
-    };
-    It asserts = () -> {
-      notifyEvent.accept("JSpecExamples.FullFixture::assert");
-      assertEquals("established and acted upon", subject);
-    };
+    public FullFixture() { notifyEvent.accept("JSpecExamples.FullFixture::new"); }
+    Establish arranges = () -> notifyEvent.accept("JSpecExamples.FullFixture::arrange");
+    Because acts = () -> notifyEvent.accept("JSpecExamples.FullFixture::act");
+    It asserts = () -> notifyEvent.accept("JSpecExamples.FullFixture::assert");
   }
   
   public static class HiddenConstructor {

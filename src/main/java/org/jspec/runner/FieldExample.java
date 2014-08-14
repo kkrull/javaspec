@@ -36,9 +36,16 @@ final class FieldExample implements Example {
   @Override
   public void run() throws Exception {
     Object context = newContextObject();
-    Establish arrange = arrangeField == null ? () -> { return; } : (Establish)readField(context, arrangeField);
-    Because action = actionField == null ? () -> { return; } : (Because)readField(context, actionField);
-    It assertion = (It)readField(context, assertionField);
+    Establish arrange = null;
+    Because action = null;
+    It assertion = null;
+    try {
+      arrange = arrangeField == null ? () -> { return; } : (Establish)readField(context, arrangeField);
+      action = actionField == null ? () -> { return; } : (Because)readField(context, actionField);
+      assertion = (It)readField(context, assertionField);
+    } catch (Throwable t) {
+      throw new TestSetupException(context.getClass(), t);
+    }
     
     arrange.run();
     action.run();
@@ -63,27 +70,16 @@ final class FieldExample implements Example {
     return context;
   }
   
-  private Object readField(Object context, Field field) {
-    Object thunk;
-    try {
-      field.setAccessible(true);
-      thunk = field.get(context);
-    } catch (Throwable t) {
-      throw new TestSetupException(field, t);
-    }
-    return thunk;
+  private Object readField(Object context, Field field) throws IllegalAccessException {
+    field.setAccessible(true);
+    return field.get(context);
   }
   
   public static final class TestSetupException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     public TestSetupException(Class<?> context, Throwable cause) {
-      super(String.format("Failed to construct test context %s", context.getName()), cause);
-    }
-    
-    public TestSetupException(Field exampleField, Throwable cause) {
-      super(String.format("Failed to access test function %s.%s", 
-        exampleField.getDeclaringClass().getName(), exampleField.getName()), cause);
+      super(String.format("Failed to create test context %s", context.getName()), cause);
     }
   }
   
