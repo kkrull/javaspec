@@ -4,12 +4,14 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
 import org.jspec.dsl.Because;
+import org.jspec.dsl.Cleanup;
 import org.jspec.dsl.Establish;
 import org.jspec.dsl.It;
 
 final class FieldExample implements Example {
   private static final Establish NOP_ESTABLISH = () -> { return; };
   private static final Because NOP_BECAUSE = () -> { return; };
+  private static final Cleanup NOP_CLEANUP = () -> { return; };
   
   private final Field arrangeField; //TODO KDK: Flag-style class to support optional setup kind of kludgy; try something else like Decorator or Template Methods
   private final Field actionField;
@@ -50,6 +52,7 @@ final class FieldExample implements Example {
     test.arrange.run();
     test.action.run();
     test.assertion.run();
+    test.cleanup.run();
   }
   
   private Object newContextObject() {
@@ -75,7 +78,8 @@ final class FieldExample implements Example {
       return new TestFunction(
         arrangeField == null ? NOP_ESTABLISH : (Establish)assignedValue(arrangeField, context),
         actionField == null ? NOP_BECAUSE : (Because)assignedValue(actionField, context),
-        (It)assignedValue(assertionField, context));
+        (It)assignedValue(assertionField, context),
+        cleanupField == null ? NOP_CLEANUP : (Cleanup)assignedValue(cleanupField, context));
     } catch (Throwable t) {
       throw new TestSetupException(context.getClass(), t);
     }
@@ -108,11 +112,13 @@ final class FieldExample implements Example {
     public final Establish arrange;
     public final Because action;
     public final It assertion;
+    public final Cleanup cleanup;
     
-    public TestFunction(Establish arrange, Because action, It assertion) {
+    public TestFunction(Establish arrange, Because action, It assertion, Cleanup cleanup) {
       this.arrange = arrange;
       this.action = action;
       this.assertion = assertion;
+      this.cleanup = cleanup;
     }
   }
 }

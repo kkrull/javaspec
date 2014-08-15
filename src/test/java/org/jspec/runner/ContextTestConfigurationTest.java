@@ -140,7 +140,7 @@ public class ContextTestConfigurationTest {
       @Test
       public void associatesTheFieldWithEachExample() {
         TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.FullFixture.class);
-        assertListEquals(ImmutableList.of("mess"),
+        assertListEquals(ImmutableList.of("cleans"),
           subject.getExamples().map(Example::describeCleanup).collect(toList()));
       }
     }

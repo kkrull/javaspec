@@ -225,10 +225,14 @@ public class FieldExampleTest {
         assertThrows(AssertionError.class, anything(), subject::run);
       }
       
-      @Test @Ignore("wip")
-      //Yes this is a test failure; otherwise you're just causing other tests to fail later by no fault of their own
+      @Test
       public void throwsWhateverCleanupThrows() throws Exception {
-        fail("pending");
+        Example subject = new FieldExample(
+          null,
+          null,
+          JSpecExamples.FailingCleanup.class.getDeclaredField("may_run"),
+          JSpecExamples.FailingCleanup.class.getDeclaredField("flawed_cleanup"));
+        assertThrows(IllegalStateException.class, equalTo("flawed_cleanup"), subject::run);
       }
     }
 

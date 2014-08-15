@@ -68,6 +68,11 @@ public class JSpecExamples {
     It will_never_run = () -> assertEquals(42, 42);
   }
   
+  public static class FailingCleanup {
+    Cleanup flawed_cleanup = () -> { throw new IllegalStateException("flawed_cleanup"); };
+    It may_run = () -> assertEquals(42, 42);
+  }
+  
   public static class FailingEstablish {
     Establish flawed_setup = () -> { throw new UnsupportedOperationException("flawed_setup"); };
     It will_never_run = () -> assertEquals(42, 42);
@@ -101,7 +106,7 @@ public class JSpecExamples {
     Establish arranges = () -> notifyEvent.accept("JSpecExamples.FullFixture::arrange");
     Because acts = () -> notifyEvent.accept("JSpecExamples.FullFixture::act");
     It asserts = () -> notifyEvent.accept("JSpecExamples.FullFixture::assert");
-    Cleanup mess = () -> notifyEvent.accept("JSpecExamples.FullFixture::mess");
+    Cleanup cleans = () -> notifyEvent.accept("JSpecExamples.FullFixture::cleans");
   }
   
   public static class HiddenConstructor {

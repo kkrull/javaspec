@@ -108,7 +108,7 @@ public final class JSpecRunnerSteps {
   @Then("^the test runner should run the Cleanup function fourth,.*$")
   public void the_test_runner_should_run_the_Cleanup_function_fourth() throws Throwable {
     assertThat(String.format("\nActual: %s", events),
-      executedMethods().get(4), equalTo("JSpecExamples.FullFixture::cleanup"));
+      executedMethods().get(4), equalTo("JSpecExamples.FullFixture::cleans"));
   }
   
   private List<String> executedMethods() {
