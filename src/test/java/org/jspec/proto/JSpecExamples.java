@@ -1,6 +1,11 @@
 package org.jspec.proto;
 
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import org.jspec.dsl.Because;
 import org.jspec.dsl.Cleanup;
@@ -11,17 +16,17 @@ import org.junit.Ignore;
 /** Inner classes are declared static to avoid the gaze of HierarchicalContextRunner when testing JSpec. */
 public class JSpecExamples {
   public static class BecauseTwice {
-    private int numActions;
-    Because act_part_one = () -> numActions++;
-    Because act_part_two_or_is_this_part_one = () -> numActions++;
-    It runs = () -> assertEquals(2, numActions);
+    private final List<String> orderMatters = new LinkedList<String>();
+    Because act_part_one = () -> orderMatters.add("do this first");
+    Because act_part_two_or_is_this_part_one = () -> orderMatters.add("do this second");
+    It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
   }
   
   public static class CleanupTwice {
-    private int numActions;
-    Cleanup cleanup_part_one = () -> numActions++;
-    Cleanup cleanup_part_two_or_is_this_part_one = () -> numActions++;
-    It runs = () -> assertEquals(2, numActions);
+    private final List<String> orderMatters = new LinkedList<String>();
+    Cleanup cleanup_part_one = () -> orderMatters.add("do this first");
+    Cleanup cleanup_part_two_or_is_this_part_one = () -> orderMatters.add("do this second");
+    It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
   }
   
   public static class ConstructorHasArguments {
@@ -34,15 +39,15 @@ public class JSpecExamples {
   public static class EstablishOnceRunTwice {
     private String subject;
     Establish that = () -> subject = "established";
-    It does_one_thing = () -> assertEquals("established", subject);
-    It does_something_else = () -> assertEquals("established", subject);
+    It does_one_thing = () -> assertThat(subject, notNullValue());
+    It does_something_else = () -> assertThat(subject, equalTo("established"));
   }
   
   public static class EstablishTwice {
-    private int numTimesEstablished;
-    Establish setup_part_one = () -> numTimesEstablished++;
-    Establish setup_part_two_not_allowed = () -> numTimesEstablished++;
-    It runs = () -> assertEquals(2, numTimesEstablished);
+    private final List<String> orderMatters = new LinkedList<String>();
+    Establish setup_part_one = () -> orderMatters.add("do this first");
+    Establish setup_part_two_not_allowed = () -> orderMatters.add("do this second");
+    It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
   }
   
   public static class FailingBecause {
@@ -105,17 +110,11 @@ public class JSpecExamples {
   }
   
   public static class MultiplePublicConstructors {
-    @SuppressWarnings("unused")
-    private final int _id; //Only used as a means of getting two constructors
-    
     public MultiplePublicConstructors() {
       this(42);
     }
     
-    public MultiplePublicConstructors(int _id) {
-      this._id = _id;
-    }
-    
+    public MultiplePublicConstructors(int _id) { }
     It is_otherwise_valid = () -> assertEquals(1, 1);
   }
   
