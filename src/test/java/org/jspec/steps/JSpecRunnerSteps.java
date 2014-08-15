@@ -28,21 +28,21 @@ public final class JSpecRunnerSteps {
   
   @Before
   public void setupTestExecutionSpy() {
-    JSpecExamples.One.setEventListener(events::add);
+    JSpecExamples.OneIt.setEventListener(events::add);
     RunWithJSpecRunner.setEventListener(events::add);
     JSpecExamples.FullFixture.setEventListener(events::add);
   }
   
   @After
   public void recallSpies() {
-    JSpecExamples.One.setEventListener(null);
+    JSpecExamples.OneIt.setEventListener(null);
     RunWithJSpecRunner.setEventListener(null);
     JSpecExamples.FullFixture.setEventListener(null);
   }
 
   @Given("^I have a class with JSpec tests in it$")
   public void i_have_a_class_with_JSpec_tests_in_it() throws Throwable {
-    this.testClass = JSpecExamples.One.class;
+    this.testClass = JSpecExamples.OneIt.class;
   }
   
   @When("^I run the tests with a JSpec runner$")
@@ -53,7 +53,7 @@ public final class JSpecRunnerSteps {
   @Then("^the test runner should run all the tests in the class$")
   public void the_test_runner_should_run_all_the_tests_in_the_class() throws Throwable {
     assertThat(String.format("\nActual: %s", events),
-      events, hasItems("JSpecExamples.One::only_test"));
+      events, hasItems("JSpecExamples.OneIt::only_test"));
   }
   
   @Given("^I have a class with JSpec tests in it that is marked to run with a JSpec runner$")

@@ -33,7 +33,7 @@ public class JSpecRunnerTest {
   public class constructor {
     @Test
     public void givenAContextClassSuitableForJSpecButNotForJUnit_raisesNoError() {
-      Runners.of(JSpecExamples.MultiplePublicConstructors.class);
+      Runners.of(JSpecExamples.TwoConstructors.class);
     }
 
     @Test
@@ -48,17 +48,17 @@ public class JSpecRunnerTest {
     public class givenATestConfigurationOrContextClassWith1OrMoreExamples {
       @Test
       public void describesTheConfiguredClass() {
-        Description description = Runners.of(JSpecExamples.IgnoredClass.class).getDescription();
-        assertThat(description.getTestClass(), equalTo(JSpecExamples.IgnoredClass.class));
+        Description description = Runners.of(JSpecExamples.IgnoreClass.class).getDescription();
+        assertThat(description.getTestClass(), equalTo(JSpecExamples.IgnoreClass.class));
         assertThat(description.getAnnotation(Ignore.class), notNullValue());
       }
       
       @Test
       public void hasAChildDescriptionForEachExample() {
-        Runner runner = Runners.of(configOf(JSpecExamples.Two.class, exampleNamed("one"), exampleNamed("another")));
+        Runner runner = Runners.of(configOf(JSpecExamples.TwoIt.class, exampleNamed("one"), exampleNamed("another")));
         Description subject = runner.getDescription();
         assertListEquals(
-          ImmutableList.of("one(org.jspec.proto.JSpecExamples$Two)", "another(org.jspec.proto.JSpecExamples$Two)"), 
+          ImmutableList.of("one(org.jspec.proto.JSpecExamples$TwoIt)", "another(org.jspec.proto.JSpecExamples$TwoIt)"), 
           subject.getChildren().stream().map(Description::getDisplayName).collect(toList()));
       }
     }
@@ -66,7 +66,7 @@ public class JSpecRunnerTest {
   
   public class run {
     private final List<Event> events = synchronizedList(new LinkedList<Event>());
-    private final Class<?> context = JSpecExamples.One.class;
+    private final Class<?> context = JSpecExamples.OneIt.class;
     
     public class givenAPassingExample {
       @Before

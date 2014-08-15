@@ -34,34 +34,34 @@ public class ContextTestConfigurationTest {
     
     @Test
     public void givenAClassWith2OrMoreEstablishFields_containsUnknownStepExecutionSequenceException() {
-      TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.EstablishTwice.class);
+      TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.TwoEstablish.class);
       assertThat(subject.findInitializationErrors().stream().map(x -> x.getClass()).collect(toList()),
         contains(equalTo(UnknownStepExecutionSequenceException.class)));
       assertThat(subject.findInitializationErrors().stream().map(Throwable::getMessage).collect(toList()),
-        contains(equalTo("Impossible to determine running order of multiple Establish functions in test context org.jspec.proto.JSpecExamples$EstablishTwice")));
+        contains(equalTo("Impossible to determine running order of multiple Establish functions in test context org.jspec.proto.JSpecExamples$TwoEstablish")));
     }
     
     @Test
     public void givenAClassWith2OrMoreBecauseFields_containsUnknownStepExecutionSequenceException() {
-      TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.BecauseTwice.class);
+      TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.TwoBecause.class);
       assertThat(subject.findInitializationErrors().stream().map(x -> x.getClass()).collect(toList()),
         contains(equalTo(UnknownStepExecutionSequenceException.class)));
       assertThat(subject.findInitializationErrors().stream().map(Throwable::getMessage).collect(toList()),
-        contains(equalTo("Impossible to determine running order of multiple Because functions in test context org.jspec.proto.JSpecExamples$BecauseTwice")));
+        contains(equalTo("Impossible to determine running order of multiple Because functions in test context org.jspec.proto.JSpecExamples$TwoBecause")));
     }
     
     @Test
     public void givenAClassWith2OrMoreCleanupFields_containsUnknownStepExecutionSequenceException() {
-      TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.CleanupTwice.class);
+      TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.TwoCleanup.class);
       assertThat(subject.findInitializationErrors().stream().map(x -> x.getClass()).collect(toList()),
         contains(equalTo(UnknownStepExecutionSequenceException.class)));
       assertThat(subject.findInitializationErrors().stream().map(Throwable::getMessage).collect(toList()),
-        contains(equalTo("Impossible to determine running order of multiple Cleanup functions in test context org.jspec.proto.JSpecExamples$CleanupTwice")));
+        contains(equalTo("Impossible to determine running order of multiple Cleanup functions in test context org.jspec.proto.JSpecExamples$TwoCleanup")));
     }
     
     @Test
     public void givenAClassWith1OrMoreItFieldsAndMeetsRemainingCriteria_returnsEmptyList() {
-      TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.Two.class);
+      TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.TwoIt.class);
       assertThat(subject.findInitializationErrors(), equalTo(Collections.emptyList()));
     }
   }
@@ -69,8 +69,8 @@ public class ContextTestConfigurationTest {
   public class getContextClass {
     @Test
     public void returnsTheGivenClass() {
-      TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.Two.class);
-      assertThat(subject.getContextClass(), equalTo(JSpecExamples.Two.class));
+      TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.TwoIt.class);
+      assertThat(subject.getContextClass(), equalTo(JSpecExamples.TwoIt.class));
     }
   }
   
@@ -88,7 +88,7 @@ public class ContextTestConfigurationTest {
     }
     
     public class givenAClassWithNoFixtureFields {
-      private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.One.class);
+      private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.OneIt.class);
       
       @Test
       public void createsEachExampleWithoutAnArrangeField() {
@@ -109,7 +109,7 @@ public class ContextTestConfigurationTest {
     public class givenAClassWith1EstablishField {
       @Test
       public void associatesTheFieldWithEachExample() {
-        TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.EstablishOnceRunTwice.class);
+        TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.TwoItWithEstablish.class);
         assertListEquals(ImmutableList.of("that", "that"),
           subject.getExamples().map(Example::describeSetup).collect(toList()));
       }
@@ -125,7 +125,7 @@ public class ContextTestConfigurationTest {
     }
     
     public class givenAClassWith1OrMoreItFields {
-      private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.Two.class);
+      private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.TwoIt.class);
       
       @Test
       public void returnsAFieldExampleForEachItField() {

@@ -118,8 +118,8 @@ public class FieldExampleTest {
     public class givenAClassWithoutACallableNoArgConstructor {
       @Test
       public void ThrowsUnsupportedConstructorException() throws Exception  {
-        assertThrowsUnsupportedConstructorException(JSpecExamples.HiddenConstructor.class, "is_otherwise_valid");
-        assertThrowsUnsupportedConstructorException(JSpecExamples.ConstructorHasArguments.class, "is_otherwise_valid");
+        assertThrowsUnsupportedConstructorException(JSpecExamples.ConstructorHidden.class, "is_otherwise_valid");
+        assertThrowsUnsupportedConstructorException(JSpecExamples.ConstructorWithArguments.class, "is_otherwise_valid");
       }
       
       private void assertThrowsUnsupportedConstructorException(Class<?> context, String itFieldName) throws Exception {
@@ -134,9 +134,9 @@ public class FieldExampleTest {
     public class givenAFaultyConstructorOrInitializer {
       @Test
       public void throwsTestSetupException() throws Exception {
-        assertTestSetupException(JSpecExamples.FaultyClassInitializer.class.getDeclaredField("is_otherwise_valid"),
+        assertTestSetupException(JSpecExamples.FailingClassInitializer.class.getDeclaredField("is_otherwise_valid"),
           AssertionError.class);
-        assertTestSetupException(JSpecExamples.FaultyConstructor.class.getDeclaredField("is_otherwise_valid"),
+        assertTestSetupException(JSpecExamples.FailingConstructor.class.getDeclaredField("is_otherwise_valid"),
           InvocationTargetException.class);
       }
       
@@ -219,7 +219,7 @@ public class FieldExampleTest {
       
       @Test
       public void throwsWhateverItThrows() throws Exception {
-        Field field = JSpecExamples.FailingTest.class.getDeclaredField("fails");
+        Field field = JSpecExamples.FailingIt.class.getDeclaredField("fails");
         Example subject = new FieldExample(null, null, field, null);
         assertThrows(AssertionError.class, anything(), subject::run);
       }

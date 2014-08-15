@@ -15,41 +15,18 @@ import org.junit.Ignore;
 
 /** Inner classes are declared static to avoid the gaze of HierarchicalContextRunner when testing JSpec. */
 public class JSpecExamples {
-  public static class BecauseTwice {
-    private final List<String> orderMatters = new LinkedList<String>();
-    Because act_part_one = () -> orderMatters.add("do this first");
-    Because act_part_two_or_is_this_part_one = () -> orderMatters.add("do this second");
-    It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
+  public static class ConstructorHidden {
+    private ConstructorHidden() {}
+    It is_otherwise_valid = () -> assertEquals(1, 1);
   }
   
-  public static class CleanupTwice {
-    private final List<String> orderMatters = new LinkedList<String>();
-    Cleanup cleanup_part_one = () -> orderMatters.add("do this first");
-    Cleanup cleanup_part_two_or_is_this_part_one = () -> orderMatters.add("do this second");
-    It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
-  }
-  
-  public static class ConstructorHasArguments {
-    public ConstructorHasArguments(int _id) { }
+  public static class ConstructorWithArguments {
+    public ConstructorWithArguments(int _id) { }
     It is_otherwise_valid = () -> assertEquals(1, 1);
   }
   
   public static class Empty {}
-  
-  public static class EstablishOnceRunTwice {
-    private String subject;
-    Establish that = () -> subject = "established";
-    It does_one_thing = () -> assertThat(subject, notNullValue());
-    It does_something_else = () -> assertThat(subject, equalTo("established"));
-  }
-  
-  public static class EstablishTwice {
-    private final List<String> orderMatters = new LinkedList<String>();
-    Establish setup_part_one = () -> orderMatters.add("do this first");
-    Establish setup_part_two_not_allowed = () -> orderMatters.add("do this second");
-    It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
-  }
-  
+
   public static class FailingBecause {
     Because flawed_action = () -> { throw new UnsupportedOperationException("flawed_action"); };
     It will_never_run = () -> assertEquals(42, 42);
@@ -58,6 +35,23 @@ public class JSpecExamples {
   public static class FailingCleanup {
     Cleanup flawed_cleanup = () -> { throw new IllegalStateException("flawed_cleanup"); };
     It may_run = () -> assertEquals(42, 42);
+  }
+  
+  public static class FailingClassInitializer {
+    static { assertEquals(1, 2); }
+    It is_otherwise_valid = () -> assertEquals(1, 1);
+  }
+  
+  public static class FailingConstructor {
+    public FailingConstructor() throws HardToFindThrowable {
+      throw new HardToFindThrowable();
+    }
+    
+    It is_otherwise_valid = () -> assertEquals(1, 1);
+    
+    public static class HardToFindThrowable extends Throwable { 
+      private static final long serialVersionUID = 1L; 
+    }
   }
   
   public static class FailingEstablish {
@@ -71,24 +65,12 @@ public class JSpecExamples {
       throw new UnsupportedOperationException("flawed_setup"); 
     };
     
-    It it = () -> assertEquals(42, 42);
+    It it = () -> notifyEvent.accept("JSpecExamples.FailingEstablishWithCleanup::it");
     Cleanup cleanup = () -> notifyEvent.accept("JSpecExamples.FailingEstablishWithCleanup::cleanup");
   }
 
-  public static class FailingTest {
+  public static class FailingIt {
     It fails = () -> assertEquals("the answer", 42);
-  }
-  
-  public static class FaultyConstructor {
-    public FaultyConstructor() throws HardToFindThrowable {
-      throw new HardToFindThrowable();
-    }
-    It is_otherwise_valid = () -> assertEquals(1, 1);
-  }
-  
-  public static class FaultyClassInitializer {
-    static { assertEquals(1, 2); }
-    It is_otherwise_valid = () -> assertEquals(1, 1);
   }
   
   public static class FullFixture extends ExecutionSpy {
@@ -99,35 +81,55 @@ public class JSpecExamples {
     Cleanup cleans = () -> notifyEvent.accept("JSpecExamples.FullFixture::cleans");
   }
   
-  public static class HiddenConstructor {
-    private HiddenConstructor() {}
-    It is_otherwise_valid = () -> assertEquals(1, 1);
-  }
-  
   @Ignore
-  public static class IgnoredClass {
+  public static class IgnoreClass {
     It gets_ignored = () -> assertEquals(1, 2);
   }
   
-  public static class MultiplePublicConstructors {
-    public MultiplePublicConstructors() {
+  public static class OneIt extends ExecutionSpy {
+    public OneIt() { notifyEvent.accept("JSpecExamples.OneIt::new"); }
+    It only_test = () -> notifyEvent.accept("JSpecExamples.OneIt::only_test");
+  }
+  
+  public static class TwoBecause {
+    private final List<String> orderMatters = new LinkedList<String>();
+    Because act_part_one = () -> orderMatters.add("do this first");
+    Because act_part_two_or_is_this_part_one = () -> orderMatters.add("do this second");
+    It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
+  }
+  
+  public static class TwoCleanup {
+    private final List<String> orderMatters = new LinkedList<String>();
+    Cleanup cleanup_part_one = () -> orderMatters.add("do this first");
+    Cleanup cleanup_part_two_or_is_this_part_one = () -> orderMatters.add("do this second");
+    It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
+  }
+  
+  public static class TwoConstructors {
+    public TwoConstructors() {
       this(42);
     }
     
-    public MultiplePublicConstructors(int _id) { }
+    public TwoConstructors(int _id) { }
     It is_otherwise_valid = () -> assertEquals(1, 1);
   }
   
-  public static class One extends ExecutionSpy {
-    public One() { notifyEvent.accept("JSpecExamples.One::new"); }
-    It only_test = () -> notifyEvent.accept("JSpecExamples.One::only_test");
+  public static class TwoEstablish {
+    private final List<String> orderMatters = new LinkedList<String>();
+    Establish setup_part_one = () -> orderMatters.add("do this first");
+    Establish setup_part_two_not_allowed = () -> orderMatters.add("do this second");
+    It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
   }
   
-  public static class Two {
+  public static class TwoIt {
     It first_test = () -> assertEquals(1, 1);
     It second_test = () -> assertEquals(2, 2);
   }
   
-  @SuppressWarnings("serial")
-  public static class HardToFindThrowable extends Throwable {}
+  public static class TwoItWithEstablish {
+    private String subject;
+    Establish that = () -> subject = "established";
+    It does_one_thing = () -> assertThat(subject, notNullValue());
+    It does_something_else = () -> assertThat(subject, equalTo("established"));
+  }
 }
