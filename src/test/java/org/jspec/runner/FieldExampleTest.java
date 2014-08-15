@@ -9,10 +9,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.jspec.dsl.Because;
-import org.jspec.dsl.Cleanup;
-import org.jspec.dsl.Establish;
-import org.jspec.dsl.It;
 import org.jspec.proto.JSpecExamples;
 import org.jspec.runner.FieldExample.TestSetupException;
 import org.jspec.runner.FieldExample.UnsupportedConstructorException;
@@ -25,92 +21,42 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 @RunWith(HierarchicalContextRunner.class)
 public class FieldExampleTest {
-  public class describeSetup {
-    Establish somethingINeedToRunMyTest;
-    It describesADesiredBehavior;
-    
-    @Test
-    public void givenNoField_returnsEmptyString() throws Exception {
-      Example subject = new FieldExample(
-        null, 
-        null, 
-        getClass().getDeclaredField("describesADesiredBehavior"),
-        null);
-      assertThat(subject.describeSetup(), equalTo(""));
+  public class descriptionMethods {
+    public class givenNoFixtureFields {
+      private final Example subject;
+      
+      public givenNoFixtureFields() throws Exception {
+        this.subject = new FieldExample(null, null, 
+          JSpecExamples.OneIt.class.getDeclaredField("only_test"),
+          null);
+      }
+      
+      @Test
+      public void fixtureMethodDescriptors_returnBlank() {
+        assertThat(subject.describeSetup(), equalTo(""));
+        assertThat(subject.describeAction(), equalTo(""));
+        assertThat(subject.describeCleanup(), equalTo(""));
+      }
     }
     
-    @Test
-    public void givenAField_returnsTheNameOfTheField() throws Exception {
-      Example subject = new FieldExample(
-        getClass().getDeclaredField("somethingINeedToRunMyTest"),
-        null,
-        getClass().getDeclaredField("describesADesiredBehavior"), 
-        null);
-      assertThat(subject.describeSetup(), equalTo("somethingINeedToRunMyTest"));
-    }
-  }
-  
-  public class describeAction {
-    Because somethingIDo;
-    It describesADesiredBehavior;
-    
-    @Test
-    public void givenNoField_returnsEmptyString() throws Exception {
-      Example subject = new FieldExample(
-        null, 
-        null, 
-        getClass().getDeclaredField("describesADesiredBehavior"),
-        null);
-      assertThat(subject.describeAction(), equalTo(""));
-    }
-    
-    @Test
-    public void givenAField_returnsTheNameOfTheField() throws Exception {
-      Example subject = new FieldExample(
-        null,
-        getClass().getDeclaredField("somethingIDo"),
-        getClass().getDeclaredField("describesADesiredBehavior"),
-        null);
-      assertThat(subject.describeAction(), equalTo("somethingIDo"));
-    }
-  }
-  
-  public class describeBehavior {
-    It describesADesiredBehavior;
-    
-    @Test
-    public void returnsTheNameOfTheField() throws Exception {
-      Example subject = new FieldExample(
-        null, 
-        null, 
-        getClass().getDeclaredField("describesADesiredBehavior"), 
-        null);
-      assertThat(subject.describeBehavior(), equalTo("describesADesiredBehavior"));
-    }
-  }
-  
-  public class describeCleanup {
-    It describesADesiredBehavior;
-    Cleanup somethingINeedToUndoBeforeTheNextTest;
-    
-    @Test
-    public void givenNoCleanup_returnsEmptyString() throws Exception {
-      Example subject = new FieldExample(
-        null,
-        null, 
-        getClass().getDeclaredField("describesADesiredBehavior"), 
-        null);
-      assertThat(subject.describeCleanup(), equalTo(""));
-    }
-    
-    @Test
-    public void givenAField_returnsTheNameOfTheField() throws Exception {
-      Example subject = new FieldExample(
-        null,
-        null,
-        getClass().getDeclaredField("describesADesiredBehavior"),
-        getClass().getDeclaredField("somethingINeedToUndoBeforeTheNextTest"));
-      assertThat(subject.describeCleanup(), equalTo("somethingINeedToUndoBeforeTheNextTest"));
+    public class givenAValueForAField {
+      private final Example subject;
+      
+      public givenAValueForAField() throws Exception {
+        this.subject = new FieldExample(
+          JSpecExamples.FullFixture.class.getDeclaredField("arranges"),
+          JSpecExamples.FullFixture.class.getDeclaredField("acts"), 
+          JSpecExamples.FullFixture.class.getDeclaredField("asserts"),
+          JSpecExamples.FullFixture.class.getDeclaredField("cleans"));
+      }
+      
+      @Test
+      public void returnsTheNameOfTheField() {
+        assertThat(subject.describeSetup(), equalTo("arranges"));
+        assertThat(subject.describeAction(), equalTo("acts"));
+        assertThat(subject.describeBehavior(), equalTo("asserts"));
+        assertThat(subject.describeCleanup(), equalTo("cleans"));
+      }
     }
   }
   

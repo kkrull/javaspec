@@ -66,7 +66,7 @@ public class ReflectionUtilTest {
     assertEquals(expectedNames, actualNames);
   }
   
-  private class EmptyNestedClass { /* Not devoid of fields; there is 1 pointing to the containing class */ }
+  private class EmptyNestedClass { /* Not really devoid of fields; there is one pointing to the containing class */ }
   
   @SuppressWarnings("unused")
   private static class MixedFields {
@@ -74,8 +74,9 @@ public class ReflectionUtilTest {
     public NonMatchingType nonMatching;
   }
   
+  @SuppressWarnings("unused")
   private static class SubType extends SuperType {
-    @SuppressWarnings("unused") public MatchingType subTypeField;
+    public MatchingType subTypeField;
     public SubType(MatchingType superTypeField) {
       this.superTypeField = superTypeField;
     }

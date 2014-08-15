@@ -137,7 +137,7 @@ public class JSpecRunnerTest {
     stub(stub.describeBehavior()).toReturn(behaviorName);
     return stub;
   }
-    
+  
   private static Example exampleSpy(String behaviorName, Consumer<Event> notify) {
     return new Example() {
       @Override

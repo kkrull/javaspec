@@ -13,6 +13,7 @@ import java.util.List;
 import org.jspec.proto.JSpecExamples;
 import org.jspec.runner.ContextTestConfiguration.NoExamplesException;
 import org.jspec.runner.ContextTestConfiguration.UnknownStepExecutionSequenceException;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -25,44 +26,40 @@ public class ContextTestConfigurationTest {
   public class findInitializationErrors {
     @Test
     public void givenAClassWithNoItFields_containsNoExamplesException() {
-      TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.Empty.class);
-      assertThat(subject.findInitializationErrors().stream().map(x -> x.getClass()).collect(toList()),
-        contains(equalTo(NoExamplesException.class)));
-      assertThat(subject.findInitializationErrors().stream().map(Throwable::getMessage).collect(toList()),
-        contains(equalTo("Test context org.jspec.proto.JSpecExamples$Empty must contain at least 1 example in an It field")));
+      shouldFindInitializationError(JSpecExamples.Empty.class, NoExamplesException.class,
+        "Test context org.jspec.proto.JSpecExamples$Empty must contain at least 1 example in an It field");
     }
     
     @Test
     public void givenAClassWith2OrMoreEstablishFields_containsUnknownStepExecutionSequenceException() {
-      TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.TwoEstablish.class);
-      assertThat(subject.findInitializationErrors().stream().map(x -> x.getClass()).collect(toList()),
-        contains(equalTo(UnknownStepExecutionSequenceException.class)));
-      assertThat(subject.findInitializationErrors().stream().map(Throwable::getMessage).collect(toList()),
-        contains(equalTo("Impossible to determine running order of multiple Establish functions in test context org.jspec.proto.JSpecExamples$TwoEstablish")));
+      shouldFindInitializationError(JSpecExamples.TwoEstablish.class, UnknownStepExecutionSequenceException.class,
+        "Impossible to determine running order of multiple Establish functions in test context org.jspec.proto.JSpecExamples$TwoEstablish");
     }
     
     @Test
     public void givenAClassWith2OrMoreBecauseFields_containsUnknownStepExecutionSequenceException() {
-      TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.TwoBecause.class);
-      assertThat(subject.findInitializationErrors().stream().map(x -> x.getClass()).collect(toList()),
-        contains(equalTo(UnknownStepExecutionSequenceException.class)));
-      assertThat(subject.findInitializationErrors().stream().map(Throwable::getMessage).collect(toList()),
-        contains(equalTo("Impossible to determine running order of multiple Because functions in test context org.jspec.proto.JSpecExamples$TwoBecause")));
+      shouldFindInitializationError(JSpecExamples.TwoBecause.class, UnknownStepExecutionSequenceException.class,
+        "Impossible to determine running order of multiple Because functions in test context org.jspec.proto.JSpecExamples$TwoBecause");
     }
     
     @Test
     public void givenAClassWith2OrMoreCleanupFields_containsUnknownStepExecutionSequenceException() {
-      TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.TwoCleanup.class);
-      assertThat(subject.findInitializationErrors().stream().map(x -> x.getClass()).collect(toList()),
-        contains(equalTo(UnknownStepExecutionSequenceException.class)));
-      assertThat(subject.findInitializationErrors().stream().map(Throwable::getMessage).collect(toList()),
-        contains(equalTo("Impossible to determine running order of multiple Cleanup functions in test context org.jspec.proto.JSpecExamples$TwoCleanup")));
+      shouldFindInitializationError(JSpecExamples.TwoCleanup.class, UnknownStepExecutionSequenceException.class,
+        "Impossible to determine running order of multiple Cleanup functions in test context org.jspec.proto.JSpecExamples$TwoCleanup");
     }
     
     @Test
     public void givenAClassWith1OrMoreItFieldsAndMeetsRemainingCriteria_returnsEmptyList() {
       TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.TwoIt.class);
       assertThat(subject.findInitializationErrors(), equalTo(Collections.emptyList()));
+    }
+    
+    private void shouldFindInitializationError(Class<?> contextType, Class<?> errorType, String errorMsg) {
+      TestConfiguration subject = new ContextTestConfiguration(contextType);
+      assertThat(subject.findInitializationErrors().stream().map(x -> x.getClass()).collect(toList()),
+        contains(equalTo(errorType)));
+      assertThat(subject.findInitializationErrors().stream().map(Throwable::getMessage).collect(toList()),
+        contains(equalTo(errorMsg)));
     }
   }
   
@@ -91,57 +88,55 @@ public class ContextTestConfigurationTest {
       private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.OneIt.class);
       
       @Test
-      public void createsEachExampleWithoutAnArrangeField() {
+      public void createsEachExampleWithoutFixtureMethods() {
         assertThat(subject.getExamples().map(Example::describeSetup).collect(toList()), contains(equalTo("")));
-      }
-      
-      @Test
-      public void createsEachExampleWithoutAnActField() {
         assertThat(subject.getExamples().map(Example::describeAction).collect(toList()), contains(equalTo("")));
-      }
-      
-      @Test
-      public void createsEachExampleWithoutACleanupField() {
         assertThat(subject.getExamples().map(Example::describeCleanup).collect(toList()), contains(equalTo("")));
       }
     }
     
-    public class givenAClassWith1EstablishField {
+    public class givenAClassWithUpToOneOfEachTypeOfFixtureField {
+      private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.FullFixture.class);
+      
       @Test
-      public void associatesTheFieldWithEachExample() {
-        TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.TwoItWithEstablish.class);
-        assertListEquals(ImmutableList.of("that", "that"),
+      public void associatesAnEstablishFieldWithEachExample() {
+        assertListEquals(ImmutableList.of("arranges"),
           subject.getExamples().map(Example::describeSetup).collect(toList()));
       }
-    }
-    
-    public class givenAClassWith1BecauseField {
+      
       @Test
-      public void associatesTheFieldWithEachExample() {
-        TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.FullFixture.class);
+      public void associatesABecauseFieldWithEachExample() {
         assertListEquals(ImmutableList.of("acts"),
           subject.getExamples().map(Example::describeAction).collect(toList()));
+      }
+      
+      @Test
+      public void associatesACleanupFieldWithEachExample() {
+        assertListEquals(ImmutableList.of("cleans"),
+          subject.getExamples().map(Example::describeCleanup).collect(toList()));
       }
     }
     
     public class givenAClassWith1OrMoreItFields {
-      private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.TwoIt.class);
+      private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.TwoItWithEstablish.class);
+      private List<Example> examples;
+      
+      @Before
+      public void readExamples() {
+        this.examples = subject.getExamples().collect(toList());
+      }
       
       @Test
       public void returnsAFieldExampleForEachItField() {
-        List<Example> examples = subject.getExamples().collect(toList());
         assertThat(examples.stream().map(Example::describeBehavior).collect(toList()),
-          contains("first_test", "second_test"));
+          contains("does_one_thing", "does_something_else"));
         examples.stream().map(Example::getClass).forEach(x -> assertThat(x, equalTo(FieldExample.class)));
       }
-    }
-    
-    public class givenAClassWith1CleanupField {
+      
       @Test
-      public void associatesTheFieldWithEachExample() {
-        TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.FullFixture.class);
-        assertListEquals(ImmutableList.of("cleans"),
-          subject.getExamples().map(Example::describeCleanup).collect(toList()));
+      public void associatesAnyFixtureMethodsWithEachExample() {
+        assertListEquals(ImmutableList.of("that", "that"), 
+          examples.stream().map(Example::describeSetup).collect(toList()));
       }
     }
   }
