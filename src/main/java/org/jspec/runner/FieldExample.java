@@ -49,10 +49,13 @@ final class FieldExample implements Example {
   public void run() throws Exception {
     Object context = newContextObject();
     TestFunction test = readTestFunctions(context);
-    test.arrange.run();
-    test.action.run();
-    test.assertion.run();
-    test.cleanup.run();
+    try {
+      test.arrange.run();
+      test.action.run();
+      test.assertion.run();
+    } finally {
+      test.cleanup.run();
+    }
   }
   
   private Object newContextObject() {

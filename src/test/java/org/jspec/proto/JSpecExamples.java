@@ -77,7 +77,24 @@ public class JSpecExamples {
     Establish flawed_setup = () -> { throw new UnsupportedOperationException("flawed_setup"); };
     It will_never_run = () -> assertEquals(42, 42);
   }
-  
+
+  public static class FailingEstablishWithCleanup {
+    private static final Consumer<String> NOP = x -> { return; };
+    private static Consumer<String> notifyEvent = NOP;
+    
+    public static void setEventListener(Consumer<String> newConsumer) {
+      notifyEvent = newConsumer == null ? NOP : newConsumer;
+    }
+    
+    Establish establish = () -> {
+      notifyEvent.accept("JSpecExamples.FailingEstablishWithCleanup::establish");
+      throw new UnsupportedOperationException("flawed_setup"); 
+    };
+    
+    It it = () -> assertEquals(42, 42);
+    Cleanup cleanup = () -> notifyEvent.accept("JSpecExamples.FailingEstablishWithCleanup::cleanup");
+  }
+
   public static class FailingTest {
     It fails = () -> assertEquals("the answer", 42);
   }

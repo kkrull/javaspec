@@ -3,7 +3,6 @@ package org.jspec.runner;
 import static org.hamcrest.Matchers.*;
 import static org.jspec.util.Assertions.assertThrows;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -19,7 +18,6 @@ import org.jspec.runner.FieldExample.TestSetupException;
 import org.jspec.runner.FieldExample.UnsupportedConstructorException;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -158,7 +156,8 @@ public class FieldExampleTest {
         this.subject = new FieldExample(
           JSpecExamples.FullFixture.class.getDeclaredField("arranges"),
           JSpecExamples.FullFixture.class.getDeclaredField("acts"), 
-          JSpecExamples.FullFixture.class.getDeclaredField("asserts"), null);
+          JSpecExamples.FullFixture.class.getDeclaredField("asserts"),
+          null);
       }
       
       @Before
@@ -238,16 +237,43 @@ public class FieldExampleTest {
 
     public class givenACleanupField {
       public class whenASetupActionOrAssertionFunctionThrows {
-        @Test @Ignore("wip")
-        public void runsTheCleanupInCaseAnyStatementsExecutedBeforeTheError() {
-          fail("pending");
+        private final List<String> events = new LinkedList<String>();
+        private final Example subject;
+        private Throwable thrown;
+        
+        public whenASetupActionOrAssertionFunctionThrows() throws Exception {
+          this.subject = new FieldExample(
+            JSpecExamples.FailingEstablishWithCleanup.class.getDeclaredField("establish"),
+            null,
+            JSpecExamples.FailingEstablishWithCleanup.class.getDeclaredField("it"), 
+            JSpecExamples.FailingEstablishWithCleanup.class.getDeclaredField("cleanup"));
         }
-      }
-      
-      public class whenAnActionOrAssertionFunctionThrows {
-        @Test @Ignore("wip")
-        public void stillRunsTheCleanup() {
-          fail("pending");
+        
+        @Before
+        public void spy() throws Exception {
+          JSpecExamples.FailingEstablishWithCleanup.setEventListener(events::add);
+          try {
+            subject.run();
+          } catch (Throwable t) {
+            this.thrown = t;
+          }
+        }
+        
+        @After
+        public void releaseSpy() {
+          JSpecExamples.FailingEstablishWithCleanup.setEventListener(null);
+        }
+        
+        @Test
+        public void runsTheCleanupInCaseAnyStatementsExecutedBeforeTheError() {
+          assertThat(events, contains(
+            "JSpecExamples.FailingEstablishWithCleanup::establish",
+            "JSpecExamples.FailingEstablishWithCleanup::cleanup"));
+        }
+        
+        @Test
+        public void stillThrowsTheOriginalException() {
+          assertThat(thrown.getMessage(), equalTo("flawed_setup"));
         }
       }
     }
