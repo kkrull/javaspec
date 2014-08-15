@@ -48,8 +48,8 @@ final class ContextTestConfiguration implements TestConfiguration {
     
     Field arrange = onlyFieldOrNull(Establish.class);
     Field act = onlyFieldOrNull(Because.class);
-//    Field cleanup = onlyFieldOrNull(Cleanup.class);
-    return ReflectionUtil.fieldsOfType(It.class, contextClass).map(it -> new FieldExample(arrange, act, it));
+    Field cleanup = onlyFieldOrNull(Cleanup.class);
+    return ReflectionUtil.fieldsOfType(It.class, contextClass).map(it -> new FieldExample(arrange, act, it, cleanup));
   }
   
   private boolean hasNoTests() {

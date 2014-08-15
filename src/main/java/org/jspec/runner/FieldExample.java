@@ -12,13 +12,15 @@ final class FieldExample implements Example {
   private static final Because NOP_BECAUSE = () -> { return; };
   
   private final Field arrangeField; //TODO KDK: Flag-style class to support optional setup kind of kludgy; try something else like Decorator or Template Methods
-  private final Field actionField; 
-  private final Field assertionField; 
+  private final Field actionField;
+  private final Field assertionField;
+  private final Field cleanupField;
   
-  FieldExample(Field arrangeField, Field actionField, Field assertionField) {
+  FieldExample(Field arrangeField, Field actionField, Field assertionField, Field cleanupField) {
     this.arrangeField = arrangeField;
     this.actionField = actionField;
     this.assertionField = assertionField;
+    this.cleanupField = cleanupField;
   }
   
   @Override
@@ -34,6 +36,11 @@ final class FieldExample implements Example {
   @Override
   public String describeBehavior() {
     return assertionField.getName();
+  }
+  
+  @Override
+  public String describeCleanup() {
+    return cleanupField == null ? "" : cleanupField.getName();
   }
   
   @Override

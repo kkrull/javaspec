@@ -3,6 +3,7 @@ package org.jspec.runner;
 import static org.hamcrest.Matchers.*;
 import static org.jspec.util.Assertions.assertThrows;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -10,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.jspec.dsl.Because;
+import org.jspec.dsl.Cleanup;
 import org.jspec.dsl.Establish;
 import org.jspec.dsl.It;
 import org.jspec.proto.JSpecExamples;
@@ -17,6 +19,7 @@ import org.jspec.runner.FieldExample.TestSetupException;
 import org.jspec.runner.FieldExample.UnsupportedConstructorException;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -24,20 +27,52 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 @RunWith(HierarchicalContextRunner.class)
 public class FieldExampleTest {
+  public class describeSetup {
+    Establish somethingINeedToRunMyTest;
+    It describesADesiredBehavior;
+    
+    @Test
+    public void givenNoField_returnsEmptyString() throws Exception {
+      Example subject = new FieldExample(
+        null, 
+        null, 
+        getClass().getDeclaredField("describesADesiredBehavior"),
+        null);
+      assertThat(subject.describeSetup(), equalTo(""));
+    }
+    
+    @Test
+    public void givenAField_returnsTheNameOfTheField() throws Exception {
+      Example subject = new FieldExample(
+        getClass().getDeclaredField("somethingINeedToRunMyTest"),
+        null,
+        getClass().getDeclaredField("describesADesiredBehavior"), 
+        null);
+      assertThat(subject.describeSetup(), equalTo("somethingINeedToRunMyTest"));
+    }
+  }
+  
   public class describeAction {
     Because somethingIDo;
     It describesADesiredBehavior;
     
     @Test
-    public void givenNoSetup_returnsEmptyString() throws Exception {
-      Example subject = new FieldExample(null, null, getClass().getDeclaredField("describesADesiredBehavior"));
-      assertThat(subject.describeBehavior(), equalTo("describesADesiredBehavior"));
+    public void givenNoField_returnsEmptyString() throws Exception {
+      Example subject = new FieldExample(
+        null, 
+        null, 
+        getClass().getDeclaredField("describesADesiredBehavior"),
+        null);
+      assertThat(subject.describeAction(), equalTo(""));
     }
     
     @Test
     public void givenAField_returnsTheNameOfTheField() throws Exception {
-      Example subject = new FieldExample(null, getClass().getDeclaredField("somethingIDo"),
-        getClass().getDeclaredField("describesADesiredBehavior"));
+      Example subject = new FieldExample(
+        null,
+        getClass().getDeclaredField("somethingIDo"),
+        getClass().getDeclaredField("describesADesiredBehavior"),
+        null);
       assertThat(subject.describeAction(), equalTo("somethingIDo"));
     }
   }
@@ -47,26 +82,37 @@ public class FieldExampleTest {
     
     @Test
     public void returnsTheNameOfTheField() throws Exception {
-      Example subject = new FieldExample(null, null, getClass().getDeclaredField("describesADesiredBehavior"));
+      Example subject = new FieldExample(
+        null, 
+        null, 
+        getClass().getDeclaredField("describesADesiredBehavior"), 
+        null);
       assertThat(subject.describeBehavior(), equalTo("describesADesiredBehavior"));
     }
   }
   
-  public class describeSetup {
-    Establish somethingINeedToRunMyTest;
+  public class describeCleanup {
     It describesADesiredBehavior;
+    Cleanup somethingINeedToUndoBeforeTheNextTest;
     
     @Test
-    public void givenNoSetup_returnsEmptyString() throws Exception {
-      Example subject = new FieldExample(null, null, getClass().getDeclaredField("describesADesiredBehavior"));
-      assertThat(subject.describeBehavior(), equalTo("describesADesiredBehavior"));
+    public void givenNoCleanup_returnsEmptyString() throws Exception {
+      Example subject = new FieldExample(
+        null,
+        null, 
+        getClass().getDeclaredField("describesADesiredBehavior"), 
+        null);
+      assertThat(subject.describeCleanup(), equalTo(""));
     }
     
     @Test
     public void givenAField_returnsTheNameOfTheField() throws Exception {
-      Example subject = new FieldExample(getClass().getDeclaredField("somethingINeedToRunMyTest"), null,
-        getClass().getDeclaredField("describesADesiredBehavior"));
-      assertThat(subject.describeSetup(), equalTo("somethingINeedToRunMyTest"));
+      Example subject = new FieldExample(
+        null,
+        null,
+        getClass().getDeclaredField("describesADesiredBehavior"),
+        getClass().getDeclaredField("somethingINeedToUndoBeforeTheNextTest"));
+      assertThat(subject.describeCleanup(), equalTo("somethingINeedToUndoBeforeTheNextTest"));
     }
   }
   
@@ -80,7 +126,7 @@ public class FieldExampleTest {
       
       private void assertThrowsUnsupportedConstructorException(Class<?> context, String itFieldName) throws Exception {
         Field field = context.getDeclaredField(itFieldName);
-        Example subject = new FieldExample(null, null, field);
+        Example subject = new FieldExample(null, null, field, null);
         assertThrows(UnsupportedConstructorException.class,
           is(String.format("Unable to find a no-argument constructor for class %s", context.getName())),
           NoSuchMethodException.class, subject::run);
@@ -97,7 +143,7 @@ public class FieldExampleTest {
       }
       
       private void assertTestSetupException(Field field, Class<? extends Throwable> expectedCause) {
-        Example subject = new FieldExample(null, null, field);
+        Example subject = new FieldExample(null, null, field, null);
         assertThrows(TestSetupException.class, 
           is(String.format("Failed to create test context %s", field.getDeclaringClass().getName())),
           expectedCause, subject::run);
@@ -112,7 +158,7 @@ public class FieldExampleTest {
         this.subject = new FieldExample(
           JSpecExamples.FullFixture.class.getDeclaredField("arranges"),
           JSpecExamples.FullFixture.class.getDeclaredField("acts"), 
-          JSpecExamples.FullFixture.class.getDeclaredField("asserts"));
+          JSpecExamples.FullFixture.class.getDeclaredField("asserts"), null);
       }
       
       @Before
@@ -140,7 +186,7 @@ public class FieldExampleTest {
       private final Example subject;
       
       public whenAFieldCanNotBeAccessed() throws Exception {
-        this.subject = new FieldExample(null, null, HasWrongType.class.getDeclaredField("inaccessibleAsIt"));
+        this.subject = new FieldExample(null, null, HasWrongType.class.getDeclaredField("inaccessibleAsIt"), null);
       }
       
       @Test
@@ -155,24 +201,50 @@ public class FieldExampleTest {
       @Test
       public void throwsWhateverEstablishThrows() throws Exception {
         Example subject = new FieldExample(
-          JSpecExamples.FailingEstablish.class.getDeclaredField("flawed_setup"), null,
-          JSpecExamples.FailingEstablish.class.getDeclaredField("will_never_run"));
+          JSpecExamples.FailingEstablish.class.getDeclaredField("flawed_setup"),
+          null,
+          JSpecExamples.FailingEstablish.class.getDeclaredField("will_never_run"),
+          null);
         assertThrows(UnsupportedOperationException.class, equalTo("flawed_setup"), subject::run);
       }
       
       @Test
       public void throwsWhateverBecauseThrows() throws Exception {
         Example subject = new FieldExample(
-          null, JSpecExamples.FailingBecause.class.getDeclaredField("flawed_action"),
-          JSpecExamples.FailingBecause.class.getDeclaredField("will_never_run"));
+          null,
+          JSpecExamples.FailingBecause.class.getDeclaredField("flawed_action"),
+          JSpecExamples.FailingBecause.class.getDeclaredField("will_never_run"),
+          null);
         assertThrows(UnsupportedOperationException.class, equalTo("flawed_action"), subject::run);
       }
       
       @Test
       public void throwsWhateverItThrows() throws Exception {
         Field field = JSpecExamples.FailingTest.class.getDeclaredField("fails");
-        Example subject = new FieldExample(null, null, field);
+        Example subject = new FieldExample(null, null, field, null);
         assertThrows(AssertionError.class, anything(), subject::run);
+      }
+      
+      @Test @Ignore("wip")
+      //Yes this is a test failure; otherwise you're just causing other tests to fail later by no fault of their own
+      public void throwsWhateverCleanupThrows() throws Exception {
+        fail("pending");
+      }
+    }
+
+    public class givenACleanupField {
+      public class whenASetupActionOrAssertionFunctionThrows {
+        @Test @Ignore("wip")
+        public void runsTheCleanupInCaseAnyStatementsExecutedBeforeTheError() {
+          fail("pending");
+        }
+      }
+      
+      public class whenAnActionOrAssertionFunctionThrows {
+        @Test @Ignore("wip")
+        public void stillRunsTheCleanup() {
+          fail("pending");
+        }
       }
     }
   }
