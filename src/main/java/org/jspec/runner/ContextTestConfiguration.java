@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.jspec.dsl.Because;
+import org.jspec.dsl.Cleanup;
 import org.jspec.dsl.Establish;
 import org.jspec.dsl.It;
 
@@ -27,6 +28,8 @@ final class ContextTestConfiguration implements TestConfiguration {
       list.add(new UnknownStepExecutionSequenceException(contextClass, Establish.class.getSimpleName()));
     if(isStepSequenceAmbiguous(Because.class))
       list.add(new UnknownStepExecutionSequenceException(contextClass, Because.class.getSimpleName()));
+    if(isStepSequenceAmbiguous(Cleanup.class))
+      list.add(new UnknownStepExecutionSequenceException(contextClass, Cleanup.class.getSimpleName()));
     return list;
   }
 
@@ -45,6 +48,7 @@ final class ContextTestConfiguration implements TestConfiguration {
     
     Field arrange = onlyFieldOrNull(Establish.class);
     Field act = onlyFieldOrNull(Because.class);
+//    Field cleanup = onlyFieldOrNull(Cleanup.class);
     return ReflectionUtil.fieldsOfType(It.class, contextClass).map(it -> new FieldExample(arrange, act, it));
   }
   

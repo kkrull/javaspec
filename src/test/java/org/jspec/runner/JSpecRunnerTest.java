@@ -150,6 +150,9 @@ public class JSpecRunnerTest {
       public String describeBehavior() { return behaviorName; }
 
       @Override
+      public String describeCleanup() { return ""; }
+      
+      @Override
       public void run() { notify.accept(Event.named("run::" + behaviorName)); }
     };
   }

@@ -16,6 +16,13 @@ public class JSpecExamples {
     It runs = () -> assertEquals(2, numActions);
   }
   
+  public static class CleanupTwice {
+    private int numActions;
+    Cleanup cleanup_part_one = () -> numActions++;
+    Cleanup cleanup_part_two_or_is_this_part_one = () -> numActions++;
+    It runs = () -> assertEquals(2, numActions);
+  }
+  
   public static class ConstructorHasArguments {
     public ConstructorHasArguments(int _id) { }
     It is_otherwise_valid = () -> assertEquals(1, 1);
@@ -94,6 +101,7 @@ public class JSpecExamples {
     Establish arranges = () -> notifyEvent.accept("JSpecExamples.FullFixture::arrange");
     Because acts = () -> notifyEvent.accept("JSpecExamples.FullFixture::act");
     It asserts = () -> notifyEvent.accept("JSpecExamples.FullFixture::assert");
+    Cleanup mess = () -> notifyEvent.accept("JSpecExamples.FullFixture::mess");
   }
   
   public static class HiddenConstructor {

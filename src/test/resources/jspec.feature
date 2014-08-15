@@ -17,4 +17,4 @@ Feature: JSpec runner
     And the test runner should run the Establish function first, to arrange conditions necessary for the test
     And the test runner should run the Because function second, to invoke the behavior in question
     And the test runner should run the It function third, to make one logical assertion about the outcome
-#    And the test runner should run the Cleanup function fourth, to put everything back the way it was before
+    And the test runner should run the Cleanup function fourth, to put everything back the way it was before

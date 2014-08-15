@@ -84,7 +84,7 @@ public final class JSpecRunnerSteps {
   
   @Then("^the test runner should run the test within the context of the test fixture$")
   public void the_test_runner_should_run_the_test_within_the_context_of_the_test_fixture() throws Throwable {
-    assertThat(String.format("\nActual: %s", events), executedMethods(), hasSize(4));
+    assertThat(String.format("\nActual: %s", events), executedMethods(), hasSize(5));
   }
 
   @Then("^the test runner should run the Establish function first,.*$")

@@ -51,6 +51,15 @@ public class ContextTestConfigurationTest {
     }
     
     @Test
+    public void givenAClassWith2OrMoreCleanupFields_containsUnknownStepExecutionSequenceException() {
+      TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.CleanupTwice.class);
+      assertThat(subject.findInitializationErrors().stream().map(x -> x.getClass()).collect(toList()),
+        contains(equalTo(UnknownStepExecutionSequenceException.class)));
+      assertThat(subject.findInitializationErrors().stream().map(Throwable::getMessage).collect(toList()),
+        contains(equalTo("Impossible to determine running order of multiple Cleanup functions in test context org.jspec.proto.JSpecExamples$CleanupTwice")));
+    }
+    
+    @Test
     public void givenAClassWith1OrMoreItFieldsAndMeetsRemainingCriteria_returnsEmptyList() {
       TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.Two.class);
       assertThat(subject.findInitializationErrors(), equalTo(Collections.emptyList()));
@@ -90,11 +99,16 @@ public class ContextTestConfigurationTest {
       public void createsEachExampleWithoutAnActField() {
         assertThat(subject.getExamples().map(Example::describeAction).collect(toList()), contains(equalTo("")));
       }
+      
+      @Test
+      public void createsEachExampleWithoutACleanupField() {
+        assertThat(subject.getExamples().map(Example::describeCleanup).collect(toList()), contains(equalTo("")));
+      }
     }
     
     public class givenAClassWith1EstablishField {
       @Test
-      public void associatesTheEstablishFieldWithEachExample() {
+      public void associatesTheFieldWithEachExample() {
         TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.EstablishOnceRunTwice.class);
         assertListEquals(ImmutableList.of("that", "that"),
           subject.getExamples().map(Example::describeSetup).collect(toList()));
@@ -103,7 +117,7 @@ public class ContextTestConfigurationTest {
     
     public class givenAClassWith1BecauseField {
       @Test
-      public void associatesTheEstablishFieldWithEachExample() {
+      public void associatesTheFieldWithEachExample() {
         TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.FullFixture.class);
         assertListEquals(ImmutableList.of("acts"),
           subject.getExamples().map(Example::describeAction).collect(toList()));
@@ -119,6 +133,15 @@ public class ContextTestConfigurationTest {
         assertThat(examples.stream().map(Example::describeBehavior).collect(toList()),
           contains("first_test", "second_test"));
         examples.stream().map(Example::getClass).forEach(x -> assertThat(x, equalTo(FieldExample.class)));
+      }
+    }
+    
+    public class givenAClassWith1CleanupField {
+      @Test
+      public void associatesTheFieldWithEachExample() {
+        TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.FullFixture.class);
+        assertListEquals(ImmutableList.of("mess"),
+          subject.getExamples().map(Example::describeCleanup).collect(toList()));
       }
     }
   }
