@@ -4,7 +4,6 @@ import static org.hamcrest.Matchers.*;
 import static org.jspec.util.Assertions.assertThrows;
 import static org.junit.Assert.assertThat;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,13 +22,7 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 public class FieldExampleTest {
   public class descriptionMethods {
     public class givenNoFixtureFields {
-      private final Example subject;
-      
-      public givenNoFixtureFields() throws Exception {
-        this.subject = new FieldExample(null, null, 
-          JSpecExamples.OneIt.class.getDeclaredField("only_test"),
-          null);
-      }
+      private final Example subject = exampleWithIt(JSpecExamples.OneIt.class, "only_test");
       
       @Test
       public void fixtureMethodDescriptors_returnBlank() {
@@ -40,15 +33,7 @@ public class FieldExampleTest {
     }
     
     public class givenAValueForAField {
-      private final Example subject;
-      
-      public givenAValueForAField() throws Exception {
-        this.subject = new FieldExample(
-          JSpecExamples.FullFixture.class.getDeclaredField("arranges"),
-          JSpecExamples.FullFixture.class.getDeclaredField("acts"), 
-          JSpecExamples.FullFixture.class.getDeclaredField("asserts"),
-          JSpecExamples.FullFixture.class.getDeclaredField("cleans"));
-      }
+      private final Example subject = exampleWithFullFixture();
       
       @Test
       public void returnsTheNameOfTheField() {
@@ -63,14 +48,13 @@ public class FieldExampleTest {
   public class run {
     public class givenAClassWithoutACallableNoArgConstructor {
       @Test
-      public void ThrowsUnsupportedConstructorException() throws Exception  {
+      public void ThrowsUnsupportedConstructorException() {
         assertThrowsUnsupportedConstructorException(JSpecExamples.ConstructorHidden.class, "is_otherwise_valid");
         assertThrowsUnsupportedConstructorException(JSpecExamples.ConstructorWithArguments.class, "is_otherwise_valid");
       }
       
-      private void assertThrowsUnsupportedConstructorException(Class<?> context, String itFieldName) throws Exception {
-        Field field = context.getDeclaredField(itFieldName);
-        Example subject = new FieldExample(null, null, field, null);
+      private void assertThrowsUnsupportedConstructorException(Class<?> context, String itFieldName) {
+        Example subject = exampleWithIt(context, itFieldName);
         assertThrows(UnsupportedConstructorException.class,
           is(String.format("Unable to find a no-argument constructor for class %s", context.getName())),
           NoSuchMethodException.class, subject::run);
@@ -80,31 +64,21 @@ public class FieldExampleTest {
     public class givenAFaultyConstructorOrInitializer {
       @Test
       public void throwsTestSetupException() throws Exception {
-        assertTestSetupException(JSpecExamples.FailingClassInitializer.class.getDeclaredField("is_otherwise_valid"),
-          AssertionError.class);
-        assertTestSetupException(JSpecExamples.FailingConstructor.class.getDeclaredField("is_otherwise_valid"),
-          InvocationTargetException.class);
+        assertTestSetupException(JSpecExamples.FailingClassInitializer.class, "will_fail", AssertionError.class);
+        assertTestSetupException(JSpecExamples.FailingConstructor.class, "will_fail", InvocationTargetException.class);
       }
       
-      private void assertTestSetupException(Field field, Class<? extends Throwable> expectedCause) {
-        Example subject = new FieldExample(null, null, field, null);
+      private void assertTestSetupException(Class<?> context, String itFieldName, Class<? extends Throwable> cause) {
+        Example subject = exampleWithIt(context, itFieldName);
         assertThrows(TestSetupException.class, 
-          is(String.format("Failed to create test context %s", field.getDeclaringClass().getName())),
-          expectedCause, subject::run);
+          is(String.format("Failed to create test context %s", context.getName())),
+          cause, subject::run);
       }
     }
     
     public class givenAccessibleFields {
       private final List<String> events = new LinkedList<String>();
-      private final Example subject;
-      
-      public givenAccessibleFields() throws Exception {
-        this.subject = new FieldExample(
-          JSpecExamples.FullFixture.class.getDeclaredField("arranges"),
-          JSpecExamples.FullFixture.class.getDeclaredField("acts"), 
-          JSpecExamples.FullFixture.class.getDeclaredField("asserts"),
-          null);
-      }
+      private final Example subject = exampleWithFullFixture();
       
       @Before
       public void spy() throws Exception {
@@ -123,16 +97,13 @@ public class FieldExampleTest {
           "JSpecExamples.FullFixture::new",
           "JSpecExamples.FullFixture::arrange",
           "JSpecExamples.FullFixture::act",
-          "JSpecExamples.FullFixture::assert"));
+          "JSpecExamples.FullFixture::assert",
+          "JSpecExamples.FullFixture::cleans"));
       }
     }
     
     public class whenAFieldCanNotBeAccessed {
-      private final Example subject;
-      
-      public whenAFieldCanNotBeAccessed() throws Exception {
-        this.subject = new FieldExample(null, null, HasWrongType.class.getDeclaredField("inaccessibleAsIt"), null);
-      }
+      private final Example subject = exampleWithIt(HasWrongType.class, "inaccessibleAsIt");
       
       @Test
       public void throwsTestSetupExceptionCausedByReflectionError() {
@@ -144,39 +115,26 @@ public class FieldExampleTest {
     
     public class whenATestFunctionThrows {
       @Test
-      public void throwsWhateverEstablishThrows() throws Exception {
-        Example subject = new FieldExample(
-          JSpecExamples.FailingEstablish.class.getDeclaredField("flawed_setup"),
-          null,
-          JSpecExamples.FailingEstablish.class.getDeclaredField("will_never_run"),
-          null);
+      public void throwsWhateverEstablishThrows() {
+        Example subject = exampleWithEstablish(JSpecExamples.FailingEstablish.class, "flawed_setup", "will_never_run");
         assertThrows(UnsupportedOperationException.class, equalTo("flawed_setup"), subject::run);
       }
       
       @Test
-      public void throwsWhateverBecauseThrows() throws Exception {
-        Example subject = new FieldExample(
-          null,
-          JSpecExamples.FailingBecause.class.getDeclaredField("flawed_action"),
-          JSpecExamples.FailingBecause.class.getDeclaredField("will_never_run"),
-          null);
+      public void throwsWhateverBecauseThrows() {
+        Example subject = exampleWithBecause(JSpecExamples.FailingBecause.class, "flawed_action", "will_never_run");
         assertThrows(UnsupportedOperationException.class, equalTo("flawed_action"), subject::run);
       }
       
       @Test
-      public void throwsWhateverItThrows() throws Exception {
-        Field field = JSpecExamples.FailingIt.class.getDeclaredField("fails");
-        Example subject = new FieldExample(null, null, field, null);
+      public void throwsWhateverItThrows() {
+        Example subject = exampleWithIt(JSpecExamples.FailingIt.class, "fails");
         assertThrows(AssertionError.class, anything(), subject::run);
       }
       
       @Test
-      public void throwsWhateverCleanupThrows() throws Exception {
-        Example subject = new FieldExample(
-          null,
-          null,
-          JSpecExamples.FailingCleanup.class.getDeclaredField("may_run"),
-          JSpecExamples.FailingCleanup.class.getDeclaredField("flawed_cleanup"));
+      public void throwsWhateverCleanupThrows() {
+        Example subject = exampleWithCleanup(JSpecExamples.FailingCleanup.class, "may_run", "flawed_cleanup");
         assertThrows(IllegalStateException.class, equalTo("flawed_cleanup"), subject::run);
       }
     }
@@ -184,16 +142,9 @@ public class FieldExampleTest {
     public class givenACleanupField {
       public class whenASetupActionOrAssertionFunctionThrows {
         private final List<String> events = new LinkedList<String>();
-        private final Example subject;
+        private final Example subject = exampleWith(JSpecExamples.FailingEstablishWithCleanup.class,
+          "establish", null, "it", "cleanup");
         private Throwable thrown;
-        
-        public whenASetupActionOrAssertionFunctionThrows() throws Exception {
-          this.subject = new FieldExample(
-            JSpecExamples.FailingEstablishWithCleanup.class.getDeclaredField("establish"),
-            null,
-            JSpecExamples.FailingEstablishWithCleanup.class.getDeclaredField("it"), 
-            JSpecExamples.FailingEstablishWithCleanup.class.getDeclaredField("cleanup"));
-        }
         
         @Before
         public void spy() throws Exception {
@@ -222,6 +173,38 @@ public class FieldExampleTest {
           assertThat(thrown.getMessage(), equalTo("flawed_setup"));
         }
       }
+    }
+  }
+  
+  private static Example exampleWithEstablish(Class<?> context, String establishField, String itField) {
+    return exampleWith(context, establishField, null, itField, null);
+  }
+  
+  private static Example exampleWithBecause(Class<?> context, String becauseField, String itField) {
+    return exampleWith(context, null, becauseField, itField, null);
+  }
+  
+  private static Example exampleWithIt(Class<?> context, String name) {
+    return exampleWith(context, null, null, name, null);
+  }
+  
+  private static Example exampleWithCleanup(Class<?> context, String itField, String cleanupField) {
+    return exampleWith(context, null, null, itField, cleanupField);
+  }
+  
+  private static Example exampleWithFullFixture() {
+    return exampleWith(JSpecExamples.FullFixture.class, "arranges", "acts", "asserts", "cleans");
+  }
+  
+  private static Example exampleWith(Class<?> context, String establish, String because, String it, String cleanup) {
+    try {
+      return new FieldExample(
+        establish == null ? null : context.getDeclaredField(establish),
+        because == null ? null : context.getDeclaredField(because),
+        it == null ? null : context.getDeclaredField(it),
+        cleanup == null ? null : context.getDeclaredField(cleanup));
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
   }
   

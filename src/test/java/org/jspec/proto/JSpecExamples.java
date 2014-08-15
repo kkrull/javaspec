@@ -39,7 +39,7 @@ public class JSpecExamples {
   
   public static class FailingClassInitializer {
     static { assertEquals(1, 2); }
-    It is_otherwise_valid = () -> assertEquals(1, 1);
+    It will_fail = () -> assertEquals(1, 1);
   }
   
   public static class FailingConstructor {
@@ -47,7 +47,7 @@ public class JSpecExamples {
       throw new HardToFindThrowable();
     }
     
-    It is_otherwise_valid = () -> assertEquals(1, 1);
+    It will_fail = () -> assertEquals(1, 1);
     
     public static class HardToFindThrowable extends Throwable { 
       private static final long serialVersionUID = 1L; 
