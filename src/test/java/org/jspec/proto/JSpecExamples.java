@@ -2,9 +2,10 @@ package org.jspec.proto;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.function.Consumer;
-
-import org.jspec.dsl.*;
+import org.jspec.dsl.Because;
+import org.jspec.dsl.Cleanup;
+import org.jspec.dsl.Establish;
+import org.jspec.dsl.It;
 import org.junit.Ignore;
 
 /** Inner classes are declared static to avoid the gaze of HierarchicalContextRunner when testing JSpec. */
@@ -29,25 +30,6 @@ public class JSpecExamples {
   }
   
   public static class Empty {}
-  
-  public static class EstablishOnce {
-    private static final Consumer<String> NOP = x -> { return; };
-    private static Consumer<String> notifyEvent = NOP;
-    
-    public static void setEventListener(Consumer<String> newConsumer) {
-      notifyEvent = newConsumer == null ? NOP : newConsumer;
-    }
-    
-    private String subject;
-    Establish that = () -> {
-      notifyEvent.accept("JSpecExamples.EstablishOnce::that");
-      subject = "established";
-    };
-    It runs = () -> {
-      notifyEvent.accept("JSpecExamples.EstablishOnce::runs");
-      assertEquals("established", subject);
-    };
-  }
   
   public static class EstablishOnceRunTwice {
     private String subject;
@@ -78,14 +60,7 @@ public class JSpecExamples {
     It will_never_run = () -> assertEquals(42, 42);
   }
 
-  public static class FailingEstablishWithCleanup {
-    private static final Consumer<String> NOP = x -> { return; };
-    private static Consumer<String> notifyEvent = NOP;
-    
-    public static void setEventListener(Consumer<String> newConsumer) {
-      notifyEvent = newConsumer == null ? NOP : newConsumer;
-    }
-    
+  public static class FailingEstablishWithCleanup extends ExecutionSpy {
     Establish establish = () -> {
       notifyEvent.accept("JSpecExamples.FailingEstablishWithCleanup::establish");
       throw new UnsupportedOperationException("flawed_setup"); 
@@ -111,14 +86,7 @@ public class JSpecExamples {
     It is_otherwise_valid = () -> assertEquals(1, 1);
   }
   
-  public static class FullFixture { //TODO KDK: Maybe these can all extend an abstract base class to share the notification behavior; then all of them could log w/ minimal effort
-    private static final Consumer<String> NOP = x -> { return; };
-    private static Consumer<String> notifyEvent = NOP;
-    
-    public static void setEventListener(Consumer<String> newConsumer) {
-      notifyEvent = newConsumer == null ? NOP : newConsumer;
-    }
-    
+  public static class FullFixture extends ExecutionSpy {
     public FullFixture() { notifyEvent.accept("JSpecExamples.FullFixture::new"); }
     Establish arranges = () -> notifyEvent.accept("JSpecExamples.FullFixture::arrange");
     Because acts = () -> notifyEvent.accept("JSpecExamples.FullFixture::act");
@@ -151,17 +119,8 @@ public class JSpecExamples {
     It is_otherwise_valid = () -> assertEquals(1, 1);
   }
   
-  public static class One {
-    private static final Consumer<String> NOP = x -> { return; };
-    private static Consumer<String> notifyEvent = NOP;
-    
-    public static void setEventListener(Consumer<String> newConsumer) {
-      notifyEvent = newConsumer == null ? NOP : newConsumer;
-    }
-    
-    public One() {
-      notifyEvent.accept("JSpecExamples.One::new");
-    }
+  public static class One extends ExecutionSpy {
+    public One() { notifyEvent.accept("JSpecExamples.One::new"); }
     It only_test = () -> notifyEvent.accept("JSpecExamples.One::only_test");
   }
   
