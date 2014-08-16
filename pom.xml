@@ -4,9 +4,9 @@
   <groupId>org.javaspec</groupId>
   <artifactId>org.javaspec</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>JSpec</name>
+  <name>JavaSpec</name>
   <description>Spec-style testing for Java</description>
-  <url>https://github.com/kkrull/jspec</url>
+  <url>https://github.com/kkrull/javaspec</url>
 
   <build>
     <plugins>
