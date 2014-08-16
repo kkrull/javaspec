@@ -13,7 +13,8 @@ final class FieldExample implements Example {
   private static final Because NOP_BECAUSE = () -> { return; };
   private static final Cleanup NOP_CLEANUP = () -> { return; };
   
-  private final Field arrangeField; //TODO KDK: Flag-style class to support optional setup kind of kludgy; try something else like Decorator or Template Methods.  Can dump describeXyz methods on Example.
+  //Would like to avoid flag-style class; need clarity for hierarchical test contexts with multiple before/after steps
+  private final Field arrangeField;
   private final Field actionField;
   private final Field assertionField;
   private final Field cleanupField;
