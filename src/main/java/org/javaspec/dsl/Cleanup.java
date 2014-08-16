@@ -15,9 +15,9 @@ package org.javaspec.dsl;
  * that the File you intended to create or the transaction you thought you started earlier actually exists before you
  * try deleting and rolling back.
  * <p>
- * Why is this necessary?  Well, JSpec has no way of telling that you were only checking your watch and haven't created
- * that File yet.  It tries to give you the opportunity to keep state from leaking out of your test, in case you did
- * do something to the environment that you don't want to last into the next test.
+ * Why is this necessary?  Well, JavaSpec has no way of telling that you were only checking your watch and haven't
+ * created that File yet.  It tries to give you the opportunity to keep state from leaking out of your test, in case you
+ * did do something to the environment that you don't want to last into the next test.
  */
 @FunctionalInterface
 public interface Cleanup {

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.function.Consumer;
 
-import org.javaspec.runner.JSpecRunner;
+import org.javaspec.runner.JavaSpecRunner;
 import org.javaspec.runner.TestConfiguration;
 import org.javaspec.util.RunListenerSpy;
 import org.javaspec.util.RunListenerSpy.Event;
@@ -18,24 +18,24 @@ import org.junit.runners.model.InitializationError;
 public final class Runners {
   public static List<Throwable> initializationErrorCauses(TestConfiguration config) {
     try {
-      new JSpecRunner(config);
+      new JavaSpecRunner(config);
     } catch (InitializationError ex) {
       return Runners.flattenCauses(ex);
     }
     return null;
   }
   
-  public static JSpecRunner of(Class<?> contextClass) {
+  public static JavaSpecRunner of(Class<?> contextClass) {
     try {
-      return new JSpecRunner(contextClass);
+      return new JavaSpecRunner(contextClass);
     } catch (InitializationError e) {
       return failForInitializationError(e);
     }
   }
   
-  public static JSpecRunner of(TestConfiguration config) {
+  public static JavaSpecRunner of(TestConfiguration config) {
     try {
-      return new JSpecRunner(config);
+      return new JavaSpecRunner(config);
     } catch (InitializationError e) {
       return failForInitializationError(e);
     }
@@ -47,13 +47,13 @@ public final class Runners {
     runner.run(notifier);
   }
   
-  private static JSpecRunner failForInitializationError(InitializationError e) {
+  private static JavaSpecRunner failForInitializationError(InitializationError e) {
     System.out.println("\nInitialization error(s)");
     flattenCauses(e).forEach(x -> {
       System.out.printf("[%s]\n", x.getClass());
       x.printStackTrace(System.out);
     });
-    fail("Failed to create JSpecRunner");
+    fail("Failed to create JavaSpecRunner");
     return null; //Not really returning; just more convenient to use at call sites
   }
   

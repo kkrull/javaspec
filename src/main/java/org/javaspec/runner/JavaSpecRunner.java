@@ -10,14 +10,14 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
-public final class JSpecRunner extends ParentRunner<Example> {
+public final class JavaSpecRunner extends ParentRunner<Example> {
   private final TestConfiguration config;
   
-  public JSpecRunner(Class<?> contextClass) throws InitializationError {
+  public JavaSpecRunner(Class<?> contextClass) throws InitializationError {
     this(new ContextClassTestConfiguration(contextClass));
   }
   
-  JSpecRunner(TestConfiguration config) throws InitializationError {
+  JavaSpecRunner(TestConfiguration config) throws InitializationError {
     super(null); //Bypass JUnit's requirements for a context class; throw our own errors instead
     this.config = config;
     

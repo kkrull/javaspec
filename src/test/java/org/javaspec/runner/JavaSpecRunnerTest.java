@@ -31,7 +31,7 @@ import com.google.common.collect.ImmutableList;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 @RunWith(HierarchicalContextRunner.class)
-public class JSpecRunnerTest {
+public class JavaSpecRunnerTest {
   public class constructor {
     @Test
     public void givenAContextClassSuitableForJSpecButNotForJUnit_raisesNoError() {

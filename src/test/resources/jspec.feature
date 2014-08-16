@@ -1,6 +1,6 @@
-Feature: JSpec runner
+Feature: JavaSpec runner
 
-  Scenario: Run JSpec tests with a JSpecRunner
+  Scenario: Run JSpec tests with a JavaSpecRunner
     Given I have a class with JSpec tests in it
     When I run the tests with a JSpec runner
     Then the test runner should run all the tests in the class

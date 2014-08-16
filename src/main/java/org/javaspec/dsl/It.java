@@ -3,7 +3,7 @@ package org.javaspec.dsl;
 /**
  * The Assert part of running a test.  Include one or more of these in each test class, like so:
  * <code>
- * @RunWith(JSpecRunner.class)
+ * @RunWith(JavaSpecRunner.class)
  * public class WidgetFooTest {
  *   private final PrintStreamSpy printStreamSpy = new PrintStreamSpy();
  *   private final String returned;
