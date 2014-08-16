@@ -1,4 +1,4 @@
-# Javaspec
+# JavaSpec
 
 Spec-style testing for Java, inspired by [RSpec](http://rspec.info) for Ruby and similar in fashion to
 [Machine.Specifications](https://github.com/machine/machine.specifications) for C#.
@@ -9,7 +9,7 @@ Not to be confused with similarly named frameworks that test JavaScript.  These 
 ## Getting started
 
 - Make a test class
-- Tag it with `@RunWith(JSpecRunner.class)`.
+- Tag it with `@RunWith(JavaSpecRunner.class)`.
 - Do any test setup you want to do in a public, no-arg constructor (similar to JUnit).
 - Include 1 or more `It` fields in the class and assign a thunk (a no-arg, anonymous function) like so:
 
