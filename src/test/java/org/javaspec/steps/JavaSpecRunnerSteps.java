@@ -21,7 +21,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
-public final class JSpecRunnerSteps {
+public final class JavaSpecRunnerSteps {
   private final List<String> events = synchronizedList(new LinkedList<String> ()); //In case JUnit uses threads per test
   private final Consumer<Event> notifyEventName = x -> events.add(x.name);
   private Class<?> testClass;
@@ -40,13 +40,13 @@ public final class JSpecRunnerSteps {
     ContextClasses.FullFixture.setEventListener(null);
   }
 
-  @Given("^I have a class with JSpec tests in it$")
-  public void i_have_a_class_with_JSpec_tests_in_it() throws Throwable {
+  @Given("^I have a class with JavaSpec tests in it$")
+  public void i_have_a_class_with_JavaSpec_tests_in_it() throws Throwable {
     this.testClass = ContextClasses.OneIt.class;
   }
   
-  @When("^I run the tests with a JSpec runner$")
-  public void i_run_the_tests_with_a_JSpec_runner() throws Throwable {
+  @When("^I run the tests with a JavaSpec runner$")
+  public void i_run_the_tests_with_a_JavaSpec_runner() throws Throwable {
     Runners.runAll(Runners.of(testClass), notifyEventName);
   }
 
@@ -56,8 +56,8 @@ public final class JSpecRunnerSteps {
       events, hasItems("ContextClasses.OneIt::only_test"));
   }
   
-  @Given("^I have a class with JSpec tests in it that is marked to run with a JSpec runner$")
-  public void i_have_a_class_with_JSpec_tests_in_it_that_is_marked_to_run_with_a_JSpec_runner() throws Throwable {
+  @Given("^I have a class with JavaSpec tests in it that is marked to run with a JavaSpec runner$")
+  public void i_have_a_class_with_JavaSpec_tests_in_it_that_is_marked_to_run_with_a_JavaSpec_runner() throws Throwable {
     this.testClass = RunWithJavaSpecRunner.class;
   }
   
@@ -72,8 +72,8 @@ public final class JSpecRunnerSteps {
       events, hasItems("RunWithJavaSpecRunner::only_test"));
   }
   
-  @Given("^I have JSpec test with test fixture functions$")
-  public void i_have_JSpec_test_with_test_fixture_functions() throws Throwable {
+  @Given("^I have JavaSpec test with test fixture functions$")
+  public void i_have_JavaSpec_test_with_test_fixture_functions() throws Throwable {
     this.testClass = ContextClasses.FullFixture.class;
   }
 
