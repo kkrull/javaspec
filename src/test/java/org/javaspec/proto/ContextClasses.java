@@ -13,7 +13,7 @@ import org.javaspec.dsl.Establish;
 import org.javaspec.dsl.It;
 import org.junit.Ignore;
 
-/** Inner classes are declared static to avoid the gaze of HierarchicalContextRunner when testing JSpec. */
+/** Inner classes are declared static to avoid the gaze of HierarchicalContextRunner when testing JavaSpec. */
 public class ContextClasses {
   public static class ConstructorHidden {
     private ConstructorHidden() {}

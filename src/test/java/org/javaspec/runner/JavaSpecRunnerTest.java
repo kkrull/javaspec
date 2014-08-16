@@ -34,7 +34,7 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 public class JavaSpecRunnerTest {
   public class constructor {
     @Test
-    public void givenAContextClassSuitableForJSpecButNotForJUnit_raisesNoError() {
+    public void givenAContextClassSuitableForJavaSpecButNotForJUnit_raisesNoError() {
       Runners.of(ContextClasses.TwoConstructors.class);
     }
 

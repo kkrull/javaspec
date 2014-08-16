@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.javaspec.proto.ContextClasses;
-import org.javaspec.proto.RunWithJSpecRunner;
+import org.javaspec.proto.RunWithJavaSpecRunner;
 import org.javaspec.runner.Runners;
 import org.javaspec.util.RunListenerSpy.Event;
 import org.junit.runner.JUnitCore;
@@ -29,14 +29,14 @@ public final class JSpecRunnerSteps {
   @Before
   public void setupTestExecutionSpy() {
     ContextClasses.OneIt.setEventListener(events::add);
-    RunWithJSpecRunner.setEventListener(events::add);
+    RunWithJavaSpecRunner.setEventListener(events::add);
     ContextClasses.FullFixture.setEventListener(events::add);
   }
   
   @After
   public void recallSpies() {
     ContextClasses.OneIt.setEventListener(null);
-    RunWithJSpecRunner.setEventListener(null);
+    RunWithJavaSpecRunner.setEventListener(null);
     ContextClasses.FullFixture.setEventListener(null);
   }
 
@@ -58,7 +58,7 @@ public final class JSpecRunnerSteps {
   
   @Given("^I have a class with JSpec tests in it that is marked to run with a JSpec runner$")
   public void i_have_a_class_with_JSpec_tests_in_it_that_is_marked_to_run_with_a_JSpec_runner() throws Throwable {
-    this.testClass = RunWithJSpecRunner.class;
+    this.testClass = RunWithJavaSpecRunner.class;
   }
   
   @When("^I run the tests with a JUnit runner$")
@@ -69,7 +69,7 @@ public final class JSpecRunnerSteps {
   @Then("^the test runner should run all the tests in the marked class$")
   public void the_test_runner_should_run_all_the_tests_in_the_marked_class() throws Throwable {
     assertThat(String.format("\nActual: %s", events),
-      events, hasItems("RunWithJSpecRunner::only_test"));
+      events, hasItems("RunWithJavaSpecRunner::only_test"));
   }
   
   @Given("^I have JSpec test with test fixture functions$")
