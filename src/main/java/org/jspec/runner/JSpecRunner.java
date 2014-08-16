@@ -14,7 +14,7 @@ public final class JSpecRunner extends ParentRunner<Example> {
   private final TestConfiguration config;
   
   public JSpecRunner(Class<?> contextClass) throws InitializationError {
-    this(new ContextTestConfiguration(contextClass));
+    this(new ContextClassTestConfiguration(contextClass));
   }
   
   JSpecRunner(TestConfiguration config) throws InitializationError {

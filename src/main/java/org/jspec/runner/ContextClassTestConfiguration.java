@@ -12,10 +12,10 @@ import org.jspec.dsl.Cleanup;
 import org.jspec.dsl.Establish;
 import org.jspec.dsl.It;
 
-final class ContextTestConfiguration implements TestConfiguration {
+final class ContextClassTestConfiguration implements TestConfiguration {
   private final Class<?> contextClass;
   
-  ContextTestConfiguration(Class<?> contextClass) {
+  ContextClassTestConfiguration(Class<?> contextClass) {
     this.contextClass = contextClass;
   }
   

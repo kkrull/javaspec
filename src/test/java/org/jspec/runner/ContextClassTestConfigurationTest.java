@@ -11,8 +11,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jspec.proto.JSpecExamples;
-import org.jspec.runner.ContextTestConfiguration.NoExamplesException;
-import org.jspec.runner.ContextTestConfiguration.UnknownStepExecutionSequenceException;
+import org.jspec.runner.ContextClassTestConfiguration.NoExamplesException;
+import org.jspec.runner.ContextClassTestConfiguration.UnknownStepExecutionSequenceException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +22,7 @@ import com.google.common.collect.ImmutableList;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 @RunWith(HierarchicalContextRunner.class)
-public class ContextTestConfigurationTest {
+public class ContextClassTestConfigurationTest {
   public class findInitializationErrors {
     @Test
     public void givenAClassWithNoItFields_containsNoExamplesException() {
@@ -50,12 +50,12 @@ public class ContextTestConfigurationTest {
     
     @Test
     public void givenAClassWith1OrMoreItFieldsAndMeetsRemainingCriteria_returnsEmptyList() {
-      TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.TwoIt.class);
+      TestConfiguration subject = new ContextClassTestConfiguration(JSpecExamples.TwoIt.class);
       assertThat(subject.findInitializationErrors(), equalTo(Collections.emptyList()));
     }
     
     private void shouldFindInitializationError(Class<?> contextType, Class<?> errorType, String errorMsg) {
-      TestConfiguration subject = new ContextTestConfiguration(contextType);
+      TestConfiguration subject = new ContextClassTestConfiguration(contextType);
       assertThat(subject.findInitializationErrors().stream().map(x -> x.getClass()).collect(toList()),
         contains(equalTo(errorType)));
       assertThat(subject.findInitializationErrors().stream().map(Throwable::getMessage).collect(toList()),
@@ -66,14 +66,14 @@ public class ContextTestConfigurationTest {
   public class getContextClass {
     @Test
     public void returnsTheGivenClass() {
-      TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.TwoIt.class);
+      TestConfiguration subject = new ContextClassTestConfiguration(JSpecExamples.TwoIt.class);
       assertThat(subject.getContextClass(), equalTo(JSpecExamples.TwoIt.class));
     }
   }
   
   public class getExamples {
     public class givenAClassWith1OrMoreInitializationErrors {
-      private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.Empty.class);
+      private final TestConfiguration subject = new ContextClassTestConfiguration(JSpecExamples.Empty.class);
       
       @Test
       public void throwsIllegalStateExceptionContainingOneOfThem() {
@@ -85,7 +85,7 @@ public class ContextTestConfigurationTest {
     }
     
     public class givenAClassWithNoFixtureFields {
-      private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.OneIt.class);
+      private final TestConfiguration subject = new ContextClassTestConfiguration(JSpecExamples.OneIt.class);
       
       @Test
       public void createsEachExampleWithoutFixtureMethods() {
@@ -96,7 +96,7 @@ public class ContextTestConfigurationTest {
     }
     
     public class givenAClassWithUpToOneOfEachTypeOfFixtureField {
-      private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.FullFixture.class);
+      private final TestConfiguration subject = new ContextClassTestConfiguration(JSpecExamples.FullFixture.class);
       
       @Test
       public void associatesAnEstablishFieldWithEachExample() {
@@ -118,7 +118,7 @@ public class ContextTestConfigurationTest {
     }
     
     public class givenAClassWith1OrMoreItFields {
-      private final TestConfiguration subject = new ContextTestConfiguration(JSpecExamples.TwoItWithEstablish.class);
+      private final TestConfiguration subject = new ContextClassTestConfiguration(JSpecExamples.TwoItWithEstablish.class);
       private List<Example> examples;
       
       @Before
