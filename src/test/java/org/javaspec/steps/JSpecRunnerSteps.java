@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.javaspec.proto.JSpecExamples;
+import org.javaspec.proto.ContextClasses;
 import org.javaspec.proto.RunWithJSpecRunner;
 import org.javaspec.runner.Runners;
 import org.javaspec.util.RunListenerSpy.Event;
@@ -28,21 +28,21 @@ public final class JSpecRunnerSteps {
   
   @Before
   public void setupTestExecutionSpy() {
-    JSpecExamples.OneIt.setEventListener(events::add);
+    ContextClasses.OneIt.setEventListener(events::add);
     RunWithJSpecRunner.setEventListener(events::add);
-    JSpecExamples.FullFixture.setEventListener(events::add);
+    ContextClasses.FullFixture.setEventListener(events::add);
   }
   
   @After
   public void recallSpies() {
-    JSpecExamples.OneIt.setEventListener(null);
+    ContextClasses.OneIt.setEventListener(null);
     RunWithJSpecRunner.setEventListener(null);
-    JSpecExamples.FullFixture.setEventListener(null);
+    ContextClasses.FullFixture.setEventListener(null);
   }
 
   @Given("^I have a class with JSpec tests in it$")
   public void i_have_a_class_with_JSpec_tests_in_it() throws Throwable {
-    this.testClass = JSpecExamples.OneIt.class;
+    this.testClass = ContextClasses.OneIt.class;
   }
   
   @When("^I run the tests with a JSpec runner$")
@@ -53,7 +53,7 @@ public final class JSpecRunnerSteps {
   @Then("^the test runner should run all the tests in the class$")
   public void the_test_runner_should_run_all_the_tests_in_the_class() throws Throwable {
     assertThat(String.format("\nActual: %s", events),
-      events, hasItems("JSpecExamples.OneIt::only_test"));
+      events, hasItems("ContextClasses.OneIt::only_test"));
   }
   
   @Given("^I have a class with JSpec tests in it that is marked to run with a JSpec runner$")
@@ -74,7 +74,7 @@ public final class JSpecRunnerSteps {
   
   @Given("^I have JSpec test with test fixture functions$")
   public void i_have_JSpec_test_with_test_fixture_functions() throws Throwable {
-    this.testClass = JSpecExamples.FullFixture.class;
+    this.testClass = ContextClasses.FullFixture.class;
   }
 
   @When("^I run the test$")
@@ -90,25 +90,25 @@ public final class JSpecRunnerSteps {
   @Then("^the test runner should run the Establish function first,.*$")
   public void the_test_runner_should_run_the_Establish_function_first() throws Throwable {
     assertThat(String.format("\nActual: %s", events),
-      executedMethods().get(1), equalTo("JSpecExamples.FullFixture::arrange"));
+      executedMethods().get(1), equalTo("ContextClasses.FullFixture::arrange"));
   }
 
   @Then("^the test runner should run the Because function second,.*$")
   public void the_test_runner_should_run_the_Because_function_second() throws Throwable {
     assertThat(String.format("\nActual: %s", events),
-      executedMethods().get(2), equalTo("JSpecExamples.FullFixture::act"));
+      executedMethods().get(2), equalTo("ContextClasses.FullFixture::act"));
   }
 
   @Then("^the test runner should run the It function third,.*$")
   public void the_test_runner_should_run_the_It_function_third() throws Throwable {
     assertThat(String.format("\nActual: %s", events),
-      executedMethods().get(3), equalTo("JSpecExamples.FullFixture::assert"));
+      executedMethods().get(3), equalTo("ContextClasses.FullFixture::assert"));
   }
 
   @Then("^the test runner should run the Cleanup function fourth,.*$")
   public void the_test_runner_should_run_the_Cleanup_function_fourth() throws Throwable {
     assertThat(String.format("\nActual: %s", events),
-      executedMethods().get(4), equalTo("JSpecExamples.FullFixture::cleans"));
+      executedMethods().get(4), equalTo("ContextClasses.FullFixture::cleans"));
   }
   
   private List<String> executedMethods() {

@@ -8,7 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.javaspec.proto.JSpecExamples;
+import org.javaspec.proto.ContextClasses;
 import org.javaspec.runner.Example;
 import org.javaspec.runner.FieldExample;
 import org.javaspec.runner.FieldExample.TestSetupException;
@@ -24,7 +24,7 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 public class FieldExampleTest {
   public class descriptionMethods {
     public class givenNoFixtureFields {
-      private final Example subject = exampleWithIt(JSpecExamples.OneIt.class, "only_test");
+      private final Example subject = exampleWithIt(ContextClasses.OneIt.class, "only_test");
       
       @Test
       public void fixtureMethodDescriptors_returnBlank() {
@@ -51,8 +51,8 @@ public class FieldExampleTest {
     public class givenAClassWithoutACallableNoArgConstructor {
       @Test
       public void ThrowsUnsupportedConstructorException() {
-        assertThrowsUnsupportedConstructorException(JSpecExamples.ConstructorHidden.class, "is_otherwise_valid");
-        assertThrowsUnsupportedConstructorException(JSpecExamples.ConstructorWithArguments.class, "is_otherwise_valid");
+        assertThrowsUnsupportedConstructorException(ContextClasses.ConstructorHidden.class, "is_otherwise_valid");
+        assertThrowsUnsupportedConstructorException(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid");
       }
       
       private void assertThrowsUnsupportedConstructorException(Class<?> context, String itFieldName) {
@@ -66,8 +66,8 @@ public class FieldExampleTest {
     public class givenAFaultyConstructorOrInitializer {
       @Test
       public void throwsTestSetupException() throws Exception {
-        assertTestSetupException(JSpecExamples.FailingClassInitializer.class, "will_fail", AssertionError.class);
-        assertTestSetupException(JSpecExamples.FailingConstructor.class, "will_fail", InvocationTargetException.class);
+        assertTestSetupException(ContextClasses.FailingClassInitializer.class, "will_fail", AssertionError.class);
+        assertTestSetupException(ContextClasses.FailingConstructor.class, "will_fail", InvocationTargetException.class);
       }
       
       private void assertTestSetupException(Class<?> context, String itFieldName, Class<? extends Throwable> cause) {
@@ -84,23 +84,23 @@ public class FieldExampleTest {
       
       @Before
       public void spy() throws Exception {
-        JSpecExamples.FullFixture.setEventListener(events::add);
+        ContextClasses.FullFixture.setEventListener(events::add);
         subject.run();
       }
       
       @After
       public void releaseSpy() {
-        JSpecExamples.FullFixture.setEventListener(null);
+        ContextClasses.FullFixture.setEventListener(null);
       }
       
       @Test
       public void runsTheActionFunctionBeforeTheItFunction() throws Exception {
         assertThat(events, contains(
-          "JSpecExamples.FullFixture::new",
-          "JSpecExamples.FullFixture::arrange",
-          "JSpecExamples.FullFixture::act",
-          "JSpecExamples.FullFixture::assert",
-          "JSpecExamples.FullFixture::cleans"));
+          "ContextClasses.FullFixture::new",
+          "ContextClasses.FullFixture::arrange",
+          "ContextClasses.FullFixture::act",
+          "ContextClasses.FullFixture::assert",
+          "ContextClasses.FullFixture::cleans"));
       }
     }
     
@@ -118,25 +118,25 @@ public class FieldExampleTest {
     public class whenATestFunctionThrows {
       @Test
       public void throwsWhateverEstablishThrows() {
-        Example subject = exampleWithEstablish(JSpecExamples.FailingEstablish.class, "flawed_setup", "will_never_run");
+        Example subject = exampleWithEstablish(ContextClasses.FailingEstablish.class, "flawed_setup", "will_never_run");
         assertThrows(UnsupportedOperationException.class, equalTo("flawed_setup"), subject::run);
       }
       
       @Test
       public void throwsWhateverBecauseThrows() {
-        Example subject = exampleWithBecause(JSpecExamples.FailingBecause.class, "flawed_action", "will_never_run");
+        Example subject = exampleWithBecause(ContextClasses.FailingBecause.class, "flawed_action", "will_never_run");
         assertThrows(UnsupportedOperationException.class, equalTo("flawed_action"), subject::run);
       }
       
       @Test
       public void throwsWhateverItThrows() {
-        Example subject = exampleWithIt(JSpecExamples.FailingIt.class, "fails");
+        Example subject = exampleWithIt(ContextClasses.FailingIt.class, "fails");
         assertThrows(AssertionError.class, anything(), subject::run);
       }
       
       @Test
       public void throwsWhateverCleanupThrows() {
-        Example subject = exampleWithCleanup(JSpecExamples.FailingCleanup.class, "may_run", "flawed_cleanup");
+        Example subject = exampleWithCleanup(ContextClasses.FailingCleanup.class, "may_run", "flawed_cleanup");
         assertThrows(IllegalStateException.class, equalTo("flawed_cleanup"), subject::run);
       }
     }
@@ -144,13 +144,13 @@ public class FieldExampleTest {
     public class givenACleanupField {
       public class whenASetupActionOrAssertionFunctionThrows {
         private final List<String> events = new LinkedList<String>();
-        private final Example subject = exampleWith(JSpecExamples.FailingEstablishWithCleanup.class,
+        private final Example subject = exampleWith(ContextClasses.FailingEstablishWithCleanup.class,
           "establish", null, "it", "cleanup");
         private Throwable thrown;
         
         @Before
         public void spy() throws Exception {
-          JSpecExamples.FailingEstablishWithCleanup.setEventListener(events::add);
+          ContextClasses.FailingEstablishWithCleanup.setEventListener(events::add);
           try {
             subject.run();
           } catch (Throwable t) {
@@ -160,14 +160,14 @@ public class FieldExampleTest {
         
         @After
         public void releaseSpy() {
-          JSpecExamples.FailingEstablishWithCleanup.setEventListener(null);
+          ContextClasses.FailingEstablishWithCleanup.setEventListener(null);
         }
         
         @Test
         public void runsTheCleanupInCaseAnyStatementsExecutedBeforeTheError() {
           assertThat(events, contains(
-            "JSpecExamples.FailingEstablishWithCleanup::establish",
-            "JSpecExamples.FailingEstablishWithCleanup::cleanup"));
+            "ContextClasses.FailingEstablishWithCleanup::establish",
+            "ContextClasses.FailingEstablishWithCleanup::cleanup"));
         }
         
         @Test
@@ -195,7 +195,7 @@ public class FieldExampleTest {
   }
   
   private static Example exampleWithFullFixture() {
-    return exampleWith(JSpecExamples.FullFixture.class, "arranges", "acts", "asserts", "cleans");
+    return exampleWith(ContextClasses.FullFixture.class, "arranges", "acts", "asserts", "cleans");
   }
   
   private static Example exampleWith(Class<?> context, String establish, String because, String it, String cleanup) {

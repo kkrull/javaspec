@@ -10,7 +10,7 @@ import static org.junit.Assert.assertThat;
 import java.util.Collections;
 import java.util.List;
 
-import org.javaspec.proto.JSpecExamples;
+import org.javaspec.proto.ContextClasses;
 import org.javaspec.runner.ContextClassTestConfiguration;
 import org.javaspec.runner.Example;
 import org.javaspec.runner.FieldExample;
@@ -30,31 +30,31 @@ public class ContextClassTestConfigurationTest {
   public class findInitializationErrors {
     @Test
     public void givenAClassWithNoItFields_containsNoExamplesException() {
-      shouldFindInitializationError(JSpecExamples.Empty.class, NoExamplesException.class,
-        "Test context org.javaspec.proto.JSpecExamples$Empty must contain at least 1 example in an It field");
+      shouldFindInitializationError(ContextClasses.Empty.class, NoExamplesException.class,
+        "Test context org.javaspec.proto.ContextClasses$Empty must contain at least 1 example in an It field");
     }
     
     @Test
     public void givenAClassWith2OrMoreEstablishFields_containsUnknownStepExecutionSequenceException() {
-      shouldFindInitializationError(JSpecExamples.TwoEstablish.class, UnknownStepExecutionSequenceException.class,
-        "Impossible to determine running order of multiple Establish functions in test context org.javaspec.proto.JSpecExamples$TwoEstablish");
+      shouldFindInitializationError(ContextClasses.TwoEstablish.class, UnknownStepExecutionSequenceException.class,
+        "Impossible to determine running order of multiple Establish functions in test context org.javaspec.proto.ContextClasses$TwoEstablish");
     }
     
     @Test
     public void givenAClassWith2OrMoreBecauseFields_containsUnknownStepExecutionSequenceException() {
-      shouldFindInitializationError(JSpecExamples.TwoBecause.class, UnknownStepExecutionSequenceException.class,
-        "Impossible to determine running order of multiple Because functions in test context org.javaspec.proto.JSpecExamples$TwoBecause");
+      shouldFindInitializationError(ContextClasses.TwoBecause.class, UnknownStepExecutionSequenceException.class,
+        "Impossible to determine running order of multiple Because functions in test context org.javaspec.proto.ContextClasses$TwoBecause");
     }
     
     @Test
     public void givenAClassWith2OrMoreCleanupFields_containsUnknownStepExecutionSequenceException() {
-      shouldFindInitializationError(JSpecExamples.TwoCleanup.class, UnknownStepExecutionSequenceException.class,
-        "Impossible to determine running order of multiple Cleanup functions in test context org.javaspec.proto.JSpecExamples$TwoCleanup");
+      shouldFindInitializationError(ContextClasses.TwoCleanup.class, UnknownStepExecutionSequenceException.class,
+        "Impossible to determine running order of multiple Cleanup functions in test context org.javaspec.proto.ContextClasses$TwoCleanup");
     }
     
     @Test
     public void givenAClassWith1OrMoreItFieldsAndMeetsRemainingCriteria_returnsEmptyList() {
-      TestConfiguration subject = new ContextClassTestConfiguration(JSpecExamples.TwoIt.class);
+      TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.TwoIt.class);
       assertThat(subject.findInitializationErrors(), equalTo(Collections.emptyList()));
     }
     
@@ -70,26 +70,26 @@ public class ContextClassTestConfigurationTest {
   public class getContextClass {
     @Test
     public void returnsTheGivenClass() {
-      TestConfiguration subject = new ContextClassTestConfiguration(JSpecExamples.TwoIt.class);
-      assertThat(subject.getContextClass(), equalTo(JSpecExamples.TwoIt.class));
+      TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.TwoIt.class);
+      assertThat(subject.getContextClass(), equalTo(ContextClasses.TwoIt.class));
     }
   }
   
   public class getExamples {
     public class givenAClassWith1OrMoreInitializationErrors {
-      private final TestConfiguration subject = new ContextClassTestConfiguration(JSpecExamples.Empty.class);
+      private final TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.Empty.class);
       
       @Test
       public void throwsIllegalStateExceptionContainingOneOfThem() {
         assertThrows(IllegalStateException.class,
-          equalTo("Test context org.javaspec.proto.JSpecExamples$Empty has one or more initialization errors"), 
+          equalTo("Test context org.javaspec.proto.ContextClasses$Empty has one or more initialization errors"), 
           NoExamplesException.class,
           subject::getExamples);
       }
     }
     
     public class givenAClassWithNoFixtureFields {
-      private final TestConfiguration subject = new ContextClassTestConfiguration(JSpecExamples.OneIt.class);
+      private final TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.OneIt.class);
       
       @Test
       public void createsEachExampleWithoutFixtureMethods() {
@@ -100,7 +100,7 @@ public class ContextClassTestConfigurationTest {
     }
     
     public class givenAClassWithUpToOneOfEachTypeOfFixtureField {
-      private final TestConfiguration subject = new ContextClassTestConfiguration(JSpecExamples.FullFixture.class);
+      private final TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.FullFixture.class);
       
       @Test
       public void associatesAnEstablishFieldWithEachExample() {
@@ -122,7 +122,7 @@ public class ContextClassTestConfigurationTest {
     }
     
     public class givenAClassWith1OrMoreItFields {
-      private final TestConfiguration subject = new ContextClassTestConfiguration(JSpecExamples.TwoItWithEstablish.class);
+      private final TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.TwoItWithEstablish.class);
       private List<Example> examples;
       
       @Before

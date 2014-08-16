@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import org.hamcrest.Matchers;
-import org.javaspec.proto.JSpecExamples;
+import org.javaspec.proto.ContextClasses;
 import org.javaspec.runner.Example;
 import org.javaspec.runner.TestConfiguration;
 import org.javaspec.util.RunListenerSpy.Event;
@@ -35,7 +35,7 @@ public class JavaSpecRunnerTest {
   public class constructor {
     @Test
     public void givenAContextClassSuitableForJSpecButNotForJUnit_raisesNoError() {
-      Runners.of(JSpecExamples.TwoConstructors.class);
+      Runners.of(ContextClasses.TwoConstructors.class);
     }
 
     @Test
@@ -50,17 +50,17 @@ public class JavaSpecRunnerTest {
     public class givenATestConfigurationOrContextClassWith1OrMoreExamples {
       @Test
       public void describesTheConfiguredClass() {
-        Description description = Runners.of(JSpecExamples.IgnoreClass.class).getDescription();
-        assertThat(description.getTestClass(), equalTo(JSpecExamples.IgnoreClass.class));
+        Description description = Runners.of(ContextClasses.IgnoreClass.class).getDescription();
+        assertThat(description.getTestClass(), equalTo(ContextClasses.IgnoreClass.class));
         assertThat(description.getAnnotation(Ignore.class), notNullValue());
       }
       
       @Test
       public void hasAChildDescriptionForEachExample() {
-        Runner runner = Runners.of(configOf(JSpecExamples.TwoIt.class, exampleNamed("one"), exampleNamed("another")));
+        Runner runner = Runners.of(configOf(ContextClasses.TwoIt.class, exampleNamed("one"), exampleNamed("another")));
         Description subject = runner.getDescription();
         assertListEquals(
-          ImmutableList.of("one(org.javaspec.proto.JSpecExamples$TwoIt)", "another(org.javaspec.proto.JSpecExamples$TwoIt)"), 
+          ImmutableList.of("one(org.javaspec.proto.ContextClasses$TwoIt)", "another(org.javaspec.proto.ContextClasses$TwoIt)"), 
           subject.getChildren().stream().map(Description::getDisplayName).collect(toList()));
       }
     }
@@ -68,7 +68,7 @@ public class JavaSpecRunnerTest {
   
   public class run {
     private final List<Event> events = synchronizedList(new LinkedList<Event>());
-    private final Class<?> context = JSpecExamples.OneIt.class;
+    private final Class<?> context = ContextClasses.OneIt.class;
     
     public class givenAPassingExample {
       @Before

@@ -14,7 +14,7 @@ import org.javaspec.dsl.It;
 import org.junit.Ignore;
 
 /** Inner classes are declared static to avoid the gaze of HierarchicalContextRunner when testing JSpec. */
-public class JSpecExamples {
+public class ContextClasses {
   public static class ConstructorHidden {
     private ConstructorHidden() {}
     It is_otherwise_valid = () -> assertEquals(1, 1);
@@ -61,12 +61,12 @@ public class JSpecExamples {
 
   public static class FailingEstablishWithCleanup extends ExecutionSpy {
     Establish establish = () -> {
-      notifyEvent.accept("JSpecExamples.FailingEstablishWithCleanup::establish");
+      notifyEvent.accept("ContextClasses.FailingEstablishWithCleanup::establish");
       throw new UnsupportedOperationException("flawed_setup"); 
     };
     
-    It it = () -> notifyEvent.accept("JSpecExamples.FailingEstablishWithCleanup::it");
-    Cleanup cleanup = () -> notifyEvent.accept("JSpecExamples.FailingEstablishWithCleanup::cleanup");
+    It it = () -> notifyEvent.accept("ContextClasses.FailingEstablishWithCleanup::it");
+    Cleanup cleanup = () -> notifyEvent.accept("ContextClasses.FailingEstablishWithCleanup::cleanup");
   }
 
   public static class FailingIt {
@@ -74,11 +74,11 @@ public class JSpecExamples {
   }
   
   public static class FullFixture extends ExecutionSpy {
-    public FullFixture() { notifyEvent.accept("JSpecExamples.FullFixture::new"); }
-    Establish arranges = () -> notifyEvent.accept("JSpecExamples.FullFixture::arrange");
-    Because acts = () -> notifyEvent.accept("JSpecExamples.FullFixture::act");
-    It asserts = () -> notifyEvent.accept("JSpecExamples.FullFixture::assert");
-    Cleanup cleans = () -> notifyEvent.accept("JSpecExamples.FullFixture::cleans");
+    public FullFixture() { notifyEvent.accept("ContextClasses.FullFixture::new"); }
+    Establish arranges = () -> notifyEvent.accept("ContextClasses.FullFixture::arrange");
+    Because acts = () -> notifyEvent.accept("ContextClasses.FullFixture::act");
+    It asserts = () -> notifyEvent.accept("ContextClasses.FullFixture::assert");
+    Cleanup cleans = () -> notifyEvent.accept("ContextClasses.FullFixture::cleans");
   }
   
   @Ignore
@@ -87,8 +87,8 @@ public class JSpecExamples {
   }
   
   public static class OneIt extends ExecutionSpy {
-    public OneIt() { notifyEvent.accept("JSpecExamples.OneIt::new"); }
-    It only_test = () -> notifyEvent.accept("JSpecExamples.OneIt::only_test");
+    public OneIt() { notifyEvent.accept("ContextClasses.OneIt::new"); }
+    It only_test = () -> notifyEvent.accept("ContextClasses.OneIt::only_test");
   }
   
   public static class TwoBecause {
