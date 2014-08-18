@@ -3,6 +3,7 @@ package org.javaspec.runner;
 import static org.hamcrest.Matchers.*;
 import static org.javaspec.util.Assertions.assertThrows;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
@@ -15,6 +16,7 @@ import org.javaspec.runner.FieldExample.TestSetupException;
 import org.javaspec.runner.FieldExample.UnsupportedConstructorException;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -43,6 +45,22 @@ public class FieldExampleTest {
         assertThat(subject.describeAction(), equalTo("acts"));
         assertThat(subject.describeBehavior(), equalTo("asserts"));
         assertThat(subject.describeCleanup(), equalTo("cleans"));
+      }
+    }
+  }
+  
+  public class isSkipped {
+    public class whenEachJavaSpecFieldHasAValue {
+      @Test
+      public void returnsFalse() {
+        fail("pending - work here");
+      }
+    }
+    
+    public class givenAnyJavaSpecFieldWithoutAValue {
+      @Test @Ignore
+      public void returnsTrue() {
+        fail("pending");
       }
     }
   }
