@@ -47,6 +47,11 @@ final class FieldExample implements Example {
   }
   
   @Override
+  public boolean isSkipped() {
+    throw new UnsupportedOperationException();
+  }
+  
+  @Override
   public void run() throws Exception {
     Object context = newContextObject();
     TestFunction test = readTestFunctions(context);

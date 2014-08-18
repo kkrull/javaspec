@@ -47,6 +47,13 @@ public final class JavaSpecRunner extends ParentRunner<Example> {
   @Override
   protected void runChild(Example child, RunNotifier notifier) {
     Description description = describeChild(child);
+    if(child.isSkipped())
+      notifier.fireTestIgnored(description);
+    else
+      runExample(child, notifier, description);
+  }
+
+  private void runExample(Example child, RunNotifier notifier, Description description) {
     notifier.fireTestStarted(description);
     try {
       child.run();

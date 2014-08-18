@@ -5,5 +5,6 @@ interface Example {
   String describeAction();
   String describeBehavior();
   String describeCleanup();
+  boolean isSkipped();
   void run() throws Exception;
 }
