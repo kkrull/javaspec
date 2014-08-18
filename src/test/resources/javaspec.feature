@@ -18,3 +18,8 @@ Feature: JavaSpec runner
     And the test runner should run the Because function second, to invoke the behavior in question
     And the test runner should run the It function third, to make one logical assertion about the outcome
     And the test runner should run the Cleanup function fourth, to put everything back the way it was before
+    
+  Scenario: Blank It field is a pending test that gets ignored
+    Given I have JavaSpec test with a blank It field
+    When I run the test
+    Then the test runner should ignore the test

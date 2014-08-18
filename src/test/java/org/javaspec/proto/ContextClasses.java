@@ -91,6 +91,10 @@ public class ContextClasses {
     It only_test = () -> notifyEvent.accept("ContextClasses.OneIt::only_test");
   }
   
+  public static class PendingIt {
+    It is_pending;
+  }
+  
   public static class TwoBecause {
     private final List<String> orderMatters = new LinkedList<String>();
     Because act_part_one = () -> orderMatters.add("do this first");
