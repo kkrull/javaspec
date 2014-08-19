@@ -19,6 +19,8 @@ final class FieldExample implements Example {
   private final Field assertionField;
   private final Field cleanupField;
   
+  private TestFunction test;
+  
   FieldExample(Field arrangeField, Field actionField, Field assertionField, Field cleanupField) {
     this.arrangeField = arrangeField;
     this.actionField = actionField;
@@ -48,13 +50,13 @@ final class FieldExample implements Example {
   
   @Override
   public boolean isSkipped() {
-    TestFunction test = readTestFunctions();
+    lazyReadTestFunctions();
     return test.hasUnassignedFunctions();
   }
   
   @Override
   public void run() throws Exception {
-    TestFunction test = readTestFunctions();
+    lazyReadTestFunctions();
     try {
       test.arrange.run();
       test.action.run();
@@ -64,10 +66,13 @@ final class FieldExample implements Example {
     }
   }
 
-  private TestFunction readTestFunctions() {
+  private void lazyReadTestFunctions() {
+    if(test != null)
+      return;
+    
     Object context = newContextObject();
     try {
-      return new TestFunction(
+      this.test = new TestFunction(
         arrangeField == null ? NOP_ESTABLISH : (Establish)assignedValue(arrangeField, context),
         actionField == null ? NOP_BECAUSE : (Because)assignedValue(actionField, context),
         (It)assignedValue(assertionField, context),

@@ -204,6 +204,17 @@ public class FieldExampleTest {
     }
   }
   
+  public class whenAccessingFieldsMultipleTimes {
+    private final Example subject = exampleWithIt(ContextClasses.UnstableConstructor.class, "asserts");
+    
+    @Test
+    public void onlyConstructsTheClassOnce() throws Exception {
+      //General precautions; it could get confusing if a context class manages to change state between isSkipped and run
+      subject.isSkipped();
+      subject.run();
+    }
+  }
+  
   private static Example exampleWithEstablish(Class<?> context, String establishField, String itField) {
     return exampleWith(context, establishField, null, itField, null);
   }

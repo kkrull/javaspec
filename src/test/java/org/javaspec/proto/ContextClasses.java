@@ -168,4 +168,16 @@ public class ContextClasses {
     It does_one_thing = () -> assertThat(subject, notNullValue());
     It does_something_else = () -> assertThat(subject, equalTo("established"));
   }
+  
+  public static class UnstableConstructor {
+    private static int _numInstances = 0;
+    public UnstableConstructor() {
+      _numInstances++;
+      if(_numInstances++ > 1) {
+        throw new RuntimeException("You may only instantiate me once.  No constructor for you!!!");
+      }
+    }
+    
+    It asserts = () -> assertThat(2, equalTo(2));
+  }
 }
