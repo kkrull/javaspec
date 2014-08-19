@@ -48,21 +48,32 @@ final class FieldExample implements Example {
   
   @Override
   public boolean isSkipped() {
-    Object context = newContextObject();
-    TestFunction test = readTestFunctions(context);
+    TestFunction test = readTestFunctions();
     return test.arrange == null || test.action == null || test.assertion == null;
   }
   
   @Override
   public void run() throws Exception {
-    Object context = newContextObject();
-    TestFunction test = readTestFunctions(context);
+    TestFunction test = readTestFunctions();
     try {
       test.arrange.run();
       test.action.run();
       test.assertion.run();
     } finally {
       test.cleanup.run();
+    }
+  }
+
+  private TestFunction readTestFunctions() {
+    Object context = newContextObject();
+    try {
+      return new TestFunction(
+        arrangeField == null ? NOP_ESTABLISH : (Establish)assignedValue(arrangeField, context),
+        actionField == null ? NOP_BECAUSE : (Because)assignedValue(actionField, context),
+        (It)assignedValue(assertionField, context),
+        cleanupField == null ? NOP_CLEANUP : (Cleanup)assignedValue(cleanupField, context));
+    } catch (Throwable t) {
+      throw new TestSetupException(context.getClass(), t);
     }
   }
   
@@ -82,18 +93,6 @@ final class FieldExample implements Example {
       throw new TestSetupException(noArgConstructor.getDeclaringClass(), e);
     }
     return context;
-  }
-  
-  private TestFunction readTestFunctions(Object context) {
-    try {
-      return new TestFunction(
-        arrangeField == null ? NOP_ESTABLISH : (Establish)assignedValue(arrangeField, context),
-        actionField == null ? NOP_BECAUSE : (Because)assignedValue(actionField, context),
-        (It)assignedValue(assertionField, context),
-        cleanupField == null ? NOP_CLEANUP : (Cleanup)assignedValue(cleanupField, context));
-    } catch (Throwable t) {
-      throw new TestSetupException(context.getClass(), t);
-    }
   }
   
   private Object assignedValue(Field field, Object context) throws IllegalAccessException {
