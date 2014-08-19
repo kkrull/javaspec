@@ -49,7 +49,7 @@ final class FieldExample implements Example {
   @Override
   public boolean isSkipped() {
     TestFunction test = readTestFunctions();
-    return test.arrange == null || test.action == null || test.assertion == null;
+    return test.arrange == null || test.action == null || test.assertion == null || test.cleanup == null;
   }
   
   @Override

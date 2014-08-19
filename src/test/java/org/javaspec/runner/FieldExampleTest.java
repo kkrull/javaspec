@@ -60,6 +60,9 @@ public class FieldExampleTest {
           shouldBeSkipped(ContextClasses.PendingEstablish.class, true);
           shouldBeSkipped(ContextClasses.PendingBecause.class, true);
           shouldBeSkipped(ContextClasses.PendingIt.class, true);
+          assertThat(
+            exampleWith(ContextClasses.PendingCleanup.class, "arranges", "acts", "asserts", "cleans").isSkipped(),
+            equalTo(true));
         }
       }
     }

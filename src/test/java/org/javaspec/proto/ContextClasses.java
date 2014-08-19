@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -92,28 +93,37 @@ public class ContextClasses {
   }
   
   public static class PendingBecause {
-    private Object subject;
+    @SuppressWarnings("unused") private Object subject;
+    private int hashcode;
     
     Establish arranges = () -> subject = new Object();
     Because acts;
-    It asserts = () -> assertThat(subject, notNullValue());
+    It asserts = () -> assertThat(hashcode, equalTo(42));
+  }
+  
+  public static class PendingCleanup {
+    private ByteArrayOutputStream subject;
+    Establish arranges = () -> subject = new ByteArrayOutputStream(4);
+    Because acts = () -> subject.write(42);
+    It asserts = () -> assertThat(subject.size(), equalTo(4));
+    Cleanup cleans;
   }
   
   public static class PendingEstablish {
     private Object subject;
-    private int returned;
+    private int hashcode;
     
     Establish arranges;
-    Because acts = () -> returned = subject.hashCode();
-    It asserts = () -> assertThat(returned, notNullValue());
+    Because acts = () -> hashcode = subject.hashCode();
+    It asserts = () -> assertThat(hashcode, equalTo(42));
   }
   
   public static class PendingIt {
     private Object subject;
-    @SuppressWarnings("unused") private int returned;
+    @SuppressWarnings("unused") private int hashcode;
     
     Establish arranges = () -> subject = new Object();
-    Because acts = () -> returned = subject.hashCode();
+    Because acts = () -> hashcode = subject.hashCode();
     It asserts;
   }
   
