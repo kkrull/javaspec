@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -91,6 +92,41 @@ public class ContextClasses {
     It only_test = () -> notifyEvent.accept("ContextClasses.OneIt::only_test");
   }
   
+  public static class PendingBecause {
+    @SuppressWarnings("unused") private Object subject;
+    private int hashcode;
+    
+    Establish arranges = () -> subject = new Object();
+    Because acts;
+    It asserts = () -> assertThat(hashcode, equalTo(42));
+  }
+  
+  public static class PendingCleanup {
+    private ByteArrayOutputStream subject;
+    Establish arranges = () -> subject = new ByteArrayOutputStream(4);
+    Because acts = () -> subject.write(42);
+    It asserts = () -> assertThat(subject.size(), equalTo(4));
+    Cleanup cleans;
+  }
+  
+  public static class PendingEstablish {
+    private Object subject;
+    private int hashcode;
+    
+    Establish arranges;
+    Because acts = () -> hashcode = subject.hashCode();
+    It asserts = () -> assertThat(hashcode, equalTo(42));
+  }
+  
+  public static class PendingIt {
+    private Object subject;
+    @SuppressWarnings("unused") private int hashcode;
+    
+    Establish arranges = () -> subject = new Object();
+    Because acts = () -> hashcode = subject.hashCode();
+    It asserts;
+  }
+  
   public static class TwoBecause {
     private final List<String> orderMatters = new LinkedList<String>();
     Because act_part_one = () -> orderMatters.add("do this first");
@@ -131,5 +167,17 @@ public class ContextClasses {
     Establish that = () -> subject = "established";
     It does_one_thing = () -> assertThat(subject, notNullValue());
     It does_something_else = () -> assertThat(subject, equalTo("established"));
+  }
+  
+  public static class UnstableConstructor {
+    private static int _numInstances = 0;
+    public UnstableConstructor() {
+      _numInstances++;
+      if(_numInstances++ > 1) {
+        throw new RuntimeException("You may only instantiate me once.  No constructor for you!!!");
+      }
+    }
+    
+    It asserts = () -> assertThat(2, equalTo(2));
   }
 }

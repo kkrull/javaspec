@@ -19,6 +19,8 @@ final class FieldExample implements Example {
   private final Field assertionField;
   private final Field cleanupField;
   
+  private TestFunction testFunction;
+  
   FieldExample(Field arrangeField, Field actionField, Field assertionField, Field cleanupField) {
     this.arrangeField = arrangeField;
     this.actionField = actionField;
@@ -47,15 +49,36 @@ final class FieldExample implements Example {
   }
   
   @Override
+  public boolean isSkipped() {
+    lazyReadTestFunctions();
+    return testFunction.hasUnassignedFunctions();
+  }
+  
+  @Override
   public void run() throws Exception {
-    Object context = newContextObject();
-    TestFunction test = readTestFunctions(context);
+    lazyReadTestFunctions();
     try {
-      test.arrange.run();
-      test.action.run();
-      test.assertion.run();
+      testFunction.arrange.run();
+      testFunction.action.run();
+      testFunction.assertion.run();
     } finally {
-      test.cleanup.run();
+      testFunction.cleanup.run();
+    }
+  }
+
+  private void lazyReadTestFunctions() {
+    if(testFunction != null)
+      return;
+    
+    Object context = newContextObject();
+    try {
+      this.testFunction = new TestFunction(
+        arrangeField == null ? NOP_ESTABLISH : (Establish)assignedValue(arrangeField, context),
+        actionField == null ? NOP_BECAUSE : (Because)assignedValue(actionField, context),
+        (It)assignedValue(assertionField, context),
+        cleanupField == null ? NOP_CLEANUP : (Cleanup)assignedValue(cleanupField, context));
+    } catch (Throwable t) {
+      throw new TestSetupException(context.getClass(), t);
     }
   }
   
@@ -77,18 +100,6 @@ final class FieldExample implements Example {
     return context;
   }
   
-  private TestFunction readTestFunctions(Object context) {
-    try {
-      return new TestFunction(
-        arrangeField == null ? NOP_ESTABLISH : (Establish)assignedValue(arrangeField, context),
-        actionField == null ? NOP_BECAUSE : (Because)assignedValue(actionField, context),
-        (It)assignedValue(assertionField, context),
-        cleanupField == null ? NOP_CLEANUP : (Cleanup)assignedValue(cleanupField, context));
-    } catch (Throwable t) {
-      throw new TestSetupException(context.getClass(), t);
-    }
-  }
-  
   private Object assignedValue(Field field, Object context) throws IllegalAccessException {
     field.setAccessible(true);
     return field.get(context);
@@ -102,7 +113,6 @@ final class FieldExample implements Example {
     }
   }
   
-  
   public static final class UnsupportedConstructorException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
@@ -110,7 +120,6 @@ final class FieldExample implements Example {
       super(String.format("Unable to find a no-argument constructor for class %s", context.getName()), cause);
     }
   }
-  
   
   private static class TestFunction {
     public final Establish arrange;
@@ -123,6 +132,13 @@ final class FieldExample implements Example {
       this.action = action;
       this.assertion = assertion;
       this.cleanup = cleanup;
+    }
+
+    public boolean hasUnassignedFunctions() {
+      return arrange == null ||
+        action == null || 
+        assertion == null || 
+        cleanup == null;
     }
   }
 }

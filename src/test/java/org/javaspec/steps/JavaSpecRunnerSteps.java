@@ -111,6 +111,16 @@ public final class JavaSpecRunnerSteps {
       executedMethods().get(4), equalTo("ContextClasses.FullFixture::cleans"));
   }
   
+  @Given("^I have JavaSpec test with a blank It field$")
+  public void i_have_JavaSpec_test_with_a_blank_It_field() throws Throwable {
+    this.testClass = ContextClasses.PendingIt.class;
+  }
+
+  @Then("^the test runner should ignore the test$")
+  public void the_test_runner_should_ignore_the_test() throws Throwable {
+    assertThat(String.format("was %s", events), events, contains("testIgnored"));
+  }
+  
   private List<String> executedMethods() {
     return events.stream().filter(x -> !x.startsWith("test")).collect(toList());
   }

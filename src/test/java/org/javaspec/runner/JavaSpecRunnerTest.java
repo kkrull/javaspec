@@ -16,8 +16,6 @@ import java.util.stream.Stream;
 
 import org.hamcrest.Matchers;
 import org.javaspec.proto.ContextClasses;
-import org.javaspec.runner.Example;
-import org.javaspec.runner.TestConfiguration;
 import org.javaspec.util.RunListenerSpy.Event;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -69,6 +67,27 @@ public class JavaSpecRunnerTest {
   public class run {
     private final List<Event> events = synchronizedList(new LinkedList<Event>());
     private final Class<?> context = ContextClasses.OneIt.class;
+    
+    public class givenASkippedExample {
+      private final Example skipped = exampleSkipped();
+      
+      @Before
+      public void setup() throws Exception {
+        Runner runner = Runners.of(configOf(context, skipped));
+        Runners.runAll(runner, events::add);
+      }
+      
+      @Test
+      public void doesNotRunTheExample() throws Exception {
+        verify(skipped, never()).run();
+      }
+      
+      @Test
+      public void notifiesTestIgnored() {
+        assertThat(events.stream().map(Event::getName).collect(toList()),
+          contains(equalTo("testIgnored")));
+      }
+    }
     
     public class givenAPassingExample {
       @Before
@@ -134,6 +153,12 @@ public class JavaSpecRunnerTest {
     return stub;
   }
   
+  private static Example exampleSkipped() {
+    Example stub = exampleNamed("skipper");
+    stub(stub.isSkipped()).toReturn(true);
+    return stub;
+  }
+  
   private static Example exampleNamed(String behaviorName) {
     Example stub = mock(Example.class);
     stub(stub.describeBehavior()).toReturn(behaviorName);
@@ -153,6 +178,9 @@ public class JavaSpecRunnerTest {
 
       @Override
       public String describeCleanup() { return ""; }
+      
+      @Override
+      public boolean isSkipped() { return false; }
       
       @Override
       public void run() { notify.accept(Event.named("run::" + behaviorName)); }

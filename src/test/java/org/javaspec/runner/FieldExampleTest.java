@@ -9,8 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.javaspec.proto.ContextClasses;
-import org.javaspec.runner.Example;
-import org.javaspec.runner.FieldExample;
 import org.javaspec.runner.FieldExample.TestSetupException;
 import org.javaspec.runner.FieldExample.UnsupportedConstructorException;
 import org.junit.After;
@@ -44,6 +42,34 @@ public class FieldExampleTest {
         assertThat(subject.describeBehavior(), equalTo("asserts"));
         assertThat(subject.describeCleanup(), equalTo("cleans"));
       }
+    }
+  }
+  
+  public class isSkipped {
+    public class givenAnItFieldAndAnyOtherJavaSpecFields {
+      public class whenEachJavaSpecFieldHasAnAssignedValue {
+        @Test
+        public void returnsFalse() {
+          shouldBeSkipped(ContextClasses.FullFixture.class, false);
+        }
+      }
+      
+      public class when1OrMoreJavaSpecFieldsDoNotHaveAnAssignedValue {
+        @Test
+        public void returnsTrue() {
+          shouldBeSkipped(ContextClasses.PendingEstablish.class, true);
+          shouldBeSkipped(ContextClasses.PendingBecause.class, true);
+          shouldBeSkipped(ContextClasses.PendingIt.class, true);
+          assertThat(
+            exampleWith(ContextClasses.PendingCleanup.class, "arranges", "acts", "asserts", "cleans").isSkipped(),
+            equalTo(true));
+        }
+      }
+    }
+    
+    private void shouldBeSkipped(Class<?> contextClass, boolean isSkipped) {
+      Example subject = exampleWith(contextClass, "arranges", "acts", "asserts", null);
+      assertThat(subject.isSkipped(), equalTo(isSkipped));
     }
   }
   
@@ -175,6 +201,17 @@ public class FieldExampleTest {
           assertThat(thrown.getMessage(), equalTo("flawed_setup"));
         }
       }
+    }
+  }
+  
+  public class whenAccessingFieldsMultipleTimes {
+    private final Example subject = exampleWithIt(ContextClasses.UnstableConstructor.class, "asserts");
+    
+    @Test
+    public void onlyConstructsTheClassOnce() throws Exception {
+      //General precautions; it could get confusing if a context class manages to change state between isSkipped and run
+      subject.isSkipped();
+      subject.run();
     }
   }
   
