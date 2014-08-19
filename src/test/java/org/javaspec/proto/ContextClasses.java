@@ -91,8 +91,30 @@ public class ContextClasses {
     It only_test = () -> notifyEvent.accept("ContextClasses.OneIt::only_test");
   }
   
+  public static class PendingBecause {
+    private Object subject;
+    
+    Establish arranges = () -> subject = new Object();
+    Because acts;
+    It asserts = () -> assertThat(subject, notNullValue());
+  }
+  
+  public static class PendingEstablish {
+    private Object subject;
+    private int returned;
+    
+    Establish arranges;
+    Because acts = () -> returned = subject.hashCode();
+    It asserts = () -> assertThat(returned, notNullValue());
+  }
+  
   public static class PendingIt {
-    It is_pending;
+    private Object subject;
+    @SuppressWarnings("unused") private int returned;
+    
+    Establish arranges = () -> subject = new Object();
+    Because acts = () -> returned = subject.hashCode();
+    It asserts;
   }
   
   public static class TwoBecause {

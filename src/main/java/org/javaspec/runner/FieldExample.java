@@ -48,7 +48,9 @@ final class FieldExample implements Example {
   
   @Override
   public boolean isSkipped() {
-    throw new UnsupportedOperationException();
+    Object context = newContextObject();
+    TestFunction test = readTestFunctions(context);
+    return test.arrange == null || test.action == null || test.assertion == null;
   }
   
   @Override
@@ -107,7 +109,6 @@ final class FieldExample implements Example {
     }
   }
   
-  
   public static final class UnsupportedConstructorException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
@@ -115,7 +116,6 @@ final class FieldExample implements Example {
       super(String.format("Unable to find a no-argument constructor for class %s", context.getName()), cause);
     }
   }
-  
   
   private static class TestFunction {
     public final Establish arrange;
