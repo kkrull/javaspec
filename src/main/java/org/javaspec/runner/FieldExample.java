@@ -49,7 +49,7 @@ final class FieldExample implements Example {
   @Override
   public boolean isSkipped() {
     TestFunction test = readTestFunctions();
-    return test.arrange == null || test.action == null || test.assertion == null || test.cleanup == null;
+    return test.hasUnassignedFunctions();
   }
   
   @Override
@@ -127,6 +127,13 @@ final class FieldExample implements Example {
       this.action = action;
       this.assertion = assertion;
       this.cleanup = cleanup;
+    }
+
+    public boolean hasUnassignedFunctions() {
+      return arrange == null ||
+        action == null || 
+        assertion == null || 
+        cleanup == null;
     }
   }
 }
