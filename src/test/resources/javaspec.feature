@@ -26,3 +26,14 @@ Feature: JavaSpec runner
     And the test runner should run the Because function second, to invoke the behavior in question
     And the test runner should run the It function third, to make one logical assertion about the outcome
     And the test runner should run the Cleanup function fourth, to put everything back the way it was before
+    
+  Scenario: Inner classes define sub-contexts
+    Note: Inner classes are non-static, nested classes.
+    Nested static classes wouldn't be able to access fields in enclosing classes.
+    
+    Given I have a top-level class marked to run with a JavaSpec runner
+    And that class contains 1 or more inner classes
+    When I run the tests
+    Then the test runner should run tests in the top-level class
+    And the test runner should run tests in each inner class
+    And tests defined in an inner class share context with the enclosing class

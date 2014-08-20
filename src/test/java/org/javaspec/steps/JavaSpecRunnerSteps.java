@@ -77,7 +77,7 @@ public final class JavaSpecRunnerSteps {
     this.testClass = ContextClasses.FullFixture.class;
   }
 
-  @When("^I run the test$")
+  @When("^I run the tests?$")
   public void i_run_the_test() throws Throwable {
     Runners.runAll(Runners.of(testClass), notifyEventName);
   }
