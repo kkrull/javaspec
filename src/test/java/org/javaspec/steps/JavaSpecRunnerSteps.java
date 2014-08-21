@@ -10,11 +10,13 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.javaspec.proto.ContextClasses;
+import org.javaspec.proto.OuterContext;
 import org.javaspec.proto.RunWithJavaSpecRunner;
 import org.javaspec.runner.Runners;
 import org.javaspec.util.RunListenerSpy.Event;
 import org.junit.runner.JUnitCore;
 
+import cucumber.api.PendingException;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
@@ -67,6 +69,19 @@ public final class JavaSpecRunnerSteps {
   @Given("^I have a JavaSpec test with a blank It field$")
   public void i_have_a_JavaSpec_test_with_a_blank_It_field() throws Throwable {
     this.testClass = ContextClasses.PendingIt.class;
+  }
+  
+  @Given("^I have a top-level class marked to run with a JavaSpec runner$")
+  public void i_have_a_top_level_class_marked_to_run_with_a_JavaSpec_runner() { /* Followed by a more specific step */ }
+
+  @Given("^that class contains 1 or more inner classes$")
+  public void that_class_contains_or_more_inner_classes() throws Throwable {
+    this.testClass = OuterContext.class;    
+  }
+  
+  @Given("^that class and its inner classes define fixture lambdas$")
+  public void that_class_and_its_inner_classes_define_fixture_lambdas() throws Throwable {
+    this.testClass = OuterContext.class;    
   }
   
   /* When */
@@ -133,8 +148,47 @@ public final class JavaSpecRunnerSteps {
     assertThat(describeEvents(), testNotifications(), contains("testIgnored"));
   }
   
+  @Then("^the test runner should run tests for each It field in the top-level class$")
+  public void the_test_runner_should_run_tests_for_each_It_field_in_the_top_level_class() throws Throwable {
+    assertTestRan(OuterContext.class, "asserts");
+  }
+
+  @Then("^the test runner should run tests for each It field in an inner class$")
+  public void the_test_runner_should_run_tests_for_each_It_field_in_an_inner_class() throws Throwable {
+    assertTestRan(OuterContext.InnerContext.class, "asserts");
+  }
+  
+  @Then("^each test runs within the context defined by the fixture lambdas in the test's own class and in each enclosing class$")
+  public void each_test_runs_within_the_context_defined_by_the_fixture_lambdas_in_the_test_s_own_class_and_in_each_enclosing_class() throws Throwable {
+    assertThat(describeEvents(), testNotifications(), not(hasItem("testFailure")));
+  }
+
+  @Then("^pre-test fixture lambdas run top-down, starting with the top-level class$")
+  public void pre_test_fixture_lambdas_run_top_down_starting_with_the_top_level_class() throws Throwable {
+    throw new PendingException();
+  }
+
+  @Then("^post-test fixture lambdas run bottom-up, starting with the class defining the test$")
+  public void post_test_fixture_lambdas_run_bottom_up_starting_with_the_class_defining_the_test() throws Throwable {
+    throw new PendingException();
+  }
+  
+  @Then("^an Establish lambda runs before a Because lambda, if both are in the same class$")
+  public void an_Establish_lambda_runs_before_a_Because_lambda_if_both_are_in_the_same_class() throws Throwable {
+    throw new PendingException();
+  }
+
+  @Then("^both of these run before any Establish or Because lambdas in any nested classes$")
+  public void both_of_these_run_before_any_Establish_or_Because_lambdas_in_any_nested_classes() throws Throwable {
+    throw new PendingException();
+  }
+
   /* Helpers */
 
+  private void assertTestRan(Class<?> context, String itFieldName) {
+    throw new UnsupportedOperationException();
+  }
+  
   private String describeEvents() {
     return String.format("\nActual: %s", events);
   }
