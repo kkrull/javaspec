@@ -10,12 +10,12 @@ Feature: Basic structure of a JavaSpec test class
     Then the test runner should run one test for every It field
   
   Scenario: An unassigned It field is a pending test
-    Given I have JavaSpec test with a blank It field
+    Given I have a JavaSpec test with a blank It field
     When I run the test
     Then the test runner should ignore the test
 
   Scenario: Relative order of execution for test fixture lambdas
-    Given I have JavaSpec test with test fixture lambdas
+    Given I have a JavaSpec test with test fixture lambdas
     When I run the test
     Then the test runner should run the test within the context of the test fixture
     And the test runner should run the Establish lambda first, to arrange conditions necessary for the test
