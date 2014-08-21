@@ -28,16 +28,18 @@ public final class JavaSpecRunnerSteps {
   
   @Before
   public void setupTestExecutionSpy() {
-    ContextClasses.OneIt.setEventListener(events::add);
-    RunWithJavaSpecRunner.setEventListener(events::add);
     ContextClasses.FullFixture.setEventListener(events::add);
+    ContextClasses.OneIt.setEventListener(events::add);
+    ContextClasses.TwoIt.setEventListener(events::add);
+    RunWithJavaSpecRunner.setEventListener(events::add);
   }
   
   @After
   public void recallSpies() {
-    ContextClasses.OneIt.setEventListener(null);
-    RunWithJavaSpecRunner.setEventListener(null);
     ContextClasses.FullFixture.setEventListener(null);
+    ContextClasses.OneIt.setEventListener(null);
+    ContextClasses.TwoIt.setEventListener(null);
+    RunWithJavaSpecRunner.setEventListener(null);
   }
 
   @Given("^I have a class with JavaSpec tests in it$")
@@ -80,6 +82,17 @@ public final class JavaSpecRunnerSteps {
   @When("^I run the tests?$")
   public void i_run_the_test() throws Throwable {
     Runners.runAll(Runners.of(testClass), notifyEventName);
+  }
+  
+  @Given("^I have a JavaSpec test with 1 or more It fields that are assigned to no-argument lambdas$")
+  public void i_have_a_JavaSpec_test_with_or_more_It_fields_that_are_assigned_to_no_argument_lambdas() throws Throwable {
+    this.testClass = ContextClasses.TwoIt.class;
+  }
+
+  @Then("^the test runner should run one test for every It field$")
+  public void the_test_runner_should_run_one_test_for_every_It_field() throws Throwable {
+    assertThat(String.format("\nActual: %s", events),
+      executedMethods(), contains("TwoIt::first_test", "TwoIt::second_test"));
   }
   
   @Then("^the test runner should run the test within the context of the test fixture$")

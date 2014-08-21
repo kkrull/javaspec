@@ -157,9 +157,9 @@ public class ContextClasses {
     It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
   }
   
-  public static class TwoIt {
-    It first_test = () -> assertEquals(1, 1);
-    It second_test = () -> assertEquals(2, 2);
+  public static class TwoIt extends ExecutionSpy {
+    It first_test = () -> notifyEvent.accept("TwoIt::first_test");
+    It second_test = () -> notifyEvent.accept("TwoIt::second_test");
   }
   
   public static class TwoItWithEstablish {
