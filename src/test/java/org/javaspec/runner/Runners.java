@@ -1,5 +1,6 @@
 package org.javaspec.runner;
 
+import static java.util.stream.Collectors.joining;
 import static org.junit.Assert.fail;
 
 import java.util.LinkedList;
@@ -7,8 +8,6 @@ import java.util.List;
 import java.util.Stack;
 import java.util.function.Consumer;
 
-import org.javaspec.runner.JavaSpecRunner;
-import org.javaspec.runner.TestConfiguration;
 import org.javaspec.util.RunListenerSpy;
 import org.javaspec.util.RunListenerSpy.Event;
 import org.junit.runner.Runner;
@@ -53,7 +52,12 @@ public final class Runners {
       System.out.printf("[%s]\n", x.getClass());
       x.printStackTrace(System.out);
     });
-    fail("Failed to create JavaSpecRunner");
+    
+    String causes = flattenCauses(e).stream()
+      .map(x -> String.format("[%s] %s", x.getClass().getName(), x.getMessage()))
+      .collect(joining("\n- "));
+    String msg = String.format("Failed to create JavaSpecRunner due to initialization errors:\n- %s\n", causes);
+    fail(msg);
     return null; //Not really returning; just more convenient to use at call sites
   }
   
