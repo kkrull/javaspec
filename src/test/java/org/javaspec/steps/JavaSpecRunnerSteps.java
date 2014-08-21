@@ -72,8 +72,8 @@ public final class JavaSpecRunnerSteps {
       events, hasItems("RunWithJavaSpecRunner::only_test"));
   }
   
-  @Given("^I have JavaSpec test with test fixture functions$")
-  public void i_have_JavaSpec_test_with_test_fixture_functions() throws Throwable {
+  @Given("^I have JavaSpec test with test fixture lambdas$")
+  public void i_have_JavaSpec_test_with_test_fixture_lambdas() throws Throwable {
     this.testClass = ContextClasses.FullFixture.class;
   }
 
@@ -87,26 +87,26 @@ public final class JavaSpecRunnerSteps {
     assertThat(String.format("\nActual: %s", events), executedMethods(), hasSize(5));
   }
 
-  @Then("^the test runner should run the Establish function first,.*$")
-  public void the_test_runner_should_run_the_Establish_function_first() throws Throwable {
+  @Then("^the test runner should run the Establish lambda first,.*$")
+  public void the_test_runner_should_run_the_Establish_lambda_first() throws Throwable {
     assertThat(String.format("\nActual: %s", events),
       executedMethods().get(1), equalTo("ContextClasses.FullFixture::arrange"));
   }
 
-  @Then("^the test runner should run the Because function second,.*$")
-  public void the_test_runner_should_run_the_Because_function_second() throws Throwable {
+  @Then("^the test runner should run the Because lambda second,.*$")
+  public void the_test_runner_should_run_the_Because_lambda_second() throws Throwable {
     assertThat(String.format("\nActual: %s", events),
       executedMethods().get(2), equalTo("ContextClasses.FullFixture::act"));
   }
 
-  @Then("^the test runner should run the It function third,.*$")
-  public void the_test_runner_should_run_the_It_function_third() throws Throwable {
+  @Then("^the test runner should run the It lambda third,.*$")
+  public void the_test_runner_should_run_the_It_lambda_third() throws Throwable {
     assertThat(String.format("\nActual: %s", events),
       executedMethods().get(3), equalTo("ContextClasses.FullFixture::assert"));
   }
 
-  @Then("^the test runner should run the Cleanup function fourth,.*$")
-  public void the_test_runner_should_run_the_Cleanup_function_fourth() throws Throwable {
+  @Then("^the test runner should run the Cleanup lambda fourth,.*$")
+  public void the_test_runner_should_run_the_Cleanup_lambda_fourth() throws Throwable {
     assertThat(String.format("\nActual: %s", events),
       executedMethods().get(4), equalTo("ContextClasses.FullFixture::cleans"));
   }
