@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.javaspec.proto.ContextClasses;
 import org.javaspec.proto.OuterContext;
+import org.javaspec.proto.OuterContextWithSetup;
 import org.javaspec.proto.RunWithJavaSpecRunner;
 import org.javaspec.runner.Runners;
 import org.javaspec.util.RunListenerSpy.Event;
@@ -79,7 +80,12 @@ public final class JavaSpecRunnerSteps {
   
   @Given("^that class and its inner classes define fixture lambdas$")
   public void that_class_and_its_inner_classes_define_fixture_lambdas() throws Throwable {
-    this.testClass = OuterContext.class;    
+    this.testClass = OuterContext.class;
+  }
+  
+  @Given("^that class and its inner classes each define Establish and Because fixture lambdas$")
+  public void that_class_and_its_inner_classes_each_define_Establish_and_Because_fixture_lambdas() throws Throwable {
+    this.testClass = OuterContextWithSetup.class;
   }
   
   /* When */
@@ -163,7 +169,8 @@ public final class JavaSpecRunnerSteps {
 
   @Then("^pre-test fixture lambdas run top-down, starting with the top-level class$")
   public void pre_test_fixture_lambdas_run_top_down_starting_with_the_top_level_class() throws Throwable {
-    throw new PendingException();
+    assertTestPassed(OuterContext.class, "asserts");
+    assertTestPassed(OuterContext.InnerContext.class, "asserts");
   }
 
   @Then("^post-test fixture lambdas run bottom-up, starting with the class defining the test$")
@@ -173,23 +180,34 @@ public final class JavaSpecRunnerSteps {
   
   @Then("^an Establish lambda runs before a Because lambda, if both are in the same class$")
   public void an_Establish_lambda_runs_before_a_Because_lambda_if_both_are_in_the_same_class() throws Throwable {
-    throw new PendingException();
+    assertTestPassed(OuterContextWithSetup.class, "asserts");
+    assertTestPassed(OuterContextWithSetup.InnerContextWithSetup.class, "asserts");
   }
 
   @Then("^both of these run before any Establish or Because lambdas in any nested classes$")
   public void both_of_these_run_before_any_Establish_or_Because_lambdas_in_any_nested_classes() throws Throwable {
-    throw new PendingException();
+    throw new PendingException("Prior step already tested this.  Find a way to describe as a single step.");
   }
 
   /* Helpers */
+  
+  private void assertTestPassed(Class<?> context, String itFieldName) {
+    assertThat(describeEvents(), notificationsForTest(context, itFieldName, "testFinished"), hasSize(1));
+    assertThat(describeEvents(), notificationsForTest(context, itFieldName, "testFailed"), hasSize(0));
+  }
 
   private void assertTestRan(Class<?> context, String itFieldName) {
+    assertThat(describeEvents(), notificationsForTest(context, itFieldName, "testStarted"), hasSize(1));
+    assertThat(describeEvents(), notificationsForTest(context, itFieldName, "testFinished"), hasSize(1));
+  }
+
+  private List<Event> notificationsForTest(Class<?> context, String itFieldName, String eventName) {
     List<Event> match = notificationEvents().stream()
-      .filter(x -> "testStarted".equals(x.name))
+      .filter(x -> eventName.equals(x.name))
       .filter(x -> context.getName().equals(x.describedClassName()))
       .filter(x -> itFieldName.equals(x.describedMethodName()))
       .collect(toList());
-    assertThat(describeEvents(), match, hasSize(1));
+    return match;
   }
   
   private String describeEvents() {
