@@ -54,8 +54,8 @@ final class ContextClassTestConfiguration implements TestConfiguration {
   }
   
   private boolean hasAnyTests() {
-    DfsSearch<Class<?>> search = new DfsSearch<Class<?>>(parent -> parent.getDeclaredClasses());
-    return search.anyNodeMatches(contextClass, x -> ReflectionUtil.hasFieldsOfType(It.class, x));
+    DfsSearch<Class<?>> search = new DfsSearch<Class<?>>(contextClass, parent -> parent.getDeclaredClasses());
+    return search.anyNodeMatches(x -> ReflectionUtil.hasFieldsOfType(It.class, x));
   }
   
   private boolean isStepSequenceAmbiguous(Class<?> typeOfStep) {
