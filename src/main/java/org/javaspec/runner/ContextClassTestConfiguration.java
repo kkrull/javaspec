@@ -11,6 +11,7 @@ import org.javaspec.dsl.Because;
 import org.javaspec.dsl.Cleanup;
 import org.javaspec.dsl.Establish;
 import org.javaspec.dsl.It;
+import org.javaspec.util.DfsSearch;
 
 final class ContextClassTestConfiguration implements TestConfiguration {
   private final Class<?> contextClass;
@@ -22,7 +23,7 @@ final class ContextClassTestConfiguration implements TestConfiguration {
   @Override
   public List<Throwable> findInitializationErrors() {
     List<Throwable> list = new LinkedList<Throwable>();
-    if(hasNoTests())
+    if(!hasAnyTests())
       list.add(new NoExamplesException(contextClass));
     if(isStepSequenceAmbiguous(Establish.class))
       list.add(new UnknownStepExecutionSequenceException(contextClass, Establish.class.getSimpleName()));
@@ -52,8 +53,9 @@ final class ContextClassTestConfiguration implements TestConfiguration {
     return ReflectionUtil.fieldsOfType(It.class, contextClass).map(it -> new FieldExample(arrange, act, it, cleanup));
   }
   
-  private boolean hasNoTests() {
-    return !ReflectionUtil.hasFieldsOfType(It.class, contextClass);
+  private boolean hasAnyTests() {
+    DfsSearch<Class<?>> search = new DfsSearch<Class<?>>(parent -> parent.getDeclaredClasses());
+    return search.anyNodeMatches(contextClass, x -> ReflectionUtil.hasFieldsOfType(It.class, x));
   }
   
   private boolean isStepSequenceAmbiguous(Class<?> typeOfStep) {

@@ -29,12 +29,6 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 public class ContextClassTestConfigurationTest {
   public class findInitializationErrors {
     @Test
-    public void givenAClassWithNoItFields_containsNoExamplesException() {
-      shouldFindInitializationError(ContextClasses.Empty.class, NoExamplesException.class,
-        "Test context org.javaspec.proto.ContextClasses$Empty must contain at least 1 example in an It field");
-    }
-    
-    @Test
     public void givenAClassWith2OrMoreEstablishFields_containsUnknownStepExecutionSequenceException() {
       shouldFindInitializationError(ContextClasses.TwoEstablish.class, UnknownStepExecutionSequenceException.class,
         "Impossible to determine running order of multiple Establish functions in test context org.javaspec.proto.ContextClasses$TwoEstablish");
@@ -52,10 +46,20 @@ public class ContextClassTestConfigurationTest {
         "Impossible to determine running order of multiple Cleanup functions in test context org.javaspec.proto.ContextClasses$TwoCleanup");
     }
     
-    @Test
-    public void givenAClassWith1OrMoreItFieldsAndMeetsRemainingCriteria_returnsEmptyList() {
-      TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.TwoIt.class);
-      assertThat(subject.findInitializationErrors(), equalTo(Collections.emptyList()));
+    public class givenAClassWith0OrMoreInnerClasses {
+      @Test
+      public void andNoClassHasAnyItFields_containsNoExamplesException() {
+        shouldFindInitializationError(ContextClasses.Empty.class, NoExamplesException.class,
+          "Test context org.javaspec.proto.ContextClasses$Empty must contain at least 1 example in an It field");
+      }
+      
+      public class andNoClassHas2OrMoreFixtureFieldsOfTheSameType {
+        @Test
+        public void andAtLeastOneClassHas1OrMoreItFields_returnsEmptyList() {
+          TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.NestedIt.class);
+          assertThat(subject.findInitializationErrors(), equalTo(Collections.emptyList()));
+        }
+      }
     }
     
     private void shouldFindInitializationError(Class<?> contextType, Class<?> errorType, String errorMsg) {

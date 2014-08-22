@@ -87,6 +87,12 @@ public class ContextClasses {
     It gets_ignored = () -> assertEquals(1, 2);
   }
   
+  public static class NestedIt {
+    public class innerContext {
+      It asserts = () -> assertEquals(1, 1);
+    }
+  }
+  
   public static class OneIt extends ExecutionSpy {
     public OneIt() { notifyEvent.accept("ContextClasses.OneIt::new"); }
     It only_test = () -> notifyEvent.accept("ContextClasses.OneIt::only_test");
