@@ -3,8 +3,8 @@ package org.javaspec.runner;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
-import static org.javaspec.util.Assertions.assertListEquals;
-import static org.javaspec.util.Assertions.assertThrows;
+import static org.javaspec.testutil.Assertions.assertListEquals;
+import static org.javaspec.testutil.Assertions.assertThrows;
 import static org.junit.Assert.assertThat;
 
 import java.util.Collections;

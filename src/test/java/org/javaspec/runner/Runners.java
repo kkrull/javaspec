@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Stack;
 import java.util.function.Consumer;
 
-import org.javaspec.util.RunListenerSpy;
-import org.javaspec.util.RunListenerSpy.Event;
+import org.javaspec.testutil.RunListenerSpy;
+import org.javaspec.testutil.RunListenerSpy.Event;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;

@@ -3,7 +3,7 @@ package org.javaspec.runner;
 import static java.util.Collections.synchronizedList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
-import static org.javaspec.util.Assertions.assertListEquals;
+import static org.javaspec.testutil.Assertions.assertListEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 import org.hamcrest.Matchers;
 import org.javaspec.proto.ContextClasses;
-import org.javaspec.util.RunListenerSpy.Event;
+import org.javaspec.testutil.RunListenerSpy.Event;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

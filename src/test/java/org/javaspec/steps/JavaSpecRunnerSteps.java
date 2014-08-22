@@ -13,7 +13,7 @@ import org.javaspec.proto.OuterContext;
 import org.javaspec.proto.OuterContextWithSetup;
 import org.javaspec.proto.RunWithJavaSpecRunner;
 import org.javaspec.runner.Runners;
-import org.javaspec.util.RunListenerSpy.Event;
+import org.javaspec.testutil.RunListenerSpy.Event;
 import org.junit.runner.JUnitCore;
 
 import cucumber.api.PendingException;

@@ -1,7 +1,7 @@
 package org.javaspec.runner;
 
 import static org.hamcrest.Matchers.*;
-import static org.javaspec.util.Assertions.assertThrows;
+import static org.javaspec.testutil.Assertions.assertThrows;
 import static org.junit.Assert.assertThat;
 
 import java.lang.reflect.InvocationTargetException;
