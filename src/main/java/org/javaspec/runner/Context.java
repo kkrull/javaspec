@@ -1,5 +1,6 @@
 package org.javaspec.runner;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,14 +13,18 @@ final class Context {
     this.children = new LinkedList<Context>();
   }
   
-  private Context(Class<?> value, List<Context> children) {
-    this.value = value;
-    this.children = children;
+  public void addChild(Class<?> child) {
+    children.add(new Context(child));
+//    System.out.printf("addChild: self=%s, value=%s, children=%s\n", toString(), value, children);
+  }
+
+  public List<Context> getChildren() {
+//    System.out.printf("getChildren: self=%s, value=%s, children=%s\n", toString(), value, children);
+    return new ArrayList<Context>(children);
   }
   
-  public Context addChild(Class<?> child) {
-    List<Context> withChild = new LinkedList<Context>(children);
-    withChild.add(new Context(child));
-    return new Context(value, withChild);
-  }
+//  @Override
+//  public String toString() {
+//    return String.format("<Context value=%s, children=%s>", value.getName(), children);
+//  }
 }

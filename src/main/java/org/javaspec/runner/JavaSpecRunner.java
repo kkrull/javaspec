@@ -3,6 +3,7 @@ package org.javaspec.runner;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -29,12 +30,25 @@ public final class JavaSpecRunner extends ParentRunner<Example> {
   
   @Override
   public Description getDescription() {
-    Context rootContext = exampleGateway.getContextRoot();
-    Description rootDescription = Description.createSuiteDescription(rootContext.value);
-    getChildren().stream().map(this::describeChild).forEach(rootDescription::addChild);
+    Context contextRoot = exampleGateway.getContextRoot();
+    Description rootDescription = describe(contextRoot);
+//    getChildren().stream().map(this::describeChild).forEach(rootDescription::addChild);
     return rootDescription;
-  };
+  }
 
+  private Description describe(Context context) {
+    Description parent = Description.createSuiteDescription(context.value);
+    
+    List<Context> subContexts = context.getChildren();
+    subContexts.stream().map(this::describe).forEach(parent::addChild);
+    
+    List<String> exampleNames = exampleGateway.getExampleNames(context);
+    Stream<Description> exampleDescriptions = exampleNames.stream().map(x -> Description.createTestDescription(context.value, x));
+    exampleDescriptions.forEach(parent::addChild);
+    
+    return parent;
+  };
+  
   @Override
   protected List<Example> getChildren() {
     return exampleGateway.getExamples().collect(toList());

@@ -5,7 +5,9 @@ import java.util.stream.Stream;
 
 interface ExampleGateway {
   List<Throwable> findInitializationErrors();
-  Class<?> getContextClass();
   Context getContextRoot();
-  Stream<Example> getExamples();
+  List<String> getExampleNames(Context context);
+  
+  Class<?> getContextClass(); //TODO KDK: Remove, if no longer needed
+  Stream<Example> getExamples(); //TODO KDK: Remove, if no longer needed
 }

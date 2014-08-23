@@ -53,13 +53,13 @@ public class JavaSpecRunnerTest {
         assertThat(description.getAnnotation(Ignore.class), notNullValue());
       }
       
-      @Test @Ignore("wip")
+      @Test
       public void describesEachContextClass() {
         ExampleGateway gateway = Mockito.mock(ExampleGateway.class);
-        stub(gateway.getContextRoot()).toReturn(
+        when(gateway.getContextRoot()).thenReturn(
           contextOf(ContextClasses.NestedIt.class, ContextClasses.NestedIt.innerContext.class));
-          
-        Description description = Runners.of(ContextClasses.NestedIt.class).getDescription();
+        
+        Description description = Runners.of(gateway).getDescription();
         assertThat(description.getTestClass(), equalTo(ContextClasses.NestedIt.class));
         assertThat(description.getChildren(), hasSize(1));
         assertThat(description.getChildren().get(0).getTestClass(), equalTo(ContextClasses.NestedIt.innerContext.class));
@@ -76,7 +76,9 @@ public class JavaSpecRunnerTest {
     }
     
     private Context contextOf(Class<?> parent, Class<?> child) {
-      return new Context(parent).addChild(child);
+      Context root = new Context(parent);
+      root.addChild(child);
+      return root;
     }
   }
   
@@ -92,7 +94,7 @@ public class JavaSpecRunnerTest {
         Runner runner = Runners.of(gatewayFor(context, skipped));
         Runners.runAll(runner, events::add);
       }
-      
+
       @Test
       public void doesNotRunTheExample() throws Exception {
         verify(skipped, never()).run();
@@ -156,6 +158,11 @@ public class JavaSpecRunnerTest {
       
       @Override
       public Stream<Example> getExamples() { return Stream.of(examples); }
+
+      @Override
+      public List<String> getExampleNames(Context context) {
+        return Stream.of(examples).map(Example::describeBehavior).collect(toList()); 
+      }
     };
   }
   

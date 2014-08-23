@@ -46,6 +46,12 @@ final class ContextClassExampleGateway implements ExampleGateway {
   }
 
   @Override
+  public List<String> getExampleNames(Context context) {
+    return new LinkedList<String>();
+//    throw new UnsupportedOperationException();
+  }
+
+  @Override
   public Stream<Example> getExamples() {
     List<Throwable> initializationErrors = findInitializationErrors();
     if(!initializationErrors.isEmpty()) {
