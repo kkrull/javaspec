@@ -53,13 +53,37 @@ public class JavaSpecRunnerTest {
         private final Description returned = Runners.of(gateway).getDescription();
         
         @Test
-        public void describesEachContextClass() {
+        public void describesEachContextAsASuite() {
           assertThat(returned.getTestClass(), equalTo(ContextClasses.Nested.class));
           assertThat(childTestClasses(returned), contains(equalTo(ContextClasses.Nested.middle.class)));
           Description middleSuite = childSuites(returned).findFirst().get();
           assertThat(childTestClasses(middleSuite), contains(equalTo(ContextClasses.Nested.middle.bottom.class)));
         }
+
+        @Test
+        public void describesEachExampleAsATestInAContextClass() {
+          assertHasTest(returned, ContextClasses.Nested.class, "runs");
+          
+          Description middleSuite = childSuites(returned).findFirst().get();
+          assertHasTest(middleSuite, ContextClasses.Nested.middle.class, "runs");
+          
+          Description bottomSuite = childSuites(middleSuite).findFirst().get();
+          assertHasTest(bottomSuite, ContextClasses.Nested.middle.bottom.class, "runs");
+        }
         
+        @Test
+        public void hasAnnotationsFromEachContextClass() {
+          Description description = Runners.of(ContextClasses.IgnoreClass.class).getDescription();
+          assertThat(description.getAnnotation(Ignore.class), notNullValue());
+        }
+
+        private void assertHasTest(Description suite, Class<?> testClass, String name) {
+          List<Description> tests = suite.getChildren().stream().filter(x -> x.isTest()).collect(toList());
+          assertThat(tests.stream().map(x -> x.getTestClass()).collect(toList()), contains(equalTo(testClass)));
+          String expectedDisplayName = String.format("%s(%s)", name, testClass.getName());
+          assertThat(tests.stream().map(x -> x.getDisplayName()).collect(toList()), contains(equalTo(expectedDisplayName)));
+        }
+
         private List<Class<?>> childTestClasses(Description suite) {
           return childSuites(suite).map(x -> x.getTestClass()).collect(toList());
         }
@@ -68,27 +92,6 @@ public class JavaSpecRunnerTest {
           return suite.getChildren().stream().filter(x -> x.isSuite());
         }
       }
-      
-      @Test
-      public void hasAnnotationsFromEachContextClass() {
-        Description description = Runners.of(ContextClasses.IgnoreClass.class).getDescription();
-        assertThat(description.getAnnotation(Ignore.class), notNullValue());
-      }
-      
-      @Test
-      public void hasAChildDescriptionForEachExample() {
-        Runner runner = Runners.of(gatewayFor(ContextClasses.TwoIt.class, exampleNamed("one"), exampleNamed("another")));
-        Description subject = runner.getDescription();
-        assertListEquals(
-          ImmutableList.of("one(org.javaspec.proto.ContextClasses$TwoIt)", "another(org.javaspec.proto.ContextClasses$TwoIt)"), 
-          subject.getChildren().stream().map(Description::getDisplayName).collect(toList()));
-      }
-    }
-    
-    private Context contextOf(Class<?> rootClass, Class<?> middleClass, Class<?> bottomClass) {
-      Context bottom = new Context(bottomClass);
-      Context middle = new Context(middleClass, ImmutableList.of(bottom));
-      return new Context(rootClass, ImmutableList.of(middle));
     }
   }
   
@@ -153,6 +156,12 @@ public class JavaSpecRunnerTest {
           "testStarted", "run::successor", "testFinished"));
       }
     }
+  }
+  
+  private Context contextOf(Class<?> rootClass, Class<?> middleClass, Class<?> bottomClass) {
+    Context bottom = new Context(bottomClass);
+    Context middle = new Context(middleClass, ImmutableList.of(bottom));
+    return new Context(rootClass, ImmutableList.of(middle));
   }
   
   private static ExampleGateway gatewayFinding(Throwable... errors) {
