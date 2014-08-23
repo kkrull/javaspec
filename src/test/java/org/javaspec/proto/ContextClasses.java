@@ -87,9 +87,11 @@ public class ContextClasses {
     It gets_ignored = () -> assertEquals(1, 2);
   }
   
-  public static class NestedIt {
-    public class innerContext {
-      It asserts = () -> assertEquals(1, 1);
+  public static class Nested {
+    public class middle {
+      public class bottom {
+        It asserts = () -> assertEquals(1, 1);
+      }
     }
   }
   

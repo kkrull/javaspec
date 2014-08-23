@@ -56,7 +56,7 @@ public class ContextClassExampleGatewayTest {
       public class andNoClassHas2OrMoreFixtureFieldsOfTheSameType {
         @Test
         public void andAtLeastOneClassHas1OrMoreItFields_returnsEmptyList() {
-          ExampleGateway subject = new ContextClassExampleGateway(ContextClasses.NestedIt.class);
+          ExampleGateway subject = new ContextClassExampleGateway(ContextClasses.Nested.class);
           assertThat(subject.findInitializationErrors(), equalTo(Collections.emptyList()));
         }
       }

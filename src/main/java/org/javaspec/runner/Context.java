@@ -13,6 +13,11 @@ final class Context {
     this.children = new LinkedList<Context>();
   }
   
+  public Context(Class<?> value, List<Context> subContexts) {
+    this.value = value;
+    this.children = new ArrayList<Context>(subContexts);
+  }
+
   public void addChild(Class<?> child) {
     children.add(new Context(child));
   }

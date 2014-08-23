@@ -47,20 +47,32 @@ public class JavaSpecRunnerTest {
   
   public class getDescription {
     public class givenAGatewayWith1OrMoreExamples {
+      public class andAContextOf1OrMoreLevels {
+        private final ExampleGateway gateway = gatewayWithExampleAtEachLevel("runs", contextOf(
+          ContextClasses.Nested.class, ContextClasses.Nested.middle.class, ContextClasses.Nested.middle.bottom.class));
+        private final Description returned = Runners.of(gateway).getDescription();
+        
+        @Test
+        public void describesEachContextClass() {
+          assertThat(returned.getTestClass(), equalTo(ContextClasses.Nested.class));
+          assertThat(childTestClasses(returned), contains(equalTo(ContextClasses.Nested.middle.class)));
+          Description middleSuite = childSuites(returned).findFirst().get();
+          assertThat(childTestClasses(middleSuite), contains(equalTo(ContextClasses.Nested.middle.bottom.class)));
+        }
+        
+        private List<Class<?>> childTestClasses(Description suite) {
+          return childSuites(suite).map(x -> x.getTestClass()).collect(toList());
+        }
+
+        private Stream<Description> childSuites(Description suite) {
+          return suite.getChildren().stream().filter(x -> x.isSuite());
+        }
+      }
+      
       @Test
       public void hasAnnotationsFromEachContextClass() {
         Description description = Runners.of(ContextClasses.IgnoreClass.class).getDescription();
         assertThat(description.getAnnotation(Ignore.class), notNullValue());
-      }
-      
-      @Test
-      public void describesEachContextClass() {
-        ExampleGateway gateway = gatewayFor(
-          contextOf(ContextClasses.NestedIt.class, ContextClasses.NestedIt.innerContext.class));
-        Description description = Runners.of(gateway).getDescription();
-        assertThat(description.getTestClass(), equalTo(ContextClasses.NestedIt.class));
-        assertThat(description.getChildren(), hasSize(1));
-        assertThat(description.getChildren().get(0).getTestClass(), equalTo(ContextClasses.NestedIt.innerContext.class));
       }
       
       @Test
@@ -73,10 +85,10 @@ public class JavaSpecRunnerTest {
       }
     }
     
-    private Context contextOf(Class<?> parent, Class<?> child) {
-      Context root = new Context(parent);
-      root.addChild(child);
-      return root;
+    private Context contextOf(Class<?> rootClass, Class<?> middleClass, Class<?> bottomClass) {
+      Context bottom = new Context(bottomClass);
+      Context middle = new Context(middleClass, ImmutableList.of(bottom));
+      return new Context(rootClass, ImmutableList.of(middle));
     }
   }
   
@@ -171,9 +183,10 @@ public class JavaSpecRunnerTest {
     };
   }
 
-  private static ExampleGateway gatewayFor(Context root) {
+  private static ExampleGateway gatewayWithExampleAtEachLevel(String exampleName, Context root) {
     ExampleGateway gateway = Mockito.mock(ExampleGateway.class);
     when(gateway.getContextRoot()).thenReturn(root);
+    when(gateway.getExampleNames(Mockito.any())).thenReturn(ImmutableList.of(exampleName));
     return gateway;
   }
 
