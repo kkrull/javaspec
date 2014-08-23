@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
+import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableList;
 
@@ -47,10 +48,21 @@ public class JavaSpecRunnerTest {
   public class getDescription {
     public class givenAGatewayWith1OrMoreExamples {
       @Test
-      public void describesTheContextClass() {
+      public void hasAnnotationsFromEachContextClass() {
         Description description = Runners.of(ContextClasses.IgnoreClass.class).getDescription();
-        assertThat(description.getTestClass(), equalTo(ContextClasses.IgnoreClass.class));
         assertThat(description.getAnnotation(Ignore.class), notNullValue());
+      }
+      
+      @Test @Ignore("wip")
+      public void describesEachContextClass() {
+        ExampleGateway gateway = Mockito.mock(ExampleGateway.class);
+        stub(gateway.getContextRoot()).toReturn(
+          contextOf(ContextClasses.NestedIt.class, ContextClasses.NestedIt.innerContext.class));
+          
+        Description description = Runners.of(ContextClasses.NestedIt.class).getDescription();
+        assertThat(description.getTestClass(), equalTo(ContextClasses.NestedIt.class));
+        assertThat(description.getChildren(), hasSize(1));
+        assertThat(description.getChildren().get(0).getTestClass(), equalTo(ContextClasses.NestedIt.innerContext.class));
       }
       
       @Test
@@ -61,6 +73,10 @@ public class JavaSpecRunnerTest {
           ImmutableList.of("one(org.javaspec.proto.ContextClasses$TwoIt)", "another(org.javaspec.proto.ContextClasses$TwoIt)"), 
           subject.getChildren().stream().map(Description::getDisplayName).collect(toList()));
       }
+    }
+    
+    private Context contextOf(Class<?> parent, Class<?> child) {
+      return new Context(parent).addChild(child);
     }
   }
   
@@ -135,6 +151,9 @@ public class JavaSpecRunnerTest {
       @Override
       public Class<?> getContextClass() { return contextClass; }
 
+      @Override
+      public Context getContextRoot() { return new Context(contextClass); }
+      
       @Override
       public Stream<Example> getExamples() { return Stream.of(examples); }
     };

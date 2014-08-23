@@ -38,6 +38,12 @@ final class ContextClassExampleGateway implements ExampleGateway {
   public Class<?> getContextClass() {
     return contextClass;
   }
+  
+  @Override
+  public Context getContextRoot() {
+    return new Context(contextClass);
+//    throw new UnsupportedOperationException();
+  }
 
   @Override
   public Stream<Example> getExamples() {

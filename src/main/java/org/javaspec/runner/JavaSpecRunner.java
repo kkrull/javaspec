@@ -29,9 +29,10 @@ public final class JavaSpecRunner extends ParentRunner<Example> {
   
   @Override
   public Description getDescription() {
-    Description context = Description.createSuiteDescription(exampleGateway.getContextClass());
-    getChildren().stream().map(this::describeChild).forEach(context::addChild);
-    return context;
+    Context rootContext = exampleGateway.getContextRoot();
+    Description rootDescription = Description.createSuiteDescription(rootContext.value);
+    getChildren().stream().map(this::describeChild).forEach(rootDescription::addChild);
+    return rootDescription;
   };
 
   @Override
