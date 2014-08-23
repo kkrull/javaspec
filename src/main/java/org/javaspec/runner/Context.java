@@ -15,16 +15,9 @@ final class Context {
   
   public void addChild(Class<?> child) {
     children.add(new Context(child));
-//    System.out.printf("addChild: self=%s, value=%s, children=%s\n", toString(), value, children);
   }
 
-  public List<Context> getChildren() {
-//    System.out.printf("getChildren: self=%s, value=%s, children=%s\n", toString(), value, children);
+  public List<Context> getSubContexts() {
     return new ArrayList<Context>(children);
   }
-  
-//  @Override
-//  public String toString() {
-//    return String.format("<Context value=%s, children=%s>", value.getName(), children);
-//  }
 }

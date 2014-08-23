@@ -55,10 +55,8 @@ public class JavaSpecRunnerTest {
       
       @Test
       public void describesEachContextClass() {
-        ExampleGateway gateway = Mockito.mock(ExampleGateway.class);
-        when(gateway.getContextRoot()).thenReturn(
+        ExampleGateway gateway = gatewayFor(
           contextOf(ContextClasses.NestedIt.class, ContextClasses.NestedIt.innerContext.class));
-        
         Description description = Runners.of(gateway).getDescription();
         assertThat(description.getTestClass(), equalTo(ContextClasses.NestedIt.class));
         assertThat(description.getChildren(), hasSize(1));
@@ -145,6 +143,13 @@ public class JavaSpecRunnerTest {
     }
   }
   
+  private static ExampleGateway gatewayFinding(Throwable... errors) {
+    ExampleGateway stub = mock(ExampleGateway.class);
+    stub(stub.findInitializationErrors()).toReturn(Arrays.asList(errors));
+    doThrow(new UnsupportedOperationException("invalid context class")).when(stub).getExamples();
+    return stub;
+  }
+
   private static ExampleGateway gatewayFor(Class<?> contextClass, Example... examples) {
     return new ExampleGateway() {
       @Override
@@ -165,12 +170,11 @@ public class JavaSpecRunnerTest {
       }
     };
   }
-  
-  private static ExampleGateway gatewayFinding(Throwable... errors) {
-    ExampleGateway stub = mock(ExampleGateway.class);
-    stub(stub.findInitializationErrors()).toReturn(Arrays.asList(errors));
-    doThrow(new UnsupportedOperationException("invalid context class")).when(stub).getExamples();
-    return stub;
+
+  private static ExampleGateway gatewayFor(Context root) {
+    ExampleGateway gateway = Mockito.mock(ExampleGateway.class);
+    when(gateway.getContextRoot()).thenReturn(root);
+    return gateway;
   }
 
   private static Example exampleFailing(String behaviorName) throws Exception {
