@@ -15,9 +15,9 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
 public final class Runners {
-  public static List<Throwable> initializationErrorCauses(TestConfiguration config) {
+  public static List<Throwable> initializationErrorCauses(ExampleGateway gateway) {
     try {
-      new JavaSpecRunner(config);
+      new JavaSpecRunner(gateway);
     } catch (InitializationError ex) {
       return Runners.flattenCauses(ex);
     }
@@ -32,9 +32,9 @@ public final class Runners {
     }
   }
   
-  public static JavaSpecRunner of(TestConfiguration config) {
+  public static JavaSpecRunner of(ExampleGateway gateway) {
     try {
-      return new JavaSpecRunner(config);
+      return new JavaSpecRunner(gateway);
     } catch (InitializationError e) {
       return failForInitializationError(e);
     }

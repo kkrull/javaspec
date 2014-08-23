@@ -37,17 +37,17 @@ public class JavaSpecRunnerTest {
     }
 
     @Test
-    public void givenAConfigurationWith1OrMoreErrors_raisesInitializationErrorWithThoseErrors() {
-      TestConfiguration config = configFinding(new IllegalArgumentException(), new AssertionError());
-      assertListEquals(Runners.initializationErrorCauses(config).stream().map(Throwable::getClass).collect(toList()),
+    public void givenAGatewayWith1OrMoreErrors_raisesInitializationErrorWithThoseErrors() {
+      ExampleGateway gateway = gatewayFinding(new IllegalArgumentException(), new AssertionError());
+      assertListEquals(Runners.initializationErrorCauses(gateway).stream().map(Throwable::getClass).collect(toList()),
         ImmutableList.of(IllegalArgumentException.class, AssertionError.class));
     }
   }
   
   public class getDescription {
-    public class givenATestConfigurationOrContextClassWith1OrMoreExamples {
+    public class givenAGatewayWith1OrMoreExamples {
       @Test
-      public void describesTheConfiguredClass() {
+      public void describesTheContextClass() {
         Description description = Runners.of(ContextClasses.IgnoreClass.class).getDescription();
         assertThat(description.getTestClass(), equalTo(ContextClasses.IgnoreClass.class));
         assertThat(description.getAnnotation(Ignore.class), notNullValue());
@@ -55,7 +55,7 @@ public class JavaSpecRunnerTest {
       
       @Test
       public void hasAChildDescriptionForEachExample() {
-        Runner runner = Runners.of(configOf(ContextClasses.TwoIt.class, exampleNamed("one"), exampleNamed("another")));
+        Runner runner = Runners.of(gatewayFor(ContextClasses.TwoIt.class, exampleNamed("one"), exampleNamed("another")));
         Description subject = runner.getDescription();
         assertListEquals(
           ImmutableList.of("one(org.javaspec.proto.ContextClasses$TwoIt)", "another(org.javaspec.proto.ContextClasses$TwoIt)"), 
@@ -73,7 +73,7 @@ public class JavaSpecRunnerTest {
       
       @Before
       public void setup() throws Exception {
-        Runner runner = Runners.of(configOf(context, skipped));
+        Runner runner = Runners.of(gatewayFor(context, skipped));
         Runners.runAll(runner, events::add);
       }
       
@@ -92,7 +92,7 @@ public class JavaSpecRunnerTest {
     public class givenAPassingExample {
       @Before
       public void setup() throws Exception {
-        Runner runner = Runners.of(configOf(context, exampleSpy("passing", events::add)));
+        Runner runner = Runners.of(gatewayFor(context, exampleSpy("passing", events::add)));
         Runners.runAll(runner, events::add);
       }
       
@@ -108,7 +108,7 @@ public class JavaSpecRunnerTest {
     public class givenAFailingExample {
       @Before
       public void setup() throws Exception {
-        Runner runner = Runners.of(configOf(context, exampleFailing("boom"), exampleSpy("successor", events::add)));
+        Runner runner = Runners.of(gatewayFor(context, exampleFailing("boom"), exampleSpy("successor", events::add)));
         Runners.runAll(runner, events::add);
       }
       
@@ -127,8 +127,8 @@ public class JavaSpecRunnerTest {
     }
   }
   
-  private static TestConfiguration configOf(Class<?> contextClass, Example... examples) {
-    return new TestConfiguration() {
+  private static ExampleGateway gatewayFor(Class<?> contextClass, Example... examples) {
+    return new ExampleGateway() {
       @Override
       public List<Throwable> findInitializationErrors() { return Collections.emptyList(); }
       
@@ -140,8 +140,8 @@ public class JavaSpecRunnerTest {
     };
   }
   
-  private static TestConfiguration configFinding(Throwable... errors) {
-    TestConfiguration stub = mock(TestConfiguration.class);
+  private static ExampleGateway gatewayFinding(Throwable... errors) {
+    ExampleGateway stub = mock(ExampleGateway.class);
     stub(stub.findInitializationErrors()).toReturn(Arrays.asList(errors));
     doThrow(new UnsupportedOperationException("invalid context class")).when(stub).getExamples();
     return stub;

@@ -13,10 +13,10 @@ import org.javaspec.dsl.Establish;
 import org.javaspec.dsl.It;
 import org.javaspec.util.DfsSearch;
 
-final class ContextClassTestConfiguration implements TestConfiguration {
+final class ContextClassExampleGateway implements ExampleGateway {
   private final Class<?> contextClass;
   
-  ContextClassTestConfiguration(Class<?> contextClass) {
+  ContextClassExampleGateway(Class<?> contextClass) {
     this.contextClass = contextClass;
   }
   

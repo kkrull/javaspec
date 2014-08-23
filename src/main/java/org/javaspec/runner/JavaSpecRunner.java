@@ -11,17 +11,17 @@ import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
 public final class JavaSpecRunner extends ParentRunner<Example> {
-  private final TestConfiguration config;
+  private final ExampleGateway exampleGateway;
   
   public JavaSpecRunner(Class<?> contextClass) throws InitializationError {
-    this(new ContextClassTestConfiguration(contextClass));
+    this(new ContextClassExampleGateway(contextClass));
   }
   
-  JavaSpecRunner(TestConfiguration config) throws InitializationError {
+  JavaSpecRunner(ExampleGateway exampleGateway) throws InitializationError {
     super(null); //Bypass JUnit's requirements for a context class; throw our own errors instead
-    this.config = config;
+    this.exampleGateway = exampleGateway;
     
-    List<Throwable> initializationErrors = config.findInitializationErrors();
+    List<Throwable> initializationErrors = exampleGateway.findInitializationErrors();
     if(!initializationErrors.isEmpty()) {
       throw new InitializationError(initializationErrors);
     }
@@ -29,19 +29,19 @@ public final class JavaSpecRunner extends ParentRunner<Example> {
   
   @Override
   public Description getDescription() {
-    Description context = Description.createSuiteDescription(config.getContextClass());
+    Description context = Description.createSuiteDescription(exampleGateway.getContextClass());
     getChildren().stream().map(this::describeChild).forEach(context::addChild);
     return context;
   };
 
   @Override
   protected List<Example> getChildren() {
-    return config.getExamples().collect(toList());
+    return exampleGateway.getExamples().collect(toList());
   }
   
   @Override
   protected Description describeChild(Example child) {
-    return Description.createTestDescription(config.getContextClass(), child.describeBehavior());
+    return Description.createTestDescription(exampleGateway.getContextClass(), child.describeBehavior());
   }
   
   @Override
