@@ -25,12 +25,11 @@ public final class Runners {
   }
   
   public static JavaSpecRunner of(Class<?> contextClass) {
-    throw new UnsupportedOperationException();
-//    try {
-//      return new JavaSpecRunner(contextClass);
-//    } catch (InitializationError e) {
-//      return failForInitializationError(e);
-//    }
+    try {
+      return new JavaSpecRunner(contextClass);
+    } catch (InitializationError e) {
+      return failForInitializationError(e);
+    }
   }
   
   public static JavaSpecRunner of(ExampleGateway gateway) {

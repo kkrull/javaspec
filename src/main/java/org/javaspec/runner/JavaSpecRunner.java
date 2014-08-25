@@ -13,9 +13,9 @@ import org.junit.runners.model.InitializationError;
 public final class JavaSpecRunner extends ParentRunner<NewExample> {
   private final ExampleGateway exampleGateway;
   
-//  public JavaSpecRunner(Class<?> contextClass) throws InitializationError {
-//    this(new ContextClassExampleGateway(contextClass));
-//  }
+  public JavaSpecRunner(Class<?> contextClass) throws InitializationError {
+    this(new NewContextClassExampleGateway(contextClass));
+  }
   
   JavaSpecRunner(ExampleGateway exampleGateway) throws InitializationError {
     super(null); //Bypass JUnit's requirements for a context class; throw our own errors instead

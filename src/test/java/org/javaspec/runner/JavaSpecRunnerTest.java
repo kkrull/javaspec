@@ -18,7 +18,6 @@ import java.util.stream.Stream;
 import org.javaspec.proto.ContextClasses;
 import org.javaspec.testutil.RunListenerSpy.Event;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
@@ -31,7 +30,7 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 @RunWith(HierarchicalContextRunner.class)
 public class JavaSpecRunnerTest {
   public class constructor {
-    @Test @Ignore("wip")
+    @Test
     public void givenAContextClassSuitableForJavaSpecButNotForJUnit_raisesNoError() {
       Runners.of(ContextClasses.TwoConstructors.class);
     }
