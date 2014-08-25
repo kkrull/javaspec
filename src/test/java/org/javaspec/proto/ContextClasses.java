@@ -12,7 +12,6 @@ import org.javaspec.dsl.Because;
 import org.javaspec.dsl.Cleanup;
 import org.javaspec.dsl.Establish;
 import org.javaspec.dsl.It;
-import org.junit.Ignore;
 
 /** Inner classes are declared static to avoid the gaze of HierarchicalContextRunner when testing JavaSpec. */
 public class ContextClasses {
@@ -80,11 +79,6 @@ public class ContextClasses {
     Because acts = () -> notifyEvent.accept("ContextClasses.FullFixture::act");
     It asserts = () -> notifyEvent.accept("ContextClasses.FullFixture::assert");
     Cleanup cleans = () -> notifyEvent.accept("ContextClasses.FullFixture::cleans");
-  }
-  
-  @Ignore
-  public static class IgnoreClass {
-    It gets_ignored = () -> assertEquals(1, 2);
   }
   
   public static class Nested {

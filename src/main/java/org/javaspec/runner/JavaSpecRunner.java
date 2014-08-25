@@ -1,9 +1,6 @@
 package org.javaspec.runner;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.List;
-import java.util.stream.Stream;
 
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -34,10 +31,10 @@ public final class JavaSpecRunner extends ParentRunner<Example> {
   }
 
   private Description describe(Context context) {
-    Description suite = Description.createSuiteDescription(context.value);
+    Description suite = Description.createSuiteDescription(context.name);
     context.getSubContexts().stream().map(this::describe).forEach(suite::addChild);
     exampleGateway.getExampleNames(context).stream()
-      .map(x -> Description.createTestDescription(context.value, x))
+      .map(x -> Description.createTestDescription(context.name, x))
       .forEach(suite::addChild);
     
     return suite;

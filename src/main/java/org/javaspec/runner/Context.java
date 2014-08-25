@@ -5,21 +5,21 @@ import java.util.LinkedList;
 import java.util.List;
 
 final class Context {
-  public final Class<?> value;
+  public final String name;
   private final List<Context> children;
   
-  public Context(Class<?> value) {
-    this.value = value;
+  public Context(String name) {
+    this.name = name;
     this.children = new LinkedList<Context>();
   }
   
-  public Context(Class<?> value, List<Context> subContexts) {
-    this.value = value;
+  public Context(String name, List<Context> subContexts) {
+    this.name = name;
     this.children = new ArrayList<Context>(subContexts);
   }
 
-  public void addChild(Class<?> child) {
-    children.add(new Context(child));
+  public void addChild(String childName) {
+    children.add(new Context(childName));
   }
 
   public List<Context> getSubContexts() {
