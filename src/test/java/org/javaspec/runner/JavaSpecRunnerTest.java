@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
 import static org.javaspec.testutil.Assertions.assertListEquals;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
@@ -14,7 +15,6 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import org.hamcrest.Matchers;
 import org.javaspec.proto.ContextClasses;
 import org.javaspec.testutil.RunListenerSpy.Event;
 import org.junit.Before;
@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
-import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableList;
 
@@ -156,33 +155,31 @@ public class JavaSpecRunnerTest {
   
   private static ExampleGateway gatewayFinding(Throwable... errors) {
     ExampleGateway stub = mock(ExampleGateway.class);
-    stub(stub.findInitializationErrors()).toReturn(Arrays.asList(errors));
+    when(stub.findInitializationErrors()).thenReturn(Arrays.asList(errors));
     doThrow(new UnsupportedOperationException("invalid context class")).when(stub).getExampleNames(any());
     return stub;
   }
 
   private static ExampleGateway gatewayFor(NewExample... examples) {
-    return new ExampleGateway() {
-      @Override
-      public List<Throwable> findInitializationErrors() { return Collections.emptyList(); }
-      
-      @Override
-      public Context getContextRoot() { return new Context("top-level context"); }
-      
-      @Override
-      public Stream<NewExample> getExamples() { return Stream.of(examples); }
-      
-      @Override
-      public List<String> getExampleNames(Context context) {
-        return Stream.of(examples).map(NewExample::describeBehavior).collect(toList()); 
-      }
-    };
+    ExampleGateway stub = mock(ExampleGateway.class);
+    when(stub.findInitializationErrors()).thenReturn(Collections.emptyList());
+    when(stub.getContextRoot()).thenReturn(new Context("top-level context"));
+    
+    Stream<NewExample> streamOfExamples = Stream.of(examples);
+    when(stub.getExamples()).thenReturn(streamOfExamples);
+    
+    List<String> exampleNames = Stream.of(examples).map(NewExample::describeBehavior).collect(toList());
+    when(stub.getExampleNames(any())).thenReturn(exampleNames);
+    return stub;
   }
 
   private static ExampleGateway gatewayWithRepeatedExample(String exampleName, Context root) {
-    ExampleGateway gateway = Mockito.mock(ExampleGateway.class);
+    ExampleGateway gateway = mock(ExampleGateway.class);
     when(gateway.getContextRoot()).thenReturn(root);
-    when(gateway.getExampleNames(Mockito.any())).thenReturn(ImmutableList.of(exampleName));
+    when(gateway.getExampleNames(any())).thenReturn(ImmutableList.of(exampleName));
+    
+    Stream<NewExample> examples = Stream.of(exampleNamed(exampleName));
+    when(gateway.getExamples()).thenReturn(examples);
     return gateway;
   }
 
@@ -194,29 +191,23 @@ public class JavaSpecRunnerTest {
   
   private static NewExample exampleSkipped() {
     NewExample stub = exampleNamed("skipper");
-    stub(stub.isSkipped()).toReturn(true);
+    when(stub.isSkipped()).thenReturn(true);
     return stub;
   }
   
   private static NewExample exampleNamed(String behaviorName) {
     NewExample stub = mock(NewExample.class);
-    stub(stub.describeBehavior()).toReturn(behaviorName);
+    when(stub.describeBehavior()).thenReturn(behaviorName);
     return stub;
   }
   
-  private static NewExample exampleSpy(String behaviorName, Consumer<Event> notify) {
-    return new NewExample() {
-      @Override
-      public String describeBehavior() { return behaviorName; }
-
-      @Override
-      public String getContextName() { return ""; }
-      
-      @Override
-      public boolean isSkipped() { return false; }
-      
-      @Override
-      public void run() { notify.accept(Event.named("run::" + behaviorName)); }
-    };
+  private static NewExample exampleSpy(String behaviorName, Consumer<Event> notify) throws Exception {
+    NewExample stub = mock(NewExample.class);
+    when(stub.describeBehavior()).thenReturn(behaviorName);
+    doAnswer(invocation -> {
+      notify.accept(Event.named("run::" + behaviorName));
+      return null;
+    }).when(stub).run();
+    return stub;
   }
 }
