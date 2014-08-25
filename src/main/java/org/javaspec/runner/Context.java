@@ -1,6 +1,7 @@
 package org.javaspec.runner;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,7 +14,7 @@ final class Context {
     this.children = new LinkedList<Context>();
   }
   
-  public Context(String name, List<Context> subContexts) {
+  public Context(String name, Collection<Context> subContexts) {
     this.name = name;
     this.children = new ArrayList<Context>(subContexts);
   }
