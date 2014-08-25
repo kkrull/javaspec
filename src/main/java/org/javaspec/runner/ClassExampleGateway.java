@@ -52,23 +52,16 @@ final class ClassExampleGateway implements ExampleGateway {
   }
 
   private static ContextStats readContext(Class<?> contextClass) {
-    List<Class<?>> innerClasses = Stream.of(contextClass.getDeclaredClasses())
-      .filter(x -> !Modifier.isStatic(x.getModifiers()))
-      .collect(toList());
-    boolean currentHasExamples = ReflectionUtil.hasFieldsOfType(It.class, contextClass);
-    if(innerClasses.isEmpty()) {
-      Context leafContext = new Context(contextClass.getSimpleName());
-      return new ContextStats(leafContext, currentHasExamples);
-    }
-    
-    List<ContextStats> subContextsWithExamples = innerClasses.stream()
+    Stream<Class<?>> innerClasses = Stream.of(contextClass.getDeclaredClasses())
+      .filter(x -> !Modifier.isStatic(x.getModifiers()));
+    Stream<Context> subContexts = innerClasses
       .map(ClassExampleGateway::readContext)
       .filter(x -> x.hasExamples)
-      .collect(toList());
-    Context internalContext = new Context(contextClass.getSimpleName(), 
-      subContextsWithExamples.stream().map(x -> x.context).collect(toList()));
-    boolean childrenHaveExamples = !subContextsWithExamples.isEmpty();
-    return new ContextStats(internalContext, currentHasExamples || childrenHaveExamples);
+      .map(x -> x.context);
+    
+    Context context = new Context(contextClass.getSimpleName(), subContexts.collect(toList()));
+    boolean contextDeclaresExamples = ReflectionUtil.hasFieldsOfType(It.class, contextClass);
+    return new ContextStats(context, contextDeclaresExamples || context.hasChildren());
   }
   
   private boolean hasAnyTests() {

@@ -149,7 +149,7 @@ public class JavaSpecRunnerTest {
   private Context contextOf(String topName, String middleName, String bottomName) {
     return new Context(topName, ImmutableList.of(
       new Context(middleName, ImmutableList.of(
-        new Context(bottomName)))));
+        new Context(bottomName, ImmutableList.of())))));
   }
   
   private static ExampleGateway gatewayFinding(Throwable... errors) {
@@ -162,7 +162,7 @@ public class JavaSpecRunnerTest {
   private static ExampleGateway gatewayFor(NewExample... examples) {
     ExampleGateway stub = mock(ExampleGateway.class);
     when(stub.findInitializationErrors()).thenReturn(Collections.emptyList());
-    when(stub.getRootContext()).thenReturn(new Context("top-level context"));
+    when(stub.getRootContext()).thenReturn(new Context("top-level context", ImmutableList.of()));
     
     Stream<NewExample> streamOfExamples = Stream.of(examples);
     when(stub.getExamples()).thenReturn(streamOfExamples);

@@ -67,13 +67,13 @@ public class ContextClassTestConfigurationTest {
 //    }
 //  }
   
-  public class getContextClass {
-    @Test
-    public void returnsTheGivenClass() {
-      TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.TwoIt.class);
-      assertThat(subject.getContextClass(), equalTo(ContextClasses.TwoIt.class));
-    }
-  }
+//  public class getContextClass {
+//    @Test
+//    public void returnsTheGivenClass() {
+//      TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.TwoIt.class);
+//      assertThat(subject.getContextClass(), equalTo(ContextClasses.TwoIt.class));
+//    }
+//  }
   
   public class getExamples {
     public class givenAClassWith1OrMoreInitializationErrors {

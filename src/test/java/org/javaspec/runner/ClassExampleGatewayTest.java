@@ -64,14 +64,22 @@ public class ClassExampleGatewayTest {
         contains(equalTo(errorMsg)));
     }
   }
+ 
+  public class getExampleNames {
+    public class given1OrMoreItFieldsAtOrBelowTheGivenClass {
+      @Test @Ignore("wip")
+      public void returnsAFieldExampleForEachItField() {
+        fail("pending");
+      }
+    }
+  }
   
   public class getRootContext {
     public class givenAClassContaining {
       public class anyLevelOfNestedInnerClasses {
         @Test
         public void returnsAContextNodeForEachInnerClassSubtreeContaining1OrMoreItFields() {
-          ExampleGateway subject = new ClassExampleGateway(ContextClasses.Nested3By2.class);
-          Context rootContext = subject.getRootContext();
+          Context rootContext = getRootContext(ContextClasses.Nested3By2.class);
           assertThat(rootContext.name, equalTo("Nested3By2"));
           assertThat(rootContext.getSubContexts(), hasSize(2));
           
@@ -81,16 +89,19 @@ public class ClassExampleGatewayTest {
         
         @Test
         public void skipsStaticNestedClasses() {
-          ExampleGateway subject = new ClassExampleGateway(ContextClasses.NestedWithStaticHelperClass.class);
-          Context rootContext = subject.getRootContext();
+          Context rootContext = getRootContext(ContextClasses.NestedWithStaticHelperClass.class);
           assert2By1Context(rootContext, "NestedWithStaticHelperClass", "context");
         }
         
         @Test
         public void skipsInnerClassSubtreesThatContainNoItFields() {
-          ExampleGateway subject = new ClassExampleGateway(ContextClasses.NestedWithInnerHelperClass.class);
-          Context rootContext = subject.getRootContext();
+          Context rootContext = getRootContext(ContextClasses.NestedWithInnerHelperClass.class);
           assert2By1Context(rootContext, "NestedWithInnerHelperClass", "context");
+        }
+        
+        private Context getRootContext(Class<?> contextClass) {
+          ExampleGateway subject = new ClassExampleGateway(contextClass);
+          return subject.getRootContext();
         }
         
         private void assert2By1Context(Context context, String parentName, String childName) {
