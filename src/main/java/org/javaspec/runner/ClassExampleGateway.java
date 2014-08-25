@@ -3,6 +3,7 @@ package org.javaspec.runner;
 import static java.util.stream.Collectors.toList;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -46,7 +47,28 @@ final class ClassExampleGateway implements ExampleGateway {
   
   @Override
   public Context getRootContext() {
-    throw new UnsupportedOperationException();
+    ContextStats contextStats = readContext(contextClass);
+    return contextStats.context;
+  }
+
+  private static ContextStats readContext(Class<?> contextClass) {
+    List<Class<?>> innerClasses = Stream.of(contextClass.getDeclaredClasses())
+      .filter(x -> !Modifier.isStatic(x.getModifiers()))
+      .collect(toList());
+    boolean currentHasExamples = ReflectionUtil.hasFieldsOfType(It.class, contextClass);
+    if(innerClasses.isEmpty()) {
+      Context leafContext = new Context(contextClass.getSimpleName());
+      return new ContextStats(leafContext, currentHasExamples);
+    }
+    
+    List<ContextStats> subContextsWithExamples = innerClasses.stream()
+      .map(ClassExampleGateway::readContext)
+      .filter(x -> x.hasExamples)
+      .collect(toList());
+    Context internalContext = new Context(contextClass.getSimpleName(), 
+      subContextsWithExamples.stream().map(x -> x.context).collect(toList()));
+    boolean childrenHaveExamples = !subContextsWithExamples.isEmpty();
+    return new ContextStats(internalContext, currentHasExamples || childrenHaveExamples);
   }
   
   private boolean hasAnyTests() {
@@ -77,6 +99,16 @@ final class ClassExampleGateway implements ExampleGateway {
     private static final long serialVersionUID = 1L;
     public NoExamplesException(Class<?> contextClass) {
       super(String.format("Test context %s must contain at least 1 example in an It field", contextClass.getName()));
+    }
+  }
+  
+  private static class ContextStats {
+    public final Context context;
+    public final boolean hasExamples;
+    
+    public ContextStats(Context context, boolean hasExamples) {
+      this.context = context;
+      this.hasExamples = hasExamples;
     }
   }
 }

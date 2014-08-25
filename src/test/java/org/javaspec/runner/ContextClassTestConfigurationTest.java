@@ -52,7 +52,7 @@ public class ContextClassTestConfigurationTest {
 //      public class andNoClassHas2OrMoreFixtureFieldsOfTheSameType {
 //        @Test
 //        public void andAtLeastOneClassHas1OrMoreItFields_returnsEmptyList() {
-//          TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.Nested.class);
+//          TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.NestedThreeDeep.class);
 //          assertThat(subject.findInitializationErrors(), equalTo(Collections.emptyList()));
 //        }
 //      }

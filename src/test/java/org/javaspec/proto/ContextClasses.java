@@ -81,11 +81,46 @@ public class ContextClasses {
     Cleanup cleans = () -> notifyEvent.accept("ContextClasses.FullFixture::cleans");
   }
   
-  public static class Nested {
+  public static class NestedThreeDeep {
     public class middle {
       public class bottom {
         It asserts = () -> assertEquals(1, 1);
       }
+    }
+  }
+  
+  public static class Nested3By2 {
+    public class level2a {
+      public class level3a {
+        It asserts = () -> assertEquals(1, 1);
+      }
+    }
+    
+    public class level2b {
+      public class level3b {
+        It asserts = () -> assertEquals(1, 1);
+      }
+    }
+  }
+  
+  public static class NestedWithInnerHelperClass {
+    public class context { 
+      It asserts = () -> assertEquals(1, 1);
+      public class HelperNotAContext { /* empty */ }
+    }
+    
+    public class emptyContextThatShouldBeExcluded {
+      public class Helper { /* empty */ }
+    }
+  }
+  
+  public static class NestedWithStaticHelperClass {
+    public class context { 
+      It asserts = () -> assertEquals(1, 1);
+    }
+    
+    public static class Helper {
+      public void dryMyTest() { /* empty */ }
     }
   }
   

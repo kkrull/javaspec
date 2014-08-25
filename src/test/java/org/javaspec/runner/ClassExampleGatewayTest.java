@@ -1,16 +1,19 @@
 package org.javaspec.runner;
 
 import static java.util.stream.Collectors.toList;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
+import static org.javaspec.testutil.Assertions.assertThrows;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import java.util.Collections;
 
 import org.javaspec.proto.ContextClasses;
+import org.javaspec.proto.OuterContext;
 import org.javaspec.runner.ClassExampleGateway.NoExamplesException;
 import org.javaspec.runner.ClassExampleGateway.UnknownStepExecutionSequenceException;
+import org.javaspec.testutil.Assertions;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -47,7 +50,7 @@ public class ClassExampleGatewayTest {
       class givenAtLeast1ItFieldSomewhere_andNoClassesWith2OrMoreOfTheSameFixture {
         @Test
         public void returnsEmptyList() {
-          ExampleGateway subject = new ClassExampleGateway(ContextClasses.Nested.class);
+          ExampleGateway subject = new ClassExampleGateway(ContextClasses.NestedThreeDeep.class);
           assertThat(subject.findInitializationErrors(), equalTo(Collections.emptyList()));
         }
       }
@@ -63,9 +66,38 @@ public class ClassExampleGatewayTest {
   }
   
   public class getRootContext {
-    @Test
-    public void doesSomething() {
-      fail("pending");
+    public class givenAClassContaining {
+      public class anyLevelOfNestedInnerClasses {
+        @Test
+        public void returnsAContextNodeForEachInnerClassSubtreeContaining1OrMoreItFields() {
+          ExampleGateway subject = new ClassExampleGateway(ContextClasses.Nested3By2.class);
+          Context rootContext = subject.getRootContext();
+          assertThat(rootContext.name, equalTo("Nested3By2"));
+          assertThat(rootContext.getSubContexts(), hasSize(2));
+          
+          assert2By1Context(rootContext.getSubContexts().get(0), "level2a", "level3a");
+          assert2By1Context(rootContext.getSubContexts().get(1), "level2b", "level3b");
+        }
+        
+        @Test
+        public void skipsStaticNestedClasses() {
+          ExampleGateway subject = new ClassExampleGateway(ContextClasses.NestedWithStaticHelperClass.class);
+          Context rootContext = subject.getRootContext();
+          assert2By1Context(rootContext, "NestedWithStaticHelperClass", "context");
+        }
+        
+        @Test
+        public void skipsInnerClassSubtreesThatContainNoItFields() {
+          ExampleGateway subject = new ClassExampleGateway(ContextClasses.NestedWithInnerHelperClass.class);
+          Context rootContext = subject.getRootContext();
+          assert2By1Context(rootContext, "NestedWithInnerHelperClass", "context");
+        }
+        
+        private void assert2By1Context(Context context, String parentName, String childName) {
+          assertThat(context.name, equalTo(parentName));
+          assertThat(context.getSubContexts().stream().map(x -> x.name).collect(toList()), contains(childName));
+        }
+      }
     }
   }
 }
