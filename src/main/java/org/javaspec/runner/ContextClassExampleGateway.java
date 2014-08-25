@@ -13,7 +13,7 @@ import org.javaspec.dsl.Establish;
 import org.javaspec.dsl.It;
 import org.javaspec.util.DfsSearch;
 
-final class ContextClassExampleGateway implements ExampleGateway {
+final class ContextClassExampleGateway implements TestConfiguration {
   private final Class<?> contextClass;
   
   ContextClassExampleGateway(Class<?> contextClass) {
@@ -39,18 +39,6 @@ final class ContextClassExampleGateway implements ExampleGateway {
     return contextClass;
   }
   
-  @Override
-  public Context getContextRoot() {
-    return new Context(contextClass);
-//    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public List<String> getExampleNames(Context context) {
-    return new LinkedList<String>();
-//    throw new UnsupportedOperationException();
-  }
-
   @Override
   public Stream<Example> getExamples() {
     List<Throwable> initializationErrors = findInitializationErrors();

@@ -14,9 +14,9 @@ import org.junit.runners.model.InitializationError;
 public final class JavaSpecRunner extends ParentRunner<Example> {
   private final ExampleGateway exampleGateway;
   
-  public JavaSpecRunner(Class<?> contextClass) throws InitializationError {
-    this(new ContextClassExampleGateway(contextClass));
-  }
+//  public JavaSpecRunner(Class<?> contextClass) throws InitializationError {
+//    this(new ContextClassExampleGateway(contextClass));
+//  }
   
   JavaSpecRunner(ExampleGateway exampleGateway) throws InitializationError {
     super(null); //Bypass JUnit's requirements for a context class; throw our own errors instead
@@ -45,12 +45,14 @@ public final class JavaSpecRunner extends ParentRunner<Example> {
   
   @Override
   protected List<Example> getChildren() {
-    return exampleGateway.getExamples().collect(toList());
+    throw new UnsupportedOperationException();
+//    return exampleGateway.getExamples().collect(toList());
   }
   
   @Override
   protected Description describeChild(Example child) {
-    return Description.createTestDescription(exampleGateway.getContextClass(), child.describeBehavior());
+    throw new UnsupportedOperationException();
+//    return Description.createTestDescription(exampleGateway.getContextClass(), child.describeBehavior());
   }
   
   @Override
