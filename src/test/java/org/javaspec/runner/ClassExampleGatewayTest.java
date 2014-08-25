@@ -2,18 +2,15 @@ package org.javaspec.runner;
 
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
-import static org.javaspec.testutil.Assertions.assertThrows;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
 
 import org.javaspec.proto.ContextClasses;
-import org.javaspec.proto.OuterContext;
 import org.javaspec.runner.ClassExampleGateway.NoExamplesException;
 import org.javaspec.runner.ClassExampleGateway.UnknownStepExecutionSequenceException;
-import org.javaspec.testutil.Assertions;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -64,13 +61,29 @@ public class ClassExampleGatewayTest {
         contains(equalTo(errorMsg)));
     }
   }
- 
-  public class getExampleNames {
-    public class given1OrMoreItFieldsAtOrBelowTheGivenClass {
-      @Test @Ignore("wip")
-      public void returnsAFieldExampleForEachItField() {
-        fail("pending");
+  
+  public class getExamples {
+    public class givenAClassWithNoItFieldsAtAnyLevel {
+      @Test
+      public void returnsNoExamples() {
+        assertThat(extractNames(readExamples(ContextClasses.Empty.class)), empty());
       }
+    }
+    
+    public class givenAClassWith1OrMoreItFieldsAtAnyLevel {
+      @Test
+      public void returnsAnExampleForEachItField() {
+        assertThat(extractNames(readExamples(ContextClasses.NestedThreeDeep.class)), contains("asserts"));
+      }
+    }
+    
+    private List<String> extractNames(Stream<NewExample> examples) {
+      return examples.map(NewExample::describeBehavior).collect(toList());
+    }
+    
+    private Stream<NewExample> readExamples(Class<?> context) {
+      ExampleGateway subject = new ClassExampleGateway(context);
+      return subject.getExamples();
     }
   }
   

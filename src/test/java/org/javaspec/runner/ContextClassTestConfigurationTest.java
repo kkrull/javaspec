@@ -76,17 +76,17 @@ public class ContextClassTestConfigurationTest {
 //  }
   
   public class getExamples {
-    public class givenAClassWith1OrMoreInitializationErrors {
-      private final TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.Empty.class);
-      
-      @Test
-      public void throwsIllegalStateExceptionContainingOneOfThem() {
-        assertThrows(IllegalStateException.class,
-          equalTo("Test context org.javaspec.proto.ContextClasses$Empty has one or more initialization errors"), 
-          NoExamplesException.class,
-          subject::getExamples);
-      }
-    }
+//    public class givenAClassWith1OrMoreInitializationErrors {
+//      private final TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.Empty.class);
+//      
+//      @Test
+//      public void throwsIllegalStateExceptionContainingOneOfThem() {
+//        assertThrows(IllegalStateException.class,
+//          equalTo("Test context org.javaspec.proto.ContextClasses$Empty has one or more initialization errors"), 
+//          NoExamplesException.class,
+//          subject::getExamples);
+//      }
+//    }
     
     public class givenAClassWithNoFixtureFields {
       private final TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.OneIt.class);

@@ -42,7 +42,10 @@ final class ClassExampleGateway implements ExampleGateway {
 
   @Override
   public Stream<NewExample> getExamples() {
-    throw new UnsupportedOperationException();
+//    Field arrange = onlyFieldOrNull(Establish.class);
+//    Field act = onlyFieldOrNull(Because.class);
+//    Field cleanup = onlyFieldOrNull(Cleanup.class);
+    return ReflectionUtil.fieldsOfType(It.class, contextClass).map(it -> new ContextExample(it));
   }
   
   @Override
@@ -75,10 +78,10 @@ final class ClassExampleGateway implements ExampleGateway {
     return thereCanBeOnlyOne.size() > 1; 
   }
   
-//  private Field onlyFieldOrNull(Class<?> typeOfField) {
-//    List<Field> matchingFields = ReflectionUtil.fieldsOfType(typeOfField, contextClass).collect(toList());
-//    return matchingFields.isEmpty() ? null : matchingFields.get(0);
-//  }
+  private Field onlyFieldOrNull(Class<?> typeOfField) {
+    List<Field> matchingFields = ReflectionUtil.fieldsOfType(typeOfField, contextClass).collect(toList());
+    return matchingFields.isEmpty() ? null : matchingFields.get(0);
+  }
   
   public static class UnknownStepExecutionSequenceException extends RuntimeException {
     private static final long serialVersionUID = 1L;
