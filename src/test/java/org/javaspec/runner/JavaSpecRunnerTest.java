@@ -89,59 +89,57 @@ public class JavaSpecRunnerTest {
   
   public class run {
     private final List<Event> events = synchronizedList(new LinkedList<Event>());
-    private final Class<?> context = ContextClasses.OneIt.class;
     
     public class givenASkippedExample {
-      private final Example skipped = exampleSkipped();
+      private final NewExample skipped = exampleSkipped();
       
       @Before
       public void setup() throws Exception {
-        Runner runner = Runners.of(gatewayFor(context.getName(), skipped));
+        Runner runner = Runners.of(gatewayFor(skipped));
         Runners.runAll(runner, events::add);
       }
 
-      @Test @Ignore("wip")
+      @Test
       public void doesNotRunTheExample() throws Exception {
         verify(skipped, never()).run();
       }
       
-      @Test @Ignore("wip")
+      @Test
       public void notifiesTestIgnored() {
-        assertThat(events.stream().map(Event::getName).collect(toList()),
-          contains(equalTo("testIgnored")));
+        assertThat(events.stream().map(Event::getName).collect(toList()), contains(equalTo("testIgnored")));
       }
     }
     
     public class givenAPassingExample {
       @Before
       public void setup() throws Exception {
-        Runner runner = Runners.of(gatewayFor(context.getName(), exampleSpy("passing", events::add)));
+        Runner runner = Runners.of(gatewayFor(exampleSpy("passing", events::add)));
         Runners.runAll(runner, events::add);
       }
       
-      @Test @Ignore("wip")
+      @Test
       public void runsBetweenNotifyStartAndFinish() {
         assertListEquals(ImmutableList.of("testStarted", "run::passing", "testFinished"),
           events.stream().map(Event::getName).collect(toList()));
-        assertThat(events.stream().map(Event::describedDisplayName).collect(toList()), 
-          contains(Matchers.startsWith("passing"), anything(), Matchers.startsWith("passing")));
+        assertThat(events.stream().map(Event::describedMethodName).collect(toList()),
+          contains(equalTo("passing"), anything(), equalTo("passing")));
       }
     }
     
     public class givenAFailingExample {
       @Before
       public void setup() throws Exception {
-        Runner runner = Runners.of(gatewayFor(context.getName(), exampleFailing("boom"), exampleSpy("successor", events::add)));
+        Runner runner = Runners.of(gatewayFor(exampleFailing("boom"), exampleSpy("successor", events::add)));
         Runners.runAll(runner, events::add);
       }
       
-      @Test @Ignore("wip")
+      @Test
       public void notifiesTestFailed() {
         assertThat(events.stream().map(Event::getName).collect(toList()), hasItem(equalTo("testFailure")));
         assertThat(events.stream().map(x -> x.failure).collect(toList()), hasItem(notNullValue()));
       }
       
-      @Test @Ignore("wip")
+      @Test
       public void continuesRunningSuccessiveTests() {
         assertThat(events.stream().map(Event::getName).collect(toList()), contains(
           "testStarted", "testFailure", "testFinished",
@@ -163,17 +161,20 @@ public class JavaSpecRunnerTest {
     return stub;
   }
 
-  private static ExampleGateway gatewayFor(String contextName, Example... examples) {
+  private static ExampleGateway gatewayFor(NewExample... examples) {
     return new ExampleGateway() {
       @Override
       public List<Throwable> findInitializationErrors() { return Collections.emptyList(); }
       
       @Override
-      public Context getContextRoot() { return new Context(contextName); }
+      public Context getContextRoot() { return new Context("top-level context"); }
+      
+      @Override
+      public Stream<NewExample> getExamples() { return Stream.of(examples); }
       
       @Override
       public List<String> getExampleNames(Context context) {
-        return Stream.of(examples).map(Example::describeBehavior).collect(toList()); 
+        return Stream.of(examples).map(NewExample::describeBehavior).collect(toList()); 
       }
     };
   }
@@ -185,37 +186,31 @@ public class JavaSpecRunnerTest {
     return gateway;
   }
 
-  private static Example exampleFailing(String behaviorName) throws Exception {
-    Example stub = exampleNamed(behaviorName);
+  private static NewExample exampleFailing(String behaviorName) throws Exception {
+    NewExample stub = exampleNamed(behaviorName);
     doThrow(new AssertionError("bang!")).when(stub).run();
     return stub;
   }
   
-  private static Example exampleSkipped() {
-    Example stub = exampleNamed("skipper");
+  private static NewExample exampleSkipped() {
+    NewExample stub = exampleNamed("skipper");
     stub(stub.isSkipped()).toReturn(true);
     return stub;
   }
   
-  private static Example exampleNamed(String behaviorName) {
-    Example stub = mock(Example.class);
+  private static NewExample exampleNamed(String behaviorName) {
+    NewExample stub = mock(NewExample.class);
     stub(stub.describeBehavior()).toReturn(behaviorName);
     return stub;
   }
   
-  private static Example exampleSpy(String behaviorName, Consumer<Event> notify) {
-    return new Example() {
-      @Override
-      public String describeSetup() { return ""; }
-      
-      @Override
-      public String describeAction() { return ""; }
-      
+  private static NewExample exampleSpy(String behaviorName, Consumer<Event> notify) {
+    return new NewExample() {
       @Override
       public String describeBehavior() { return behaviorName; }
 
       @Override
-      public String describeCleanup() { return ""; }
+      public String getContextName() { return ""; }
       
       @Override
       public boolean isSkipped() { return false; }

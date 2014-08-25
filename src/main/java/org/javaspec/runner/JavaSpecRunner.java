@@ -1,5 +1,7 @@
 package org.javaspec.runner;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.List;
 
 import org.junit.runner.Description;
@@ -8,7 +10,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
-public final class JavaSpecRunner extends ParentRunner<Example> {
+public final class JavaSpecRunner extends ParentRunner<NewExample> {
   private final ExampleGateway exampleGateway;
   
 //  public JavaSpecRunner(Class<?> contextClass) throws InitializationError {
@@ -30,30 +32,31 @@ public final class JavaSpecRunner extends ParentRunner<Example> {
     return describe(exampleGateway.getContextRoot());
   }
 
+  @Override
+  protected Description describeChild(NewExample child) {
+    return describeExample(child.getContextName(), child.describeBehavior());
+  }
+
   private Description describe(Context context) {
     Description suite = Description.createSuiteDescription(context.name);
     context.getSubContexts().stream().map(this::describe).forEach(suite::addChild);
-    exampleGateway.getExampleNames(context).stream()
-      .map(x -> Description.createTestDescription(context.name, x))
+    exampleGateway.getExampleNames(context).stream().map(x -> describeExample(context.name, x))
       .forEach(suite::addChild);
     
     return suite;
   };
   
-  @Override
-  protected List<Example> getChildren() {
-    throw new UnsupportedOperationException();
-//    return exampleGateway.getExamples().collect(toList());
+  private Description describeExample(String contextName, String exampleName) {
+    return Description.createTestDescription(contextName, exampleName);
   }
   
   @Override
-  protected Description describeChild(Example child) {
-    throw new UnsupportedOperationException();
-//    return Description.createTestDescription(exampleGateway.getContextClass(), child.describeBehavior());
+  protected List<NewExample> getChildren() {
+    return exampleGateway.getExamples().collect(toList());
   }
   
   @Override
-  protected void runChild(Example child, RunNotifier notifier) {
+  protected void runChild(NewExample child, RunNotifier notifier) {
     Description description = describeChild(child);
     if(child.isSkipped())
       notifier.fireTestIgnored(description);
@@ -61,7 +64,7 @@ public final class JavaSpecRunner extends ParentRunner<Example> {
       runExample(child, notifier, description);
   }
 
-  private void runExample(Example child, RunNotifier notifier, Description description) {
+  private void runExample(NewExample child, RunNotifier notifier, Description description) {
     notifier.fireTestStarted(description);
     try {
       child.run();
