@@ -11,8 +11,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.javaspec.proto.ContextClasses;
-import org.javaspec.runner.ContextClassExampleGateway.NoExamplesException;
-import org.javaspec.runner.ContextClassExampleGateway.UnknownStepExecutionSequenceException;
+import org.javaspec.runner.ContextClassTestConfiguration.NoExamplesException;
+import org.javaspec.runner.ContextClassTestConfiguration.UnknownStepExecutionSequenceException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +22,7 @@ import com.google.common.collect.ImmutableList;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 @RunWith(HierarchicalContextRunner.class)
-public class ContextClassExampleGatewayTest {
+public class ContextClassTestConfigurationTest {
   public class findInitializationErrors {
     @Test
     public void givenAClassWith2OrMoreEstablishFields_containsUnknownStepExecutionSequenceException() {
@@ -52,14 +52,14 @@ public class ContextClassExampleGatewayTest {
       public class andNoClassHas2OrMoreFixtureFieldsOfTheSameType {
         @Test
         public void andAtLeastOneClassHas1OrMoreItFields_returnsEmptyList() {
-          TestConfiguration subject = new ContextClassExampleGateway(ContextClasses.Nested.class);
+          TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.Nested.class);
           assertThat(subject.findInitializationErrors(), equalTo(Collections.emptyList()));
         }
       }
     }
     
     private void shouldFindInitializationError(Class<?> contextType, Class<?> errorType, String errorMsg) {
-      TestConfiguration subject = new ContextClassExampleGateway(contextType);
+      TestConfiguration subject = new ContextClassTestConfiguration(contextType);
       assertThat(subject.findInitializationErrors().stream().map(x -> x.getClass()).collect(toList()),
         contains(equalTo(errorType)));
       assertThat(subject.findInitializationErrors().stream().map(Throwable::getMessage).collect(toList()),
@@ -70,14 +70,14 @@ public class ContextClassExampleGatewayTest {
   public class getContextClass {
     @Test
     public void returnsTheGivenClass() {
-      TestConfiguration subject = new ContextClassExampleGateway(ContextClasses.TwoIt.class);
+      TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.TwoIt.class);
       assertThat(subject.getContextClass(), equalTo(ContextClasses.TwoIt.class));
     }
   }
   
   public class getExamples {
     public class givenAClassWith1OrMoreInitializationErrors {
-      private final TestConfiguration subject = new ContextClassExampleGateway(ContextClasses.Empty.class);
+      private final TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.Empty.class);
       
       @Test
       public void throwsIllegalStateExceptionContainingOneOfThem() {
@@ -89,7 +89,7 @@ public class ContextClassExampleGatewayTest {
     }
     
     public class givenAClassWithNoFixtureFields {
-      private final TestConfiguration subject = new ContextClassExampleGateway(ContextClasses.OneIt.class);
+      private final TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.OneIt.class);
       
       @Test
       public void createsEachExampleWithoutFixtureMethods() {
@@ -100,7 +100,7 @@ public class ContextClassExampleGatewayTest {
     }
     
     public class givenAClassWithUpToOneOfEachTypeOfFixtureField {
-      private final TestConfiguration subject = new ContextClassExampleGateway(ContextClasses.FullFixture.class);
+      private final TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.FullFixture.class);
       
       @Test
       public void associatesAnEstablishFieldWithEachExample() {
@@ -122,7 +122,7 @@ public class ContextClassExampleGatewayTest {
     }
     
     public class givenAClassWith1OrMoreItFields {
-      private final TestConfiguration subject = new ContextClassExampleGateway(ContextClasses.TwoItWithEstablish.class);
+      private final TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.TwoItWithEstablish.class);
       private List<Example> examples;
       
       @Before

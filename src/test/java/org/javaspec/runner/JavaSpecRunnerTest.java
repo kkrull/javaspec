@@ -162,7 +162,7 @@ public class JavaSpecRunnerTest {
   private static ExampleGateway gatewayFor(NewExample... examples) {
     ExampleGateway stub = mock(ExampleGateway.class);
     when(stub.findInitializationErrors()).thenReturn(Collections.emptyList());
-    when(stub.getContextRoot()).thenReturn(new Context("top-level context"));
+    when(stub.getRootContext()).thenReturn(new Context("top-level context"));
     
     Stream<NewExample> streamOfExamples = Stream.of(examples);
     when(stub.getExamples()).thenReturn(streamOfExamples);
@@ -174,8 +174,8 @@ public class JavaSpecRunnerTest {
 
   private static ExampleGateway gatewayWithRepeatedExample(String exampleName, Context root) {
     ExampleGateway gateway = mock(ExampleGateway.class);
-    when(gateway.getContextRoot()).thenReturn(root);
     when(gateway.getExampleNames(any())).thenReturn(ImmutableList.of(exampleName));
+    when(gateway.getRootContext()).thenReturn(root);
     
     Stream<NewExample> examples = Stream.of(exampleNamed(exampleName));
     when(gateway.getExamples()).thenReturn(examples);

@@ -14,7 +14,7 @@ public final class JavaSpecRunner extends ParentRunner<NewExample> {
   private final ExampleGateway exampleGateway;
   
   public JavaSpecRunner(Class<?> contextClass) throws InitializationError {
-    this(new NewContextClassExampleGateway(contextClass));
+    this(new ClassExampleGateway(contextClass));
   }
   
   JavaSpecRunner(ExampleGateway exampleGateway) throws InitializationError {
@@ -29,7 +29,7 @@ public final class JavaSpecRunner extends ParentRunner<NewExample> {
   
   @Override
   public Description getDescription() {
-    return describe(exampleGateway.getContextRoot());
+    return describe(exampleGateway.getRootContext());
   }
 
   @Override
