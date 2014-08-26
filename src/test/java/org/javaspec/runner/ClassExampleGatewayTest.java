@@ -109,30 +109,30 @@ public class ClassExampleGatewayTest {
     }
     
     public class givenAClassContaining0OrMoreInnerClasses {
-      private final Context rootContext = doGetRootContext(ContextClasses.Nested3By2.class);
-      
       @Test
       public void returnsAContextNodeForEachInnerClassSubtreeContaining1OrMoreItFields() {
+        Context rootContext = doGetRootContext(ContextClasses.Nested3By2.class);
         assertThat(rootContext.name, equalTo("Nested3By2"));
         assertThat(rootContext.getSubContexts(), hasSize(2));
         
         assert2By1Context(rootContext.getSubContexts().get(0), "level2a", "level3a");
         assert2By1Context(rootContext.getSubContexts().get(1), "level2b", "level3b");
       }
-      
+    }
+    
+    public class givenAContextClassInTheTreeThatHasNoItFields {
       @Test
-      public void returnsExampleNamesForEachItFieldInAClass() {
+      public void returnsAContextNodeWithEmptyExampleNames() {
+        Context rootContext = doGetRootContext(ContextClasses.NestedWithInnerHelperClass.class);
         assertThat(rootContext.getExampleNames(), empty());
-        
-        Context level2a = rootContext.getSubContexts().get(0);
-        Context level2b = rootContext.getSubContexts().get(1);
-        assertThat(level2a.getExampleNames(), empty());
-        assertThat(level2b.getExampleNames(), empty());
-        
-        Context level3a = level2a.getSubContexts().get(0);
-        Context level3b = level2b.getSubContexts().get(0);
-        assertThat(level3a.getExampleNames(), contains("asserts"));
-        assertThat(level3b.getExampleNames(), contains("asserts"));
+      }
+    }
+    
+    public class givenAContextClassInTheTreeWith1OrMoreItFields {
+      @Test
+      public void returnsAContextNodeWithExampleNamesForThoseItFields() {
+        Context rootContext = doGetRootContext(ContextClasses.TwoIt.class);
+        assertThat(rootContext.getExampleNames(), contains("first_test", "second_test"));
       }
     }
     
