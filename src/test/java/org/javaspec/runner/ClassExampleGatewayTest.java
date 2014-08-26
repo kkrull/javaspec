@@ -82,55 +82,93 @@ public class ClassExampleGatewayTest {
     }
   }
   
+  public class getExampleNames {
+//    public class givenAClassWithoutAnyExamples {
+//      @Test
+//      public void returnsAnEmptyList() {
+//        ExampleGateway subject = new ClassExampleGateway(ContextClasses.Empty.class);
+//        assertThat(subject.getExampleNames(context), equalTo(false));
+//      }
+//    }
+//    
+//    public class givenAClassWith1OrMoreExamples {
+//      @Test
+//      public void returnsTrue() {
+//        ExampleGateway subject = new ClassExampleGateway(ContextClasses.OneIt.class);
+//        assertThat(subject.hasExamples(), equalTo(true));
+//      }
+//    }
+  }
+  
   public class getRootContext {
-    public class givenAClassContaining {
-      public class anyLevelOfNestedInnerClasses {
-        @Test
-        public void returnsAContextNodeForEachInnerClassSubtreeContaining1OrMoreItFields() {
-          Context rootContext = getRootContext(ContextClasses.Nested3By2.class);
-          assertThat(rootContext.name, equalTo("Nested3By2"));
-          assertThat(rootContext.getSubContexts(), hasSize(2));
-          
-          assert2By1Context(rootContext.getSubContexts().get(0), "level2a", "level3a");
-          assert2By1Context(rootContext.getSubContexts().get(1), "level2b", "level3b");
-        }
-        
-        @Test
-        public void skipsStaticNestedClasses() {
-          Context rootContext = getRootContext(ContextClasses.NestedWithStaticHelperClass.class);
-          assert2By1Context(rootContext, "NestedWithStaticHelperClass", "context");
-        }
-        
-        @Test
-        public void skipsInnerClassSubtreesThatContainNoItFields() {
-          Context rootContext = getRootContext(ContextClasses.NestedWithInnerHelperClass.class);
-          assert2By1Context(rootContext, "NestedWithInnerHelperClass", "context");
-        }
-        
-        private Context getRootContext(Class<?> contextClass) {
-          ExampleGateway subject = new ClassExampleGateway(contextClass);
-          return subject.getRootContext();
-        }
-        
-        private void assert2By1Context(Context context, String parentName, String childName) {
-          assertThat(context.name, equalTo(parentName));
-          assertThat(context.getSubContexts().stream().map(x -> x.name).collect(toList()), contains(childName));
-        }
+    public class givenAClassContainingNoItFieldsInAnyPartOfTheTree {
+      @Test
+      public void returnsAnEmptyContext() {
+        Context rootContext = doGetRootContext(ContextClasses.Empty.class);
+        assertThat(rootContext.getSubContexts(), empty());
       }
+    }
+    
+    public class givenAClassContainingStaticNestedClasses {
+      @Test
+      public void omitsThatSubtreeFromTheReturnedContext() {
+        Context rootContext = doGetRootContext(ContextClasses.NestedWithStaticHelperClass.class);
+        assert2By1Context(rootContext, "NestedWithStaticHelperClass", "context");
+      }
+    }
+    
+    public class givenAClassContaining0OrMoreInnerClasses {
+      @Test
+      public void returnsAContextNodeForEachInnerClassSubtreeContaining1OrMoreItFields() {
+        Context rootContext = doGetRootContext(ContextClasses.Nested3By2.class);
+        assertThat(rootContext.name, equalTo("Nested3By2"));
+        assertThat(rootContext.getSubContexts(), hasSize(2));
+        
+        assert2By1Context(rootContext.getSubContexts().get(0), "level2a", "level3a");
+        assert2By1Context(rootContext.getSubContexts().get(1), "level2b", "level3b");
+      }
+      
+      @Test
+      public void skipsInnerClassSubtreesThatContainNoItFields() {
+        Context rootContext = doGetRootContext(ContextClasses.NestedWithInnerHelperClass.class);
+        assert2By1Context(rootContext, "NestedWithInnerHelperClass", "context");
+      }
+    }
+    
+    private Context doGetRootContext(Class<?> contextClass) {
+      ExampleGateway subject = new ClassExampleGateway(contextClass);
+      return subject.getRootContext();
+    }
+    
+    private void assert2By1Context(Context context, String parentName, String childName) {
+      assertThat(context.name, equalTo(parentName));
+      assertThat(context.getSubContexts().stream().map(x -> x.name).collect(toList()), contains(childName));
     }
   }
   
   public class getRootContextName {
-    @Test @Ignore("wip")
-    public void returnsTheNameOfTheRootContext() {
-      fail("pending");
+    @Test
+    public void returnsTheNameOfTheGivenClass() {
+      ExampleGateway subject = new ClassExampleGateway(ContextClasses.OneIt.class);
+      assertThat(subject.getRootContextName(), equalTo("OneIt"));
     }
   }
   
   public class hasExamples {
-    @Test @Ignore("wip")
-    public void returnsTrueIffNoItFieldsAnywhere() {
-      fail("pending");
+    public class givenAClassWithoutAnyExamples {
+      @Test
+      public void returnsFalse() {
+        ExampleGateway subject = new ClassExampleGateway(ContextClasses.Empty.class);
+        assertThat(subject.hasExamples(), equalTo(false));
+      }
+    }
+    
+    public class givenAClassWith1OrMoreExamples {
+      @Test
+      public void returnsTrue() {
+        ExampleGateway subject = new ClassExampleGateway(ContextClasses.OneIt.class);
+        assertThat(subject.hasExamples(), equalTo(true));
+      }
     }
   }
 }

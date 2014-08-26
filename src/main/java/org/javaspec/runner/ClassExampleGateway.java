@@ -102,6 +102,6 @@ final class ClassExampleGateway implements ExampleGateway {
 
   @Override
   public boolean hasExamples() {
-    return true;
+    return getExamples().anyMatch(x -> true);
   }
 }
