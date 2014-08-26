@@ -69,10 +69,12 @@ final class ClassExampleGateway implements ExampleGateway {
       .map(ClassExampleGateway::readContext)
       .filter(x -> x.hasExamples)
       .map(x -> x.context);
+    List<String> declaredExamples = ReflectionUtil.fieldsOfType(It.class, contextClass)
+      .map(Field::getName)
+      .collect(toList());
     
-    Context context = new Context(contextClass.getSimpleName(), subContexts.collect(toList()));
-    boolean contextDeclaresExamples = ReflectionUtil.hasFieldsOfType(It.class, contextClass);
-    return new ContextStats(context, contextDeclaresExamples || context.hasChildren());
+    Context context = new Context(contextClass.getSimpleName(), declaredExamples, subContexts.collect(toList()));
+    return new ContextStats(context, !declaredExamples.isEmpty() || context.hasSubContexts());
   }
   
   private static class ContextStats {
@@ -87,11 +89,6 @@ final class ClassExampleGateway implements ExampleGateway {
   
   /* Examples */
   
-  @Override
-  public List<String> getExampleNames(Context context) {
-    throw new UnsupportedOperationException();
-  }
-
   @Override
   public Stream<NewExample> getExamples() {
 //    Field arrange = onlyFieldOrNull(Establish.class);

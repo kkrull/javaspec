@@ -11,7 +11,6 @@ interface ExampleGateway {
   String getRootContextName();
   
   //Examples
-  List<String> getExampleNames(Context context);
   Stream<NewExample> getExamples();
   boolean hasExamples();
 }

@@ -6,18 +6,24 @@ import java.util.List;
 
 final class Context {
   public final String name;
-  private final List<Context> children;
-  
-  public Context(String name, Collection<Context> subContexts) {
+  private final List<String> exampleNames;
+  private final List<Context> subcontexts;
+
+  public Context(String name, Collection<String> exampleNames, Collection<Context> subcontexts) {
     this.name = name;
-    this.children = new ArrayList<Context>(subContexts);
+    this.exampleNames = new ArrayList<String>(exampleNames);
+    this.subcontexts = new ArrayList<Context>(subcontexts);
+  }
+
+  public List<String> getExampleNames() {
+    return new ArrayList<String>(exampleNames);
   }
 
   public List<Context> getSubContexts() {
-    return new ArrayList<Context>(children);
+    return new ArrayList<Context>(subcontexts);
   }
-  
-  public boolean hasChildren() {
-    return !children.isEmpty();
+
+  public boolean hasSubContexts() {
+    return !subcontexts.isEmpty();
   }
 }
