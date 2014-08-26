@@ -11,48 +11,61 @@ import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
 public final class JavaSpecRunner extends ParentRunner<NewExample> {
-  private final ExampleGateway exampleGateway;
+  private final ExampleGateway gateway;
   
   public JavaSpecRunner(Class<?> contextClass) throws InitializationError {
     this(new ClassExampleGateway(contextClass));
   }
   
-  JavaSpecRunner(ExampleGateway exampleGateway) throws InitializationError {
+  JavaSpecRunner(ExampleGateway gateway) throws InitializationError {
     super(null); //Bypass JUnit's requirements for a context class; throw our own errors instead
-    this.exampleGateway = exampleGateway;
+    this.gateway = gateway;
     
-    List<Throwable> initializationErrors = exampleGateway.findInitializationErrors();
+    List<Throwable> initializationErrors = findInitializationErrors(gateway);
     if(!initializationErrors.isEmpty()) {
       throw new InitializationError(initializationErrors);
     }
   }
   
+  private List<Throwable> findInitializationErrors(ExampleGateway gateway) {
+    List<Throwable> initializationErrors = gateway.findInitializationErrors();
+    if(!gateway.hasExamples()) {
+      initializationErrors.add(new NoExamplesException(gateway.getRootContextName()));
+    }
+    
+    return initializationErrors;
+  }
+  
+  /* Describing tests */
+  
   @Override
   public Description getDescription() {
-    return describe(exampleGateway.getRootContext());
+    return describeSuite(gateway.getRootContext());
   }
 
   @Override
   protected Description describeChild(NewExample child) {
-    return describeExample(child.getContextName(), child.describeBehavior());
+    return describeTest(child.getContextName(), child.describeBehavior());
   }
 
-  private Description describe(Context context) {
+  private Description describeSuite(Context context) {
     Description suite = Description.createSuiteDescription(context.name);
-    context.getSubContexts().stream().map(this::describe).forEach(suite::addChild);
-    exampleGateway.getExampleNames(context).stream().map(x -> describeExample(context.name, x))
+    context.getSubContexts().stream().map(this::describeSuite).forEach(suite::addChild);
+    gateway.getExampleNames(context).stream().map(x -> describeTest(context.name, x))
       .forEach(suite::addChild);
     
     return suite;
   };
   
-  private Description describeExample(String contextName, String exampleName) {
+  private Description describeTest(String contextName, String exampleName) {
     return Description.createTestDescription(contextName, exampleName);
   }
   
+  /* Running tests */
+  
   @Override
   protected List<NewExample> getChildren() {
-    return exampleGateway.getExamples().collect(toList());
+    return gateway.getExamples().collect(toList());
   }
   
   @Override
@@ -72,6 +85,13 @@ public final class JavaSpecRunner extends ParentRunner<NewExample> {
       notifier.fireTestFailure(new Failure(description, e));
     } finally {
       notifier.fireTestFinished(description);
+    }
+  }
+  
+  public static class NoExamplesException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
+    public NoExamplesException(String contextName) {
+      super(String.format("Test context '%s' must contain at least 1 example in an It field", contextName));
     }
   }
 }

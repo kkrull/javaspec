@@ -5,7 +5,13 @@ import java.util.stream.Stream;
 
 interface ExampleGateway {
   List<Throwable> findInitializationErrors();
+  
+  //Context
+  Context getRootContext();
+  String getRootContextName();
+  
+  //Examples
   List<String> getExampleNames(Context context);
   Stream<NewExample> getExamples();
-  Context getRootContext();
+  boolean hasExamples();
 }

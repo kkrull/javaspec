@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import org.javaspec.testutil.RunListenerSpy;
 import org.javaspec.testutil.RunListenerSpy.Event;
@@ -15,7 +16,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
 public final class Runners {
-  public static List<Throwable> initializationErrorCauses(ExampleGateway gateway) {
+  public static Stream<Throwable> initializationErrorCauses(ExampleGateway gateway) {
     try {
       new JavaSpecRunner(gateway);
     } catch (InitializationError ex) {
@@ -53,7 +54,7 @@ public final class Runners {
       x.printStackTrace(System.out);
     });
     
-    String causes = flattenCauses(e).stream()
+    String causes = flattenCauses(e)
       .map(x -> String.format("[%s] %s", x.getClass().getName(), x.getMessage()))
       .collect(joining("\n- "));
     String msg = String.format("Failed to create JavaSpecRunner due to initialization errors:\n- %s\n", causes);
@@ -61,7 +62,7 @@ public final class Runners {
     return null; //Not really returning; just more convenient to use at call sites
   }
   
-  private static List<Throwable> flattenCauses(InitializationError root) {
+  private static Stream<Throwable> flattenCauses(InitializationError root) {
     List<Throwable> causes = new LinkedList<Throwable>();
     Stack<InitializationError> nodesWithChildren = new Stack<InitializationError>();
     nodesWithChildren.push(root);
@@ -75,6 +76,6 @@ public final class Runners {
         }
       }
     }
-    return causes;
+    return causes.stream();
   }
 }
