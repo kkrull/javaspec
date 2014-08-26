@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -60,16 +61,16 @@ public class DfsSearchTest {
   }
   
   static class Tree {
-    private final Map<String, String[]> adjancencyList = new TreeMap<String, String[]>();
+    private final Map<String, List<String>> adjancencyList = new TreeMap<String, List<String>>();
     
     public Tree withNode(String parent, String... children) {
-      adjancencyList.put(parent, children);
+      adjancencyList.put(parent, Arrays.asList(children));
       return this;
     }
     
-    public String[] getChildren(String parent) {
-      String[] children = adjancencyList.containsKey(parent) ? adjancencyList.get(parent) : new String[0];
-      return Arrays.copyOf(children, children.length);
+    public Stream<String> getChildren(String parent) {
+      List<String> children = adjancencyList.containsKey(parent) ? adjancencyList.get(parent) : new LinkedList<String>();
+      return children.stream();
     }
   }
 }

@@ -54,7 +54,7 @@ final class ContextClassTestConfiguration implements TestConfiguration {
   }
   
   private boolean hasAnyTests() {
-    DfsSearch<Class<?>> search = new DfsSearch<Class<?>>(contextClass, parent -> parent.getDeclaredClasses());
+    DfsSearch<Class<?>> search = new DfsSearch<Class<?>>(contextClass, parent -> Stream.of(parent.getDeclaredClasses()));
     return search.anyNodeMatches(x -> ReflectionUtil.hasFieldsOfType(It.class, x));
   }
   

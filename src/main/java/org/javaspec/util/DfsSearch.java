@@ -7,9 +7,9 @@ import java.util.stream.Stream;
 
 public final class DfsSearch<N> {
   private final N root;
-  private final Function<N, N[]> getChildren;
+  private final Function<N, Stream<N>> getChildren;
   
-  public DfsSearch(N root, Function<N, N[]> getChildren) {
+  public DfsSearch(N root, Function<N, Stream<N>> getChildren) {
     this.root = root;
     this.getChildren = getChildren;
   }
@@ -22,7 +22,7 @@ public final class DfsSearch<N> {
       if(isMatchingNode.test(current))
         return true;
       else
-        Stream.of(getChildren.apply(current)).forEach(toVisit::push);
+        getChildren.apply(current).forEach(toVisit::push);
     }
     
     return false;

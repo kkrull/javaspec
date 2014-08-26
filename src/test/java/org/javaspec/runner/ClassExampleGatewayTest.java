@@ -3,7 +3,6 @@ package org.javaspec.runner;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.util.Collections;
 import java.util.List;
@@ -66,7 +65,7 @@ public class ClassExampleGatewayTest {
     }
     
     public class givenAClassWith1OrMoreItFieldsAtAnyLevel {
-      @Test @Ignore("wip")
+      @Test
       public void returnsAnExampleForEachItField() {
         assertThat(extractNames(readExamples(ContextClasses.NestedThreeDeep.class)), contains("asserts"));
       }

@@ -6,12 +6,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.javaspec.dsl.Because;
 import org.javaspec.dsl.Cleanup;
 import org.javaspec.dsl.Establish;
 import org.javaspec.dsl.It;
+import org.javaspec.util.DfsSearch;
 
 final class ClassExampleGateway implements ExampleGateway {
   private final Class<?> contextClass;
@@ -94,6 +96,11 @@ final class ClassExampleGateway implements ExampleGateway {
 //    Field arrange = onlyFieldOrNull(Establish.class);
 //    Field act = onlyFieldOrNull(Because.class);
 //    Field cleanup = onlyFieldOrNull(Cleanup.class);
+//    Function<Class<?>, Class<?>[]> getInnerClasses = parent -> Stream.of(parent.getDeclaredClasses())
+//      .filter(x -> !Modifier.isStatic(x.getModifiers()));
+    
+//    DfsSearch<Class<?>> dfs = new DfsSearch<Class<?>>(contextClass, getInnerClasses);
+    
     return ReflectionUtil.fieldsOfType(It.class, contextClass).map(it -> new ContextExample(it));
   }
 
