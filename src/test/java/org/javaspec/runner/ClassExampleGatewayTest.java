@@ -144,47 +144,47 @@ public class ClassExampleGatewayTest {
       
       public class givenUpTo1BecauseLambdaInEachLevelOfContext {
         @Test
-        public void ordersTheseLambdasInDescendingOrderStartingFromTheTopLevelContext() {
-          fail("pending");
+        public void theseBecomeBeforeLambdasThatRunOuterContextToInnerContext() {
+          readExamples(ContextClasses.NestedBecause.class, factory);
+          assertBefores(ContextClasses.NestedBecause.inner.class, "asserts",
+            field(ContextClasses.NestedBecause.class, "outer_act"),
+            field(ContextClasses.NestedBecause.inner.class, "inner_act"));
         }
       }
       
-      public class and1OrMoreContextClassesContainsEstablishLambdas {
-        @Test @Ignore("wip")
-        public void ordersTheseLambdasInDescendingOrderStartingFromTheTopLevelContext() {
-          fail("pending");
-        }
-        
-        @Test @Ignore("wip")
-        public void excludesLambdasForEstablishFieldsAboveTheTopContext() {
-          fail("pending");
-        }
-        
-        @Test @Ignore("wip")
-        public void excludesLambdasForEstablishFieldsBelowTheContextInWhichAnItFieldIsDeclared() {
-          fail("pending");
+      public class givenAContextWithEstablishAndBecauseLambdas {
+        @Test
+        public void beforeLambdasOrderEstablishBecause_thenByContextLevel() {
+          readExamples(ContextClasses.NestedEstablishBecause.class, factory);
+          assertBefores(ContextClasses.NestedEstablishBecause.inner.class, "asserts",
+            field(ContextClasses.NestedEstablishBecause.class, "outer_arrange"),
+            field(ContextClasses.NestedEstablishBecause.class, "outer_act"),
+            field(ContextClasses.NestedEstablishBecause.inner.class, "inner_arrange"),
+            field(ContextClasses.NestedEstablishBecause.inner.class, "inner_act"));
         }
       }
       
-      @Test @Ignore
-      public void includesFixtureFunctionsForBecauseFieldsInTheContextScope() {
-        fail("pending");
-      }
-      
-      @Test @Ignore
-      public void ordersEstablishBeforeBecauseInEachContext() {
-        fail("pending");
-      }
-      
-      @Test @Ignore
-      public void includesFixtureFunctionsForCleanupFieldsInTheContextScope() {
-        fail("pending");
+      public class givenUpTo1CleanupLambdaInEachLevelOfContext {
+        @Test
+        public void theseBecomeAfterLambdasThatRunInnerContextToOuterContext() {
+          readExamples(ContextClasses.NestedCleanup.class, factory);
+          assertAfters(ContextClasses.NestedCleanup.inner.class, "asserts",
+            field(ContextClasses.NestedCleanup.inner.class, "inner_cleanup"),
+            field(ContextClasses.NestedCleanup.class, "outer_cleanup"));
+        }
       }
     }
     
     private void assertCreatedExample(Class<?> contextClass, String itName) {
       verify(factory).makeExample(Mockito.eq(contextClass), Mockito.argThat(field(contextClass, itName)), 
         Mockito.any(), Mockito.any());
+    }
+
+    private void assertAfters(Class<?> itContext, String itName, Matcher<Field>... afterMatchers) {
+      verify(factory).makeExample(
+        Mockito.eq(itContext), Mockito.argThat(field(itContext, itName)), 
+        befores.capture(), afters.capture());
+      assertThat(afters.getValue(), contains(afterMatchers));
     }
     
     private void assertBefores(Class<?> itContext, String itName, Matcher<Field>... beforeMatchers) {

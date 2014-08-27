@@ -104,7 +104,7 @@ final class ClassExampleGateway implements ExampleGateway {
   @Override
   public Stream<NewExample> getExamples() {
     List<NewExample> examples = new LinkedList<NewExample>();
-    appendExamples(contextClass, examples, new ArrayList<Field>());
+    appendExamples(contextClass, examples, new ArrayList<Field>(), new ArrayList<Field>());
     return examples.stream();
   }
   
@@ -113,13 +113,21 @@ final class ClassExampleGateway implements ExampleGateway {
     return getExamples().anyMatch(x -> true);
   }
   
-  private void appendExamples(Class<?> contextClass, List<NewExample> examples, List<Field> ancestorBefores) {
+  //TODO KDK: Don't go down; start at the itClass and go back up to contextClass
+  private void appendExamples(Class<?> contextClass, List<NewExample> examples, List<Field> ancestorBefores, List<Field> ancestorAfters) {
+    //Before lambdas run outside-in
     List<Field> befores = new ArrayList<Field>(ancestorBefores);
     ReflectionUtil.fieldsOfType(Establish.class, contextClass).forEach(befores::add);
+    ReflectionUtil.fieldsOfType(Because.class, contextClass).forEach(befores::add);
+    
+    //After lambdas run inside-out
+    ArrayList<Field> afters = new ArrayList<Field>();
+    ReflectionUtil.fieldsOfType(Cleanup.class, contextClass).forEach(afters::add);
+    afters.addAll(ancestorAfters);
     
     ReflectionUtil.fieldsOfType(It.class, contextClass)
-      .map(it -> factory.makeExample(contextClass, it, befores, new ArrayList<Field>()))
+      .map(it -> factory.makeExample(contextClass, it, befores, afters))
       .forEach(examples::add);
-    readInnerClasses(contextClass).forEach(x -> appendExamples(x, examples, befores));
+    readInnerClasses(contextClass).forEach(x -> appendExamples(x, examples, befores, afters));
   }
 }

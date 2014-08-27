@@ -98,14 +98,42 @@ public class ContextClasses {
       }
     }
   }
-
+  
   public static class NestedEstablish {
     Establish outer_arrange = () -> assertEquals(1, 1);
     
     public class inner {
       Establish inner_arrange = () -> assertEquals(1, 1);
       It asserts = () -> assertEquals(42, 42);
-//      It another_test = () -> assertEquals(42, 42);
+    }
+  }
+  
+  public static class NestedBecause {
+    Because outer_act = () -> assertEquals(1, 1);
+    
+    public class inner {
+      Because inner_act = () -> assertEquals(1, 1);
+      It asserts = () -> assertEquals(42, 42);
+    }
+  }
+
+  public static class NestedEstablishBecause {
+    Establish outer_arrange = () -> assertEquals(1, 1);
+    Because outer_act = () -> assertEquals(1, 1);
+    
+    public class inner {
+      Establish inner_arrange = () -> assertEquals(1, 1);
+      Because inner_act = () -> assertEquals(1, 1);
+      It asserts = () -> assertEquals(42, 42);
+    }
+  }
+  
+  public static class NestedCleanup {
+    Cleanup outer_cleanup = () -> assertEquals(1, 1);
+    
+    public class inner {
+      Cleanup inner_cleanup = () -> assertEquals(1, 1);
+      It asserts = () -> assertEquals(42, 42);
     }
   }
   
