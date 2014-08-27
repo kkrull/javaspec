@@ -102,9 +102,9 @@ public class JavaSpecRunnerTest {
           
           NewExample[] examples = { example, example, example };
           Context[] contexts = { 
-            new Context(1, top, newArrayList(example.describeBehavior())),
-            new Context(2, middle, newArrayList(example.describeBehavior())),
-            new Context(3, bottom, newArrayList(example.describeBehavior())),
+            new Context(1, top, newArrayList(example.getName())),
+            new Context(2, middle, newArrayList(example.getName())),
+            new Context(3, bottom, newArrayList(example.getName())),
           };
           
           Stream<NewExample> exampleStream = Stream.of(examples);
@@ -210,7 +210,7 @@ public class JavaSpecRunnerTest {
     
     private NewExample exampleSpy(String behaviorName, Consumer<Event> notify) throws Exception {
       NewExample stub = mock(NewExample.class);
-      when(stub.describeBehavior()).thenReturn(behaviorName);
+      when(stub.getName()).thenReturn(behaviorName);
       doAnswer(invocation -> {
         notify.accept(Event.named("run::" + behaviorName));
         return null;
@@ -221,7 +221,7 @@ public class JavaSpecRunnerTest {
     private ExampleGateway gatewayWithExamples(NewExample... examples) {
       ExampleGateway stub = mock(ExampleGateway.class);
       
-      List<String> exampleNames = Stream.of(examples).map(NewExample::describeBehavior).collect(toList());
+      List<String> exampleNames = Stream.of(examples).map(NewExample::getName).collect(toList());
       when(stub.getRootContext()).thenReturn(new Context(1, "root", exampleNames));
       when(stub.getRootContextName()).thenReturn("root");
       when(stub.hasExamples()).thenReturn(examples.length > 0);
@@ -234,7 +234,7 @@ public class JavaSpecRunnerTest {
   
   private NewExample exampleNamed(String behaviorName) {
     NewExample stub = mock(NewExample.class);
-    when(stub.describeBehavior()).thenReturn(behaviorName);
+    when(stub.getName()).thenReturn(behaviorName);
     return stub;
   }
 }

@@ -36,7 +36,7 @@ final class ClassExampleGateway implements ExampleGateway {
     return list;
   }
   
-  private boolean isStepSequenceAmbiguous(Class<?> typeOfStep) {
+  private boolean isStepSequenceAmbiguous(Class<?> typeOfStep) { //TODO KDK: Search the context class and all its inner, context classes
     //No guarantee that reflection will sort fields by order of declaration; running them out of order could fail
     List<Field> thereCanBeOnlyOne = ReflectionUtil.fieldsOfType(typeOfStep, contextClass).collect(toList());
     return thereCanBeOnlyOne.size() > 1; 
@@ -51,7 +51,7 @@ final class ClassExampleGateway implements ExampleGateway {
   }
   
   /* Context */
-
+  
   @Override
   public Context getRootContext() {
     return readContext(contextClass);
@@ -74,7 +74,7 @@ final class ClassExampleGateway implements ExampleGateway {
     DfsSearch<Class<?>> searchForItFields = new DfsSearch<Class<?>>(subtreeRoot, ClassExampleGateway::readInnerClasses);
     return searchForItFields.anyNodeMatches(x -> ReflectionUtil.hasFieldsOfType(It.class, x));
   }
-
+  
   private static Stream<Class<?>> readInnerClasses(Class<?> parent) {
     return Stream.of(parent.getDeclaredClasses()).filter(x -> !Modifier.isStatic(x.getModifiers()));
   }
@@ -83,16 +83,25 @@ final class ClassExampleGateway implements ExampleGateway {
     List<String> examples = ReflectionUtil.fieldsOfType(It.class, contextClass).map(Field::getName).collect(toList());
     return new Context(contextClass, contextClass.getSimpleName(), examples);
   }
-
+  
   /* Examples */
   
   @Override
   public Stream<NewExample> getExamples() {
-    return ReflectionUtil.fieldsOfType(It.class, contextClass).map(it -> new ContextExample(it));
+    List<NewExample> examples = new LinkedList<NewExample>();
+    appendExamples(contextClass, examples);
+    return examples.stream();
   }
-
+  
   @Override
   public boolean hasExamples() {
     return getExamples().anyMatch(x -> true);
+  }
+  
+  private static void appendExamples(Class<?> contextClass, List<NewExample> examples) {
+    ReflectionUtil.fieldsOfType(It.class, contextClass)
+      .map(it -> new ContextExample(it))
+      .forEach(examples::add);
+    readInnerClasses(contextClass).forEach(x -> appendExamples(x, examples));
   }
 }

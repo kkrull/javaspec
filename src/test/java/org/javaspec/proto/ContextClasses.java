@@ -80,21 +80,21 @@ public class ContextClasses {
     It asserts = () -> notifyEvent.accept("ContextClasses.FullFixture::assert");
     Cleanup cleans = () -> notifyEvent.accept("ContextClasses.FullFixture::cleans");
   }
-  
-  public static class NestedThreeDeep {
-    public class middle {
-      public class bottom {
-        It asserts = () -> assertEquals(1, 1);
-      }
-    }
-  }
-  
-  public static class Nested {
+
+  public static class NestedExamples {
     public class leafContext {
       It one_nested_test = () -> assertEquals(1, 1);
       It another_nested_test = () -> assertEquals(1, 1);
     }
     
+    public class middle {
+      public class bottom {
+        It bottom_test = () -> assertEquals(1, 1);
+      }
+    }
+  }
+
+  public static class NestedThreeDeep {
     public class middle {
       public class bottom {
         It asserts = () -> assertEquals(1, 1);
@@ -120,6 +120,7 @@ public class ContextClasses {
     
     public static class Helper {
       public void dryMyTest() { /* empty */ }
+      It is_not_a_test = () -> assertEquals(1, 1); //Static context classes are not supported
     }
   }
   

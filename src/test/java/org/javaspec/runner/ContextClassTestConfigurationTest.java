@@ -19,71 +19,7 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 @RunWith(HierarchicalContextRunner.class)
 public class ContextClassTestConfigurationTest {
-//  public class findInitializationErrors {
-//    @Test
-//    public void givenAClassWith2OrMoreEstablishFields_containsUnknownStepExecutionSequenceException() {
-//      shouldFindInitializationError(ContextClasses.TwoEstablish.class, UnknownStepExecutionSequenceException.class,
-//        "Impossible to determine running order of multiple Establish functions in test context org.javaspec.proto.ContextClasses$TwoEstablish");
-//    }
-//    
-//    @Test
-//    public void givenAClassWith2OrMoreBecauseFields_containsUnknownStepExecutionSequenceException() {
-//      shouldFindInitializationError(ContextClasses.TwoBecause.class, UnknownStepExecutionSequenceException.class,
-//        "Impossible to determine running order of multiple Because functions in test context org.javaspec.proto.ContextClasses$TwoBecause");
-//    }
-//    
-//    @Test
-//    public void givenAClassWith2OrMoreCleanupFields_containsUnknownStepExecutionSequenceException() {
-//      shouldFindInitializationError(ContextClasses.TwoCleanup.class, UnknownStepExecutionSequenceException.class,
-//        "Impossible to determine running order of multiple Cleanup functions in test context org.javaspec.proto.ContextClasses$TwoCleanup");
-//    }
-//    
-//    public class givenAClassWith0OrMoreInnerClasses {
-//      @Test
-//      public void andNoClassHasAnyItFields_containsNoExamplesException() {
-//        shouldFindInitializationError(ContextClasses.Empty.class, NoExamplesException.class,
-//          "Test context org.javaspec.proto.ContextClasses$Empty must contain at least 1 example in an It field");
-//      }
-//      
-//      public class andNoClassHas2OrMoreFixtureFieldsOfTheSameType {
-//        @Test
-//        public void andAtLeastOneClassHas1OrMoreItFields_returnsEmptyList() {
-//          TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.NestedThreeDeep.class);
-//          assertThat(subject.findInitializationErrors(), equalTo(Collections.emptyList()));
-//        }
-//      }
-//    }
-//    
-//    private void shouldFindInitializationError(Class<?> contextType, Class<?> errorType, String errorMsg) {
-//      TestConfiguration subject = new ContextClassTestConfiguration(contextType);
-//      assertThat(subject.findInitializationErrors().stream().map(x -> x.getClass()).collect(toList()),
-//        contains(equalTo(errorType)));
-//      assertThat(subject.findInitializationErrors().stream().map(Throwable::getMessage).collect(toList()),
-//        contains(equalTo(errorMsg)));
-//    }
-//  }
-  
-//  public class getContextClass {
-//    @Test
-//    public void returnsTheGivenClass() {
-//      TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.TwoIt.class);
-//      assertThat(subject.getContextClass(), equalTo(ContextClasses.TwoIt.class));
-//    }
-//  }
-  
   public class getExamples {
-//    public class givenAClassWith1OrMoreInitializationErrors {
-//      private final TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.Empty.class);
-//      
-//      @Test
-//      public void throwsIllegalStateExceptionContainingOneOfThem() {
-//        assertThrows(IllegalStateException.class,
-//          equalTo("Test context org.javaspec.proto.ContextClasses$Empty has one or more initialization errors"), 
-//          NoExamplesException.class,
-//          subject::getExamples);
-//      }
-//    }
-    
     public class givenAClassWithNoFixtureFields {
       private final TestConfiguration subject = new ContextClassTestConfiguration(ContextClasses.OneIt.class);
       

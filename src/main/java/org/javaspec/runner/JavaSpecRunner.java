@@ -45,7 +45,7 @@ public final class JavaSpecRunner extends ParentRunner<NewExample> {
 
   @Override
   protected Description describeChild(NewExample child) {
-    return describeTest(child.getContextName(), child.describeBehavior());
+    return describeTest(child.getContextName(), child.getName());
   }
 
   private Description describeSuite(Context context) {

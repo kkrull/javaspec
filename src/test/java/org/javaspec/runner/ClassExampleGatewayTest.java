@@ -8,7 +8,6 @@ import static org.junit.Assert.assertThat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 
 import org.javaspec.proto.ContextClasses;
 import org.javaspec.proto.ContextClasses.NestedWithStaticHelperClass;
@@ -62,20 +61,38 @@ public class ClassExampleGatewayTest {
   }
   
   public class getExamples {
-    public class givenAClassWithNoItFieldsAtAnyLevel {
-      @Test @Ignore("wip")
-      public void returnsNoExamples() {
-        assertThat(extractNames(readExamples(ContextClasses.Empty.class)), empty());
+    public class givenAClassWith1OrMoreNestedStaticClasses {
+      @Test
+      public void doesNotCreateExamplesForItFieldsDeclaredInAStaticNestedClass() {
+        assertThat(extractNames(readExamples(NestedWithStaticHelperClass.class)), contains("asserts"));
       }
     }
     
-    private List<String> extractNames(Stream<NewExample> examples) {
-      return examples.map(NewExample::describeBehavior).collect(toList());
+    public class givenAClassWith0OrMoreInnerClasses {
+      public class andThereAreNoItFieldsInTheTreeOfTheClassAndItsInnerClasses {
+        @Test
+        public void returnsNoExamples() {
+          assertThat(readExamples(ContextClasses.Empty.class), empty());
+        }
+      }
+      
+      public class andAtLeast1ItFieldExistsSomewhereInTheTreeOfThisClassAndItsInnerClasses {
+        @Test
+        public void returnsAnExampleForEachItField() {
+          assertThat(extractNames(readExamples(ContextClasses.OneIt.class)), contains("only_test"));
+          assertThat(extractNames(readExamples(ContextClasses.NestedExamples.class)),
+            contains("one_nested_test", "another_nested_test", "bottom_test"));
+        }
+      }
     }
     
-    private Stream<NewExample> readExamples(Class<?> context) {
+    private List<String> extractNames(List<NewExample> examples) {
+      return examples.stream().map(NewExample::getName).collect(toList());
+    }
+    
+    private List<NewExample> readExamples(Class<?> context) {
       ExampleGateway subject = new ClassExampleGateway(context);
-      return subject.getExamples();
+      return subject.getExamples().collect(toList());
     }
   }
   
@@ -137,12 +154,13 @@ public class ClassExampleGatewayTest {
       }
       
       public class whenANestedClassIsAnInnerClassWithAnItFieldSomewhereInItsSubtree {
-        private final List<Context> subcontexts = subContexts(ContextClasses.Nested.class);
+        private final List<Context> subcontexts = subContexts(ContextClasses.NestedExamples.class);
         
         @Test
         public void returnsASubContextForTheClass() {
-          assertContextClasses(subcontexts, 
-            ImmutableList.of(ContextClasses.Nested.leafContext.class, ContextClasses.Nested.middle.class));
+          assertContextClasses(subcontexts, ImmutableList.of(
+            ContextClasses.NestedExamples.leafContext.class,
+            ContextClasses.NestedExamples.middle.class));
         }
         
         @Test

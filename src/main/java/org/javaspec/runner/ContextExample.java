@@ -10,13 +10,13 @@ final class ContextExample implements NewExample {
   }
 
   @Override
-  public String describeBehavior() {
-    return it.getName();
-  }
-
-  @Override
   public String getContextName() {
     throw new UnsupportedOperationException();
+  }
+  
+  @Override
+  public String getName() {
+    return it.getName();
   }
 
   @Override
