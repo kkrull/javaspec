@@ -113,7 +113,6 @@ final class ClassExampleGateway implements ExampleGateway {
     return getExamples().anyMatch(x -> true);
   }
   
-  //TODO KDK: Don't go down; start at the itClass and go back up to contextClass
   private void appendExamples(Class<?> contextClass, List<NewExample> examples, List<Field> ancestorBefores, List<Field> ancestorAfters) {
     //Before lambdas run outside-in
     List<Field> befores = new ArrayList<Field>(ancestorBefores);

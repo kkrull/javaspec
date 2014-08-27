@@ -137,6 +137,19 @@ public class ContextClasses {
     }
   }
   
+  public static class NestedFixture {
+    Establish above_target_context = () -> assertEquals(1, 1);
+    
+    public class targetContext {
+      It asserts_in_target_context = () -> assertEquals(1, 1);
+      
+      public class moreSpecificContext {
+        Establish below_target_context = () -> assertEquals(1, 1);
+        It asserts_in_more_specific_context = () -> assertEquals(1, 1);
+      }
+    }
+  }
+  
   public static class NestedThreeDeep {
     public class middle {
       public class bottom {

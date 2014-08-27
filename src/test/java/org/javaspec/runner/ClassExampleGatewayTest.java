@@ -4,7 +4,6 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
 import static org.javaspec.testutil.Assertions.assertListEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.verify;
 
 import java.lang.reflect.Field;
@@ -18,7 +17,6 @@ import org.javaspec.proto.ContextClasses;
 import org.javaspec.proto.ContextClasses.NestedWithStaticHelperClass;
 import org.javaspec.runner.ClassExampleGateway.UnknownStepExecutionSequenceException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -118,6 +116,17 @@ public class ClassExampleGatewayTest {
         public void createdExamplesHaveNoFixture() {
           readExamples(ContextClasses.OneIt.class, factory);
           assertEmptyFixture(ContextClasses.OneIt.class, "only_test");
+        }
+      }
+      
+      public class givenFixtureFieldsOutsideTheContext {
+        @Test
+        public void excludesTheseFieldsFromTheContext() {
+          readExamples(ContextClasses.NestedFixture.targetContext.class, factory);
+          assertEmptyFixture(ContextClasses.NestedFixture.targetContext.class, "asserts_in_target_context");
+          assertBefores(ContextClasses.NestedFixture.targetContext.moreSpecificContext.class, 
+            "asserts_in_more_specific_context",
+            field(ContextClasses.NestedFixture.targetContext.moreSpecificContext.class, "below_target_context"));
         }
       }
       
