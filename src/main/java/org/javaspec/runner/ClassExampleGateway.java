@@ -118,7 +118,7 @@ final class ClassExampleGateway implements ExampleGateway {
     ReflectionUtil.fieldsOfType(Establish.class, contextClass).forEach(befores::add);
     
     ReflectionUtil.fieldsOfType(It.class, contextClass)
-      .map(it -> factory.makeExample(contextClass, it, befores, null))
+      .map(it -> factory.makeExample(contextClass, it, befores, new ArrayList<Field>()))
       .forEach(examples::add);
     readInnerClasses(contextClass).forEach(x -> appendExamples(x, examples, befores));
   }

@@ -78,26 +78,28 @@ public class ClassExampleGatewayTest {
     private @Captor ArgumentCaptor<List<Field>> afters;
     
     @Before
-    public void initMocks() { 
-      MockitoAnnotations.initMocks(this);
-    }
+    public void initMocks() { MockitoAnnotations.initMocks(this); }
     
-    public class givenAClassWith1OrMoreNestedStaticClasses {
-      @Test
-      public void doesNotCreateExamplesForItFieldsDeclaredInAStaticNestedClass() {
-        assertThat(extractNames(readExamples(NestedWithStaticHelperClass.class)), contains("asserts"));
+    /* Context: The (sub-)tree defined of the given context class and all its descendant, inner classes */
+
+    public class defineContext {
+      public class givenAClassWith1OrMoreNestedStaticClasses {
+        @Test
+        public void doesNotCreateExamplesForItFieldsDeclaredInAStaticNestedClass() {
+          assertThat(extractNames(readExamples(NestedWithStaticHelperClass.class)), contains("asserts"));
+        }
       }
     }
     
-    public class givenAClassWith0OrMoreInnerClasses {
-      public class andThereAreNoItFieldsInTheTreeOfTheClassAndItsInnerClasses {
+    public class defineExample {
+      public class givenNoItFieldsWithinTheContext {
         @Test
         public void returnsNoExamples() {
           assertThat(readExamples(ContextClasses.Empty.class), empty());
         }
       }
       
-      public class andAtLeast1ItFieldExistsSomewhereInTheTreeOfThisClassAndItsInnerClasses {
+      public class given1OrMoreItFieldsWithinTheContext {
         @Test
         public void returnsAnExampleForEachItField() {
           readExamples(ContextClasses.NestedExamples.class, factory);
@@ -108,16 +110,46 @@ public class ClassExampleGatewayTest {
           Mockito.verifyNoMoreInteractions(factory);
         }
       }
-      
-      public class and1OrMoreContextClassesContainsEstablishLambdas {
+    }
+    
+    public class defineFixture {
+      public class givenNoFixtureFieldsInTheContext {
         @Test
-        public void passesTheseLambdasAsBeforeLambdasForEachExample() {
+        public void createdExamplesHaveNoFixture() {
+          readExamples(ContextClasses.OneIt.class, factory);
+          assertEmptyFixture(ContextClasses.OneIt.class, "only_test");
+        }
+      }
+      
+      public class given2OrMoreItFieldsInTheSameScopeAnd1OrMoreFixtureFieldsVisibibleInThatScope {
+        private final ArgumentMatcher<Field> establish = field(ContextClasses.TwoItWithEstablish.class, "that");
+        
+        @Test
+        public void allExamplesInTheSameScopeGetTheSameFixture() {
+          readExamples(ContextClasses.TwoItWithEstablish.class, factory);
+          assertBefores(ContextClasses.TwoItWithEstablish.class, "does_one_thing", establish);
+          assertBefores(ContextClasses.TwoItWithEstablish.class, "does_something_else", establish);
+        }
+      }
+      
+      public class givenUpTo1EstablishLambdaInEachLevelOfContext {
+        @Test
+        public void theseBecomeBeforeLambdasThatRunOuterContextToInnerContext() {
           readExamples(ContextClasses.NestedEstablish.class, factory);
           assertBefores(ContextClasses.NestedEstablish.inner.class, "asserts",
             field(ContextClasses.NestedEstablish.class, "outer_arrange"),
             field(ContextClasses.NestedEstablish.inner.class, "inner_arrange"));
         }
-        
+      }
+      
+      public class givenUpTo1BecauseLambdaInEachLevelOfContext {
+        @Test
+        public void ordersTheseLambdasInDescendingOrderStartingFromTheTopLevelContext() {
+          fail("pending");
+        }
+      }
+      
+      public class and1OrMoreContextClassesContainsEstablishLambdas {
         @Test @Ignore("wip")
         public void ordersTheseLambdasInDescendingOrderStartingFromTheTopLevelContext() {
           fail("pending");
@@ -160,6 +192,14 @@ public class ClassExampleGatewayTest {
         Mockito.eq(itContext), Mockito.argThat(field(itContext, itName)), 
         befores.capture(), afters.capture());
       assertThat(befores.getValue(), contains(beforeMatchers));
+    }
+    
+    private void assertEmptyFixture(Class<?> itContext, String itName) {
+      verify(factory).makeExample(
+        Mockito.eq(itContext), Mockito.argThat(field(itContext, itName)), 
+        befores.capture(), afters.capture());
+      assertThat(befores.getValue(), empty());
+      assertThat(afters.getValue(), empty());
     }
     
     private List<String> extractNames(List<NewExample> examples) {
