@@ -12,12 +12,13 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.javaspec.proto.ContextClasses;
-import org.javaspec.proto.ContextClasses.Empty;
+import org.javaspec.proto.ContextClasses.NestedWithStaticHelperClass;
 import org.javaspec.runner.ClassExampleGateway.UnknownStepExecutionSequenceException;
-import org.javaspec.testutil.Assertions;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import com.google.common.collect.ImmutableList;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
@@ -83,6 +84,7 @@ public class ClassExampleGatewayTest {
     @Test
     public void returnsAContextNamedAfterTheClass() {
       Context rootContext = doGetRootContext(ContextClasses.OneIt.class);
+      assertThat(rootContext.id, equalTo(ContextClasses.OneIt.class));
       assertThat(rootContext.name, equalTo("OneIt"));
     }
     
@@ -119,32 +121,50 @@ public class ClassExampleGatewayTest {
     public class givenAClassThatHasNoNestedClasses {
       @Test
       public void returnsEmpty() {
-        Class<?> contextClass = ContextClasses.Empty.class;
-        ClassExampleGateway subject = new ClassExampleGateway(contextClass);
-        Context context = subject.getRootContext();
-        assertThat(subject.getSubContexts(context), empty());
+        assertSubContextClasses(ContextClasses.Empty.class, ImmutableList.of());
       }
     }
     
     public class givenAnEnclosedStaticClass {
+      @Test
+      public void doesNotMakeACorrespondingSubcontextForThatClass() {
+        assertSubContextClasses(ContextClasses.NestedWithStaticHelperClass.class, 
+          ImmutableList.of(NestedWithStaticHelperClass.context.class));
+      }
+    }
+    
+    public class givenAnInnerClassSubtreeDeclaringNoItFields {
       @Test @Ignore("wip")
       public void doesNotMakeACorrespondingSubcontextForThatClass() {
         fail("pending");
       }
     }
     
-    public class givenAnEnclosedInnerClassSubtreeDeclaringNoItFields {
-      @Test @Ignore("wip")
-      public void doesNotMakeACorrespondingSubcontextForThatClass() {
+    public class givenAnInnerClassDeclaring1OrMoreItFields {
+      @Test
+      public void includesThoseExampleNamesInTheSubcontext() {
         fail("pending");
       }
     }
     
     public class given1OrMoreInnerClassSubtreesThatContainAnItField {
-      @Test @Ignore("wip")
+      @Test
       public void returnsASubContextForEachSuchClass() {
-        fail("pending");
+        Class<?> contextClass = ContextClasses.Nested3By2.class;
+        ClassExampleGateway subject = new ClassExampleGateway(contextClass);
+        Context context = subject.getRootContext();
+        
+        List<Context> level2 = subject.getSubContexts(context);
+        assertListEquals(
+          ImmutableList.of(ContextClasses.Nested3By2.level2a.class, ContextClasses.Nested3By2.level2b.class),
+          level2.stream().map(x -> x.id).collect(toList()));
       }
+    }
+    
+    private void assertSubContextClasses(Class<?> contextClass, List<Class<?>> expectedSubcontextClasses) {
+      ClassExampleGateway subject = new ClassExampleGateway(contextClass);
+      assertListEquals(expectedSubcontextClasses, 
+        subject.getSubContexts(subject.getRootContext()).stream().map(x -> (Class<?>)x.id).collect(toList()));
     }
   }
   

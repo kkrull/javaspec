@@ -52,7 +52,7 @@ public class JavaSpecRunnerTest {
     }
 
     private Context contextNamed(String name) {
-      return new Context(name, ImmutableList.of());
+      return new Context(1, name, ImmutableList.of());
     }
     
     private ExampleGateway gatewayFinding(Throwable... errors) {
@@ -102,9 +102,9 @@ public class JavaSpecRunnerTest {
           
           NewExample[] examples = { example, example, example };
           Context[] contexts = { 
-            new Context(top, newArrayList(example.describeBehavior())),
-            new Context(middle, newArrayList(example.describeBehavior())),
-            new Context(bottom, newArrayList(example.describeBehavior())),
+            new Context(1, top, newArrayList(example.describeBehavior())),
+            new Context(2, middle, newArrayList(example.describeBehavior())),
+            new Context(3, bottom, newArrayList(example.describeBehavior())),
           };
           
           Stream<NewExample> exampleStream = Stream.of(examples);
@@ -222,7 +222,7 @@ public class JavaSpecRunnerTest {
       ExampleGateway stub = mock(ExampleGateway.class);
       
       List<String> exampleNames = Stream.of(examples).map(NewExample::describeBehavior).collect(toList());
-      when(stub.getRootContext()).thenReturn(new Context("root", exampleNames));
+      when(stub.getRootContext()).thenReturn(new Context(1, "root", exampleNames));
       when(stub.getRootContextName()).thenReturn("root");
       when(stub.hasExamples()).thenReturn(examples.length > 0);
       
