@@ -1,5 +1,6 @@
 package org.javaspec.runner;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static java.util.stream.Collectors.toList;
 
 import java.lang.reflect.Field;
@@ -53,13 +54,18 @@ final class ClassExampleGateway implements ExampleGateway {
 
   @Override
   public Context getRootContext() {
-    ContextStats contextStats = readContext(contextClass);
-    return contextStats.context;
+    List<String> examples = ReflectionUtil.fieldsOfType(It.class, contextClass).map(Field::getName).collect(toList());
+    return new Context(contextClass.getSimpleName(), examples);
   }
   
   @Override
   public String getRootContextName() {
     return getRootContext().name;
+  }
+  
+  @Override
+  public List<Context> getSubContexts(Context context) {
+    throw new UnsupportedOperationException();
   }
   
   private static ContextStats readContext(Class<?> contextClass) {
@@ -91,24 +97,11 @@ final class ClassExampleGateway implements ExampleGateway {
   
   @Override
   public Stream<NewExample> getExamples() {
-//    Field arrange = onlyFieldOrNull(Establish.class);
-//    Field act = onlyFieldOrNull(Because.class);
-//    Field cleanup = onlyFieldOrNull(Cleanup.class);
-//    Function<Class<?>, Class<?>[]> getInnerClasses = parent -> Stream.of(parent.getDeclaredClasses())
-//      .filter(x -> !Modifier.isStatic(x.getModifiers()));
-    
-//    DfsSearch<Class<?>> dfs = new DfsSearch<Class<?>>(contextClass, getInnerClasses);
-    
     return ReflectionUtil.fieldsOfType(It.class, contextClass).map(it -> new ContextExample(it));
   }
 
   @Override
   public boolean hasExamples() {
     return getExamples().anyMatch(x -> true);
-  }
-
-  @Override
-  public List<Context> getSubContexts(Context context) {
-    throw new UnsupportedOperationException();
   }
 }
