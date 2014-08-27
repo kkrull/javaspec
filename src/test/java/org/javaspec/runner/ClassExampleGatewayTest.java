@@ -82,8 +82,7 @@ public class ClassExampleGatewayTest {
   public class getRootContext {
     @Test
     public void returnsAContextNamedAfterTheClass() {
-      ExampleGateway subject = new ClassExampleGateway(ContextClasses.OneIt.class);
-      Context rootContext = subject.getRootContext();
+      Context rootContext = doGetRootContext(ContextClasses.OneIt.class);
       assertThat(rootContext.name, equalTo("OneIt"));
     }
     
@@ -98,9 +97,13 @@ public class ClassExampleGatewayTest {
     }
     
     private void assertHasExamples(Class<?> contextClass, String... names) {
-      ExampleGateway subject = new ClassExampleGateway(contextClass);
-      Context rootContext = subject.getRootContext();
+      Context rootContext = doGetRootContext(contextClass);
       assertListEquals(Arrays.asList(names), rootContext.getExampleNames());
+    }
+    
+    private Context doGetRootContext(Class<?> contextClass) {
+      ExampleGateway subject = new ClassExampleGateway(contextClass);
+      return subject.getRootContext();
     }
   }
   
@@ -113,9 +116,35 @@ public class ClassExampleGatewayTest {
   }
   
   public class getSubContexts {
-    @Test @Ignore("wip")
-    public void doSomething() {
-      fail("pending");
+    public class givenAClassThatHasNoNestedClasses {
+      @Test
+      public void returnsEmpty() {
+        Class<?> contextClass = ContextClasses.Empty.class;
+        ClassExampleGateway subject = new ClassExampleGateway(contextClass);
+        Context context = subject.getRootContext();
+        assertThat(subject.getSubContexts(context), empty());
+      }
+    }
+    
+    public class givenAnEnclosedStaticClass {
+      @Test @Ignore("wip")
+      public void doesNotMakeACorrespondingSubcontextForThatClass() {
+        fail("pending");
+      }
+    }
+    
+    public class givenAnEnclosedInnerClassSubtreeDeclaringNoItFields {
+      @Test @Ignore("wip")
+      public void doesNotMakeACorrespondingSubcontextForThatClass() {
+        fail("pending");
+      }
+    }
+    
+    public class given1OrMoreInnerClassSubtreesThatContainAnItField {
+      @Test @Ignore("wip")
+      public void returnsASubContextForEachSuchClass() {
+        fail("pending");
+      }
     }
   }
   

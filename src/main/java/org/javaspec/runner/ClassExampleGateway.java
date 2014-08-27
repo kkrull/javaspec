@@ -65,7 +65,7 @@ final class ClassExampleGateway implements ExampleGateway {
   
   @Override
   public List<Context> getSubContexts(Context context) {
-    throw new UnsupportedOperationException();
+    return newArrayList();
   }
   
   private static ContextStats readContext(Class<?> contextClass) {
