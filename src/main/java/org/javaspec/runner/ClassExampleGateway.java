@@ -73,8 +73,8 @@ final class ClassExampleGateway implements ExampleGateway {
       .map(Field::getName)
       .collect(toList());
     
-    Context context = new Context(contextClass.getSimpleName(), declaredExamples, subContexts.collect(toList()));
-    return new ContextStats(context, !declaredExamples.isEmpty() || context.hasSubContexts());
+    Context context = new Context(contextClass.getSimpleName(), declaredExamples);
+    return new ContextStats(context, !declaredExamples.isEmpty() /*|| context.hasSubContexts()*/);
   }
   
   private static class ContextStats {
@@ -105,5 +105,10 @@ final class ClassExampleGateway implements ExampleGateway {
   @Override
   public boolean hasExamples() {
     return getExamples().anyMatch(x -> true);
+  }
+
+  @Override
+  public List<Context> getSubContexts(Context context) {
+    throw new UnsupportedOperationException();
   }
 }

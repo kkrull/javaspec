@@ -1,5 +1,6 @@
 package org.javaspec.runner;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.Collections.synchronizedList;
 import static java.util.stream.Collectors.toList;
@@ -55,7 +56,7 @@ public class JavaSpecRunnerTest {
   public class getDescription {
     public class givenAGatewayWith1OrMoreExamples {
       public class andAContextOf1OrMoreLevels {
-        private final ExampleGateway gateway = gatewayFor(contextRepeating("runs", "top", "middle", "bottom"));
+        private final ExampleGateway gateway = gatewayRepeatingExample("runs", "top", "middle", "bottom");
         private final Description returned = Runners.of(gateway).getDescription();
         
         @Test
@@ -77,11 +78,28 @@ public class JavaSpecRunnerTest {
           assertHasTest(bottomSuite, "bottom", "runs");
         }
         
-        private Context contextRepeating(String exampleName, String top, String middle, String bottom) {
-          List<String> exampleNames = ImmutableList.of(exampleName);
-          return new Context(top, exampleNames, ImmutableList.of(
-            new Context(middle, exampleNames, ImmutableList.of(
-              new Context(bottom, exampleNames, ImmutableList.of())))));
+        private ExampleGateway gatewayRepeatingExample(String example, String top, String middle, String bottom) {
+          ExampleGateway gateway = mock(ExampleGateway.class);
+          when(gateway.findInitializationErrors()).thenReturn(newArrayList());
+          when(gateway.hasExamples()).thenReturn(true);
+          
+          NewExample[] examples = { exampleNamed(example), exampleNamed(example), exampleNamed(example) };
+          Stream<NewExample> exampleStream = Stream.of(examples);
+          when(gateway.getExamples()).thenReturn(exampleStream);
+          
+          Context[] contexts = { 
+            new Context(top, newArrayList(example)),
+            new Context(middle, newArrayList(example)),
+            new Context(bottom, newArrayList(example)),
+          };
+          
+          when(gateway.getRootContext()).thenReturn(contexts[0]);
+          when(gateway.getRootContextName()).thenReturn(top);
+          when(gateway.getSubContexts(contexts[0])).thenReturn(newArrayList(contexts[1]));
+          when(gateway.getSubContexts(contexts[1])).thenReturn(newArrayList(contexts[2]));
+          when(gateway.getSubContexts(contexts[2])).thenReturn(newArrayList());
+          
+          return gateway;
         }
 
         private void assertHasTest(Description suite, String contextName, String exampleName) {
@@ -163,7 +181,7 @@ public class JavaSpecRunnerTest {
   }
   
   private static Context contextNamed(String name) {
-    return new Context(name, ImmutableList.of(), ImmutableList.of());
+    return new Context(name, ImmutableList.of());
   }
   
   private static ExampleGateway gatewayFinding(Throwable... errors) {
@@ -178,7 +196,7 @@ public class JavaSpecRunnerTest {
     when(stub.findInitializationErrors()).thenReturn(newLinkedList());
     
     List<String> exampleNames = Stream.of(examples).map(NewExample::describeBehavior).collect(toList());
-    when(stub.getRootContext()).thenReturn(new Context("root", exampleNames, newLinkedList()));
+    when(stub.getRootContext()).thenReturn(new Context("root", exampleNames));
     when(stub.getRootContextName()).thenReturn("root");
     when(stub.hasExamples()).thenReturn(examples.length > 0);
     

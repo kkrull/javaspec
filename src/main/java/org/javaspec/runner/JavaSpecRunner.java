@@ -50,7 +50,7 @@ public final class JavaSpecRunner extends ParentRunner<NewExample> {
 
   private Description describeSuite(Context context) {
     Description suite = Description.createSuiteDescription(context.name);
-    context.getSubContexts().stream().map(this::describeSuite).forEach(suite::addChild);
+    gateway.getSubContexts(context).stream().map(this::describeSuite).forEach(suite::addChild);
     context.getExampleNames().stream().map(x -> describeTest(context.name, x)).forEach(suite::addChild);
     return suite;
   };

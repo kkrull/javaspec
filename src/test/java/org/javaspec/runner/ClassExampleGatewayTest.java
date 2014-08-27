@@ -63,13 +63,6 @@ public class ClassExampleGatewayTest {
       }
     }
     
-    public class givenAClassWith1OrMoreItFieldsAtAnyLevel {
-      @Test
-      public void returnsAnExampleForEachItField() {
-        assertThat(extractNames(readExamples(ContextClasses.NestedThreeDeep.class)), contains("asserts"));
-      }
-    }
-    
     private List<String> extractNames(Stream<NewExample> examples) {
       return examples.map(NewExample::describeBehavior).collect(toList());
     }
@@ -85,7 +78,7 @@ public class ClassExampleGatewayTest {
       @Test
       public void returnsAnEmptyContext() {
         Context rootContext = doGetRootContext(ContextClasses.Empty.class);
-        assertThat(rootContext.getSubContexts(), empty());
+//        assertThat(rootContext.getSubContexts(), empty());
         assertThat(rootContext.getExampleNames(), empty());
       }
     }
@@ -111,10 +104,10 @@ public class ClassExampleGatewayTest {
       public void returnsAContextNodeForEachInnerClassSubtreeContaining1OrMoreItFields() {
         Context rootContext = doGetRootContext(ContextClasses.Nested3By2.class);
         assertThat(rootContext.name, equalTo("Nested3By2"));
-        assertThat(rootContext.getSubContexts(), hasSize(2));
+//        assertThat(rootContext.getSubContexts(), hasSize(2));
         
-        assert2By1Context(rootContext.getSubContexts().get(0), "level2a", "level3a");
-        assert2By1Context(rootContext.getSubContexts().get(1), "level2b", "level3b");
+//        assert2By1Context(rootContext.getSubContexts().get(0), "level2a", "level3a");
+//        assert2By1Context(rootContext.getSubContexts().get(1), "level2b", "level3b");
       }
     }
     
@@ -141,7 +134,7 @@ public class ClassExampleGatewayTest {
     
     private void assert2By1Context(Context context, String parentName, String childName) {
       assertThat(context.name, equalTo(parentName));
-      assertThat(context.getSubContexts().stream().map(x -> x.name).collect(toList()), contains(childName));
+//      assertThat(context.getSubContexts().stream().map(x -> x.name).collect(toList()), contains(childName));
     }
   }
   
