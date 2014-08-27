@@ -99,6 +99,16 @@ public class ContextClasses {
     }
   }
 
+  public static class NestedEstablish {
+    Establish outer_arrange = () -> assertEquals(1, 1);
+    
+    public class inner {
+      Establish inner_arrange = () -> assertEquals(1, 1);
+      It asserts = () -> assertEquals(42, 42);
+//      It another_test = () -> assertEquals(42, 42);
+    }
+  }
+  
   public static class NestedThreeDeep {
     public class middle {
       public class bottom {

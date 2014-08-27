@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -103,7 +104,7 @@ final class ClassExampleGateway implements ExampleGateway {
   @Override
   public Stream<NewExample> getExamples() {
     List<NewExample> examples = new LinkedList<NewExample>();
-    appendExamples(contextClass, examples);
+    appendExamples(contextClass, examples, new ArrayList<Field>());
     return examples.stream();
   }
   
@@ -112,13 +113,13 @@ final class ClassExampleGateway implements ExampleGateway {
     return getExamples().anyMatch(x -> true);
   }
   
-  private void appendExamples(Class<?> contextClass, List<NewExample> examples) {
-    List<Field> befores = new LinkedList<Field>();
+  private void appendExamples(Class<?> contextClass, List<NewExample> examples, List<Field> ancestorBefores) {
+    List<Field> befores = new ArrayList<Field>(ancestorBefores);
     ReflectionUtil.fieldsOfType(Establish.class, contextClass).forEach(befores::add);
     
     ReflectionUtil.fieldsOfType(It.class, contextClass)
       .map(it -> factory.makeExample(contextClass, it, befores, null))
       .forEach(examples::add);
-    readInnerClasses(contextClass).forEach(x -> appendExamples(x, examples));
+    readInnerClasses(contextClass).forEach(x -> appendExamples(x, examples, befores));
   }
 }

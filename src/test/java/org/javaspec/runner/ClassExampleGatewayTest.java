@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.javaspec.proto.ContextClasses;
 import org.javaspec.proto.ContextClasses.NestedWithStaticHelperClass;
 import org.javaspec.runner.ClassExampleGateway.UnknownStepExecutionSequenceException;
@@ -111,9 +112,10 @@ public class ClassExampleGatewayTest {
       public class and1OrMoreContextClassesContainsEstablishLambdas {
         @Test
         public void passesTheseLambdasAsBeforeLambdasForEachExample() {
-          readExamples(ContextClasses.FailingEstablish.class, factory);
-          assertBefores(ContextClasses.FailingEstablish.class, "will_never_run", 
-            ContextClasses.FailingEstablish.class, "flawed_setup");
+          readExamples(ContextClasses.NestedEstablish.class, factory);
+          assertBefores(ContextClasses.NestedEstablish.inner.class, "asserts",
+            field(ContextClasses.NestedEstablish.class, "outer_arrange"),
+            field(ContextClasses.NestedEstablish.inner.class, "inner_arrange"));
         }
         
         @Test @Ignore("wip")
@@ -153,12 +155,11 @@ public class ClassExampleGatewayTest {
         Mockito.any(), Mockito.any());
     }
     
-    private void assertBefores(Class<?> itContext, String itName, 
-      Class<?> beforeContext, String beforeName) {
+    private void assertBefores(Class<?> itContext, String itName, Matcher<Field>... beforeMatchers) {
       verify(factory).makeExample(
         Mockito.eq(itContext), Mockito.argThat(field(itContext, itName)), 
         befores.capture(), afters.capture());
-      assertThat(befores.getValue(), contains(field(beforeContext, beforeName)));
+      assertThat(befores.getValue(), contains(beforeMatchers));
     }
     
     private List<String> extractNames(List<NewExample> examples) {
