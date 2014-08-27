@@ -81,7 +81,11 @@ final class ClassExampleGateway implements ExampleGateway {
   
   private static Context readContext(Class<?> contextClass) {
     List<String> examples = ReflectionUtil.fieldsOfType(It.class, contextClass).map(Field::getName).collect(toList());
-    return new Context(contextClass, contextClass.getSimpleName(), examples);
+    return new Context(contextClass, nameContext(contextClass), examples);
+  }
+  
+  private static String nameContext(Class<?> contextClass) {
+    return contextClass.getSimpleName();
   }
   
   /* Examples */
@@ -100,7 +104,7 @@ final class ClassExampleGateway implements ExampleGateway {
   
   private static void appendExamples(Class<?> contextClass, List<NewExample> examples) {
     ReflectionUtil.fieldsOfType(It.class, contextClass)
-      .map(it -> new ContextExample(it))
+      .map(it -> new ContextExample(nameContext(contextClass), it))
       .forEach(examples::add);
     readInnerClasses(contextClass).forEach(x -> appendExamples(x, examples));
   }

@@ -82,14 +82,19 @@ public class ContextClasses {
   }
 
   public static class NestedExamples {
-    public class leafContext {
-      It one_nested_test = () -> assertEquals(1, 1);
-      It another_nested_test = () -> assertEquals(1, 1);
-    }
+    It top_level_test = () -> assertEquals(1, 1);
     
-    public class middle {
+    public class middleWithNoTests {
       public class bottom {
         It bottom_test = () -> assertEquals(1, 1);
+      }
+    }
+    
+    public class middleWithTest {
+      It middle_test = () -> assertEquals(1, 1);
+      
+      public class bottom {
+        It another_bottom_test = () -> assertEquals(1, 1);
       }
     }
   }

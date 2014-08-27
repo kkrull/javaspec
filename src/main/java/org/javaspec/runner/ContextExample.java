@@ -3,15 +3,17 @@ package org.javaspec.runner;
 import java.lang.reflect.Field;
 
 final class ContextExample implements NewExample {
+  private final String contextName;
   private final Field it;
 
-  public ContextExample(Field it) {
+  public ContextExample(String contextName, Field it) {
+    this.contextName = contextName;
     this.it = it;
   }
 
   @Override
   public String getContextName() {
-    throw new UnsupportedOperationException();
+    return contextName;
   }
   
   @Override

@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
 import static org.javaspec.testutil.Assertions.assertListEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -79,11 +80,40 @@ public class ClassExampleGatewayTest {
       public class andAtLeast1ItFieldExistsSomewhereInTheTreeOfThisClassAndItsInnerClasses {
         @Test
         public void returnsAnExampleForEachItField() {
-          assertThat(extractNames(readExamples(ContextClasses.OneIt.class)), contains("only_test"));
+          assertThat(extractNames(readExamples(ContextClasses.TwoIt.class)), contains("first_test", "second_test"));
           assertThat(extractNames(readExamples(ContextClasses.NestedExamples.class)),
-            contains("one_nested_test", "another_nested_test", "bottom_test"));
+            contains("top_level_test", "bottom_test", "middle_test", "another_bottom_test"));
+        }
+        
+        @Test
+        public void usesTheContainingClassNameAsTheContextName() {
+          assertThat(extractContextNames(readExamples(ContextClasses.OneIt.class)), contains("OneIt"));
+        }
+        
+        @Test @Ignore
+        public void includesFixtureFunctionsForEstablishFieldsInTheContextScope() {
+          fail("pending");
+        }
+        
+        @Test @Ignore
+        public void includesFixtureFunctionsForBecauseFieldsInTheContextScope() {
+          fail("pending");
+        }
+        
+        @Test @Ignore
+        public void ordersEstablishBeforeBecauseInEachContext() {
+          fail("pending");
+        }
+        
+        @Test @Ignore
+        public void includesFixtureFunctionsForCleanupFieldsInTheContextScope() {
+          fail("pending");
         }
       }
+    }
+    
+    private List<String> extractContextNames(List<NewExample> examples) {
+      return examples.stream().map(NewExample::getContextName).collect(toList());
     }
     
     private List<String> extractNames(List<NewExample> examples) {
@@ -159,14 +189,13 @@ public class ClassExampleGatewayTest {
         @Test
         public void returnsASubContextForTheClass() {
           assertContextClasses(subcontexts, ImmutableList.of(
-            ContextClasses.NestedExamples.leafContext.class,
-            ContextClasses.NestedExamples.middle.class));
+            ContextClasses.NestedExamples.middleWithNoTests.class, ContextClasses.NestedExamples.middleWithTest.class));
         }
         
         @Test
         public void includesExampleNamesForItFieldsDeclaredInThatClass() {
-          assertExampleNames(subcontexts.get(0), "one_nested_test", "another_nested_test");
-          assertExampleNames(subcontexts.get(1));
+          assertExampleNames(subcontexts.get(0));
+          assertExampleNames(subcontexts.get(1), "middle_test");
         }
       }
     }

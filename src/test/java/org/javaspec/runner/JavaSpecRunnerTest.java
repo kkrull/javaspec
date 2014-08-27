@@ -73,13 +73,13 @@ public class JavaSpecRunnerTest {
   public class getDescription {
     public class givenAGatewayWith1OrMoreExamples {
       public class andAContextOf1OrMoreLevels {
-        private final ExampleGateway gateway = gatewayRepeatingExample(exampleNamed("runs"), "top", "middle", "bottom");
+        private final ExampleGateway gateway = gatewayRepeatingExample(exampleNamed("runs"), "top", "middleWithNoTests", "bottom");
         private final Description returned = Runners.of(gateway).getDescription();
         
         @Test
         public void describesEachContextAsASuite() {
           assertThat(returned.getClassName(), equalTo("top"));
-          assertThat(childClassNames(returned), contains(equalTo("middle")));
+          assertThat(childClassNames(returned), contains(equalTo("middleWithNoTests")));
           Description middleSuite = childSuites(returned).findFirst().get();
           assertThat(childClassNames(middleSuite), contains(equalTo("bottom")));
         }
@@ -89,7 +89,7 @@ public class JavaSpecRunnerTest {
           assertHasTest(returned, "top", "runs");
           
           Description middleSuite = childSuites(returned).findFirst().get();
-          assertHasTest(middleSuite, "middle", "runs");
+          assertHasTest(middleSuite, "middleWithNoTests", "runs");
           
           Description bottomSuite = childSuites(middleSuite).findFirst().get();
           assertHasTest(bottomSuite, "bottom", "runs");

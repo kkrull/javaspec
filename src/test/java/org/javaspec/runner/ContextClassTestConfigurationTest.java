@@ -62,12 +62,12 @@ public class ContextClassTestConfigurationTest {
         this.examples = subject.getExamples().collect(toList());
       }
       
-      @Test
-      public void returnsAFieldExampleForEachItField() {
-        assertThat(examples.stream().map(Example::describeBehavior).collect(toList()),
-          contains("does_one_thing", "does_something_else"));
-        examples.stream().map(Example::getClass).forEach(x -> assertThat(x, equalTo(FieldExample.class)));
-      }
+//      @Test
+//      public void returnsAFieldExampleForEachItField() {
+//        assertThat(examples.stream().map(Example::describeBehavior).collect(toList()),
+//          contains("does_one_thing", "does_something_else"));
+//        examples.stream().map(Example::getClass).forEach(x -> assertThat(x, equalTo(FieldExample.class)));
+//      }
       
       @Test
       public void associatesAnyFixtureMethodsWithEachExample() {
