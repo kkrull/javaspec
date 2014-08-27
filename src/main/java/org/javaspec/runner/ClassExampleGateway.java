@@ -1,6 +1,5 @@
 package org.javaspec.runner;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static java.util.stream.Collectors.toList;
 
 import java.lang.reflect.Field;
@@ -13,6 +12,7 @@ import org.javaspec.dsl.Because;
 import org.javaspec.dsl.Cleanup;
 import org.javaspec.dsl.Establish;
 import org.javaspec.dsl.It;
+import org.javaspec.util.DfsSearch;
 
 final class ClassExampleGateway implements ExampleGateway {
   private final Class<?> contextClass;
@@ -54,8 +54,7 @@ final class ClassExampleGateway implements ExampleGateway {
 
   @Override
   public Context getRootContext() {
-    List<String> examples = ReflectionUtil.fieldsOfType(It.class, contextClass).map(Field::getName).collect(toList());
-    return new Context(contextClass, contextClass.getSimpleName(), examples);
+    return readContext(contextClass);
   }
   
   @Override
@@ -65,39 +64,26 @@ final class ClassExampleGateway implements ExampleGateway {
   
   @Override
   public List<Context> getSubContexts(Context context) {
-    Class<?> contextClass = (Class<?>) context.id;
-    List<String> exampleNames = newArrayList();
-    return Stream.of(contextClass.getDeclaredClasses())
-      .filter(x -> !Modifier.isStatic(x.getModifiers()))
-      .map(x -> new Context(x, x.getSimpleName(), exampleNames))
+    return readInnerClasses((Class<?>) context.id)
+      .filter(x -> treeContainsItField(x))
+      .map(ClassExampleGateway::readContext)
       .collect(toList());
   }
   
-//  private static ContextStats readContext(Class<?> contextClass) {
-//    Stream<Class<?>> innerClasses = Stream.of(contextClass.getDeclaredClasses())
-//      .filter(x -> !Modifier.isStatic(x.getModifiers()));
-//    Stream<Context> subContexts = innerClasses
-//      .map(ClassExampleGateway::readContext)
-//      .filter(x -> x.hasExamples)
-//      .map(x -> x.context);
-//    List<String> declaredExamples = ReflectionUtil.fieldsOfType(It.class, contextClass)
-//      .map(Field::getName)
-//      .collect(toList());
-//    
-//    Context context = new Context(contextClass.getSimpleName(), declaredExamples);
-//    return new ContextStats(context, !declaredExamples.isEmpty() /*|| context.hasSubContexts()*/);
-//  }
+  private static boolean treeContainsItField(Class<?> subtreeRoot) {
+    DfsSearch<Class<?>> searchForItFields = new DfsSearch<Class<?>>(subtreeRoot, ClassExampleGateway::readInnerClasses);
+    return searchForItFields.anyNodeMatches(x -> ReflectionUtil.hasFieldsOfType(It.class, x));
+  }
+
+  private static Stream<Class<?>> readInnerClasses(Class<?> parent) {
+    return Stream.of(parent.getDeclaredClasses()).filter(x -> !Modifier.isStatic(x.getModifiers()));
+  }
   
-//  private static class ContextStats {
-//    public final Context context;
-//    public final boolean hasExamples;
-//    
-//    public ContextStats(Context context, boolean hasExamples) {
-//      this.context = context;
-//      this.hasExamples = hasExamples;
-//    }
-//  }
-  
+  private static Context readContext(Class<?> contextClass) {
+    List<String> examples = ReflectionUtil.fieldsOfType(It.class, contextClass).map(Field::getName).collect(toList());
+    return new Context(contextClass, contextClass.getSimpleName(), examples);
+  }
+
   /* Examples */
   
   @Override

@@ -4,7 +4,6 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
 import static org.javaspec.testutil.Assertions.assertListEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -90,17 +89,12 @@ public class ClassExampleGatewayTest {
     
     @Test
     public void givenAClassDeclaringNoItFields_returnsAContextWithoutExamples() {
-      assertHasExamples(ContextClasses.Empty.class);
+      assertExampleNames(doGetRootContext(ContextClasses.Empty.class));
     }
     
     @Test
     public void givenAClassDeclaring1OrMoreItFields_returnsAContextWithThoseExampleNames() {
-      assertHasExamples(ContextClasses.TwoIt.class, "first_test", "second_test");
-    }
-    
-    private void assertHasExamples(Class<?> contextClass, String... names) {
-      Context rootContext = doGetRootContext(contextClass);
-      assertListEquals(Arrays.asList(names), rootContext.getExampleNames());
+      assertExampleNames(doGetRootContext(ContextClasses.TwoIt.class), "first_test", "second_test");
     }
     
     private Context doGetRootContext(Class<?> contextClass) {
@@ -121,50 +115,42 @@ public class ClassExampleGatewayTest {
     public class givenAClassThatHasNoNestedClasses {
       @Test
       public void returnsEmpty() {
-        assertSubContextClasses(ContextClasses.Empty.class, ImmutableList.of());
+        assertContextClasses(subContexts(ContextClasses.Empty.class), ImmutableList.of());
       }
     }
     
-    public class givenAnEnclosedStaticClass {
-      @Test
-      public void doesNotMakeACorrespondingSubcontextForThatClass() {
-        assertSubContextClasses(ContextClasses.NestedWithStaticHelperClass.class, 
-          ImmutableList.of(NestedWithStaticHelperClass.context.class));
+    public class givenAClassWith1OrMoreNestedClasses {
+      public class whenANestedClassIsStatic {
+        @Test
+        public void doesNotMakeACorrespondingSubcontext() {
+          assertContextClasses(subContexts(ContextClasses.NestedWithStaticHelperClass.class),
+            ImmutableList.of(NestedWithStaticHelperClass.context.class));
+        }
       }
-    }
-    
-    public class givenAnInnerClassSubtreeDeclaringNoItFields {
-      @Test @Ignore("wip")
-      public void doesNotMakeACorrespondingSubcontextForThatClass() {
-        fail("pending");
+      
+      public class whenANestedInnerClassHasNoItFieldsInItsSubtree {
+        @Test
+        public void doesNotMakeACorrespondingSubcontext() {
+          assertContextClasses(subContexts(ContextClasses.NestedWithInnerHelperClass.class),
+            ImmutableList.of(ContextClasses.NestedWithInnerHelperClass.context.class));
+        }
       }
-    }
-    
-    public class givenAnInnerClassDeclaring1OrMoreItFields {
-      @Test
-      public void includesThoseExampleNamesInTheSubcontext() {
-        fail("pending");
-      }
-    }
-    
-    public class given1OrMoreInnerClassSubtreesThatContainAnItField {
-      @Test
-      public void returnsASubContextForEachSuchClass() {
-        Class<?> contextClass = ContextClasses.Nested3By2.class;
-        ClassExampleGateway subject = new ClassExampleGateway(contextClass);
-        Context context = subject.getRootContext();
+      
+      public class whenANestedClassIsAnInnerClassWithAnItFieldSomewhereInItsSubtree {
+        private final List<Context> subcontexts = subContexts(ContextClasses.Nested.class);
         
-        List<Context> level2 = subject.getSubContexts(context);
-        assertListEquals(
-          ImmutableList.of(ContextClasses.Nested3By2.level2a.class, ContextClasses.Nested3By2.level2b.class),
-          level2.stream().map(x -> x.id).collect(toList()));
+        @Test
+        public void returnsASubContextForTheClass() {
+          assertContextClasses(subcontexts, 
+            ImmutableList.of(ContextClasses.Nested.leafContext.class, ContextClasses.Nested.middle.class));
+        }
+        
+        @Test
+        public void includesExampleNamesForItFieldsDeclaredInThatClass() {
+          assertExampleNames(subcontexts.get(0), "one_nested_test", "another_nested_test");
+          assertExampleNames(subcontexts.get(1));
+        }
       }
-    }
-    
-    private void assertSubContextClasses(Class<?> contextClass, List<Class<?>> expectedSubcontextClasses) {
-      ClassExampleGateway subject = new ClassExampleGateway(contextClass);
-      assertListEquals(expectedSubcontextClasses, 
-        subject.getSubContexts(subject.getRootContext()).stream().map(x -> (Class<?>)x.id).collect(toList()));
     }
   }
   
@@ -184,5 +170,22 @@ public class ClassExampleGatewayTest {
         assertThat(subject.hasExamples(), equalTo(true));
       }
     }
+  }
+  
+  private static void assertContextClasses(List<Context> contexts, List<Class<?>> classes) {
+    assertListEquals(classes, contextClasses(contexts));
+  }
+  
+  private static void assertExampleNames(Context context, String... names) {
+    assertListEquals(Arrays.asList(names), context.getExampleNames());
+  }
+  
+  private static List<Class<?>> contextClasses(List<Context> contexts) {
+    return contexts.stream().map(x -> (Class<?>)x.id).collect(toList());
+  }
+  
+  private static List<Context> subContexts(Class<?> contextClass) {
+    ClassExampleGateway subject = new ClassExampleGateway(contextClass);
+    return subject.getSubContexts(subject.getRootContext());
   }
 }

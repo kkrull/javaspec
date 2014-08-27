@@ -89,15 +89,14 @@ public class ContextClasses {
     }
   }
   
-  public static class Nested3By2 {
-    public class level2a {
-      public class level3a {
-        It asserts = () -> assertEquals(1, 1);
-      }
+  public static class Nested {
+    public class leafContext {
+      It one_nested_test = () -> assertEquals(1, 1);
+      It another_nested_test = () -> assertEquals(1, 1);
     }
     
-    public class level2b {
-      public class level3b {
+    public class middle {
+      public class bottom {
         It asserts = () -> assertEquals(1, 1);
       }
     }
@@ -110,7 +109,7 @@ public class ContextClasses {
     }
     
     public class emptyContextThatShouldBeExcluded {
-      public class Helper { /* empty */ }
+      public class InnerHelper { /* empty */ }
     }
   }
   
