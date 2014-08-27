@@ -5,7 +5,9 @@ import static org.hamcrest.Matchers.*;
 import static org.javaspec.testutil.Assertions.assertListEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.verify;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -13,9 +15,12 @@ import java.util.List;
 import org.javaspec.proto.ContextClasses;
 import org.javaspec.proto.ContextClasses.NestedWithStaticHelperClass;
 import org.javaspec.runner.ClassExampleGateway.UnknownStepExecutionSequenceException;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
+import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableList;
 
@@ -78,21 +83,39 @@ public class ClassExampleGatewayTest {
       }
       
       public class andAtLeast1ItFieldExistsSomewhereInTheTreeOfThisClassAndItsInnerClasses {
+        private final ExampleFactory factory = Mockito.mock(ExampleFactory.class);
+        
+        @Before
+        public void run() {
+          readExamples(ContextClasses.NestedExamples.class, factory);
+        }
+        
         @Test
         public void returnsAnExampleForEachItField() {
-          assertThat(extractNames(readExamples(ContextClasses.TwoIt.class)), contains("first_test", "second_test"));
-          assertThat(extractNames(readExamples(ContextClasses.NestedExamples.class)),
-            contains("top_level_test", "bottom_test", "middle_test", "another_bottom_test"));
+          assertCreatedExample(ContextClasses.NestedExamples.class, "top_level_test");
+          assertCreatedExample(ContextClasses.NestedExamples.middleWithNoTests.bottom.class, "bottom_test");
+          assertCreatedExample(ContextClasses.NestedExamples.middleWithTest.class, "middle_test");
+          assertCreatedExample(ContextClasses.NestedExamples.middleWithTest.bottom.class, "another_bottom_test");
+          Mockito.verifyNoMoreInteractions(factory);
         }
         
         @Test
-        public void usesTheContainingClassNameAsTheContextName() {
-          assertThat(extractContextNames(readExamples(ContextClasses.OneIt.class)), contains("OneIt"));
-        }
-        
-        @Test @Ignore
         public void includesFixtureFunctionsForEstablishFieldsInTheContextScope() {
           fail("pending");
+        }
+        
+        private void assertCreatedExample(Class<?> contextClass, String itFieldName) {
+          ArgumentMatcher<Field> matcher = new ArgumentMatcher<Field>() {
+            @Override
+            public boolean matches(Object obj) {
+              if(obj == null || obj instanceof Field == false)
+                return false;
+              
+              Field given = (Field)obj;
+              return contextClass.equals(given.getDeclaringClass())
+                && itFieldName.equals(given.getName());
+          }};
+          verify(factory).makeExample(Mockito.eq(contextClass), Mockito.argThat(matcher));
         }
         
         @Test @Ignore
@@ -112,12 +135,13 @@ public class ClassExampleGatewayTest {
       }
     }
     
-    private List<String> extractContextNames(List<NewExample> examples) {
-      return examples.stream().map(NewExample::getContextName).collect(toList());
-    }
-    
     private List<String> extractNames(List<NewExample> examples) {
       return examples.stream().map(NewExample::getName).collect(toList());
+    }
+    
+    private List<NewExample> readExamples(Class<?> context, ExampleFactory factory) {
+      ExampleGateway subject = new ClassExampleGateway(context, factory);
+      return subject.getExamples().collect(toList());
     }
     
     private List<NewExample> readExamples(Class<?> context) {

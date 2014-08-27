@@ -16,9 +16,19 @@ import org.javaspec.util.DfsSearch;
 
 final class ClassExampleGateway implements ExampleGateway {
   private final Class<?> contextClass;
+  private final ExampleFactory factory;
   
   ClassExampleGateway(Class<?> contextClass) {
+    this(contextClass, ClassExampleGateway::makeExample);
+  }
+  
+  ClassExampleGateway(Class<?> contextClass, ExampleFactory factory) {
     this.contextClass = contextClass;
+    this.factory = factory;
+  }
+  
+  private static NewExample makeExample(Class<?> contextClass, Field it) {
+    return new ContextExample(nameContext(contextClass), it);
   }
   
   /* Validation */
@@ -102,9 +112,9 @@ final class ClassExampleGateway implements ExampleGateway {
     return getExamples().anyMatch(x -> true);
   }
   
-  private static void appendExamples(Class<?> contextClass, List<NewExample> examples) {
+  private void appendExamples(Class<?> contextClass, List<NewExample> examples) {
     ReflectionUtil.fieldsOfType(It.class, contextClass)
-      .map(it -> new ContextExample(nameContext(contextClass), it))
+      .map(it -> factory.makeExample(contextClass, it))
       .forEach(examples::add);
     readInnerClasses(contextClass).forEach(x -> appendExamples(x, examples));
   }
