@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.hamcrest.Description;
 import org.javaspec.proto.ContextClasses;
 import org.javaspec.proto.ContextClasses.NestedWithStaticHelperClass;
 import org.javaspec.runner.ClassExampleGateway.UnknownStepExecutionSequenceException;
@@ -19,8 +20,12 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
+import org.mockito.Captor;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import com.google.common.collect.ImmutableList;
 
@@ -67,6 +72,15 @@ public class ClassExampleGatewayTest {
   }
   
   public class getExamples {
+    private @Mock ExampleFactory factory;
+    private @Captor ArgumentCaptor<List<Field>> befores;
+    private @Captor ArgumentCaptor<List<Field>> afters;
+    
+    @Before
+    public void initMocks() { 
+      MockitoAnnotations.initMocks(this);
+    }
+    
     public class givenAClassWith1OrMoreNestedStaticClasses {
       @Test
       public void doesNotCreateExamplesForItFieldsDeclaredInAStaticNestedClass() {
@@ -83,56 +97,68 @@ public class ClassExampleGatewayTest {
       }
       
       public class andAtLeast1ItFieldExistsSomewhereInTheTreeOfThisClassAndItsInnerClasses {
-        private final ExampleFactory factory = Mockito.mock(ExampleFactory.class);
-        
-        @Before
-        public void run() {
-          readExamples(ContextClasses.NestedExamples.class, factory);
-        }
-        
         @Test
         public void returnsAnExampleForEachItField() {
+          readExamples(ContextClasses.NestedExamples.class, factory);
           assertCreatedExample(ContextClasses.NestedExamples.class, "top_level_test");
           assertCreatedExample(ContextClasses.NestedExamples.middleWithNoTests.bottom.class, "bottom_test");
           assertCreatedExample(ContextClasses.NestedExamples.middleWithTest.class, "middle_test");
           assertCreatedExample(ContextClasses.NestedExamples.middleWithTest.bottom.class, "another_bottom_test");
           Mockito.verifyNoMoreInteractions(factory);
         }
-        
+      }
+      
+      public class and1OrMoreContextClassesContainsEstablishLambdas {
         @Test
-        public void includesFixtureFunctionsForEstablishFieldsInTheContextScope() {
+        public void passesTheseLambdasAsBeforeLambdasForEachExample() {
+          readExamples(ContextClasses.FailingEstablish.class, factory);
+          assertBefores(ContextClasses.FailingEstablish.class, "will_never_run", 
+            ContextClasses.FailingEstablish.class, "flawed_setup");
+        }
+        
+        @Test @Ignore("wip")
+        public void ordersTheseLambdasInDescendingOrderStartingFromTheTopLevelContext() {
           fail("pending");
         }
         
-        private void assertCreatedExample(Class<?> contextClass, String itFieldName) {
-          ArgumentMatcher<Field> matcher = new ArgumentMatcher<Field>() {
-            @Override
-            public boolean matches(Object obj) {
-              if(obj == null || obj instanceof Field == false)
-                return false;
-              
-              Field given = (Field)obj;
-              return contextClass.equals(given.getDeclaringClass())
-                && itFieldName.equals(given.getName());
-          }};
-          verify(factory).makeExample(Mockito.eq(contextClass), Mockito.argThat(matcher));
-        }
-        
-        @Test @Ignore
-        public void includesFixtureFunctionsForBecauseFieldsInTheContextScope() {
+        @Test @Ignore("wip")
+        public void excludesLambdasForEstablishFieldsAboveTheTopContext() {
           fail("pending");
         }
         
-        @Test @Ignore
-        public void ordersEstablishBeforeBecauseInEachContext() {
-          fail("pending");
-        }
-        
-        @Test @Ignore
-        public void includesFixtureFunctionsForCleanupFieldsInTheContextScope() {
+        @Test @Ignore("wip")
+        public void excludesLambdasForEstablishFieldsBelowTheContextInWhichAnItFieldIsDeclared() {
           fail("pending");
         }
       }
+      
+      @Test @Ignore
+      public void includesFixtureFunctionsForBecauseFieldsInTheContextScope() {
+        fail("pending");
+      }
+      
+      @Test @Ignore
+      public void ordersEstablishBeforeBecauseInEachContext() {
+        fail("pending");
+      }
+      
+      @Test @Ignore
+      public void includesFixtureFunctionsForCleanupFieldsInTheContextScope() {
+        fail("pending");
+      }
+    }
+    
+    private void assertCreatedExample(Class<?> contextClass, String itName) {
+      verify(factory).makeExample(Mockito.eq(contextClass), Mockito.argThat(field(contextClass, itName)), 
+        Mockito.any(), Mockito.any());
+    }
+    
+    private void assertBefores(Class<?> itContext, String itName, 
+      Class<?> beforeContext, String beforeName) {
+      verify(factory).makeExample(
+        Mockito.eq(itContext), Mockito.argThat(field(itContext, itName)), 
+        befores.capture(), afters.capture());
+      assertThat(befores.getValue(), contains(field(beforeContext, beforeName)));
     }
     
     private List<String> extractNames(List<NewExample> examples) {
@@ -258,5 +284,34 @@ public class ClassExampleGatewayTest {
   private static List<Context> subContexts(Class<?> contextClass) {
     ClassExampleGateway subject = new ClassExampleGateway(contextClass);
     return subject.getSubContexts(subject.getRootContext());
+  }
+  
+  private static ArgumentMatcher<Field> field(Class<?> declaringClass, String name) { 
+    return new FieldMatcher(declaringClass, name);
+  }
+  
+  private static class FieldMatcher extends ArgumentMatcher<Field> {
+    private final Class<?> declaringClass;
+    private final String name;
+
+    public FieldMatcher(Class<?> declaringClass, String name) {
+      this.declaringClass = declaringClass;
+      this.name = name;
+    }
+    
+    @Override
+    public void describeTo(Description description) {
+      description.appendText(String.format("<Field %s.%s>", declaringClass.getName(), name));
+    }
+
+    @Override
+    public boolean matches(Object obj) {
+      if (obj == null || obj instanceof Field == false)
+        return false;
+
+      Field given = (Field) obj;
+      return declaringClass.equals(given.getDeclaringClass())
+        && name.equals(given.getName());
+    }
   }
 }

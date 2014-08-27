@@ -27,7 +27,7 @@ final class ClassExampleGateway implements ExampleGateway {
     this.factory = factory;
   }
   
-  private static NewExample makeExample(Class<?> contextClass, Field it) {
+  private static NewExample makeExample(Class<?> contextClass, Field it, List<Field> runBefore, List<Field> runAfter) {
     return new ContextExample(nameContext(contextClass), it);
   }
   
@@ -113,8 +113,11 @@ final class ClassExampleGateway implements ExampleGateway {
   }
   
   private void appendExamples(Class<?> contextClass, List<NewExample> examples) {
+    List<Field> befores = new LinkedList<Field>();
+    ReflectionUtil.fieldsOfType(Establish.class, contextClass).forEach(befores::add);
+    
     ReflectionUtil.fieldsOfType(It.class, contextClass)
-      .map(it -> factory.makeExample(contextClass, it))
+      .map(it -> factory.makeExample(contextClass, it, befores, null))
       .forEach(examples::add);
     readInnerClasses(contextClass).forEach(x -> appendExamples(x, examples));
   }
