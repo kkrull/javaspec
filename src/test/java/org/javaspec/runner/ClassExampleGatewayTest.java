@@ -10,7 +10,6 @@ import java.util.stream.Stream;
 
 import org.javaspec.proto.ContextClasses;
 import org.javaspec.runner.ClassExampleGateway.UnknownStepExecutionSequenceException;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

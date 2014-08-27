@@ -6,14 +6,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.javaspec.dsl.Because;
 import org.javaspec.dsl.Cleanup;
 import org.javaspec.dsl.Establish;
 import org.javaspec.dsl.It;
-import org.javaspec.util.DfsSearch;
 
 final class ClassExampleGateway implements ExampleGateway {
   private final Class<?> contextClass;
