@@ -47,7 +47,7 @@ final class ClassExampleGateway implements ExampleGateway {
     return list;
   }
   
-  private boolean isStepSequenceAmbiguous(Class<?> typeOfStep) { //TODO KDK: Search the context class and all its inner, context classes
+  private boolean isStepSequenceAmbiguous(Class<?> typeOfStep) {
     //No guarantee that reflection will sort fields by order of declaration; running them out of order could fail
     List<Field> thereCanBeOnlyOne = ReflectionUtil.fieldsOfType(typeOfStep, contextClass).collect(toList());
     return thereCanBeOnlyOne.size() > 1; 
