@@ -78,7 +78,7 @@ final class OldFieldExample implements IOldExample {
         (It)assignedValue(assertionField, context),
         cleanupField == null ? NOP_CLEANUP : (Cleanup)assignedValue(cleanupField, context));
     } catch (Throwable t) {
-      throw new TestSetupException(context.getClass(), t);
+      throw new FieldExample.TestSetupException(context.getClass(), t);
     }
   }
   
@@ -88,14 +88,14 @@ final class OldFieldExample implements IOldExample {
       Class<?> contextClass = assertionField.getDeclaringClass();
       noArgConstructor = contextClass.getConstructor();
     } catch (Exception e) {
-      throw new UnsupportedConstructorException(assertionField.getDeclaringClass(), e);
+      throw new FieldExample.UnsupportedConstructorException(assertionField.getDeclaringClass(), e);
     }
 
     Object context;
     try {
       context = noArgConstructor.newInstance();
     } catch (Exception | AssertionError e) {
-      throw new TestSetupException(noArgConstructor.getDeclaringClass(), e);
+      throw new FieldExample.TestSetupException(noArgConstructor.getDeclaringClass(), e);
     }
     return context;
   }
@@ -103,22 +103,6 @@ final class OldFieldExample implements IOldExample {
   private Object assignedValue(Field field, Object context) throws IllegalAccessException {
     field.setAccessible(true);
     return field.get(context);
-  }
-  
-  public static final class TestSetupException extends RuntimeException {
-    private static final long serialVersionUID = 1L;
-
-    public TestSetupException(Class<?> context, Throwable cause) {
-      super(String.format("Failed to create test context %s", context.getName()), cause);
-    }
-  }
-  
-  public static final class UnsupportedConstructorException extends RuntimeException {
-    private static final long serialVersionUID = 1L;
-
-    public UnsupportedConstructorException(Class<?> context, Throwable cause) {
-      super(String.format("Unable to find a no-argument constructor for class %s", context.getName()), cause);
-    }
   }
   
   private static class TestFunction {

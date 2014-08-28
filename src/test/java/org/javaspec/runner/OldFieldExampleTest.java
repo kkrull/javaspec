@@ -9,8 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.javaspec.proto.ContextClasses;
-import org.javaspec.runner.OldFieldExample.TestSetupException;
-import org.javaspec.runner.OldFieldExample.UnsupportedConstructorException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -83,7 +81,7 @@ public class OldFieldExampleTest {
       
       private void assertThrowsUnsupportedConstructorException(Class<?> context, String itFieldName) {
         IOldExample subject = exampleWithIt(context, itFieldName);
-        assertThrows(UnsupportedConstructorException.class,
+        assertThrows(FieldExample.UnsupportedConstructorException.class,
           is(String.format("Unable to find a no-argument constructor for class %s", context.getName())),
           NoSuchMethodException.class, subject::run);
       }
@@ -98,7 +96,7 @@ public class OldFieldExampleTest {
       
       private void assertTestSetupException(Class<?> context, String itFieldName, Class<? extends Throwable> cause) {
         IOldExample subject = exampleWithIt(context, itFieldName);
-        assertThrows(TestSetupException.class, 
+        assertThrows(FieldExample.TestSetupException.class, 
           is(String.format("Failed to create test context %s", context.getName())),
           cause, subject::run);
       }
@@ -136,7 +134,7 @@ public class OldFieldExampleTest {
       @Test
       public void throwsTestSetupExceptionCausedByReflectionError() {
         //Intended to catch ReflectiveOperationException, but causing that with a fake SecurityManager was not reliable
-        assertThrows(TestSetupException.class, startsWith("Failed to create test context"), ClassCastException.class,
+        assertThrows(FieldExample.TestSetupException.class, startsWith("Failed to create test context"), ClassCastException.class,
           subject::run);
       }
     }

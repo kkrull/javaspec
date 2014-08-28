@@ -12,11 +12,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.javaspec.proto.ContextClasses;
-import org.javaspec.runner.OldFieldExample.TestSetupException;
-import org.javaspec.runner.OldFieldExample.UnsupportedConstructorException;
+import org.javaspec.runner.FieldExample.TestSetupException;
+import org.javaspec.runner.FieldExample.UnsupportedConstructorException;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -59,7 +58,7 @@ public class FieldExampleTest {
     }
   }
   
-  public class _run {
+  public class run {
     public class givenAClassWithoutACallableNoArgConstructor {
       @Test
       public void ThrowsUnsupportedConstructorException() {
@@ -68,7 +67,7 @@ public class FieldExampleTest {
       }
       
       private void assertThrowsUnsupportedConstructorException(Class<?> context, String itFieldName) {
-        IOldExample subject = _exampleWithIt(context, itFieldName);
+        Example subject = exampleWithIt(context, itFieldName);
         assertThrows(UnsupportedConstructorException.class,
           is(String.format("Unable to find a no-argument constructor for class %s", context.getName())),
           NoSuchMethodException.class, subject::run);
@@ -83,45 +82,18 @@ public class FieldExampleTest {
       }
       
       private void assertTestSetupException(Class<?> context, String itFieldName, Class<? extends Throwable> cause) {
-        IOldExample subject = _exampleWithIt(context, itFieldName);
+        Example subject = exampleWithIt(context, itFieldName);
         assertThrows(TestSetupException.class, 
           is(String.format("Failed to create test context %s", context.getName())),
           cause, subject::run);
       }
     }
     
-    public class givenAccessibleFields {
-      private final List<String> events = new LinkedList<String>();
-      private final IOldExample subject = _exampleWithFullFixture();
-      
-      @Before
-      public void spy() throws Exception {
-        ContextClasses.FullFixture.setEventListener(events::add);
-        subject.run();
-      }
-      
-      @After
-      public void releaseSpy() {
-        ContextClasses.FullFixture.setEventListener(null);
-      }
-      
-      @Test
-      public void runsTheActionFunctionBeforeTheItFunction() throws Exception {
-        assertThat(events, contains(
-          "ContextClasses.FullFixture::new",
-          "ContextClasses.FullFixture::arrange",
-          "ContextClasses.FullFixture::act",
-          "ContextClasses.FullFixture::assert",
-          "ContextClasses.FullFixture::cleans"));
-      }
-    }
-    
     public class whenAFieldCanNotBeAccessed {
-      private final IOldExample subject = _exampleWithIt(HasWrongType.class, "inaccessibleAsIt");
-      
       @Test
       public void throwsTestSetupExceptionCausedByReflectionError() {
         //Intended to catch ReflectiveOperationException, but causing that with a fake SecurityManager was not reliable
+        Example subject = exampleWithIt(HasWrongType.class, "inaccessibleAsIt");
         assertThrows(TestSetupException.class, startsWith("Failed to create test context"), ClassCastException.class,
           subject::run);
       }
@@ -150,6 +122,34 @@ public class FieldExampleTest {
       public void throwsWhateverCleanupThrows() {
         IOldExample subject = _exampleWithCleanup(ContextClasses.FailingCleanup.class, "may_run", "flawed_cleanup");
         assertThrows(IllegalStateException.class, equalTo("flawed_cleanup"), subject::run);
+      }
+    }
+  }
+  
+  public class _run {
+    public class givenAccessibleFields {
+      private final List<String> events = new LinkedList<String>();
+      private final IOldExample subject = _exampleWithFullFixture();
+      
+      @Before
+      public void spy() throws Exception {
+        ContextClasses.FullFixture.setEventListener(events::add);
+        subject.run();
+      }
+      
+      @After
+      public void releaseSpy() {
+        ContextClasses.FullFixture.setEventListener(null);
+      }
+      
+      @Test
+      public void runsTheActionFunctionBeforeTheItFunction() throws Exception {
+        assertThat(events, contains(
+          "ContextClasses.FullFixture::new",
+          "ContextClasses.FullFixture::arrange",
+          "ContextClasses.FullFixture::act",
+          "ContextClasses.FullFixture::assert",
+          "ContextClasses.FullFixture::cleans"));
       }
     }
 

@@ -37,7 +37,12 @@ final class FieldExample implements Example {
     TestFunction f = readTestFunction();
     return f.hasUnassignedFunctions();
   }
-  
+
+  @Override
+  public void run() throws Exception {
+    TestFunction f = readTestFunction();
+  }
+
   private TestFunction readTestFunction() {
     Object context = newContextObject();
     try {
@@ -80,11 +85,6 @@ final class FieldExample implements Example {
   private Object assignedValue(Field field, Object context) throws IllegalAccessException {
     field.setAccessible(true);
     return field.get(context);
-  }
-  
-  @Override
-  public void run() throws Exception {
-    throw new UnsupportedOperationException();
   }
   
   private static class TestFunction {
