@@ -29,7 +29,7 @@ final class ClassExampleGateway implements ExampleGateway {
   }
   
   private static Example makeExample(Class<?> contextClass, Field it, List<Field> runBefore, List<Field> runAfter) {
-    return new FieldExample(nameContext(contextClass), it);
+    return new FieldExample(nameContext(contextClass), it, runBefore, runAfter);
   }
   
   /* Validation */
