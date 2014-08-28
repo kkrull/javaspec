@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.javaspec.dsl.Before;
+import org.javaspec.dsl.Cleanup;
 import org.javaspec.dsl.It;
 
 final class FieldExample implements Example {
@@ -39,20 +41,19 @@ final class FieldExample implements Example {
   private TestFunction readTestFunction() {
     Object context = newContextObject();
     try {
-      List<Object> beforeValues = new LinkedList<Object>();
+      List<Before> beforeValues = new LinkedList<Before>();
       for(Field before : befores) {
-        beforeValues.add(assignedValue(before, context));
+        Before value = (Before)assignedValue(before, context);
+        beforeValues.add(value);
       }
       
-      List<Object> afterValues = new LinkedList<Object>();
+      List<Cleanup> afterValues = new LinkedList<Cleanup>();
       for(Field after : afters) {
-        afterValues.add(assignedValue(after, context));
+        Cleanup value = (Cleanup)assignedValue(after, context);
+        afterValues.add(value);
       }
       
-      return new TestFunction(
-        (It)assignedValue(assertionField, context),
-        beforeValues,
-        afterValues);
+      return new TestFunction((It)assignedValue(assertionField, context), beforeValues, afterValues);
     } catch (Throwable t) {
       throw new TestSetupException(context.getClass(), t);
     }
@@ -88,15 +89,15 @@ final class FieldExample implements Example {
   
   private static class TestFunction {
     public final It assertion;
-    public final List<Object> befores;
-    public final List<Object> afters;
+    public final List<Before> befores;
+    public final List<Cleanup> afters;
     
-    public TestFunction(It assertion, List<Object> befores, List<Object> afters) {
+    public TestFunction(It assertion, List<Before> befores, List<Cleanup> afters) {
       this.assertion = assertion;
       this.befores = befores;
       this.afters = afters;
     }
-
+    
     public boolean hasUnassignedFunctions() {
       return assertion == null || befores.contains(null) || afters.contains(null);
     }
