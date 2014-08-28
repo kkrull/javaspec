@@ -73,8 +73,8 @@ public class ContextClasses { //TODO KDK: Remove classes that aren't used anymor
     It fails = () -> assertEquals("the answer", 42);
   }
   
-  public static class FullFixture extends ExecutionSpy {
-    public FullFixture() { notifyEvent.accept("ContextClasses.FullFixture::new"); }
+  public static class FullFixture extends ExecutionSpy { //TODO KDK: Try setting this up to where it doesn't need to spy
+    public FullFixture() { notifyEvent.accept("ContextClasses.FullFixture::new"); } //TODO KDK: This is confusing feature tests, because it runs twice (isSkipped and run)
     Establish arranges = () -> notifyEvent.accept("ContextClasses.FullFixture::arrange");
     Because acts = () -> notifyEvent.accept("ContextClasses.FullFixture::act");
     It asserts = () -> notifyEvent.accept("ContextClasses.FullFixture::assert");
