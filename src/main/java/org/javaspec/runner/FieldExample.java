@@ -41,6 +41,12 @@ final class FieldExample implements Example {
   @Override
   public void run() throws Exception {
     TestFunction f = readTestFunction();
+    for(Before before : f.befores)
+      before.run();
+    
+    f.assertion.run();
+    for(Cleanup after : f.afters)
+      after.run();
   }
 
   private TestFunction readTestFunction() {

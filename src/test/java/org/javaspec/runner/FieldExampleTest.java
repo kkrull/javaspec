@@ -99,6 +99,34 @@ public class FieldExampleTest {
       }
     }
     
+    public class givenAccessibleFields {
+      private final List<String> events = new LinkedList<String>();
+      private final Example subject = exampleWithFullFixture();
+      
+      @Before
+      public void spy() throws Exception {
+        ContextClasses.FullFixture.setEventListener(events::add);
+        subject.run();
+      }
+      
+      @After
+      public void releaseSpy() {
+        ContextClasses.FullFixture.setEventListener(null);
+      }
+      
+      @Test
+      public void runsTheActionFunctionBeforeTheItFunction() throws Exception {
+        assertThat(events, contains(
+          "ContextClasses.FullFixture::new",
+          "ContextClasses.FullFixture::arrange",
+          "ContextClasses.FullFixture::act",
+          "ContextClasses.FullFixture::assert",
+          "ContextClasses.FullFixture::cleans"));
+      }
+    }
+  }
+  
+  public class _run {
     public class whenATestFunctionThrows {
       @Test
       public void throwsWhateverEstablishThrows() {
@@ -122,34 +150,6 @@ public class FieldExampleTest {
       public void throwsWhateverCleanupThrows() {
         IOldExample subject = _exampleWithCleanup(ContextClasses.FailingCleanup.class, "may_run", "flawed_cleanup");
         assertThrows(IllegalStateException.class, equalTo("flawed_cleanup"), subject::run);
-      }
-    }
-  }
-  
-  public class _run {
-    public class givenAccessibleFields {
-      private final List<String> events = new LinkedList<String>();
-      private final IOldExample subject = _exampleWithFullFixture();
-      
-      @Before
-      public void spy() throws Exception {
-        ContextClasses.FullFixture.setEventListener(events::add);
-        subject.run();
-      }
-      
-      @After
-      public void releaseSpy() {
-        ContextClasses.FullFixture.setEventListener(null);
-      }
-      
-      @Test
-      public void runsTheActionFunctionBeforeTheItFunction() throws Exception {
-        assertThat(events, contains(
-          "ContextClasses.FullFixture::new",
-          "ContextClasses.FullFixture::arrange",
-          "ContextClasses.FullFixture::act",
-          "ContextClasses.FullFixture::assert",
-          "ContextClasses.FullFixture::cleans"));
       }
     }
 
@@ -217,10 +217,6 @@ public class FieldExampleTest {
     return _exampleWith(context, null, null, itField, cleanupField);
   }
   
-  private static IOldExample _exampleWithFullFixture() {
-    return _exampleWith(ContextClasses.FullFixture.class, "arranges", "acts", "asserts", "cleans");
-  }
-  
   private static IOldExample _exampleWith(Class<?> context, String establish, String because, String it, String cleanup) {
     try {
       return new OldFieldExample(
@@ -231,6 +227,10 @@ public class FieldExampleTest {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
+  }
+  
+  private static Example exampleWithFullFixture() {
+    return exampleWith(ContextClasses.FullFixture.class, "asserts", newArrayList("arranges", "acts"), newArrayList("cleans"));
   }
   
   private static Example exampleWithIt(Class<?> context, String name) {
