@@ -244,10 +244,12 @@ public class ContextClasses {
   }
   
   public static class TwoEstablish {
-    private final List<String> orderMatters = new LinkedList<String>();
-    Establish setup_part_one = () -> orderMatters.add("do this first");
-    Establish setup_part_two_not_allowed = () -> orderMatters.add("do this second");
-    It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
+    public class innerContext {
+      private final List<String> orderMatters = new LinkedList<String>();
+      Establish setup_part_one = () -> orderMatters.add("do this first");
+      Establish setup_part_two_not_allowed = () -> orderMatters.add("do this second");
+      It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
+    }
   }
   
   public static class TwoIt extends ExecutionSpy {

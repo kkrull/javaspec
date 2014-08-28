@@ -49,8 +49,11 @@ final class ClassExampleGateway implements ExampleGateway {
   
   private boolean isStepSequenceAmbiguous(Class<?> typeOfStep) {
     //No guarantee that reflection will sort fields by order of declaration; running them out of order could fail
-    List<Field> thereCanBeOnlyOne = ReflectionUtil.fieldsOfType(typeOfStep, contextClass).collect(toList());
-    return thereCanBeOnlyOne.size() > 1; 
+    DfsSearch<Class<?>> contextSearch = new DfsSearch<Class<?>> (contextClass, ClassExampleGateway::readInnerClasses);
+    return contextSearch.anyNodeMatches(contextClass -> {
+      List<Field> thereCanBeOnlyOne = ReflectionUtil.fieldsOfType(typeOfStep, contextClass).collect(toList());
+      return thereCanBeOnlyOne.size() > 1; 
+    });
   }
   
   public static class UnknownStepExecutionSequenceException extends RuntimeException {

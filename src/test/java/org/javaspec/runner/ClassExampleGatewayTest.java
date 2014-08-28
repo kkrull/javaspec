@@ -4,7 +4,6 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
 import static org.javaspec.testutil.Assertions.assertListEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.verify;
 
 import java.lang.reflect.Field;
@@ -39,7 +38,6 @@ public class ClassExampleGatewayTest {
       public void andAClassWith2OrMoreEstablishFields_containsUnknownStepExecutionSequenceException() {
         shouldFindInitializationError(ContextClasses.TwoEstablish.class, UnknownStepExecutionSequenceException.class,
           "Impossible to determine running order of multiple Establish functions in test context org.javaspec.proto.ContextClasses$TwoEstablish");
-        fail("this should work for nested contexts too");
       }
       
       @Test
