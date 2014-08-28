@@ -213,16 +213,16 @@ public class ClassExampleGatewayTest {
       assertThat(afters.getValue(), empty());
     }
     
-    private List<String> extractNames(List<NewExample> examples) {
-      return examples.stream().map(NewExample::getName).collect(toList());
+    private List<String> extractNames(List<Example> examples) {
+      return examples.stream().map(Example::getName).collect(toList());
     }
     
-    private List<NewExample> readExamples(Class<?> context, ExampleFactory factory) {
+    private List<Example> readExamples(Class<?> context, ExampleFactory factory) {
       ExampleGateway subject = new ClassExampleGateway(context, factory);
       return subject.getExamples().collect(toList());
     }
     
-    private List<NewExample> readExamples(Class<?> context) {
+    private List<Example> readExamples(Class<?> context) {
       ExampleGateway subject = new ClassExampleGateway(context);
       return subject.getExamples().collect(toList());
     }

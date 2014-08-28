@@ -5,5 +5,5 @@ import java.util.List;
 
 @FunctionalInterface
 interface ExampleFactory {
-  NewExample makeExample(Class<?> contextClass, Field it, List<Field> runBefore, List<Field> runAfter);
+  Example makeExample(Class<?> contextClass, Field it, List<Field> runBefore, List<Field> runAfter);
 }

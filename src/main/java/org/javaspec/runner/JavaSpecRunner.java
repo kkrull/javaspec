@@ -10,7 +10,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
-public final class JavaSpecRunner extends ParentRunner<NewExample> {
+public final class JavaSpecRunner extends ParentRunner<Example> {
   private final ExampleGateway gateway;
   
   public JavaSpecRunner(Class<?> contextClass) throws InitializationError {
@@ -44,7 +44,7 @@ public final class JavaSpecRunner extends ParentRunner<NewExample> {
   }
 
   @Override
-  protected Description describeChild(NewExample child) {
+  protected Description describeChild(Example child) {
     return describeTest(child.getContextName(), child.getName());
   }
 
@@ -62,12 +62,12 @@ public final class JavaSpecRunner extends ParentRunner<NewExample> {
   /* Running tests */
   
   @Override
-  protected List<NewExample> getChildren() {
+  protected List<Example> getChildren() {
     return gateway.getExamples().collect(toList());
   }
   
   @Override
-  protected void runChild(NewExample child, RunNotifier notifier) {
+  protected void runChild(Example child, RunNotifier notifier) {
     Description description = describeChild(child);
     if(child.isSkipped())
       notifier.fireTestIgnored(description);
@@ -75,7 +75,7 @@ public final class JavaSpecRunner extends ParentRunner<NewExample> {
       runExample(child, notifier, description);
   }
 
-  private void runExample(NewExample child, RunNotifier notifier, Description description) {
+  private void runExample(Example child, RunNotifier notifier, Description description) {
     notifier.fireTestStarted(description);
     try {
       child.run();

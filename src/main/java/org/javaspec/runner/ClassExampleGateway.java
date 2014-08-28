@@ -28,8 +28,8 @@ final class ClassExampleGateway implements ExampleGateway {
     this.factory = factory;
   }
   
-  private static NewExample makeExample(Class<?> contextClass, Field it, List<Field> runBefore, List<Field> runAfter) {
-    return new ContextExample(nameContext(contextClass), it);
+  private static Example makeExample(Class<?> contextClass, Field it, List<Field> runBefore, List<Field> runAfter) {
+    return new FieldExample(nameContext(contextClass), it);
   }
   
   /* Validation */
@@ -105,7 +105,7 @@ final class ClassExampleGateway implements ExampleGateway {
   /* Examples */
   
   @Override
-  public Stream<NewExample> getExamples() {
+  public Stream<Example> getExamples() {
     ExampleWalker tree = new ExampleWalker(factory);
     return tree.dfsTraversal(contextClass);
   }
@@ -117,14 +117,14 @@ final class ClassExampleGateway implements ExampleGateway {
   
   private static class ExampleWalker {
     private final ExampleFactory factory;
-    private final List<NewExample> examples;
+    private final List<Example> examples;
     
     public ExampleWalker(ExampleFactory factory) {
       this.factory = factory;
-      this.examples = new LinkedList<NewExample>();
+      this.examples = new LinkedList<Example>();
     }
     
-    public Stream<NewExample> dfsTraversal(Class<?> rootContext) {
+    public Stream<Example> dfsTraversal(Class<?> rootContext) {
       appendExamples(rootContext, new ArrayList<Field>(), new ArrayList<Field>());
       return examples.stream();
     }

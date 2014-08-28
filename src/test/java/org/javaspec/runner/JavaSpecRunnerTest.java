@@ -95,19 +95,19 @@ public class JavaSpecRunnerTest {
           assertHasTest(bottomSuite, "bottom", "runs");
         }
         
-        private ExampleGateway gatewayRepeatingExample(NewExample example, String top, String middle, String bottom) {
+        private ExampleGateway gatewayRepeatingExample(Example example, String top, String middle, String bottom) {
           ExampleGateway gateway = mock(ExampleGateway.class);
           when(gateway.findInitializationErrors()).thenReturn(newArrayList());
           when(gateway.hasExamples()).thenReturn(true);
           
-          NewExample[] examples = { example, example, example };
+          Example[] examples = { example, example, example };
           Context[] contexts = { 
             new Context(1, top, newArrayList(example.getName())),
             new Context(2, middle, newArrayList(example.getName())),
             new Context(3, bottom, newArrayList(example.getName())),
           };
           
-          Stream<NewExample> exampleStream = Stream.of(examples);
+          Stream<Example> exampleStream = Stream.of(examples);
           when(gateway.getExamples()).thenReturn(exampleStream);
           
           when(gateway.getRootContext()).thenReturn(contexts[0]);
@@ -140,7 +140,7 @@ public class JavaSpecRunnerTest {
     private final List<Event> events = synchronizedList(new LinkedList<Event>());
     
     public class givenASkippedExample {
-      private final NewExample skipped = exampleSkipped();
+      private final Example skipped = exampleSkipped();
       
       @Before
       public void setup() throws Exception {
@@ -196,20 +196,20 @@ public class JavaSpecRunnerTest {
       }
     }
 
-    private NewExample exampleFailing(String behaviorName) throws Exception {
-      NewExample stub = exampleNamed(behaviorName);
+    private Example exampleFailing(String behaviorName) throws Exception {
+      Example stub = exampleNamed(behaviorName);
       doThrow(new AssertionError("bang!")).when(stub).run();
       return stub;
     }
     
-    private NewExample exampleSkipped() {
-      NewExample stub = exampleNamed("skipper");
+    private Example exampleSkipped() {
+      Example stub = exampleNamed("skipper");
       when(stub.isSkipped()).thenReturn(true);
       return stub;
     }
     
-    private NewExample exampleSpy(String behaviorName, Consumer<Event> notify) throws Exception {
-      NewExample stub = mock(NewExample.class);
+    private Example exampleSpy(String behaviorName, Consumer<Event> notify) throws Exception {
+      Example stub = mock(Example.class);
       when(stub.getName()).thenReturn(behaviorName);
       doAnswer(invocation -> {
         notify.accept(Event.named("run::" + behaviorName));
@@ -218,22 +218,22 @@ public class JavaSpecRunnerTest {
       return stub;
     }
     
-    private ExampleGateway gatewayWithExamples(NewExample... examples) {
+    private ExampleGateway gatewayWithExamples(Example... examples) {
       ExampleGateway stub = mock(ExampleGateway.class);
       
-      List<String> exampleNames = Stream.of(examples).map(NewExample::getName).collect(toList());
+      List<String> exampleNames = Stream.of(examples).map(Example::getName).collect(toList());
       when(stub.getRootContext()).thenReturn(new Context(1, "root", exampleNames));
       when(stub.getRootContextName()).thenReturn("root");
       when(stub.hasExamples()).thenReturn(examples.length > 0);
       
-      Stream<NewExample> streamOfExamples = Stream.of(examples);
+      Stream<Example> streamOfExamples = Stream.of(examples);
       when(stub.getExamples()).thenReturn(streamOfExamples);
       return stub;
     }
   }
   
-  private NewExample exampleNamed(String behaviorName) {
-    NewExample stub = mock(NewExample.class);
+  private Example exampleNamed(String behaviorName) {
+    Example stub = mock(Example.class);
     when(stub.getName()).thenReturn(behaviorName);
     return stub;
   }

@@ -9,8 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.javaspec.proto.ContextClasses;
-import org.javaspec.runner.FieldExample.TestSetupException;
-import org.javaspec.runner.FieldExample.UnsupportedConstructorException;
+import org.javaspec.runner.OldFieldExample.TestSetupException;
+import org.javaspec.runner.OldFieldExample.UnsupportedConstructorException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,10 +19,10 @@ import org.junit.runner.RunWith;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 @RunWith(HierarchicalContextRunner.class)
-public class FieldExampleTest {
+public class OldFieldExampleTest {
   public class descriptionMethods {
     public class givenNoFixtureFields {
-      private final Example subject = exampleWithIt(ContextClasses.OneIt.class, "only_test");
+      private final IOldExample subject = exampleWithIt(ContextClasses.OneIt.class, "only_test");
       
       @Test
       public void fixtureMethodDescriptors_returnBlank() {
@@ -33,7 +33,7 @@ public class FieldExampleTest {
     }
     
     public class givenAValueForAField {
-      private final Example subject = exampleWithFullFixture();
+      private final IOldExample subject = exampleWithFullFixture();
       
       @Test
       public void returnsTheNameOfTheField() {
@@ -68,7 +68,7 @@ public class FieldExampleTest {
     }
     
     private void shouldBeSkipped(Class<?> contextClass, boolean isSkipped) {
-      Example subject = exampleWith(contextClass, "arranges", "acts", "asserts", null);
+      IOldExample subject = exampleWith(contextClass, "arranges", "acts", "asserts", null);
       assertThat(subject.isSkipped(), equalTo(isSkipped));
     }
   }
@@ -82,7 +82,7 @@ public class FieldExampleTest {
       }
       
       private void assertThrowsUnsupportedConstructorException(Class<?> context, String itFieldName) {
-        Example subject = exampleWithIt(context, itFieldName);
+        IOldExample subject = exampleWithIt(context, itFieldName);
         assertThrows(UnsupportedConstructorException.class,
           is(String.format("Unable to find a no-argument constructor for class %s", context.getName())),
           NoSuchMethodException.class, subject::run);
@@ -97,7 +97,7 @@ public class FieldExampleTest {
       }
       
       private void assertTestSetupException(Class<?> context, String itFieldName, Class<? extends Throwable> cause) {
-        Example subject = exampleWithIt(context, itFieldName);
+        IOldExample subject = exampleWithIt(context, itFieldName);
         assertThrows(TestSetupException.class, 
           is(String.format("Failed to create test context %s", context.getName())),
           cause, subject::run);
@@ -106,7 +106,7 @@ public class FieldExampleTest {
     
     public class givenAccessibleFields {
       private final List<String> events = new LinkedList<String>();
-      private final Example subject = exampleWithFullFixture();
+      private final IOldExample subject = exampleWithFullFixture();
       
       @Before
       public void spy() throws Exception {
@@ -131,7 +131,7 @@ public class FieldExampleTest {
     }
     
     public class whenAFieldCanNotBeAccessed {
-      private final Example subject = exampleWithIt(HasWrongType.class, "inaccessibleAsIt");
+      private final IOldExample subject = exampleWithIt(HasWrongType.class, "inaccessibleAsIt");
       
       @Test
       public void throwsTestSetupExceptionCausedByReflectionError() {
@@ -144,25 +144,25 @@ public class FieldExampleTest {
     public class whenATestFunctionThrows {
       @Test
       public void throwsWhateverEstablishThrows() {
-        Example subject = exampleWithEstablish(ContextClasses.FailingEstablish.class, "flawed_setup", "will_never_run");
+        IOldExample subject = exampleWithEstablish(ContextClasses.FailingEstablish.class, "flawed_setup", "will_never_run");
         assertThrows(UnsupportedOperationException.class, equalTo("flawed_setup"), subject::run);
       }
       
       @Test
       public void throwsWhateverBecauseThrows() {
-        Example subject = exampleWithBecause(ContextClasses.FailingBecause.class, "flawed_action", "will_never_run");
+        IOldExample subject = exampleWithBecause(ContextClasses.FailingBecause.class, "flawed_action", "will_never_run");
         assertThrows(UnsupportedOperationException.class, equalTo("flawed_action"), subject::run);
       }
       
       @Test
       public void throwsWhateverItThrows() {
-        Example subject = exampleWithIt(ContextClasses.FailingIt.class, "fails");
+        IOldExample subject = exampleWithIt(ContextClasses.FailingIt.class, "fails");
         assertThrows(AssertionError.class, anything(), subject::run);
       }
       
       @Test
       public void throwsWhateverCleanupThrows() {
-        Example subject = exampleWithCleanup(ContextClasses.FailingCleanup.class, "may_run", "flawed_cleanup");
+        IOldExample subject = exampleWithCleanup(ContextClasses.FailingCleanup.class, "may_run", "flawed_cleanup");
         assertThrows(IllegalStateException.class, equalTo("flawed_cleanup"), subject::run);
       }
     }
@@ -170,7 +170,7 @@ public class FieldExampleTest {
     public class givenACleanupField {
       public class whenASetupActionOrAssertionFunctionThrows {
         private final List<String> events = new LinkedList<String>();
-        private final Example subject = exampleWith(ContextClasses.FailingEstablishWithCleanup.class,
+        private final IOldExample subject = exampleWith(ContextClasses.FailingEstablishWithCleanup.class,
           "establish", null, "it", "cleanup");
         private Throwable thrown;
         
@@ -205,7 +205,7 @@ public class FieldExampleTest {
   }
   
   public class whenAccessingFieldsMultipleTimes {
-    private final Example subject = exampleWithIt(ContextClasses.UnstableConstructor.class, "asserts");
+    private final IOldExample subject = exampleWithIt(ContextClasses.UnstableConstructor.class, "asserts");
     
     @Test
     public void onlyConstructsTheClassOnce() throws Exception {
@@ -215,29 +215,29 @@ public class FieldExampleTest {
     }
   }
   
-  private static Example exampleWithEstablish(Class<?> context, String establishField, String itField) {
+  private static IOldExample exampleWithEstablish(Class<?> context, String establishField, String itField) {
     return exampleWith(context, establishField, null, itField, null);
   }
   
-  private static Example exampleWithBecause(Class<?> context, String becauseField, String itField) {
+  private static IOldExample exampleWithBecause(Class<?> context, String becauseField, String itField) {
     return exampleWith(context, null, becauseField, itField, null);
   }
   
-  private static Example exampleWithIt(Class<?> context, String name) {
+  private static IOldExample exampleWithIt(Class<?> context, String name) {
     return exampleWith(context, null, null, name, null);
   }
   
-  private static Example exampleWithCleanup(Class<?> context, String itField, String cleanupField) {
+  private static IOldExample exampleWithCleanup(Class<?> context, String itField, String cleanupField) {
     return exampleWith(context, null, null, itField, cleanupField);
   }
   
-  private static Example exampleWithFullFixture() {
+  private static IOldExample exampleWithFullFixture() {
     return exampleWith(ContextClasses.FullFixture.class, "arranges", "acts", "asserts", "cleans");
   }
   
-  private static Example exampleWith(Class<?> context, String establish, String because, String it, String cleanup) {
+  private static IOldExample exampleWith(Class<?> context, String establish, String because, String it, String cleanup) {
     try {
-      return new FieldExample(
+      return new OldFieldExample(
         establish == null ? null : context.getDeclaredField(establish),
         because == null ? null : context.getDeclaredField(because),
         it == null ? null : context.getDeclaredField(it),

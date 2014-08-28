@@ -12,6 +12,6 @@ interface ExampleGateway {
   List<Context> getSubContexts(Context context);
   
   //Examples
-  Stream<NewExample> getExamples();
+  Stream<Example> getExamples();
   boolean hasExamples();
 }
