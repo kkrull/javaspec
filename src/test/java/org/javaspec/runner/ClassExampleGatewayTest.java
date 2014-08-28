@@ -71,7 +71,7 @@ public class ClassExampleGatewayTest {
   }
   
   public class getExamples {
-    private @Mock ExampleFactory factory;
+    private @Mock ClassExampleGateway.ExampleFactory factory;
     private @Captor ArgumentCaptor<List<Field>> befores;
     private @Captor ArgumentCaptor<List<Field>> afters;
     
@@ -234,7 +234,7 @@ public class ClassExampleGatewayTest {
       return examples.stream().map(Example::getName).collect(toList());
     }
     
-    private List<Example> readExamples(Class<?> context, ExampleFactory factory) {
+    private List<Example> readExamples(Class<?> context, ClassExampleGateway.ExampleFactory factory) {
       ExampleGateway subject = new ClassExampleGateway(context, factory);
       return subject.getExamples().collect(toList());
     }

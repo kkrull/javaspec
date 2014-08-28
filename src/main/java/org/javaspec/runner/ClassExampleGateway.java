@@ -28,6 +28,11 @@ final class ClassExampleGateway implements ExampleGateway {
     this.factory = factory;
   }
   
+  @FunctionalInterface
+  interface ExampleFactory {
+    Example makeExample(Class<?> contextClass, Field it, List<Field> runBefore, List<Field> runAfter);
+  }
+  
   private static Example makeExample(Class<?> contextClass, Field it, List<Field> runBefore, List<Field> runAfter) {
     return new FieldExample(nameContext(contextClass), it, runBefore, runAfter);
   }
