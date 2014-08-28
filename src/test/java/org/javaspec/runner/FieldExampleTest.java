@@ -138,40 +138,34 @@ public class FieldExampleTest {
         subject.run();
       }
     }
-  }
-  
-  public class _run {
+    
     public class whenATestFunctionThrows {
       @Test
-      public void throwsWhateverEstablishThrows() {
-        IOldExample subject = _exampleWithEstablish(ContextClasses.FailingEstablish.class, "flawed_setup", "will_never_run");
+      public void throwsWhateverEstablishOrBecauseThrows() {
+        Example subject = exampleWith(ContextClasses.FailingEstablish.class, "will_never_run", 
+          newArrayList("flawed_setup"), newArrayList());
         assertThrows(UnsupportedOperationException.class, equalTo("flawed_setup"), subject::run);
       }
       
       @Test
-      public void throwsWhateverBecauseThrows() {
-        IOldExample subject = _exampleWithBecause(ContextClasses.FailingBecause.class, "flawed_action", "will_never_run");
-        assertThrows(UnsupportedOperationException.class, equalTo("flawed_action"), subject::run);
-      }
-      
-      @Test
       public void throwsWhateverItThrows() {
-        IOldExample subject = _exampleWithIt(ContextClasses.FailingIt.class, "fails");
+        Example subject = exampleWithIt(ContextClasses.FailingIt.class, "fails");
         assertThrows(AssertionError.class, anything(), subject::run);
       }
       
       @Test
       public void throwsWhateverCleanupThrows() {
-        IOldExample subject = _exampleWithCleanup(ContextClasses.FailingCleanup.class, "may_run", "flawed_cleanup");
+        Example subject = exampleWith(ContextClasses.FailingCleanup.class, "may_run", 
+          newArrayList(), newArrayList("flawed_cleanup"));
         assertThrows(IllegalStateException.class, equalTo("flawed_cleanup"), subject::run);
       }
     }
-
+    
     public class givenACleanupField {
       public class whenASetupActionOrAssertionFunctionThrows {
         private final List<String> events = new LinkedList<String>();
-        private final IOldExample subject = _exampleWith(ContextClasses.FailingEstablishWithCleanup.class,
-          "establish", null, "it", "cleanup");
+        private final Example subject = exampleWith(ContextClasses.FailingEstablishWithCleanup.class, "it",
+          newArrayList("establish"), newArrayList("cleanup"));
         private Throwable thrown;
         
         @Before
@@ -204,40 +198,13 @@ public class FieldExampleTest {
     }
   }
   
-  private static IOldExample _exampleWithEstablish(Class<?> context, String establishField, String itField) {
-    return _exampleWith(context, establishField, null, itField, null);
-  }
-  
-  private static IOldExample _exampleWithBecause(Class<?> context, String becauseField, String itField) {
-    return _exampleWith(context, null, becauseField, itField, null);
-  }
-  
-  private static IOldExample _exampleWithIt(Class<?> context, String name) {
-    return _exampleWith(context, null, null, name, null);
-  }
-  
-  private static IOldExample _exampleWithCleanup(Class<?> context, String itField, String cleanupField) {
-    return _exampleWith(context, null, null, itField, cleanupField);
-  }
-  
-  private static IOldExample _exampleWith(Class<?> context, String establish, String because, String it, String cleanup) {
-    try {
-      return new OldFieldExample(
-        establish == null ? null : context.getDeclaredField(establish),
-          because == null ? null : context.getDeclaredField(because),
-            it == null ? null : context.getDeclaredField(it),
-              cleanup == null ? null : context.getDeclaredField(cleanup));
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-  }
-  
   private static Example exampleWithFullFixture() {
-    return new FieldExample(ContextClasses.FullFixture.class.getSimpleName(),
-      readField(ContextClasses.FullFixture.class, "asserts"),
-      newArrayList(readField(ContextClasses.FullFixture.class, "arranges"),
-        readField(ContextClasses.FullFixture.class, "acts")),
-      newArrayList(readField(ContextClasses.FullFixture.class, "cleans")));
+    return exampleWith(ContextClasses.FullFixture.class, "asserts", 
+      newArrayList("arranges", "acts"), newArrayList("cleans"));
+  }
+  
+  private static Example exampleWithIt(Class<?> context, String name) {
+    return exampleWith(context, name, newArrayList(), newArrayList());
   }
   
   private static Example exampleWithNestedFullFixture() {
@@ -246,10 +213,6 @@ public class FieldExampleTest {
       newArrayList(readField(ContextClasses.NestedFullFixture.class, "arranges"),
         readField(ContextClasses.NestedFullFixture.innerContext.class, "acts")),
       newArrayList(readField(ContextClasses.NestedFullFixture.class, "cleans")));
-  }
-  
-  private static Example exampleWithIt(Class<?> context, String name) {
-    return exampleWith(context, name, newArrayList(), newArrayList());
   }
   
   private static Example exampleWith(Class<?> context, String it, List<String> befores, List<String> afters) {
