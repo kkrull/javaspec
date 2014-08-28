@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import org.javaspec.proto.ContextClasses;
 import org.javaspec.runner.JavaSpecRunner.NoExamplesException;
 import org.javaspec.testutil.RunListenerSpy.Event;
+import org.javaspectest.proto.ContextClasses;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Description;

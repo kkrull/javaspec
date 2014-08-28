@@ -14,6 +14,7 @@ import org.javaspec.dsl.Cleanup;
 import org.javaspec.dsl.Establish;
 import org.javaspec.dsl.It;
 import org.javaspec.util.DfsSearch;
+import org.javaspec.util.ReflectionUtil;
 
 final class ClassExampleGateway implements ExampleGateway {
   private final Class<?> contextClass;

@@ -1,4 +1,4 @@
-package org.javaspec.proto;
+package org.javaspectest.proto;
 
 import java.util.function.Consumer;
 

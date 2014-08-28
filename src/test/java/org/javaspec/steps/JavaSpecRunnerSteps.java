@@ -8,12 +8,12 @@ import static org.hamcrest.Matchers.*;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.javaspec.proto.ContextClasses;
-import org.javaspec.proto.OuterContext;
-import org.javaspec.proto.OuterContextWithSetup;
-import org.javaspec.proto.RunWithJavaSpecRunner;
 import org.javaspec.runner.Runners;
 import org.javaspec.testutil.RunListenerSpy.Event;
+import org.javaspectest.proto.ContextClasses;
+import org.javaspectest.proto.OuterContext;
+import org.javaspectest.proto.OuterContextWithSetup;
+import org.javaspectest.proto.RunWithJavaSpecRunner;
 import org.junit.runner.JUnitCore;
 
 import cucumber.api.PendingException;

@@ -1,4 +1,4 @@
-package org.javaspec.proto;
+package org.javaspectest.proto;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
@@ -14,7 +14,7 @@ import org.javaspec.dsl.Establish;
 import org.javaspec.dsl.It;
 
 /** Inner classes are declared static to avoid the gaze of HierarchicalContextRunner when testing JavaSpec. */
-public class ContextClasses {
+public class ContextClasses { //TODO KDK: Remove classes that aren't used anymore
   public static class ConstructorHidden {
     private ConstructorHidden() {}
     It is_otherwise_valid = () -> assertEquals(1, 1);

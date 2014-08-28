@@ -45,17 +45,14 @@ final class FieldExample implements Example {
   public void run() throws Exception {
     TestFunction f = readTestFunction();
     try {
-      for(Before before : f.befores)
-        before.run();
-      
+      for(Before before : f.befores) { before.run(); }
       f.assertion.run();
     } finally {
-      for(Cleanup after : f.afters)
-        after.run();
+      for(Cleanup after : f.afters) { after.run(); }
     }
   }
 
-  private TestFunction readTestFunction() {
+  private TestFunction readTestFunction() { //TODO KDK: Clean
     Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
     Object context = newContextObject(assertionField.getDeclaringClass(), instances);
     try {
@@ -79,7 +76,7 @@ final class FieldExample implements Example {
     }
   }
   
-  private static Object newContextObject(Class<?> contextClass, Map<Class<?>, Object> instances) {
+  private static Object newContextObject(Class<?> contextClass, Map<Class<?>, Object> instances) { //TODO KDK: Clean
     Class<?> enclosingClass = contextClass.getEnclosingClass();
     if(enclosingClass == null) {
       Constructor<?> noArgConstructor;

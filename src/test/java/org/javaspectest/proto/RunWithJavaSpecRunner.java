@@ -1,4 +1,4 @@
-package org.javaspec.proto;
+package org.javaspectest.proto;
 
 import org.javaspec.dsl.It;
 import org.javaspec.runner.JavaSpecRunner;

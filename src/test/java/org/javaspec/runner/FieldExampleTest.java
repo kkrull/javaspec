@@ -11,9 +11,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.javaspec.proto.ContextClasses;
 import org.javaspec.runner.FieldExample.TestSetupException;
 import org.javaspec.runner.FieldExample.UnsupportedConstructorException;
+import org.javaspectest.proto.ContextClasses;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
