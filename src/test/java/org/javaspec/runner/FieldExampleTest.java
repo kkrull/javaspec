@@ -105,23 +105,24 @@ public class FieldExampleTest {
       
       @Before
       public void spy() throws Exception {
-        ContextClasses.FullFixture.setEventListener(events::add);
+        ContextClasses.NestedFullFixture.setEventListener(events::add);
         subject.run();
       }
       
       @After
       public void releaseSpy() {
-        ContextClasses.FullFixture.setEventListener(null);
+        ContextClasses.NestedFullFixture.setEventListener(null);
       }
       
       @Test
-      public void runsTheActionFunctionBeforeTheItFunction() throws Exception {
+      public void instantiatesTheContextClassesThenRunsSetupThenAssertsThenCleansUp() throws Exception {
         assertThat(events, contains(
-          "ContextClasses.FullFixture::new",
-          "ContextClasses.FullFixture::arrange",
-          "ContextClasses.FullFixture::act",
-          "ContextClasses.FullFixture::assert",
-          "ContextClasses.FullFixture::cleans"));
+          "ContextClasses.NestedFullFixture::new",
+          "ContextClasses.NestedFullFixture.innerContext::new",
+          "ContextClasses.NestedFullFixture::arrange",
+          "ContextClasses.NestedFullFixture.innerContext::act",
+          "ContextClasses.NestedFullFixture.innerContext::assert",
+          "ContextClasses.NestedFullFixture.innerContext::cleans"));
       }
     }
   }
@@ -230,7 +231,11 @@ public class FieldExampleTest {
   }
   
   private static Example exampleWithFullFixture() {
-    return exampleWith(ContextClasses.FullFixture.class, "asserts", newArrayList("arranges", "acts"), newArrayList("cleans"));
+    return new FieldExample(ContextClasses.NestedFullFixture.class.getSimpleName(),
+      readField(ContextClasses.NestedFullFixture.innerContext.class, "asserts"),
+      newArrayList(readField(ContextClasses.NestedFullFixture.class, "arranges"),
+        readField(ContextClasses.NestedFullFixture.innerContext.class, "acts")),
+      newArrayList(readField(ContextClasses.NestedFullFixture.innerContext.class, "cleans")));
   }
   
   private static Example exampleWithIt(Class<?> context, String name) {
