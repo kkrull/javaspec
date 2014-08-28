@@ -189,14 +189,16 @@ public class ClassExampleGatewayTest {
         Mockito.any(), Mockito.any());
     }
 
-    private void assertAfters(Class<?> itContext, String itName, Matcher<Field>... afterMatchers) {
+    @SafeVarargs
+    private final void assertAfters(Class<?> itContext, String itName, Matcher<Field>... afterMatchers) {
       verify(factory).makeExample(
         Mockito.eq(itContext), Mockito.argThat(field(itContext, itName)), 
         befores.capture(), afters.capture());
       assertThat(afters.getValue(), contains(afterMatchers));
     }
     
-    private void assertBefores(Class<?> itContext, String itName, Matcher<Field>... beforeMatchers) {
+    @SafeVarargs
+    private final void assertBefores(Class<?> itContext, String itName, Matcher<Field>... beforeMatchers) {
       verify(factory).makeExample(
         Mockito.eq(itContext), Mockito.argThat(field(itContext, itName)), 
         befores.capture(), afters.capture());

@@ -166,7 +166,7 @@ public class JavaSpecRunnerTest {
         Runners.runAll(runner, events::add);
       }
       
-      @Test
+      @Test @SuppressWarnings("unchecked")
       public void runsBetweenNotifyStartAndFinish() {
         assertListEquals(ImmutableList.of("testStarted", "run::passing", "testFinished"),
           events.stream().map(Event::getName).collect(toList()));
