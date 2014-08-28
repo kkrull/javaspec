@@ -2,6 +2,7 @@ package org.javaspec.runner;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -50,7 +51,7 @@ final class FieldExample implements Example {
   }
 
   private TestFunction readTestFunction() {
-    Object context = newContextObject();
+    Object context = newContextObject(assertionField.getDeclaringClass());
     try {
       List<Before> beforeValues = new LinkedList<Before>();
       for(Field before : befores) {
@@ -70,22 +71,60 @@ final class FieldExample implements Example {
     }
   }
   
-  private Object newContextObject() {
-    Constructor<?> noArgConstructor;
-    try {
-      Class<?> contextClass = assertionField.getDeclaringClass();
-      noArgConstructor = contextClass.getConstructor();
-    } catch (Exception e) {
-      throw new UnsupportedConstructorException(assertionField.getDeclaringClass(), e);
-    }
+  private static Object newContextObject(Class<?> contextClass) {
+    //TODO KDK: What about a static enclosing class that has fixture/test fields? 
+    //Will need instances of those classes later, even if they're not required to instantiate the leaf context class where It is declared.
+    //Problem is, who knows what those class's constructors take as parameters.
+    //But then again, static classes will be excluded from the context.
+    //But then again, the passed class could exist inside a static class (like with the tests).
+    Class<?> enclosingClass = contextClass.getEnclosingClass();
+    if(enclosingClass == null) {
+      Constructor<?> noArgConstructor;
+      try {
+        noArgConstructor = contextClass.getConstructor();
+      } catch (Exception e) {
+        throw new UnsupportedConstructorException(contextClass, e);
+      }
 
-    Object context;
-    try {
-      context = noArgConstructor.newInstance();
-    } catch (Exception | AssertionError e) {
-      throw new TestSetupException(noArgConstructor.getDeclaringClass(), e);
+      Object context;
+      try {
+        context = noArgConstructor.newInstance();
+      } catch (Exception | AssertionError e) {
+        throw new TestSetupException(contextClass, e);
+      }
+      return context;
+    } else if(Modifier.isStatic(contextClass.getModifiers())) { 
+      Constructor<?> noArgConstructor;
+      try {
+        noArgConstructor = contextClass.getConstructor();
+      } catch (Exception e) {
+        throw new UnsupportedConstructorException(contextClass, e);
+      }
+
+      Object context;
+      try {
+        context = noArgConstructor.newInstance();
+      } catch (Exception | AssertionError e) {
+        throw new TestSetupException(contextClass, e);
+      }
+      return context;
+    } else {
+      Object enclosingObject = newContextObject(enclosingClass);
+      Constructor<?> constructor;
+      try {
+        constructor = contextClass.getConstructor(enclosingClass);
+      } catch (Exception e) {
+        throw new UnsupportedConstructorException(contextClass, e);
+      }
+
+      Object context;
+      try {
+        context = constructor.newInstance(enclosingObject);
+      } catch (Exception | AssertionError e) {
+        throw new TestSetupException(contextClass, e);
+      }
+      return context;
     }
-    return context;
   }
   
   private Object assignedValue(Field field, Object context) throws IllegalAccessException {

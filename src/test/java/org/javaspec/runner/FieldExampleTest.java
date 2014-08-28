@@ -4,7 +4,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
 import static org.javaspec.testutil.Assertions.assertThrows;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -16,6 +16,7 @@ import org.javaspec.runner.FieldExample.TestSetupException;
 import org.javaspec.runner.FieldExample.UnsupportedConstructorException;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -99,30 +100,38 @@ public class FieldExampleTest {
       }
     }
     
-    public class givenAccessibleFields {
+    public class givenFieldsAccessibleFromAContextClass {
       private final List<String> events = new LinkedList<String>();
       private final Example subject = exampleWithFullFixture();
       
       @Before
       public void spy() throws Exception {
-        ContextClasses.NestedFullFixture.setEventListener(events::add);
+        ContextClasses.FullFixture.setEventListener(events::add);
         subject.run();
       }
       
       @After
       public void releaseSpy() {
-        ContextClasses.NestedFullFixture.setEventListener(null);
+        ContextClasses.FullFixture.setEventListener(null);
       }
       
       @Test
-      public void instantiatesTheContextClassesThenRunsSetupThenAssertsThenCleansUp() throws Exception {
+      public void instantiatesContextClassesThenRunsSetupThenAssertsThenCleansUp() throws Exception {
         assertThat(events, contains(
-          "ContextClasses.NestedFullFixture::new",
-          "ContextClasses.NestedFullFixture.innerContext::new",
-          "ContextClasses.NestedFullFixture::arrange",
-          "ContextClasses.NestedFullFixture.innerContext::act",
-          "ContextClasses.NestedFullFixture.innerContext::assert",
-          "ContextClasses.NestedFullFixture.innerContext::cleans"));
+          "ContextClasses.FullFixture::new",
+          "ContextClasses.FullFixture::arrange",
+          "ContextClasses.FullFixture::act",
+          "ContextClasses.FullFixture::assert",
+          "ContextClasses.FullFixture::cleans"));
+      }
+    }
+    
+    public class givenANestedContext {
+      private final Example subject = exampleWithIt(ContextClasses.NestedThreeDeep.middle.bottom.class, "asserts");
+      
+      @Test
+      public void instantiatesTheNestedContextClasses() throws Exception {
+        subject.run();
       }
     }
   }
@@ -231,6 +240,14 @@ public class FieldExampleTest {
   }
   
   private static Example exampleWithFullFixture() {
+    return new FieldExample(ContextClasses.FullFixture.class.getSimpleName(),
+      readField(ContextClasses.FullFixture.class, "asserts"),
+      newArrayList(readField(ContextClasses.FullFixture.class, "arranges"),
+        readField(ContextClasses.FullFixture.class, "acts")),
+      newArrayList(readField(ContextClasses.FullFixture.class, "cleans")));
+  }
+  
+  private static Example exampleWithNestedFullFixture() {
     return new FieldExample(ContextClasses.NestedFullFixture.class.getSimpleName(),
       readField(ContextClasses.NestedFullFixture.innerContext.class, "asserts"),
       newArrayList(readField(ContextClasses.NestedFullFixture.class, "arranges"),
