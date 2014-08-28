@@ -103,9 +103,8 @@ final class ClassExampleGateway implements ExampleGateway {
   
   @Override
   public Stream<NewExample> getExamples() {
-    List<NewExample> examples = new LinkedList<NewExample>();
-    appendExamples(contextClass, examples, new ArrayList<Field>(), new ArrayList<Field>());
-    return examples.stream();
+    ExampleWalker tree = new ExampleWalker(factory);
+    return tree.dfsTraversal(contextClass);
   }
   
   @Override
@@ -113,20 +112,41 @@ final class ClassExampleGateway implements ExampleGateway {
     return getExamples().anyMatch(x -> true);
   }
   
-  private void appendExamples(Class<?> contextClass, List<NewExample> examples, List<Field> ancestorBefores, List<Field> ancestorAfters) {
-    //Before lambdas run outside-in
-    List<Field> befores = new ArrayList<Field>(ancestorBefores);
-    ReflectionUtil.fieldsOfType(Establish.class, contextClass).forEach(befores::add);
-    ReflectionUtil.fieldsOfType(Because.class, contextClass).forEach(befores::add);
+  private static class ExampleWalker {
+    private final ExampleFactory factory;
+    private final List<NewExample> examples;
     
-    //After lambdas run inside-out
-    ArrayList<Field> afters = new ArrayList<Field>();
-    ReflectionUtil.fieldsOfType(Cleanup.class, contextClass).forEach(afters::add);
-    afters.addAll(ancestorAfters);
+    public ExampleWalker(ExampleFactory factory) {
+      this.factory = factory;
+      this.examples = new LinkedList<NewExample>();
+    }
     
-    ReflectionUtil.fieldsOfType(It.class, contextClass)
-      .map(it -> factory.makeExample(contextClass, it, befores, afters))
-      .forEach(examples::add);
-    readInnerClasses(contextClass).forEach(x -> appendExamples(x, examples, befores, afters));
+    public Stream<NewExample> dfsTraversal(Class<?> rootContext) {
+      appendExamples(rootContext, new ArrayList<Field>(), new ArrayList<Field>());
+      return examples.stream();
+    }
+    
+    private void appendExamples(Class<?> context, List<Field> ancestorBefores, List<Field> ancestorAfters) {
+      List<Field> befores = outsideInBefores(context, ancestorBefores);
+      List<Field> afters = insideOutAfters(context, ancestorAfters);
+      ReflectionUtil.fieldsOfType(It.class, context)
+        .map(it -> factory.makeExample(context, it, befores, afters))
+        .forEach(examples::add);
+      readInnerClasses(context).forEach(subcontext -> appendExamples(subcontext, befores, afters));
+    }
+    
+    private static List<Field> outsideInBefores(Class<?> contextClass, List<Field> ancestors) {
+      List<Field> befores = new ArrayList<Field>(ancestors);
+      ReflectionUtil.fieldsOfType(Establish.class, contextClass).forEach(befores::add);
+      ReflectionUtil.fieldsOfType(Because.class, contextClass).forEach(befores::add);
+      return befores;
+    }
+    
+    private static List<Field> insideOutAfters(Class<?> contextClass, List<Field> ancestors) {
+      List<Field> afters = new ArrayList<Field>();
+      ReflectionUtil.fieldsOfType(Cleanup.class, contextClass).forEach(afters::add);
+      afters.addAll(ancestors);
+      return afters;
+    }
   }
 }
