@@ -4,7 +4,6 @@ import static org.hamcrest.Matchers.*;
 import static org.javaspec.testutil.Assertions.assertThrows;
 import static org.junit.Assert.assertThat;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,128 +16,8 @@ import org.junit.runner.RunWith;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 @RunWith(HierarchicalContextRunner.class)
-public class OldFieldExampleTest {
-  public class descriptionMethods {
-    public class givenNoFixtureFields {
-      private final IOldExample subject = exampleWithIt(ContextClasses.OneIt.class, "only_test");
-      
-      @Test
-      public void fixtureMethodDescriptors_returnBlank() {
-        assertThat(subject.describeSetup(), equalTo(""));
-        assertThat(subject.describeAction(), equalTo(""));
-        assertThat(subject.describeCleanup(), equalTo(""));
-      }
-    }
-    
-    public class givenAValueForAField {
-      private final IOldExample subject = exampleWithFullFixture();
-      
-      @Test
-      public void returnsTheNameOfTheField() {
-        assertThat(subject.describeSetup(), equalTo("arranges"));
-        assertThat(subject.describeAction(), equalTo("acts"));
-        assertThat(subject.describeBehavior(), equalTo("asserts"));
-        assertThat(subject.describeCleanup(), equalTo("cleans"));
-      }
-    }
-  }
-  
-  public class isSkipped {
-    public class givenAnItFieldAndAnyOtherJavaSpecFields {
-      public class whenEachJavaSpecFieldHasAnAssignedValue {
-        @Test
-        public void returnsFalse() {
-          shouldBeSkipped(ContextClasses.FullFixture.class, false);
-        }
-      }
-      
-      public class when1OrMoreJavaSpecFieldsDoNotHaveAnAssignedValue {
-        @Test
-        public void returnsTrue() {
-          shouldBeSkipped(ContextClasses.PendingEstablish.class, true);
-          shouldBeSkipped(ContextClasses.PendingBecause.class, true);
-          shouldBeSkipped(ContextClasses.PendingIt.class, true);
-          assertThat(
-            exampleWith(ContextClasses.PendingCleanup.class, "arranges", "acts", "asserts", "cleans").isSkipped(),
-            equalTo(true));
-        }
-      }
-    }
-    
-    private void shouldBeSkipped(Class<?> contextClass, boolean isSkipped) {
-      IOldExample subject = exampleWith(contextClass, "arranges", "acts", "asserts", null);
-      assertThat(subject.isSkipped(), equalTo(isSkipped));
-    }
-  }
-  
+public class OldFieldExampleTest { 
   public class run {
-    public class givenAClassWithoutACallableNoArgConstructor {
-      @Test
-      public void ThrowsUnsupportedConstructorException() {
-        assertThrowsUnsupportedConstructorException(ContextClasses.ConstructorHidden.class, "is_otherwise_valid");
-        assertThrowsUnsupportedConstructorException(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid");
-      }
-      
-      private void assertThrowsUnsupportedConstructorException(Class<?> context, String itFieldName) {
-        IOldExample subject = exampleWithIt(context, itFieldName);
-        assertThrows(FieldExample.UnsupportedConstructorException.class,
-          is(String.format("Unable to find a no-argument constructor for class %s", context.getName())),
-          NoSuchMethodException.class, subject::run);
-      }
-    }
-    
-    public class givenAFaultyConstructorOrInitializer {
-      @Test
-      public void throwsTestSetupException() throws Exception {
-        assertTestSetupException(ContextClasses.FailingClassInitializer.class, "will_fail", AssertionError.class);
-        assertTestSetupException(ContextClasses.FailingConstructor.class, "will_fail", InvocationTargetException.class);
-      }
-      
-      private void assertTestSetupException(Class<?> context, String itFieldName, Class<? extends Throwable> cause) {
-        IOldExample subject = exampleWithIt(context, itFieldName);
-        assertThrows(FieldExample.TestSetupException.class, 
-          is(String.format("Failed to create test context %s", context.getName())),
-          cause, subject::run);
-      }
-    }
-    
-    public class givenAccessibleFields {
-      private final List<String> events = new LinkedList<String>();
-      private final IOldExample subject = exampleWithFullFixture();
-      
-      @Before
-      public void spy() throws Exception {
-        ContextClasses.FullFixture.setEventListener(events::add);
-        subject.run();
-      }
-      
-      @After
-      public void releaseSpy() {
-        ContextClasses.FullFixture.setEventListener(null);
-      }
-      
-      @Test
-      public void runsTheActionFunctionBeforeTheItFunction() throws Exception {
-        assertThat(events, contains(
-          "ContextClasses.FullFixture::new",
-          "ContextClasses.FullFixture::arrange",
-          "ContextClasses.FullFixture::act",
-          "ContextClasses.FullFixture::assert",
-          "ContextClasses.FullFixture::cleans"));
-      }
-    }
-    
-    public class whenAFieldCanNotBeAccessed {
-      private final IOldExample subject = exampleWithIt(HasWrongType.class, "inaccessibleAsIt");
-      
-      @Test
-      public void throwsTestSetupExceptionCausedByReflectionError() {
-        //Intended to catch ReflectiveOperationException, but causing that with a fake SecurityManager was not reliable
-        assertThrows(FieldExample.TestSetupException.class, startsWith("Failed to create test context"), ClassCastException.class,
-          subject::run);
-      }
-    }
-    
     public class whenATestFunctionThrows {
       @Test
       public void throwsWhateverEstablishThrows() {
@@ -227,10 +106,6 @@ public class OldFieldExampleTest {
   
   private static IOldExample exampleWithCleanup(Class<?> context, String itField, String cleanupField) {
     return exampleWith(context, null, null, itField, cleanupField);
-  }
-  
-  private static IOldExample exampleWithFullFixture() {
-    return exampleWith(ContextClasses.FullFixture.class, "arranges", "acts", "asserts", "cleans");
   }
   
   private static IOldExample exampleWith(Class<?> context, String establish, String because, String it, String cleanup) {

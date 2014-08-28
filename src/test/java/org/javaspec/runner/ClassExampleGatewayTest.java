@@ -78,7 +78,18 @@ public class ClassExampleGatewayTest {
     @Before
     public void initMocks() { MockitoAnnotations.initMocks(this); }
     
-    /* Context: The (sub-)tree defined of the given context class and all its descendant, inner classes */
+    /* Context definition: A group of related examples and/or test fixtures.  All examples in the same context share
+     * the same test fixture.
+     * 
+     * Instance of a context: An environment or state in which an example runs, as maintained by the example's fixture.
+     * 
+     * Here, the context is defined by a (sub-)tree of classes rooted at the given context class and including all its
+     * descendant, inner classes.  An instance of a context is the set of instances of these classes.  Lambdas execute
+     * in an instance of the class in which it is declared.
+     * 
+     * Note that the top-level context class may be a static class, but the context does not include any static classes
+     * enclosing or enclosed within this class.
+     */
 
     public class defineContext {
       public class givenAClassWith1OrMoreNestedStaticClasses {
@@ -88,6 +99,8 @@ public class ClassExampleGatewayTest {
         }
       }
     }
+    
+    /* Example: A single test.  Consists of a thunk assigned to an It field and 0..n thunks for its test fixture. */
     
     public class defineExample {
       public class givenNoItFieldsWithinTheContext {
@@ -109,6 +122,10 @@ public class ClassExampleGatewayTest {
         }
       }
     }
+    
+    /* Fixture: Optional thunks running before an example to set up conditions necessary for the test and/or after
+     * an example to restore the environment to its original state.
+     */
     
     public class defineFixture {
       public class givenNoFixtureFieldsInTheContext {
@@ -188,7 +205,7 @@ public class ClassExampleGatewayTest {
       verify(factory).makeExample(Mockito.eq(contextClass), Mockito.argThat(field(contextClass, itName)), 
         Mockito.any(), Mockito.any());
     }
-
+    
     @SafeVarargs
     private final void assertAfters(Class<?> itContext, String itName, Matcher<Field>... afterMatchers) {
       verify(factory).makeExample(

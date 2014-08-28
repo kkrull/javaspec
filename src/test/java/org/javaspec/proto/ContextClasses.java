@@ -153,12 +153,12 @@ public class ContextClasses {
   public static class NestedFullFixture extends ExecutionSpy {
     public NestedFullFixture() { notifyEvent.accept("ContextClasses.NestedFullFixture::new"); }
     Establish arranges = () -> notifyEvent.accept("ContextClasses.NestedFullFixture::arrange");
+    Cleanup cleans = () -> notifyEvent.accept("ContextClasses.NestedFullFixture::cleans");
     
     public class innerContext {
       public innerContext() { notifyEvent.accept("ContextClasses.NestedFullFixture.innerContext::new"); }
       Because acts = () -> notifyEvent.accept("ContextClasses.NestedFullFixture.innerContext::act");
       It asserts = () -> notifyEvent.accept("ContextClasses.NestedFullFixture.innerContext::assert");
-      Cleanup cleans = () -> notifyEvent.accept("ContextClasses.NestedFullFixture.innerContext::cleans");
     }
   }
 

@@ -4,7 +4,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
 import static org.javaspec.testutil.Assertions.assertThrows;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -16,7 +16,6 @@ import org.javaspec.runner.FieldExample.TestSetupException;
 import org.javaspec.runner.FieldExample.UnsupportedConstructorException;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -101,7 +100,7 @@ public class FieldExampleTest {
     }
     
     public class givenFieldsAccessibleFromAContextClass {
-      private final List<String> events = new LinkedList<String>();
+      private final List<String> events = new LinkedList<String>(); //TODO KDK: Don't have to spy; can write the test such that it only passes when everything runs in order
       private final Example subject = exampleWithFullFixture();
       
       @Before
@@ -127,10 +126,15 @@ public class FieldExampleTest {
     }
     
     public class givenANestedContext {
-      private final Example subject = exampleWithIt(ContextClasses.NestedThreeDeep.middle.bottom.class, "asserts");
-      
       @Test
       public void instantiatesTheNestedContextClasses() throws Exception {
+        Example subject = exampleWithIt(ContextClasses.NestedThreeDeep.middle.bottom.class, "asserts");
+        subject.run();
+      }
+      
+      @Test
+      public void usesTheTreeOfContextObjectsToRunTheFixtureLambdas() throws Exception {
+        Example subject = exampleWithNestedFullFixture();
         subject.run();
       }
     }
@@ -252,7 +256,7 @@ public class FieldExampleTest {
       readField(ContextClasses.NestedFullFixture.innerContext.class, "asserts"),
       newArrayList(readField(ContextClasses.NestedFullFixture.class, "arranges"),
         readField(ContextClasses.NestedFullFixture.innerContext.class, "acts")),
-      newArrayList(readField(ContextClasses.NestedFullFixture.innerContext.class, "cleans")));
+      newArrayList(readField(ContextClasses.NestedFullFixture.class, "cleans")));
   }
   
   private static Example exampleWithIt(Class<?> context, String name) {

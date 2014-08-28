@@ -3,8 +3,10 @@ package org.javaspec.runner;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.javaspec.dsl.Before;
 import org.javaspec.dsl.Cleanup;
@@ -51,17 +53,20 @@ final class FieldExample implements Example {
   }
 
   private TestFunction readTestFunction() {
-    Object context = newContextObject(assertionField.getDeclaringClass());
+    Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
+    Object context = newContextObject(assertionField.getDeclaringClass(), instances);
     try {
       List<Before> beforeValues = new LinkedList<Before>();
       for(Field before : befores) {
-        Before value = (Before)assignedValue(before, context);
+        Object contextForBefore = instances.get(before.getDeclaringClass());
+        Before value = (Before)assignedValue(before, contextForBefore);
         beforeValues.add(value);
       }
       
       List<Cleanup> afterValues = new LinkedList<Cleanup>();
       for(Field after : afters) {
-        Cleanup value = (Cleanup)assignedValue(after, context);
+        Object contextForAfter = instances.get(after.getDeclaringClass());
+        Cleanup value = (Cleanup)assignedValue(after, contextForAfter);
         afterValues.add(value);
       }
       
@@ -71,12 +76,7 @@ final class FieldExample implements Example {
     }
   }
   
-  private static Object newContextObject(Class<?> contextClass) {
-    //TODO KDK: What about a static enclosing class that has fixture/test fields? 
-    //Will need instances of those classes later, even if they're not required to instantiate the leaf context class where It is declared.
-    //Problem is, who knows what those class's constructors take as parameters.
-    //But then again, static classes will be excluded from the context.
-    //But then again, the passed class could exist inside a static class (like with the tests).
+  private static Object newContextObject(Class<?> contextClass, Map<Class<?>, Object> instances) {
     Class<?> enclosingClass = contextClass.getEnclosingClass();
     if(enclosingClass == null) {
       Constructor<?> noArgConstructor;
@@ -89,6 +89,7 @@ final class FieldExample implements Example {
       Object context;
       try {
         context = noArgConstructor.newInstance();
+        instances.put(contextClass, context);
       } catch (Exception | AssertionError e) {
         throw new TestSetupException(contextClass, e);
       }
@@ -104,12 +105,13 @@ final class FieldExample implements Example {
       Object context;
       try {
         context = noArgConstructor.newInstance();
+        instances.put(contextClass, context);
       } catch (Exception | AssertionError e) {
         throw new TestSetupException(contextClass, e);
       }
       return context;
     } else {
-      Object enclosingObject = newContextObject(enclosingClass);
+      Object enclosingObject = newContextObject(enclosingClass, instances);
       Constructor<?> constructor;
       try {
         constructor = contextClass.getConstructor(enclosingClass);
@@ -120,6 +122,7 @@ final class FieldExample implements Example {
       Object context;
       try {
         context = constructor.newInstance(enclosingObject);
+        instances.put(contextClass, context);
       } catch (Exception | AssertionError e) {
         throw new TestSetupException(contextClass, e);
       }
