@@ -83,7 +83,7 @@ final class ClassExampleGateway implements ExampleGateway {
   }
   
   @Override
-  public List<Context> getSubContexts(Context context) {
+  public List<Context> getSubContexts(Context context) { //TODO KDK: This should be a set (interface collection); order is not guaranteed
     return readInnerClasses((Class<?>) context.id)
       .filter(x -> treeContainsItField(x))
       .map(ClassExampleGateway::readContext)

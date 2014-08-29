@@ -1,15 +1,17 @@
 package org.javaspec.runner;
 
+import static com.google.common.collect.Sets.newHashSet;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.hamcrest.Matchers.*;
-import static org.javaspec.testutil.Assertions.assertListEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -26,7 +28,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
@@ -230,18 +232,18 @@ public class ClassExampleGatewayTest {
       assertThat(afters.getValue(), empty());
     }
     
-    private List<String> extractNames(List<Example> examples) {
-      return examples.stream().map(Example::getName).collect(toList());
+    private Set<String> extractNames(Collection<Example> examples) {
+      return examples.stream().map(Example::getName).collect(toSet());
     }
     
-    private List<Example> readExamples(Class<?> context, ClassExampleGateway.ExampleFactory factory) {
+    private Set<Example> readExamples(Class<?> context, ClassExampleGateway.ExampleFactory factory) {
       ExampleGateway subject = new ClassExampleGateway(context, factory);
-      return subject.getExamples().collect(toList());
+      return subject.getExamples().collect(toSet());
     }
     
-    private List<Example> readExamples(Class<?> context) {
+    private Set<Example> readExamples(Class<?> context) {
       ExampleGateway subject = new ClassExampleGateway(context);
-      return subject.getExamples().collect(toList());
+      return subject.getExamples().collect(toSet());
     }
   }
   
@@ -281,7 +283,7 @@ public class ClassExampleGatewayTest {
     public class givenAClassThatHasNoNestedClasses {
       @Test
       public void returnsEmpty() {
-        assertContextClasses(subContexts(ContextClasses.Empty.class), ImmutableList.of());
+        assertContextClasses(subContexts(ContextClasses.Empty.class), ImmutableSet.of());
       }
     }
     
@@ -290,7 +292,7 @@ public class ClassExampleGatewayTest {
         @Test
         public void doesNotMakeACorrespondingSubcontext() {
           assertContextClasses(subContexts(ContextClasses.NestedWithStaticHelperClass.class),
-            ImmutableList.of(NestedWithStaticHelperClass.context.class));
+            ImmutableSet.of(NestedWithStaticHelperClass.context.class));
         }
       }
       
@@ -298,23 +300,27 @@ public class ClassExampleGatewayTest {
         @Test
         public void doesNotMakeACorrespondingSubcontext() {
           assertContextClasses(subContexts(ContextClasses.NestedWithInnerHelperClass.class),
-            ImmutableList.of(ContextClasses.NestedWithInnerHelperClass.context.class));
+            ImmutableSet.of(ContextClasses.NestedWithInnerHelperClass.context.class));
         }
       }
       
       public class whenANestedClassIsAnInnerClassWithAnItFieldSomewhereInItsSubtree {
-        private final List<Context> subcontexts = subContexts(ContextClasses.NestedExamples.class);
+        private final Set<Context> subcontexts = subContexts(ContextClasses.NestedExamples.class);
         
         @Test
         public void returnsASubContextForTheClass() {
-          assertContextClasses(subcontexts, ImmutableList.of(
+          assertContextClasses(subcontexts, ImmutableSet.of(
             ContextClasses.NestedExamples.middleWithNoTests.class, ContextClasses.NestedExamples.middleWithTest.class));
         }
         
         @Test
         public void includesExampleNamesForItFieldsDeclaredInThatClass() {
-          assertExampleNames(subcontexts.get(0));
-          assertExampleNames(subcontexts.get(1), "middle_test");
+          assertExampleNames(contextNamed("middleWithNoTests"));
+          assertExampleNames(contextNamed("middleWithTest"), "middle_test");
+        }
+        
+        private Context contextNamed(String name) {
+          return subcontexts.stream().filter(x -> name.equals(x.name)).findFirst().get();
         }
       }
     }
@@ -338,21 +344,21 @@ public class ClassExampleGatewayTest {
     }
   }
   
-  private static void assertContextClasses(List<Context> contexts, List<Class<?>> classes) {
-    assertListEquals(classes, contextClasses(contexts));
+  private static void assertContextClasses(Set<Context> contexts, Set<Class<?>> classes) {
+    assertThat(contextClasses(contexts), equalTo(classes));
   }
   
   private static void assertExampleNames(Context context, String... names) {
-    assertListEquals(Arrays.asList(names), context.getExampleNames());
+    assertThat(newHashSet(context.getExampleNames()), equalTo(newHashSet(names)));
   }
   
-  private static List<Class<?>> contextClasses(List<Context> contexts) {
-    return contexts.stream().map(x -> (Class<?>)x.id).collect(toList());
+  private static Set<Class<?>> contextClasses(Set<Context> contexts) {
+    return contexts.stream().map(x -> (Class<?>)x.id).collect(toSet());
   }
   
-  private static List<Context> subContexts(Class<?> contextClass) {
+  private static Set<Context> subContexts(Class<?> contextClass) {
     ClassExampleGateway subject = new ClassExampleGateway(contextClass);
-    return subject.getSubContexts(subject.getRootContext());
+    return newHashSet(subject.getSubContexts(subject.getRootContext()));
   }
   
   private static ArgumentMatcher<Field> field(Class<?> declaringClass, String name) { 

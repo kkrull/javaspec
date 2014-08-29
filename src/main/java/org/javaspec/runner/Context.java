@@ -7,7 +7,7 @@ import java.util.List;
 final class Context {
   public final Object id;
   public final String name;
-  private final List<String> exampleNames;
+  private final List<String> exampleNames; //TODO KDK: This should be a set; order is not guaranteed
 
   public Context(Object id, String name, Collection<String> exampleNames) {
     this.id = id;
