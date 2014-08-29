@@ -2,6 +2,7 @@ package org.javaspec.util;
 
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.equalTo;
+import static org.javaspec.testutil.Assertions.assertListEquals;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
@@ -11,7 +12,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 
-import org.javaspec.testutil.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -45,7 +45,7 @@ public class DfsSearchTest {
           .collect(toList());
         boolean[] allTrue = new boolean[7];
         Arrays.fill(allTrue, true);
-        Assertions.assertListEquals(Booleans.asList(allTrue), queriesOnEachNode);
+        assertListEquals(Booleans.asList(allTrue), queriesOnEachNode);
       }
       
       @Test

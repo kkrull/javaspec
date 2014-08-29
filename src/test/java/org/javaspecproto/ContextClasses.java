@@ -26,11 +26,6 @@ public class ContextClasses { //TODO KDK: Remove classes that aren't used anymor
   }
   
   public static class Empty {}
-
-  public static class FailingBecause {
-    Because flawed_action = () -> { throw new UnsupportedOperationException("flawed_action"); };
-    It will_never_run = () -> assertEquals(42, 42);
-  }
   
   public static class FailingCleanup {
     Cleanup flawed_cleanup = () -> { throw new IllegalStateException("flawed_cleanup"); };
@@ -274,17 +269,5 @@ public class ContextClasses { //TODO KDK: Remove classes that aren't used anymor
     Establish that = () -> subject = "established";
     It does_one_thing = () -> assertThat(subject, notNullValue());
     It does_something_else = () -> assertThat(subject, equalTo("established"));
-  }
-  
-  public static class UnstableConstructor {
-    private static int _numInstances = 0;
-    public UnstableConstructor() {
-      _numInstances++;
-      if(_numInstances++ > 1) {
-        throw new RuntimeException("You may only instantiate me once.  No constructor for you!!!");
-      }
-    }
-    
-    It asserts = () -> assertThat(2, equalTo(2));
   }
 }

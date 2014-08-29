@@ -20,8 +20,8 @@ public final class Assertions {
     }
   }
 
-  public static void assertThrows(Class<? extends Throwable> expectedType, Matcher<? super String> expectedMessage, Thunk thunk) {
-    assertThrows(expectedType, expectedMessage, null, thunk);
+  public static void assertThrows(Class<? extends Throwable> type, Matcher<? super String> message, Thunk thunk) {
+    assertThrows(type, message, null, thunk);
   }
 
   public static void assertThrows(Class<? extends Throwable> expectedType, Matcher<? super String> expectedMessage, 
