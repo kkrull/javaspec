@@ -1,4 +1,4 @@
-package org.javaspec.steps;
+package org.javaspecfeature;
 
 import static java.util.Collections.synchronizedList;
 import static java.util.stream.Collectors.toList;
@@ -10,10 +10,10 @@ import java.util.List;
 
 import org.javaspec.runner.Runners;
 import org.javaspec.testutil.RunListenerSpy.Event;
-import org.javaspectest.proto.ContextClasses;
-import org.javaspectest.proto.OuterContext;
-import org.javaspectest.proto.OuterContextWithSetup;
-import org.javaspectest.proto.RunWithJavaSpecRunner;
+import org.javaspecproto.ContextClasses;
+import org.javaspecproto.OuterContext;
+import org.javaspecproto.OuterContextWithSetup;
+import org.javaspecproto.RunWithJavaSpecRunner;
 import org.junit.runner.JUnitCore;
 
 import cucumber.api.java.After;

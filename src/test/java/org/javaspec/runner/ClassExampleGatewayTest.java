@@ -16,8 +16,8 @@ import java.util.Set;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.javaspec.runner.ClassExampleGateway.UnknownStepExecutionSequenceException;
-import org.javaspectest.proto.ContextClasses;
-import org.javaspectest.proto.ContextClasses.NestedWithStaticHelperClass;
+import org.javaspecproto.ContextClasses;
+import org.javaspecproto.ContextClasses.NestedWithStaticHelperClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,19 +39,19 @@ public class ClassExampleGatewayTest {
       @Test
       public void andAClassWith2OrMoreEstablishFields_containsUnknownStepExecutionSequenceException() {
         shouldFindInitializationError(ContextClasses.TwoEstablish.class, UnknownStepExecutionSequenceException.class,
-          "Impossible to determine running order of multiple Establish functions in test context org.javaspectest.proto.ContextClasses$TwoEstablish");
+          "Impossible to determine running order of multiple Establish functions in test context org.javaspecproto.ContextClasses$TwoEstablish");
       }
       
       @Test
       public void andAClassWith2OrMoreBecauseFields_containsUnknownStepExecutionSequenceException() {
         shouldFindInitializationError(ContextClasses.TwoBecause.class, UnknownStepExecutionSequenceException.class,
-          "Impossible to determine running order of multiple Because functions in test context org.javaspectest.proto.ContextClasses$TwoBecause");
+          "Impossible to determine running order of multiple Because functions in test context org.javaspecproto.ContextClasses$TwoBecause");
       }
       
       @Test
       public void andAClassWith2OrMoreCleanupFields_containsUnknownStepExecutionSequenceException() {
         shouldFindInitializationError(ContextClasses.TwoCleanup.class, UnknownStepExecutionSequenceException.class,
-          "Impossible to determine running order of multiple Cleanup functions in test context org.javaspectest.proto.ContextClasses$TwoCleanup");
+          "Impossible to determine running order of multiple Cleanup functions in test context org.javaspecproto.ContextClasses$TwoCleanup");
       }
       
       public class andAtLeast1ItFieldSomewhere_andNoClassesWith2OrMoreOfTheSameFixture {

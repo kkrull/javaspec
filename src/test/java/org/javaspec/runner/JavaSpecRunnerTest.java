@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 import org.javaspec.runner.JavaSpecRunner.NoExamplesException;
 import org.javaspec.testutil.RunListenerSpy.Event;
-import org.javaspectest.proto.ContextClasses;
+import org.javaspecproto.ContextClasses;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Description;

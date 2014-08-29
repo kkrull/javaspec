@@ -13,7 +13,7 @@ import java.util.List;
 
 import org.javaspec.runner.FieldExample.TestSetupException;
 import org.javaspec.runner.FieldExample.UnsupportedConstructorException;
-import org.javaspectest.proto.ContextClasses;
+import org.javaspecproto.ContextClasses;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

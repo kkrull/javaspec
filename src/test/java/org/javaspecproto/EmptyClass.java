@@ -1,3 +1,3 @@
-package org.javaspectest.proto;
+package org.javaspecproto;
 
 public final class EmptyClass {}

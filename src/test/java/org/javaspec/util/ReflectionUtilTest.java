@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.javaspec.util.ReflectionUtil;
-import org.javaspectest.proto.EmptyClass;
+import org.javaspecproto.EmptyClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

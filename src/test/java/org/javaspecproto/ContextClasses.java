@@ -1,4 +1,4 @@
-package org.javaspectest.proto;
+package org.javaspecproto;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
