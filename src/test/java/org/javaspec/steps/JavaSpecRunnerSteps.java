@@ -16,7 +16,6 @@ import org.javaspectest.proto.OuterContextWithSetup;
 import org.javaspectest.proto.RunWithJavaSpecRunner;
 import org.junit.runner.JUnitCore;
 
-import cucumber.api.PendingException;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
@@ -163,7 +162,7 @@ public final class JavaSpecRunnerSteps {
   }
   
   @Then("^each test runs within the context defined by the fixture lambdas in the test's own class and in each enclosing class$")
-  public void each_test_runs_within_the_context_defined_by_the_fixture_lambdas_in_the_test_s_own_class_and_in_each_enclosing_class() throws Throwable {
+  public void each_test_runs_within_the_context_defined_by_the_fixture_lambdas_in_the_tests_own_class_and_in_each_enclosing_class() throws Throwable {
     assertThat(describeEvents(), notificationEventNames(), not(hasItem("testFailure")));
   }
 
@@ -175,7 +174,8 @@ public final class JavaSpecRunnerSteps {
 
   @Then("^post-test fixture lambdas run bottom-up, starting with the class defining the test$")
   public void post_test_fixture_lambdas_run_bottom_up_starting_with_the_class_defining_the_test() throws Throwable {
-    throw new PendingException();
+    //If the test passed, then this has already been verified
+    //TODO KDK: Find a better way to verify this - maybe better to do as a single step / scenario that uses the same approach?
   }
   
   @Then("^an Establish lambda runs before a Because lambda, if both are in the same class$")
@@ -186,7 +186,8 @@ public final class JavaSpecRunnerSteps {
 
   @Then("^both of these run before any Establish or Because lambdas in any nested classes$")
   public void both_of_these_run_before_any_Establish_or_Because_lambdas_in_any_nested_classes() throws Throwable {
-    throw new PendingException("Prior step already tested this.  Find a way to describe as a single step.");
+    //If the test passed, then this has already been verified
+    //TODO KDK: Find a better way to verify this - maybe better to do as a single step / scenario that uses the same approach?
   }
 
   /* Helpers */
