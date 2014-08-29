@@ -3,6 +3,7 @@ package org.javaspec.runner;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
+import static org.javaspec.testutil.Assertions.assertNoThrow;
 import static org.javaspec.testutil.Assertions.assertThrows;
 import static org.junit.Assert.assertThat;
 
@@ -129,13 +130,13 @@ public class FieldExampleTest {
       @Test
       public void instantiatesTheNestedContextClasses() throws Exception {
         Example subject = exampleWithIt(ContextClasses.NestedThreeDeep.middle.bottom.class, "asserts");
-        subject.run();
+        assertNoThrow(subject::run);
       }
       
       @Test
       public void usesTheTreeOfContextObjectsToRunTheFixtureLambdas() throws Exception {
         Example subject = exampleWithNestedFullFixture();
-        subject.run();
+        assertNoThrow(subject::run);
       }
     }
     

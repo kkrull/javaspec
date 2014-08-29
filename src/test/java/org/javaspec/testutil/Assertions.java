@@ -19,6 +19,14 @@ public final class Assertions {
         a, equalTo(e));
     }
   }
+  
+  public static void assertNoThrow(Thunk thunk) {
+    try {
+      thunk.run();
+    } catch(Throwable t) {
+      assertThat(t, nullValue());
+    }
+  }
 
   public static void assertThrows(Class<? extends Throwable> type, Matcher<? super String> message, Thunk thunk) {
     assertThrows(type, message, null, thunk);
