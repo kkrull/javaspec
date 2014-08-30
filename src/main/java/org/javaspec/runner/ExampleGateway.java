@@ -1,6 +1,7 @@
 package org.javaspec.runner;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 interface ExampleGateway {
@@ -9,7 +10,7 @@ interface ExampleGateway {
   //Context
   Context getRootContext();
   String getRootContextName();
-  List<Context> getSubContexts(Context context);
+  Set<Context> getSubContexts(Context context);
   
   //Examples
   Stream<Example> getExamples();

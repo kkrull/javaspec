@@ -1,11 +1,11 @@
 package org.javaspec.runner;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -85,11 +85,11 @@ final class ClassExampleGateway implements ExampleGateway {
   }
   
   @Override
-  public List<Context> getSubContexts(Context context) {
+  public Set<Context> getSubContexts(Context context) {
     return readInnerClasses((Class<?>) context.id)
       .filter(x -> treeContainsItField(x))
       .map(ClassExampleGateway::readContext)
-      .collect(toList());
+      .collect(toSet());
   }
   
   private static boolean treeContainsItField(Class<?> subtreeRoot) {

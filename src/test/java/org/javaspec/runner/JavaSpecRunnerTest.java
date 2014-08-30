@@ -1,6 +1,5 @@
 package org.javaspec.runner;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Collections.synchronizedList;
 import static java.util.stream.Collectors.toList;
@@ -71,7 +70,7 @@ public class JavaSpecRunnerTest {
         @Before
         public void setup() {
           exampleHas("runs");
-          gatewayRepeatingExample(example, "top", "middleWithNoTests", "bottom");
+          gatewayRepeatsExample(example, "top", "middleWithNoTests", "bottom");
           returned = Runners.of(gateway).getDescription();
         }
         
@@ -94,7 +93,7 @@ public class JavaSpecRunnerTest {
           assertHasTest(bottomSuite, "bottom", "runs");
         }
         
-        private void gatewayRepeatingExample(Example example, String top, String middle, String bottom) {
+        private void gatewayRepeatsExample(Example example, String top, String middle, String bottom) {
           gatewayHasExamples(example, example, example);
           Context[] contexts = { 
             new Context(1, top, newHashSet(example.getName())),
@@ -103,9 +102,9 @@ public class JavaSpecRunnerTest {
           };
           
           gatewayHasRootContext(contexts[0]);
-          when(gateway.getSubContexts(contexts[0])).thenReturn(newArrayList(contexts[1]));
-          when(gateway.getSubContexts(contexts[1])).thenReturn(newArrayList(contexts[2]));
-          when(gateway.getSubContexts(contexts[2])).thenReturn(newArrayList());
+          when(gateway.getSubContexts(contexts[0])).thenReturn(newHashSet(contexts[1]));
+          when(gateway.getSubContexts(contexts[1])).thenReturn(newHashSet(contexts[2]));
+          when(gateway.getSubContexts(contexts[2])).thenReturn(newHashSet());
         }
 
         private void assertHasTest(Description suite, String contextName, String exampleName) {
