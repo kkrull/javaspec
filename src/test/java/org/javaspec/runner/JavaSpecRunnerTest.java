@@ -1,8 +1,10 @@
 package org.javaspec.runner;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Collections.synchronizedList;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.hamcrest.Matchers.*;
 import static org.javaspec.testutil.Assertions.assertListEquals;
 import static org.junit.Assert.assertThat;
@@ -11,6 +13,7 @@ import static org.mockito.Mockito.*;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -25,6 +28,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
@@ -93,9 +97,9 @@ public class JavaSpecRunnerTest {
         private void gatewayRepeatingExample(Example example, String top, String middle, String bottom) {
           gatewayHasExamples(example, example, example);
           Context[] contexts = { 
-            new Context(1, top, newArrayList(example.getName())),
-            new Context(2, middle, newArrayList(example.getName())),
-            new Context(3, bottom, newArrayList(example.getName())),
+            new Context(1, top, newHashSet(example.getName())),
+            new Context(2, middle, newHashSet(example.getName())),
+            new Context(3, bottom, newHashSet(example.getName())),
           };
           
           gatewayHasRootContext(contexts[0]);
@@ -191,7 +195,7 @@ public class JavaSpecRunnerTest {
   }
   
   private Context contextNamed(String name) {
-    return new Context(1, name, ImmutableList.of());
+    return new Context(1, name, ImmutableSet.of());
   }
   
   private void exampleHas(String behaviorName) {
@@ -216,7 +220,7 @@ public class JavaSpecRunnerTest {
   }
   
   private void gatewayHasTopLevelExamples(Example... examples) {
-    List<String> exampleNames = Stream.of(examples).map(Example::getName).collect(toList());
+    Set<String> exampleNames = Stream.of(examples).map(Example::getName).collect(toSet());
     gatewayHasRootContext(new Context(1, "root", exampleNames));
     gatewayHasExamples(examples);
   }

@@ -1,12 +1,14 @@
 package org.javaspec.runner;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.javaspec.dsl.Because;
@@ -83,7 +85,7 @@ final class ClassExampleGateway implements ExampleGateway {
   }
   
   @Override
-  public List<Context> getSubContexts(Context context) { //TODO KDK: This should be a set (interface collection); order is not guaranteed
+  public List<Context> getSubContexts(Context context) {
     return readInnerClasses((Class<?>) context.id)
       .filter(x -> treeContainsItField(x))
       .map(ClassExampleGateway::readContext)
@@ -100,7 +102,9 @@ final class ClassExampleGateway implements ExampleGateway {
   }
   
   private static Context readContext(Class<?> contextClass) {
-    List<String> examples = ReflectionUtil.fieldsOfType(It.class, contextClass).map(Field::getName).collect(toList());
+    Set<String> examples = ReflectionUtil.fieldsOfType(It.class, contextClass)
+      .map(Field::getName)
+      .collect(toSet());
     return new Context(contextClass, nameContext(contextClass), examples);
   }
   
