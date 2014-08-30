@@ -175,7 +175,6 @@ public final class JavaSpecRunnerSteps {
   @Then("^post-test fixture lambdas run bottom-up, starting with the class defining the test$")
   public void post_test_fixture_lambdas_run_bottom_up_starting_with_the_class_defining_the_test() throws Throwable {
     //If the test passed, then this has already been verified
-    //TODO KDK: Find a better way to verify this - maybe better to do as a single step / scenario that uses the same approach?
   }
   
   @Then("^an Establish lambda runs before a Because lambda, if both are in the same class$")
@@ -187,7 +186,6 @@ public final class JavaSpecRunnerSteps {
   @Then("^both of these run before any Establish or Because lambdas in any nested classes$")
   public void both_of_these_run_before_any_Establish_or_Because_lambdas_in_any_nested_classes() throws Throwable {
     //If the test passed, then this has already been verified
-    //TODO KDK: Find a better way to verify this - maybe better to do as a single step / scenario that uses the same approach?
   }
 
   /* Helpers */

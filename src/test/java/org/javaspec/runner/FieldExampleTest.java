@@ -101,7 +101,7 @@ public class FieldExampleTest {
     }
     
     public class givenFieldsAccessibleFromAContextClass {
-      private final List<String> events = new LinkedList<String>(); //TODO KDK: Don't have to spy; can write the test such that it only passes when everything runs in order
+      private final List<String> events = new LinkedList<String>();
       private final Example subject = exampleWithFullFixture();
       
       @Before

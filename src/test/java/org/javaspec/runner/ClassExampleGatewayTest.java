@@ -80,7 +80,6 @@ public class ClassExampleGatewayTest {
     @Before
     public void initMocks() { MockitoAnnotations.initMocks(this); }
     
-    //TODO KDK: Move all this documentation to the readme or wiki
     /* Context definition: A group of related examples and/or test fixtures.  All examples in the same context share
      * the same test fixture.
      * 
