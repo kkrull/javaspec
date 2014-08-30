@@ -1,4 +1,4 @@
-package org.javaspec.util;
+package org.javaspec.testutil;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -19,9 +19,17 @@ public final class Assertions {
         a, equalTo(e));
     }
   }
+  
+  public static void assertNoThrow(Thunk thunk) {
+    try {
+      thunk.run();
+    } catch(Throwable t) {
+      assertThat(t, nullValue());
+    }
+  }
 
-  public static void assertThrows(Class<? extends Throwable> expectedType, Matcher<? super String> expectedMessage, Thunk thunk) {
-    assertThrows(expectedType, expectedMessage, null, thunk);
+  public static void assertThrows(Class<? extends Throwable> type, Matcher<? super String> message, Thunk thunk) {
+    assertThrows(type, message, null, thunk);
   }
 
   public static void assertThrows(Class<? extends Throwable> expectedType, Matcher<? super String> expectedMessage, 

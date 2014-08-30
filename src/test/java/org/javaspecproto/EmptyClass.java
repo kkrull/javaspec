@@ -1,3 +1,3 @@
-package org.javaspec.proto;
+package org.javaspecproto;
 
 public final class EmptyClass {}

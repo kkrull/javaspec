@@ -1,4 +1,4 @@
-package org.javaspec.util;
+package org.javaspec.testutil;
 
 import java.util.function.Consumer;
 
@@ -79,8 +79,19 @@ public final class RunListenerSpy extends RunListener {
       this.failure = failure;
     }
     
+    public String describedClassName() {
+      return description == null ? "<no description>" : description.getClassName();
+    }
+
+    public String describedDisplayName() {
+      return description == null ? "<no description>" : description.getDisplayName();
+    }
+
+    public String describedMethodName() {
+      return description == null ? "<no description>" : description.getMethodName();
+    }
+
     public String getName() { return name; }
-    public String getDisplayName() { return description == null ? null : description.getDisplayName(); }
     
     @Override
     public String toString() {

@@ -1,4 +1,4 @@
-package org.javaspec.runner;
+package org.javaspec.util;
 
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
@@ -9,8 +9,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.javaspec.proto.EmptyClass;
-import org.javaspec.runner.ReflectionUtil;
+import org.javaspec.util.ReflectionUtil;
+import org.javaspecproto.EmptyClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

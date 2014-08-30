@@ -1,4 +1,4 @@
-package org.javaspec.proto;
+package org.javaspecproto;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
@@ -12,7 +12,6 @@ import org.javaspec.dsl.Because;
 import org.javaspec.dsl.Cleanup;
 import org.javaspec.dsl.Establish;
 import org.javaspec.dsl.It;
-import org.junit.Ignore;
 
 /** Inner classes are declared static to avoid the gaze of HierarchicalContextRunner when testing JavaSpec. */
 public class ContextClasses {
@@ -27,11 +26,6 @@ public class ContextClasses {
   }
   
   public static class Empty {}
-
-  public static class FailingBecause {
-    Because flawed_action = () -> { throw new UnsupportedOperationException("flawed_action"); };
-    It will_never_run = () -> assertEquals(42, 42);
-  }
   
   public static class FailingCleanup {
     Cleanup flawed_cleanup = () -> { throw new IllegalStateException("flawed_cleanup"); };
@@ -81,10 +75,116 @@ public class ContextClasses {
     It asserts = () -> notifyEvent.accept("ContextClasses.FullFixture::assert");
     Cleanup cleans = () -> notifyEvent.accept("ContextClasses.FullFixture::cleans");
   }
+
+  public static class NestedExamples {
+    It top_level_test = () -> assertEquals(1, 1);
+    
+    public class middleWithNoTests {
+      public class bottom {
+        It bottom_test = () -> assertEquals(1, 1);
+      }
+    }
+    
+    public class middleWithTest {
+      It middle_test = () -> assertEquals(1, 1);
+      
+      public class bottom {
+        It another_bottom_test = () -> assertEquals(1, 1);
+      }
+    }
+  }
   
-  @Ignore
-  public static class IgnoreClass {
-    It gets_ignored = () -> assertEquals(1, 2);
+  public static class NestedEstablish {
+    Establish outer_arrange = () -> assertEquals(1, 1);
+    
+    public class inner {
+      Establish inner_arrange = () -> assertEquals(1, 1);
+      It asserts = () -> assertEquals(42, 42);
+    }
+  }
+  
+  public static class NestedBecause {
+    Because outer_act = () -> assertEquals(1, 1);
+    
+    public class inner {
+      Because inner_act = () -> assertEquals(1, 1);
+      It asserts = () -> assertEquals(42, 42);
+    }
+  }
+
+  public static class NestedEstablishBecause {
+    Establish outer_arrange = () -> assertEquals(1, 1);
+    Because outer_act = () -> assertEquals(1, 1);
+    
+    public class inner {
+      Establish inner_arrange = () -> assertEquals(1, 1);
+      Because inner_act = () -> assertEquals(1, 1);
+      It asserts = () -> assertEquals(42, 42);
+    }
+  }
+  
+  public static class NestedCleanup {
+    Cleanup outer_cleanup = () -> assertEquals(1, 1);
+    
+    public class inner {
+      Cleanup inner_cleanup = () -> assertEquals(1, 1);
+      It asserts = () -> assertEquals(42, 42);
+    }
+  }
+  
+  public static class NestedFixture {
+    Establish above_target_context = () -> assertEquals(1, 1);
+    
+    public class targetContext {
+      It asserts_in_target_context = () -> assertEquals(1, 1);
+      
+      public class moreSpecificContext {
+        Establish below_target_context = () -> assertEquals(1, 1);
+        It asserts_in_more_specific_context = () -> assertEquals(1, 1);
+      }
+    }
+  }
+  
+  public static class NestedFullFixture extends ExecutionSpy {
+    public NestedFullFixture() { notifyEvent.accept("ContextClasses.NestedFullFixture::new"); }
+    Establish arranges = () -> notifyEvent.accept("ContextClasses.NestedFullFixture::arrange");
+    Cleanup cleans = () -> notifyEvent.accept("ContextClasses.NestedFullFixture::cleans");
+    
+    public class innerContext {
+      public innerContext() { notifyEvent.accept("ContextClasses.NestedFullFixture.innerContext::new"); }
+      Because acts = () -> notifyEvent.accept("ContextClasses.NestedFullFixture.innerContext::act");
+      It asserts = () -> notifyEvent.accept("ContextClasses.NestedFullFixture.innerContext::assert");
+    }
+  }
+
+  public static class NestedThreeDeep {
+    public class middle {
+      public class bottom {
+        It asserts = () -> assertEquals(1, 1);
+      }
+    }
+  }
+  
+  public static class NestedWithInnerHelperClass {
+    public class context { 
+      It asserts = () -> assertEquals(1, 1);
+      public class HelperNotAContext { /* empty */ }
+    }
+    
+    public class emptyContextThatShouldBeExcluded {
+      public class InnerHelper { /* empty */ }
+    }
+  }
+  
+  public static class NestedWithStaticHelperClass {
+    public class context { 
+      It asserts = () -> assertEquals(1, 1);
+    }
+    
+    public static class Helper {
+      public void dryMyTest() { /* empty */ }
+      It is_not_a_test = () -> assertEquals(1, 1); //Static context classes are not supported
+    }
   }
   
   public static class OneIt extends ExecutionSpy {
@@ -151,15 +251,17 @@ public class ContextClasses {
   }
   
   public static class TwoEstablish {
-    private final List<String> orderMatters = new LinkedList<String>();
-    Establish setup_part_one = () -> orderMatters.add("do this first");
-    Establish setup_part_two_not_allowed = () -> orderMatters.add("do this second");
-    It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
+    public class innerContext {
+      private final List<String> orderMatters = new LinkedList<String>();
+      Establish setup_part_one = () -> orderMatters.add("do this first");
+      Establish setup_part_two_not_allowed = () -> orderMatters.add("do this second");
+      It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
+    }
   }
   
-  public static class TwoIt {
-    It first_test = () -> assertEquals(1, 1);
-    It second_test = () -> assertEquals(2, 2);
+  public static class TwoIt extends ExecutionSpy {
+    It first_test = () -> notifyEvent.accept("TwoIt::first_test");
+    It second_test = () -> notifyEvent.accept("TwoIt::second_test");
   }
   
   public static class TwoItWithEstablish {
@@ -167,17 +269,5 @@ public class ContextClasses {
     Establish that = () -> subject = "established";
     It does_one_thing = () -> assertThat(subject, notNullValue());
     It does_something_else = () -> assertThat(subject, equalTo("established"));
-  }
-  
-  public static class UnstableConstructor {
-    private static int _numInstances = 0;
-    public UnstableConstructor() {
-      _numInstances++;
-      if(_numInstances++ > 1) {
-        throw new RuntimeException("You may only instantiate me once.  No constructor for you!!!");
-      }
-    }
-    
-    It asserts = () -> assertThat(2, equalTo(2));
   }
 }

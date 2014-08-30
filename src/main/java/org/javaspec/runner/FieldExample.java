@@ -1,108 +1,152 @@
 package org.javaspec.runner;
 
+import static java.util.stream.Collectors.toList;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.javaspec.dsl.Because;
+import org.javaspec.dsl.Before;
 import org.javaspec.dsl.Cleanup;
-import org.javaspec.dsl.Establish;
 import org.javaspec.dsl.It;
 
 final class FieldExample implements Example {
-  private static final Establish NOP_ESTABLISH = () -> { return; };
-  private static final Because NOP_BECAUSE = () -> { return; };
-  private static final Cleanup NOP_CLEANUP = () -> { return; };
-  
-  //Would like to avoid flag-style class; need clarity for hierarchical test contexts with multiple before/after steps
-  private final Field arrangeField;
-  private final Field actionField;
+  private final String contextName;
   private final Field assertionField;
-  private final Field cleanupField;
-  
-  private TestFunction testFunction;
-  
-  FieldExample(Field arrangeField, Field actionField, Field assertionField, Field cleanupField) {
-    this.arrangeField = arrangeField;
-    this.actionField = actionField;
-    this.assertionField = assertionField;
-    this.cleanupField = cleanupField;
+  private final List<Field> befores;
+  private final List<Field> afters;
+
+  public FieldExample(String contextName, Field it, List<Field> befores, List<Field> afters) {
+    this.contextName = contextName;
+    this.assertionField = it;
+    this.befores = befores;
+    this.afters = afters;
+  }
+
+  @Override
+  public String getContextName() {
+    return contextName;
   }
   
   @Override
-  public String describeSetup() {
-    return arrangeField == null ? "" : arrangeField.getName();
-  }
-  
-  @Override
-  public String describeAction() {
-    return actionField == null ? "" : actionField.getName();
-  }
-  
-  @Override
-  public String describeBehavior() {
+  public String getName() {
     return assertionField.getName();
   }
-  
-  @Override
-  public String describeCleanup() {
-    return cleanupField == null ? "" : cleanupField.getName();
-  }
-  
+
   @Override
   public boolean isSkipped() {
-    lazyReadTestFunctions();
-    return testFunction.hasUnassignedFunctions();
+    TestFunction f = readTestFunction();
+    return f.hasUnassignedFunctions();
   }
-  
+
   @Override
   public void run() throws Exception {
-    lazyReadTestFunctions();
+    TestFunction f = readTestFunction();
     try {
-      testFunction.arrange.run();
-      testFunction.action.run();
-      testFunction.assertion.run();
+      for(Before before : f.befores) { before.run(); }
+      f.assertion.run();
     } finally {
-      testFunction.cleanup.run();
+      for(Cleanup after : f.afters) { after.run(); }
     }
   }
 
-  private void lazyReadTestFunctions() {
-    if(testFunction != null)
-      return;
-    
-    Object context = newContextObject();
+  private TestFunction readTestFunction() {
+    ContextFactory factory = new ContextFactory();
+    factory.initNewContext(assertionField.getDeclaringClass());
     try {
-      this.testFunction = new TestFunction(
-        arrangeField == null ? NOP_ESTABLISH : (Establish)assignedValue(arrangeField, context),
-        actionField == null ? NOP_BECAUSE : (Because)assignedValue(actionField, context),
-        (It)assignedValue(assertionField, context),
-        cleanupField == null ? NOP_CLEANUP : (Cleanup)assignedValue(cleanupField, context));
+      List<Before> beforeValues = befores.stream().map(x -> (Before)factory.getAssignedValue(x)).collect(toList());
+      List<Cleanup> afterValues = afters.stream().map(x -> (Cleanup)factory.getAssignedValue(x)).collect(toList());
+      It assertion = (It)factory.getAssignedValue(assertionField);
+      return new TestFunction(assertion, beforeValues, afterValues);
     } catch (Throwable t) {
-      throw new TestSetupException(context.getClass(), t);
+      throw new TestSetupException(assertionField.getDeclaringClass(), t);
     }
   }
   
-  private Object newContextObject() {
-    Constructor<?> noArgConstructor;
-    try {
-      Class<?> contextClass = assertionField.getDeclaringClass();
-      noArgConstructor = contextClass.getConstructor();
-    } catch (Exception e) {
-      throw new UnsupportedConstructorException(assertionField.getDeclaringClass(), e);
+  private static class ContextFactory {
+    private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
+    
+    public void initNewContext(Class<?> innerMostContext) {
+      makeInstance(innerMostContext);
     }
+    
+    public Object getInstance(Class<?> anyPartOfContext) {
+      return instances.get(anyPartOfContext);
+    }
+    
+    public Object getAssignedValue(Field field) {
+      Class<?> declaringClass = field.getDeclaringClass();
+      try {
+        Object declaredContext = getInstance(declaringClass);
+        field.setAccessible(true);
+        return field.get(declaredContext);
+      } catch (Throwable t) {
+        throw new TestSetupException(declaringClass, t);
+      }
+    }
+    
+    private Object makeInstance(Class<?> contextClass) {
+      Class<?> enclosingClass = contextClass.getEnclosingClass();
+      if(enclosingClass == null || Modifier.isStatic(contextClass.getModifiers())) {
+        return makeTopLevelInstance(contextClass);
+      } else {
+        return makeEnclosedInstance(contextClass, enclosingClass);
+      }
+    }
+    
+    private Object makeTopLevelInstance(Class<?> contextClass) {
+      Constructor<?> noArgConstructor;
+      try {
+        noArgConstructor = contextClass.getConstructor();
+      } catch (Exception e) {
+        throw new UnsupportedConstructorException(contextClass, e);
+      }
+      
+      try {
+        Object context = noArgConstructor.newInstance();
+        instances.put(contextClass, context);
+        return context;
+      } catch (Exception | AssertionError e) {
+        throw new TestSetupException(contextClass, e);
+      }
+    }
+    
+    private Object makeEnclosedInstance(Class<?> contextClass, Class<?> enclosingClass) {
+      Object enclosingObject = makeInstance(enclosingClass);
+      Constructor<?> constructor;
+      try {
+        constructor = contextClass.getConstructor(enclosingClass);
+      } catch (Exception e) {
+        throw new UnsupportedConstructorException(contextClass, e);
+      }
 
-    Object context;
-    try {
-      context = noArgConstructor.newInstance();
-    } catch (Exception | AssertionError e) {
-      throw new TestSetupException(noArgConstructor.getDeclaringClass(), e);
+      try {
+        Object context = constructor.newInstance(enclosingObject);
+        instances.put(contextClass, context);
+        return context;
+      } catch (Exception | AssertionError e) {
+        throw new TestSetupException(contextClass, e);
+      }
     }
-    return context;
   }
   
-  private Object assignedValue(Field field, Object context) throws IllegalAccessException {
-    field.setAccessible(true);
-    return field.get(context);
+  private static class TestFunction {
+    public final It assertion;
+    public final List<Before> befores;
+    public final List<Cleanup> afters;
+    
+    public TestFunction(It assertion, List<Before> befores, List<Cleanup> afters) {
+      this.assertion = assertion;
+      this.befores = befores;
+      this.afters = afters;
+    }
+    
+    public boolean hasUnassignedFunctions() {
+      return assertion == null || befores.contains(null) || afters.contains(null);
+    }
   }
   
   public static final class TestSetupException extends RuntimeException {
@@ -118,27 +162,6 @@ final class FieldExample implements Example {
 
     public UnsupportedConstructorException(Class<?> context, Throwable cause) {
       super(String.format("Unable to find a no-argument constructor for class %s", context.getName()), cause);
-    }
-  }
-  
-  private static class TestFunction {
-    public final Establish arrange;
-    public final Because action;
-    public final It assertion;
-    public final Cleanup cleanup;
-    
-    public TestFunction(Establish arrange, Because action, It assertion, Cleanup cleanup) {
-      this.arrange = arrange;
-      this.action = action;
-      this.assertion = assertion;
-      this.cleanup = cleanup;
-    }
-
-    public boolean hasUnassignedFunctions() {
-      return arrange == null ||
-        action == null || 
-        assertion == null || 
-        cleanup == null;
     }
   }
 }

@@ -2,6 +2,4 @@ package org.javaspec.dsl;
 
 /** A thunk that executes the Act step of a test.  Runs between <code>Establish</code> and <code>It</code>. */
 @FunctionalInterface
-public interface Because {
-  public void run() throws Exception;
-}
+public interface Because extends Before { }
