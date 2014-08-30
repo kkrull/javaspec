@@ -1,10 +1,11 @@
 package org.javaspec.runner;
 
+import static java.util.stream.Collectors.toList;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -52,66 +53,69 @@ final class FieldExample implements Example {
     }
   }
 
-  private TestFunction readTestFunction() { //TODO KDK: Clean
-    Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
-    Object context = newContextObject(assertionField.getDeclaringClass(), instances);
+  private TestFunction readTestFunction() {
+    ContextFactory factory = new ContextFactory();
+    factory.initNewContext(assertionField.getDeclaringClass());
     try {
-      List<Before> beforeValues = new LinkedList<Before>();
-      for(Field before : befores) {
-        Object contextForBefore = instances.get(before.getDeclaringClass());
-        Before value = (Before)assignedValue(before, contextForBefore);
-        beforeValues.add(value);
-      }
-      
-      List<Cleanup> afterValues = new LinkedList<Cleanup>();
-      for(Field after : afters) {
-        Object contextForAfter = instances.get(after.getDeclaringClass());
-        Cleanup value = (Cleanup)assignedValue(after, contextForAfter);
-        afterValues.add(value);
-      }
-      
-      return new TestFunction((It)assignedValue(assertionField, context), beforeValues, afterValues);
+      List<Before> beforeValues = befores.stream().map(x -> (Before)factory.getAssignedValue(x)).collect(toList());
+      List<Cleanup> afterValues = afters.stream().map(x -> (Cleanup)factory.getAssignedValue(x)).collect(toList());
+      It assertion = (It)factory.getAssignedValue(assertionField);
+      return new TestFunction(assertion, beforeValues, afterValues);
     } catch (Throwable t) {
-      throw new TestSetupException(context.getClass(), t);
+      throw new TestSetupException(assertionField.getDeclaringClass(), t);
     }
   }
   
-  private static Object newContextObject(Class<?> contextClass, Map<Class<?>, Object> instances) { //TODO KDK: Clean
-    Class<?> enclosingClass = contextClass.getEnclosingClass();
-    if(enclosingClass == null) {
+  private static class ContextFactory {
+    private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
+    
+    public void initNewContext(Class<?> innerMostContext) {
+      makeInstance(innerMostContext);
+    }
+    
+    public Object getInstance(Class<?> anyPartOfContext) {
+      return instances.get(anyPartOfContext);
+    }
+    
+    public Object getAssignedValue(Field field) {
+      Class<?> declaringClass = field.getDeclaringClass();
+      try {
+        Object declaredContext = getInstance(declaringClass);
+        field.setAccessible(true);
+        return field.get(declaredContext);
+      } catch (Throwable t) {
+        throw new TestSetupException(declaringClass, t);
+      }
+    }
+    
+    private Object makeInstance(Class<?> contextClass) {
+      Class<?> enclosingClass = contextClass.getEnclosingClass();
+      if(enclosingClass == null || Modifier.isStatic(contextClass.getModifiers())) {
+        return makeTopLevelInstance(contextClass);
+      } else {
+        return makeEnclosedInstance(contextClass, enclosingClass);
+      }
+    }
+    
+    private Object makeTopLevelInstance(Class<?> contextClass) {
       Constructor<?> noArgConstructor;
       try {
         noArgConstructor = contextClass.getConstructor();
       } catch (Exception e) {
         throw new UnsupportedConstructorException(contextClass, e);
       }
-
-      Object context;
+      
       try {
-        context = noArgConstructor.newInstance();
+        Object context = noArgConstructor.newInstance();
         instances.put(contextClass, context);
+        return context;
       } catch (Exception | AssertionError e) {
         throw new TestSetupException(contextClass, e);
       }
-      return context;
-    } else if(Modifier.isStatic(contextClass.getModifiers())) { 
-      Constructor<?> noArgConstructor;
-      try {
-        noArgConstructor = contextClass.getConstructor();
-      } catch (Exception e) {
-        throw new UnsupportedConstructorException(contextClass, e);
-      }
-
-      Object context;
-      try {
-        context = noArgConstructor.newInstance();
-        instances.put(contextClass, context);
-      } catch (Exception | AssertionError e) {
-        throw new TestSetupException(contextClass, e);
-      }
-      return context;
-    } else {
-      Object enclosingObject = newContextObject(enclosingClass, instances);
+    }
+    
+    private Object makeEnclosedInstance(Class<?> contextClass, Class<?> enclosingClass) {
+      Object enclosingObject = makeInstance(enclosingClass);
       Constructor<?> constructor;
       try {
         constructor = contextClass.getConstructor(enclosingClass);
@@ -119,20 +123,14 @@ final class FieldExample implements Example {
         throw new UnsupportedConstructorException(contextClass, e);
       }
 
-      Object context;
       try {
-        context = constructor.newInstance(enclosingObject);
+        Object context = constructor.newInstance(enclosingObject);
         instances.put(contextClass, context);
+        return context;
       } catch (Exception | AssertionError e) {
         throw new TestSetupException(contextClass, e);
       }
-      return context;
     }
-  }
-  
-  private Object assignedValue(Field field, Object context) throws IllegalAccessException {
-    field.setAccessible(true);
-    return field.get(context);
   }
   
   private static class TestFunction {
