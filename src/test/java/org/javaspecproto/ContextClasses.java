@@ -14,7 +14,7 @@ import org.javaspec.dsl.Establish;
 import org.javaspec.dsl.It;
 
 /** Inner classes are declared static to avoid the gaze of HierarchicalContextRunner when testing JavaSpec. */
-public class ContextClasses { //TODO KDK: Remove classes that aren't used anymore
+public class ContextClasses {
   public static class ConstructorHidden {
     private ConstructorHidden() {}
     It is_otherwise_valid = () -> assertEquals(1, 1);
