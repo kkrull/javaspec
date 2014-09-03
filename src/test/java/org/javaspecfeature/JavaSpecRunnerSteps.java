@@ -27,7 +27,7 @@ public final class JavaSpecRunnerSteps {
   private Class<?> testClass;
   
   @Before
-  public void setupTestExecutionSpy() {
+  public void deploySpies() {
     ContextClasses.FullFixture.setEventListener(events::add);
     ContextClasses.OneIt.setEventListener(events::add);
     ContextClasses.TwoIt.setEventListener(events::add);
@@ -41,9 +41,10 @@ public final class JavaSpecRunnerSteps {
     ContextClasses.TwoIt.setEventListener(null);
     RunWithJavaSpecRunner.setEventListener(null);
   }
-
+  
   /* Given */
   
+
   @Given("^I have a class with JavaSpec tests in it$")
   public void i_have_a_class_with_JavaSpec_tests_in_it() throws Throwable {
     this.testClass = ContextClasses.OneIt.class;
@@ -187,7 +188,7 @@ public final class JavaSpecRunnerSteps {
   public void both_of_these_run_before_any_Establish_or_Because_lambdas_in_any_nested_classes() throws Throwable {
     //If the test passed, then this has already been verified
   }
-
+  
   /* Helpers */
   
   private void assertTestPassed(Class<?> context, String itFieldName) {

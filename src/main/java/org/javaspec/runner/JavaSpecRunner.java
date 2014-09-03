@@ -12,7 +12,7 @@ import org.junit.runners.model.InitializationError;
 
 public final class JavaSpecRunner extends ParentRunner<Example> {
   private final ExampleGateway gateway;
-  
+
   public JavaSpecRunner(Class<?> contextClass) throws InitializationError {
     this(new ClassExampleGateway(contextClass));
   }
