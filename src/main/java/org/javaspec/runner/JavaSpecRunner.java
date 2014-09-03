@@ -15,12 +15,13 @@ import org.junit.runners.model.InitializationError;
  * 
  * For example, the class below results in two tests.
  * <ul>
- *   <li>returns_bar: Creates the widget, calls foo(), and verifies that it returned "bar".</li>
- *   <li>prints_baz: Creates the widget, calls foo(), and verifies that it wrote "baz" to the console.</li>
+ *   <li><code>returns_bar</code>: Creates the widget, calls foo(), and verifies that it returned "bar".</li>
+ *   <li><code>prints_baz</code>: Creates the widget, calls foo(), and verifies that it wrote "baz" to the console.</li>
  * </ul>
  * 
- * <code>
- * @RunWith(JavaSpecRunner.class)
+ * <pre>
+ * {@code
+ * {@literal @RunWith(JavaSpecRunner.class)}
  * public class WidgetFooTest {
  *   public class foo {
  *     private final PrintStreamSpy printStreamSpy = new PrintStreamSpy();
@@ -34,7 +35,8 @@ import org.junit.runners.model.InitializationError;
  *     It prints_baz = () -> assertEquals("baz", printStreamSpy.getWhatWasPrinted());
  *   }
  * }
- * </code>
+ * }
+ * </pre>
  * 
  * Classes WidgetFooTest and its inner class foo are both <em>context classes</em>.  See ClassExampleGateway for
  * details.
