@@ -4,8 +4,10 @@
   <groupId>org.javaspec</groupId>
   <artifactId>javaspec</artifactId>
   <version>0.4.0</version>
-  <name>JavaSpec</name>
+  <packaging>jar</packaging>
+  
   <description>Spec-style testing for Java</description>
+  <name>JavaSpec</name>
   <url>https://github.com/kkrull/javaspec</url>
 
   <build>
@@ -66,8 +68,33 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  
+  <developers>
+    <developer>
+      <id>kkrull</id>
+      <name>Kyle Krull</name>
+    </developer>
+  </developers>
 
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/kkrull/javaspec/issues</url>
+  </issueManagement>
+  
+  <licenses>
+    <license>
+      <name>MIT license (also X11)</name>
+      <url>http://www.spdx.org/licenses/MIT</url>
+    </license>
+  </licenses>
+  
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+  
+  <scm>
+    <connection>scm:git@github.com:kkrull/javaspec.git</connection>
+    <developerConnection>scm:git@github.com:kkrull/javaspec.git</developerConnection>
+    <url>git@github.com:kkrull/javaspec.git</url>
+  </scm>
 </project>
