@@ -10,6 +10,35 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
+/**
+ * Runs tests written with JavaSpec lambdas under JUnit.
+ * 
+ * For example, the class below results in two tests.
+ * <ul>
+ *   <li>returns_bar: Creates the widget, calls foo(), and verifies that it returned "bar".</li>
+ *   <li>prints_baz: Creates the widget, calls foo(), and verifies that it wrote "baz" to the console.</li>
+ * </ul>
+ * 
+ * <code>
+ * @RunWith(JavaSpecRunner.class)
+ * public class WidgetFooTest {
+ *   public class foo {
+ *     private final PrintStreamSpy printStreamSpy = new PrintStreamSpy();
+ *     private Widget subject;
+ *     private String returned;
+ *     
+ *     Establish that = () -> subject = new Widget(printStreamSpy);
+ *     Because of = () -> returned = subject.foo();
+ *     
+ *     It returns_bar = () -> assertEquals("bar", returned);
+ *     It prints_baz = () -> assertEquals("baz", printStreamSpy.getWhatWasPrinted());
+ *   }
+ * }
+ * </code>
+ * 
+ * Classes WidgetFooTest and its inner class foo are both <em>context classes</em>.  See ClassExampleGateway for
+ * details.
+ */
 public final class JavaSpecRunner extends ParentRunner<Example> {
   private final ExampleGateway gateway;
 
