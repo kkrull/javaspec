@@ -5,7 +5,7 @@
   <artifactId>javaspec</artifactId>
   <version>0.4.0</version>
   <packaging>jar</packaging>
-  
+
   <description>Spec-style testing for Java</description>
   <name>JavaSpec</name>
   <url>https://github.com/kkrull/javaspec</url>
@@ -15,27 +15,34 @@
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
           <version>2.5</version>
-          <configuration>
-            <archive>
-              <manifest>
-                <addClasspath>true</addClasspath>
-                <mainClass>org.javaspec.JavaSpec</mainClass>
-              </manifest>
-            </archive>
-          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
-    
+
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <mainClass>org.javaspec.JavaSpec</mainClass>
+            </manifest>
+          </archive>
         </configuration>
       </plugin>
     </plugins>
@@ -86,7 +93,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
   <developers>
     <developer>
       <id>kkrull</id>
@@ -98,18 +105,18 @@
     <system>GitHub</system>
     <url>https://github.com/kkrull/javaspec/issues</url>
   </issueManagement>
-  
+
   <licenses>
     <license>
       <name>MIT license (also X11)</name>
       <url>http://www.spdx.org/licenses/MIT</url>
     </license>
   </licenses>
-  
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  
+
   <scm>
     <connection>scm:git@github.com:kkrull/javaspec.git</connection>
     <developerConnection>scm:git@github.com:kkrull/javaspec.git</developerConnection>
