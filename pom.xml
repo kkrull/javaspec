@@ -124,8 +124,8 @@
   </properties>
 
   <scm>
-    <connection>scm:git@github.com:kkrull/javaspec.git</connection>
-    <developerConnection>scm:git@github.com:kkrull/javaspec.git</developerConnection>
+    <connection>scm:git:git@github.com:kkrull/javaspec.git</connection>
+    <developerConnection>scm:git:git@github.com:kkrull/javaspec.git</developerConnection>
     <url>git@github.com:kkrull/javaspec.git</url>
   </scm>
 </project>
