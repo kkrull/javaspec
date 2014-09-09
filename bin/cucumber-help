@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+#This took [forever to find](https://github.com/cucumber/cucumber-java-skeleton#overriding-options)
+mvn test -Dcucumber.options="--help"
