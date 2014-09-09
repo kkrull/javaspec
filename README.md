@@ -18,3 +18,15 @@ It does_something_cool = () -> assertEquals("hello", widget.sayHello());
 ```
 
 - Run this test anywhere you run JUnit.
+
+## Installation
+
+JavaSpec is located in the Maven Central Repository, under the following coordinates:
+
+```
+<dependency>
+  <groupId>info.javaspec</groupId>
+  <artifactId>javaspec</artifactId>
+  <version>0.4.0</version>
+</dependency>
+```
