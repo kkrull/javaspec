@@ -90,7 +90,7 @@ class GreeterWithFixtureTest {
 }
 ```
 
-## It's hierarchical, like RSpec
+## It has hierarchical fixtures, like RSpec
 
 RSpec lets you organize hierarchies of tests and fixtures with `describe` and `context`, and each level in the tree can have its own `before` and `after` methods to work the test fixture.  JavaSpec provides nested contexts by nesting *context classes* (inner, **non-static** classes) in the top-level test class.
 
