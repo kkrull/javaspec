@@ -1,7 +1,7 @@
 # JavaSpec
 
-Spec-style testing for Java using lambdas.  Inspired by [RSpec](http://rspec.info) for Ruby and
-[Machine.Specifications](https://github.com/machine/machine.specifications) for C#.
+Spec-style testing for Java using lambdas.  Inspired by [RSpec](http://rspec.info) and
+[Machine.Specifications](https://github.com/machine/machine.specifications).
 
 *Why create another testing framework for Java, and why use lambdas?*
 
@@ -9,7 +9,7 @@ JavaSpec attempts to be:
 
 - **Concise**: Simple behavior should be simple to test and describe in a small amount of space.
 - **Searchable**: Finding call sites in Java code is easy.  Finding where a test calls your code should be just as easy.
-- **Transparent**: You shouldn't have to keep any caveats or gotchas in mind when writing test code.
+- **Transparent**: You shouldn't have to keep any caveats in mind when writing test code.
 
 There are many testing libraries out there with some of these characteristics, but expresiveness does not need to come at the cost of adding complexity.  For example you can write your tests in Ruby or Groovy (as the author once considered), but now you're adding more components between your test and production code, adding new dependencies, and losing out on searchability.
 
@@ -37,12 +37,12 @@ libraries instead of pretending like these are radical, never-before-seen ideas.
 
 ## It runs on JUnit
 
-JUnit has you create a test class and put a bunch of `@Test` methods in it.  JavaSpec is pretty similar to that:
+JUnit has you create a test class and put a bunch of `@Test` methods in it.  JavaSpec is pretty similar:
 
 - Make a test class.
 - Tag it with `@RunWith(JavaSpecRunner.class)`.
 - Include 1 or more `It` fields in the class and assign a no-arg lambda to it.  This takes the place of what would normally be a `@Test` method in JUnit.
-- Run your tests anywhere you run JUnit.  Maven (surefire plugin) and Eclipse Luna are known to work.
+- Run your tests anywhere you run JUnit.  Maven (surefire plugin) and Eclipse Luna work.
 
 A simple "Hello World" test looks like this:
 
@@ -92,7 +92,7 @@ class GreeterWithFixtureTest {
 
 ## It's hierarchical, like RSpec
 
-RSpec lets you organize hierarchies of tests and fixtures with `describe` and `context`, and each each level in the tree can have its own `before` and `after` methods to work the test fixture.  JavaSpec provides nested contexts by nesting *context classes* (inner, **non-static** classes) in the top-level test class.
+RSpec lets you organize hierarchies of tests and fixtures with `describe` and `context`, and each level in the tree can have its own `before` and `after` methods to work the test fixture.  JavaSpec provides nested contexts by nesting *context classes* (inner, **non-static** classes) in the top-level test class.
 
 Each class can have as many `It` lambdas as you want, plus up to 1 of each type of fixture lambda (`Establish`, `Because`, and `Cleanup`) to build up the test fixture.  As with RSpec, setup runs outside-in (`Because` in an enclosing class runs before `Establish` or `Because` in the enclosed class), and cleanup runs inside-out.
 
