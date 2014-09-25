@@ -6,6 +6,7 @@ import static info.javaspec.testutil.Assertions.assertThrows;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import info.javaspec.runner.Example;
 import info.javaspec.runner.FieldExample;
 import info.javaspec.runner.FieldExample.TestSetupException;
@@ -63,16 +64,13 @@ public class FieldExampleTest {
   
   public class run {
     public class givenAClassWithoutACallableNoArgConstructor {
+      private final Example subject = exampleWithIt(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid");
+      
       @Test
       public void ThrowsUnsupportedConstructorException() {
-        assertThrowsUnsupportedConstructorException(ContextClasses.ConstructorHidden.class, "is_otherwise_valid");
-        assertThrowsUnsupportedConstructorException(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid");
-      }
-      
-      private void assertThrowsUnsupportedConstructorException(Class<?> context, String itFieldName) {
-        Example subject = exampleWithIt(context, itFieldName);
         assertThrows(UnsupportedConstructorException.class,
-          is(String.format("Unable to find a no-argument constructor for class %s", context.getName())),
+          is(String.format("Unable to find a no-argument constructor for class %s",
+            ContextClasses.ConstructorWithArguments.class.getName())),
           NoSuchMethodException.class, subject::run);
       }
     }
@@ -99,6 +97,27 @@ public class FieldExampleTest {
         Example subject = exampleWithIt(HasWrongType.class, "inaccessibleAsIt");
         assertThrows(TestSetupException.class, startsWith("Failed to create test context"), ClassCastException.class,
           subject::run);
+      }
+    }
+    
+    public class givenANonPublicContextClass {
+      private final Example subject = exampleWithIt(getHiddenClass(), "runs");
+      
+      @Test
+      public void obtainsAccessToItsConstructor() throws Exception {
+        subject.run();
+      }
+      
+      private Class<?> getHiddenClass() {
+        Class<?> outer;
+        try {
+          outer = Class.forName("info.javaspecproto.HiddenContext");
+          return outer.getDeclaredClasses()[0];
+        } catch (ClassNotFoundException e) {
+          e.printStackTrace();
+          fail("Unable to set up test");
+          return null;
+        }
       }
     }
     
@@ -221,7 +240,7 @@ public class FieldExampleTest {
   private static Example exampleWith(Class<?> context, String it, List<String> befores, List<String> afters) {
     try {
       return new FieldExample(context.getSimpleName(), 
-        it == null ? null : context.getDeclaredField(it),
+        it == null ? null : readField(context, it),
         befores.stream().map(x -> readField(context, x)).collect(toList()),
         afters.stream().map(x -> readField(context, x)).collect(toList()));
     } catch (Exception e) {

@@ -99,7 +99,8 @@ final class FieldExample implements Example {
     private Object makeTopLevelInstance(Class<?> contextClass) {
       Constructor<?> noArgConstructor;
       try {
-        noArgConstructor = contextClass.getConstructor();
+        noArgConstructor = contextClass.getDeclaredConstructor();
+        noArgConstructor.setAccessible(true);
       } catch (Exception e) {
         throw new UnsupportedConstructorException(contextClass, e);
       }
@@ -117,7 +118,8 @@ final class FieldExample implements Example {
       Object enclosingObject = makeInstance(enclosingClass);
       Constructor<?> constructor;
       try {
-        constructor = contextClass.getConstructor(enclosingClass);
+        constructor = contextClass.getDeclaredConstructor(enclosingClass);
+        constructor.setAccessible(true);
       } catch (Exception e) {
         throw new UnsupportedConstructorException(contextClass, e);
       }

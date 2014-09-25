@@ -14,11 +14,6 @@ import java.util.List;
 
 /** Inner classes are declared static to avoid the gaze of HierarchicalContextRunner when testing JavaSpec. */
 public class ContextClasses {
-  public static class ConstructorHidden {
-    private ConstructorHidden() {}
-    It is_otherwise_valid = () -> assertEquals(1, 1);
-  }
-  
   public static class ConstructorWithArguments {
     public ConstructorWithArguments(int _id) { }
     It is_otherwise_valid = () -> assertEquals(1, 1);
