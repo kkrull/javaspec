@@ -9,7 +9,7 @@
   
   <groupId>info.javaspec</groupId>
   <artifactId>javaspec</artifactId>
-  <version>0.4.0</version>
+  <version>0.4.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <description>Spec-style testing for Java</description>
