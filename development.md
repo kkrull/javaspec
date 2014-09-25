@@ -23,6 +23,12 @@
 - Update README
 - Push README to github page for use on [JavaSpec.info](http://javaspec.info)
 
+### Git
+
+- Merge release branch into master **`no-ff`**
+- Merge release branch into develop
+- Delete release branch
+
 ### Deployment
 
 - Push to Sonatype
