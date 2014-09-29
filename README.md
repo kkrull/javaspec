@@ -40,12 +40,12 @@ instead of pretending like these are radical, never-before-seen ideas.
 
 ## It runs on JUnit
 
-JUnit has you create a test class and put a bunch of `@Test` methods in it.  JavaSpec is pretty similar:
+In JUnit, you create a test class and put `@Test` methods in it.  JavaSpec is similar:
 
 - Make a test class.
 - Tag it with `@RunWith(JavaSpecRunner.class)`.
-- Include 1 or more `It` fields in the class and assign a no-arg lambda to it.  This takes the place of what would
-  normally be a `@Test` method in JUnit.
+- Include 1 or more `It` fields in the class and assign a no-arg lambda to it.  Put whatever code you would normally run
+  in the `@Test` method in this lambda.
 - Run your tests anywhere you run JUnit.  Maven (surefire plugin) and Eclipse Luna work.
 
 A simple "Hello World" test looks like this:
@@ -59,7 +59,7 @@ class GreeterTest {
 
 As with JUnit, you get 1 instance of your test class per test.  Each `It` is its own test.
 
-## It uses lambdas assigned to fields, like Machine.Specifications
+## It's like Machine.Specifications
 
 Machine.Specifications and JavaSpec represent the different steps of a test the same way:
 
@@ -97,15 +97,16 @@ class GreeterWithFixtureTest {
 }
 ```
 
-## It has hierarchical fixtures, like RSpec
+## It's like RSpec
 
 RSpec lets you organize hierarchies of tests and fixtures with `describe` and `context`, and each level in the tree can
 have its own `before` and `after` methods to work the test fixture.  JavaSpec provides nested contexts by nesting
 *context classes* (inner, **non-static** classes) in the top-level test class.
 
 Each class can have as many `It` lambdas as you want, plus up to 1 of each type of fixture lambda (`Establish`,
-`Because`, and `Cleanup`) to build up the test fixture.  As with RSpec, setup runs outside-in (`Because` in an enclosing
-class runs before `Establish` or `Because` in the enclosed class), and cleanup runs inside-out.
+`Because`, and `Cleanup`) to build up the test fixture.  As with RSpec, setup runs outside-in and cleanup runs
+inside-out.  If you happen to have an `Because` in an outer class and an `Establish` in an inner class and wonder which
+one runs first, the outer class lambdas run first (i.e. `Because` runs first).`
 
 An example of using nested contexts:
 
@@ -142,8 +143,7 @@ In short:
 
 ## If you have any other questions
 
-Hopefully JavaSpec works like you think it does, and you won't have to ask many detailed questions about how it really
-works.  For times when it doesn't, start by looking at the tests on
+Hopefully JavaSpec works like you think it does  For times when it doesn't, start by looking at the tests on
 [`JavaSpecRunner`](https://github.com/kkrull/javaspec/blob/master/src/test/java/info/javaspec/runner/JavaSpecRunnerTest.java)
 and related classes.
 
