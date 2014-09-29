@@ -31,5 +31,13 @@
 
 ### Deployment
 
-- Push to Sonatype
-- Delete local artifact and do test installation from Maven Central
+The overall process is described [here](http://central.sonatype.org/pages/ossrh-guide.html#releasing-to-central).
+
+- Push to Sonatype: `./bin/mvn-sonatype`.  This will require a GPG key.
+- Log in to [Sonatype](https://oss.sonatype.org/) in a browser, and find the staging repository (search).
+- Check the contents tab to make sure the compiled jar, source, javadocs and GPG keys are all present.
+- [Close](http://central.sonatype.org/pages/releasing-the-deployment.html#close-and-drop-or-release-your-staging-repository) the repository.
+- Release the repository.  Now the staging repository should be gone.
+- Go to [Maven Central](http://search.maven.org/#search|ga|1|g%3A%22info.javaspec%22) and make sure it shows up.  It's
+  supposed to take about 10 minutes to be in the repository, and up to 2 hours to show up in search results.
+- Delete local artifact and do test installation from Maven Central.

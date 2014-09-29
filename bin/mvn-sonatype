@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 set -e
-mvn -P sonatype-oss-release $@
+mvn -P sonatype-oss-release deploy $@
