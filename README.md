@@ -106,7 +106,7 @@ have its own `before` and `after` methods to work the test fixture.  JavaSpec pr
 Each class can have as many `It` lambdas as you want, plus up to 1 of each type of fixture lambda (`Establish`,
 `Because`, and `Cleanup`) to build up the test fixture.  As with RSpec, setup runs outside-in and cleanup runs
 inside-out.  If you happen to have an `Because` in an outer class and an `Establish` in an inner class and wonder which
-one runs first, the outer class lambdas run first (i.e. `Because` runs first).`
+one runs first, the outer class lambdas run first (i.e. `Because` runs first).
 
 An example of using nested contexts:
 
@@ -156,6 +156,6 @@ and related classes.
 
 # Release history
 
-- 0.4.0: Initial release
 - 0.4.1: Fixed [Issue 1](https://github.com/kkrull/javaspec/issues/1), dealing with being able to instantiate non-public
   context classes.
+- 0.4.0: Initial release
