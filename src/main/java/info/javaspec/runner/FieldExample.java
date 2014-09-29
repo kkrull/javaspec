@@ -53,33 +53,29 @@ final class FieldExample implements Example {
   }
 
   private TestFunction readTestFunction() {
-    ContextFactory factory = new ContextFactory();
-    factory.initNewContext(assertionField.getDeclaringClass());
+    TestContext context = new TestContext();
+    context.init(assertionField.getDeclaringClass());
     try {
-      List<Before> beforeValues = befores.stream().map(x -> (Before)factory.getAssignedValue(x)).collect(toList());
-      List<Cleanup> afterValues = afters.stream().map(x -> (Cleanup)factory.getAssignedValue(x)).collect(toList());
-      It assertion = (It)factory.getAssignedValue(assertionField);
+      List<Before> beforeValues = befores.stream().map(x -> (Before)context.getAssignedValue(x)).collect(toList());
+      List<Cleanup> afterValues = afters.stream().map(x -> (Cleanup)context.getAssignedValue(x)).collect(toList());
+      It assertion = (It)context.getAssignedValue(assertionField);
       return new TestFunction(assertion, beforeValues, afterValues);
     } catch (Throwable t) {
       throw new TestSetupException(assertionField.getDeclaringClass(), t);
     }
   }
   
-  private static class ContextFactory {
+  private static final class TestContext {
     private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
     
-    public void initNewContext(Class<?> innerMostContext) {
-      makeInstance(innerMostContext);
-    }
-    
-    public Object getInstance(Class<?> anyPartOfContext) {
-      return instances.get(anyPartOfContext);
+    public void init(Class<?> innerMostContext) {
+      makeAndRememberInstance(innerMostContext);
     }
     
     public Object getAssignedValue(Field field) {
       Class<?> declaringClass = field.getDeclaringClass();
       try {
-        Object declaredContext = getInstance(declaringClass);
+        Object declaredContext = instances.get(declaringClass);
         field.setAccessible(true);
         return field.get(declaredContext);
       } catch (Throwable t) {
@@ -87,49 +83,74 @@ final class FieldExample implements Example {
       }
     }
     
+    private Object makeAndRememberInstance(Class<?> contextClass) {
+      Object context = makeInstance(contextClass);
+      instances.put(contextClass, context);
+      return context;
+    }
+    
     private Object makeInstance(Class<?> contextClass) {
       Class<?> enclosingClass = contextClass.getEnclosingClass();
       if(enclosingClass == null || Modifier.isStatic(contextClass.getModifiers())) {
-        return makeTopLevelInstance(contextClass);
+        return new OuterClassFactory().makeInstance(contextClass);
       } else {
-        return makeEnclosedInstance(contextClass, enclosingClass);
+        Object enclosingObject = makeAndRememberInstance(enclosingClass);
+        return new InnerClassFactory(enclosingClass, enclosingObject).makeInstance(contextClass);
       }
     }
+  }
+  
+  private static final class OuterClassFactory extends ClassFactory {
+    @Override
+    protected Constructor<?> getConstructor(Class<?> outerClass) throws NoSuchMethodException {
+      return outerClass.getDeclaredConstructor();
+    }
+
+    @Override
+    protected Object makeInstance(Constructor<?> constructor) throws ReflectiveOperationException {
+      return constructor.newInstance();
+    }
+  }
+
+  private static final class InnerClassFactory extends ClassFactory {
+    private final Class<?> enclosingClass;
+    private final Object enclosingObject;
     
-    private Object makeTopLevelInstance(Class<?> contextClass) {
-      Constructor<?> noArgConstructor;
+    public InnerClassFactory(Class<?> enclosingClass, Object enclosingObject) {
+      this.enclosingClass = enclosingClass;
+      this.enclosingObject = enclosingObject;
+    }
+    
+    @Override
+    protected Constructor<?> getConstructor(Class<?> innerClass) throws NoSuchMethodException {
+      return innerClass.getDeclaredConstructor(enclosingClass);
+    }
+    
+    @Override
+    protected Object makeInstance(Constructor<?> constructor) throws ReflectiveOperationException {
+      return constructor.newInstance(enclosingObject);
+    }
+  }
+  
+  private abstract static class ClassFactory {
+    public Object makeInstance(Class<?> aClass) {
+      Constructor<?> constructor;
       try {
-        noArgConstructor = contextClass.getConstructor();
+        constructor = getConstructor(aClass);
+        constructor.setAccessible(true);
       } catch (Exception e) {
-        throw new UnsupportedConstructorException(contextClass, e);
+        throw new UnsupportedConstructorException(aClass, e);
       }
       
       try {
-        Object context = noArgConstructor.newInstance();
-        instances.put(contextClass, context);
-        return context;
+        return makeInstance(constructor);
       } catch (Exception | AssertionError e) {
-        throw new TestSetupException(contextClass, e);
+        throw new TestSetupException(aClass, e);
       }
     }
     
-    private Object makeEnclosedInstance(Class<?> contextClass, Class<?> enclosingClass) {
-      Object enclosingObject = makeInstance(enclosingClass);
-      Constructor<?> constructor;
-      try {
-        constructor = contextClass.getConstructor(enclosingClass);
-      } catch (Exception e) {
-        throw new UnsupportedConstructorException(contextClass, e);
-      }
-
-      try {
-        Object context = constructor.newInstance(enclosingObject);
-        instances.put(contextClass, context);
-        return context;
-      } catch (Exception | AssertionError e) {
-        throw new TestSetupException(contextClass, e);
-      }
-    }
+    protected abstract Constructor<?> getConstructor(Class<?> aClass) throws NoSuchMethodException;
+    protected abstract Object makeInstance(Constructor<?> constructor) throws ReflectiveOperationException;
   }
   
   private static class TestFunction {

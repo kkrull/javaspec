@@ -8,7 +8,7 @@ import java.io.PrintStream;
  * See JavaSpecRunner for details on running tests.
  */
 public final class JavaSpec {
-  private static final String VERSION = "0.4.0";
+  private static final String VERSION = "0.4.1";
   
   private static final PrintStream DEFAULT_CONSOLE = System.out;
   private static PrintStream _console = DEFAULT_CONSOLE;
