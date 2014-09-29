@@ -153,3 +153,9 @@ and related classes.
 - Something similar to RSpec's `shared_examples` and `shared_context` could be useful.
 - Feel free to [add an issue in GitHub](https://github.com/kkrull/javaspec/issues) if if JavaSpec's current behavior is
   not clear or could be improved.
+
+# Release history
+
+- 0.4.0: Initial release
+- 0.4.1: Fixed [Issue 1](https://github.com/kkrull/javaspec/issues/1), dealing with being able to instantiate non-public
+  context classes.
