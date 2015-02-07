@@ -149,7 +149,7 @@ and related classes.
 
 # Future work
 
-- Ability to `@Ignore` a class or an `It`.
+- Ability to `@Ignore` a class or an `It`.  Better yet, `@Focus` on one, pesky test.
 - JavaSpec can use strings to allow a more natural language for describing behavior.
 - Something similar to RSpec's `shared_examples` and `shared_context` could be useful.
 - Feel free to [add an issue in GitHub](https://github.com/kkrull/javaspec/issues) if if JavaSpec's current behavior is
