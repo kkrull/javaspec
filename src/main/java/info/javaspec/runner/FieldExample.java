@@ -17,6 +17,7 @@ final class FieldExample implements Example {
   private final Field assertionField;
   private final List<Field> befores;
   private final List<Field> afters;
+  private TestFunction testFunction;
 
   public FieldExample(String contextName, Field it, List<Field> befores, List<Field> afters) {
     this.contextName = contextName;
@@ -29,7 +30,7 @@ final class FieldExample implements Example {
   public String getContextName() {
     return contextName;
   }
-  
+
   @Override
   public String getName() {
     return assertionField.getName();
@@ -37,13 +38,12 @@ final class FieldExample implements Example {
 
   @Override
   public boolean isSkipped() {
-    TestFunction f = readTestFunction();
-    return f.hasUnassignedFunctions();
+    return theTestFunction().hasUnassignedFunctions();
   }
 
   @Override
   public void run() throws Exception {
-    TestFunction f = readTestFunction();
+    TestFunction f = theTestFunction();
     try {
       for(Before before : f.befores) { before.run(); }
       f.assertion.run();
@@ -52,26 +52,30 @@ final class FieldExample implements Example {
     }
   }
 
-  private TestFunction readTestFunction() {
-    TestContext context = new TestContext();
-    context.init(assertionField.getDeclaringClass());
-    try {
-      List<Before> beforeValues = befores.stream().map(x -> (Before)context.getAssignedValue(x)).collect(toList());
-      List<Cleanup> afterValues = afters.stream().map(x -> (Cleanup)context.getAssignedValue(x)).collect(toList());
-      It assertion = (It)context.getAssignedValue(assertionField);
-      return new TestFunction(assertion, beforeValues, afterValues);
-    } catch (Throwable t) {
-      throw new TestSetupException(assertionField.getDeclaringClass(), t);
+  private TestFunction theTestFunction() {
+    if(testFunction == null) {
+      TestContext context = new TestContext();
+      context.init(assertionField.getDeclaringClass());
+      try {
+        List<Before> beforeValues = befores.stream().map(x -> (Before)context.getAssignedValue(x)).collect(toList());
+        List<Cleanup> afterValues = afters.stream().map(x -> (Cleanup)context.getAssignedValue(x)).collect(toList());
+        It assertion = (It)context.getAssignedValue(assertionField);
+        testFunction = new TestFunction(assertion, beforeValues, afterValues);
+      } catch (Throwable t) {
+        throw new TestSetupException(assertionField.getDeclaringClass(), t);
+      }
     }
+
+    return testFunction;
   }
-  
+
   private static final class TestContext {
     private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
-    
+
     public void init(Class<?> innerMostContext) {
       makeAndRememberInstance(innerMostContext);
     }
-    
+
     public Object getAssignedValue(Field field) {
       Class<?> declaringClass = field.getDeclaringClass();
       try {
@@ -82,13 +86,13 @@ final class FieldExample implements Example {
         throw new TestSetupException(declaringClass, t);
       }
     }
-    
+
     private Object makeAndRememberInstance(Class<?> contextClass) {
       Object context = makeInstance(contextClass);
       instances.put(contextClass, context);
       return context;
     }
-    
+
     private Object makeInstance(Class<?> contextClass) {
       Class<?> enclosingClass = contextClass.getEnclosingClass();
       if(enclosingClass == null || Modifier.isStatic(contextClass.getModifiers())) {
@@ -99,7 +103,7 @@ final class FieldExample implements Example {
       }
     }
   }
-  
+
   private static final class OuterClassFactory extends ClassFactory {
     @Override
     protected Constructor<?> getConstructor(Class<?> outerClass) throws NoSuchMethodException {
@@ -115,23 +119,23 @@ final class FieldExample implements Example {
   private static final class InnerClassFactory extends ClassFactory {
     private final Class<?> enclosingClass;
     private final Object enclosingObject;
-    
+
     public InnerClassFactory(Class<?> enclosingClass, Object enclosingObject) {
       this.enclosingClass = enclosingClass;
       this.enclosingObject = enclosingObject;
     }
-    
+
     @Override
     protected Constructor<?> getConstructor(Class<?> innerClass) throws NoSuchMethodException {
       return innerClass.getDeclaredConstructor(enclosingClass);
     }
-    
+
     @Override
     protected Object makeInstance(Constructor<?> constructor) throws ReflectiveOperationException {
       return constructor.newInstance(enclosingObject);
     }
   }
-  
+
   private abstract static class ClassFactory {
     public Object makeInstance(Class<?> aClass) {
       Constructor<?> constructor;
@@ -141,34 +145,34 @@ final class FieldExample implements Example {
       } catch (Exception e) {
         throw new UnsupportedConstructorException(aClass, e);
       }
-      
+
       try {
         return makeInstance(constructor);
       } catch (Exception | AssertionError e) {
         throw new TestSetupException(aClass, e);
       }
     }
-    
+
     protected abstract Constructor<?> getConstructor(Class<?> aClass) throws NoSuchMethodException;
     protected abstract Object makeInstance(Constructor<?> constructor) throws ReflectiveOperationException;
   }
-  
+
   private static class TestFunction {
     public final It assertion;
     public final List<Before> befores;
     public final List<Cleanup> afters;
-    
+
     public TestFunction(It assertion, List<Before> befores, List<Cleanup> afters) {
       this.assertion = assertion;
       this.befores = befores;
       this.afters = afters;
     }
-    
+
     public boolean hasUnassignedFunctions() {
       return assertion == null || befores.contains(null) || afters.contains(null);
     }
   }
-  
+
   public static final class TestSetupException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
@@ -176,7 +180,7 @@ final class FieldExample implements Example {
       super(String.format("Failed to create test context %s", context.getName()), cause);
     }
   }
-  
+
   public static final class UnsupportedConstructorException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 

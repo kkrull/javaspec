@@ -1,6 +1,7 @@
 package info.javaspec.runner;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
+import info.javaspec.dsl.It;
 import info.javaspec.runner.FieldExample.TestSetupException;
 import info.javaspec.runner.FieldExample.UnsupportedConstructorException;
 import info.javaspecproto.ContextClasses;
@@ -19,6 +20,7 @@ import static info.javaspec.testutil.Assertions.assertNoThrow;
 import static info.javaspec.testutil.Assertions.assertThrows;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -64,7 +66,7 @@ public class FieldExampleTest {
       private final Example subject = exampleWithIt(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid");
       
       @Test
-      public void ThrowsUnsupportedConstructorException() {
+      public void throwsUnsupportedConstructorException() {
         assertThrows(UnsupportedConstructorException.class,
           is(String.format("Unable to find a no-argument constructor for class %s",
             ContextClasses.ConstructorWithArguments.class.getName())),
@@ -215,8 +217,15 @@ public class FieldExampleTest {
         }
       }
     }
+
+    @Test //Issue 2: code run at instantiation may have undesired side effects if run a second time
+    public void runsWithTheSameInstanceThatWasUsedToCheckIfTheTestIsSkipped() throws Exception {
+      Example subject = exampleWithIt(ConstructorWithSideEffects.class, "expects_to_be_run_once");
+      subject.isSkipped();
+      subject.run();
+    }
   }
-  
+
   private static Example exampleWithFullFixture() {
     return exampleWith(ContextClasses.FullFixture.class, "asserts", 
       newArrayList("arranges", "acts"), newArrayList("cleans"));
@@ -255,5 +264,11 @@ public class FieldExampleTest {
   
   public static class HasWrongType {
     public Object inaccessibleAsIt = new Object();
+  }
+
+  public static final class ConstructorWithSideEffects {
+    private static int _numTimesInitialized = 0;
+    public ConstructorWithSideEffects() { _numTimesInitialized++; }
+    It expects_to_be_run_once = () -> assertThat(_numTimesInitialized, equalTo(1));
   }
 }

@@ -124,27 +124,27 @@ public final class JavaSpecRunnerSteps {
   
   @Then("^the test runner should run the test within the context of the test fixture$")
   public void the_test_runner_should_run_the_test_within_the_context_of_the_test_fixture() throws Throwable {
-    assertThat(describeEvents(), executedLambdas(), hasSize(6)); //The constructor runs twice
+    assertThat(describeEvents(), executedLambdas(), hasSize(5));
   }
 
   @Then("^the test runner should run the Establish lambda first.*$")
   public void the_test_runner_should_run_the_Establish_lambda_first() throws Throwable {
-    assertThat(describeEvents(), executedLambdas().get(2), equalTo("ContextClasses.FullFixture::arrange"));
+    assertThat(describeEvents(), executedLambdas().get(1), equalTo("ContextClasses.FullFixture::arrange"));
   }
 
   @Then("^the test runner should run the Because lambda second.*$")
   public void the_test_runner_should_run_the_Because_lambda_second() throws Throwable {
-    assertThat(describeEvents(), executedLambdas().get(3), equalTo("ContextClasses.FullFixture::act"));
+    assertThat(describeEvents(), executedLambdas().get(2), equalTo("ContextClasses.FullFixture::act"));
   }
 
   @Then("^the test runner should run the It lambda third.*$")
   public void the_test_runner_should_run_the_It_lambda_third() throws Throwable {
-    assertThat(describeEvents(), executedLambdas().get(4), equalTo("ContextClasses.FullFixture::assert"));
+    assertThat(describeEvents(), executedLambdas().get(3), equalTo("ContextClasses.FullFixture::assert"));
   }
 
   @Then("^the test runner should run the Cleanup lambda fourth.*$")
   public void the_test_runner_should_run_the_Cleanup_lambda_fourth() throws Throwable {
-    assertThat(describeEvents(), executedLambdas().get(5), equalTo("ContextClasses.FullFixture::cleans"));
+    assertThat(describeEvents(), executedLambdas().get(4), equalTo("ContextClasses.FullFixture::cleans"));
   }
 
   @Then("^the test runner should ignore the test$")
