@@ -43,7 +43,6 @@ public final class JavaSpecRunnerSteps {
   }
   
   /* Given */
-  
 
   @Given("^I have a class with JavaSpec tests in it$")
   public void i_have_a_class_with_JavaSpec_tests_in_it() throws Throwable {
