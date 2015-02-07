@@ -1,19 +1,17 @@
 package info.javaspec.runner;
 
-import static com.google.common.collect.Sets.newHashSet;
-import static info.javaspec.testutil.Assertions.assertListEquals;
-import static java.util.Collections.synchronizedList;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
-import info.javaspec.runner.Context;
-import info.javaspec.runner.Example;
-import info.javaspec.runner.ExampleGateway;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.runner.JavaSpecRunner.NoExamplesException;
 import info.javaspec.testutil.RunListenerSpy.Event;
 import info.javaspecproto.ContextClasses;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.Description;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -22,17 +20,15 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.Description;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
-import de.bechte.junit.runners.context.HierarchicalContextRunner;
+import static com.google.common.collect.Sets.newHashSet;
+import static info.javaspec.testutil.Assertions.assertListEquals;
+import static java.util.Collections.synchronizedList;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.*;
 
 @RunWith(HierarchicalContextRunner.class)
 public class JavaSpecRunnerTest {

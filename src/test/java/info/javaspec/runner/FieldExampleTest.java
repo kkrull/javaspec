@@ -1,5 +1,19 @@
 package info.javaspec.runner;
 
+import de.bechte.junit.runners.context.HierarchicalContextRunner;
+import info.javaspec.runner.FieldExample.TestSetupException;
+import info.javaspec.runner.FieldExample.UnsupportedConstructorException;
+import info.javaspecproto.ContextClasses;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedList;
+import java.util.List;
+
 import static com.google.common.collect.Lists.newArrayList;
 import static info.javaspec.testutil.Assertions.assertNoThrow;
 import static info.javaspec.testutil.Assertions.assertThrows;
@@ -7,23 +21,6 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import info.javaspec.runner.Example;
-import info.javaspec.runner.FieldExample;
-import info.javaspec.runner.FieldExample.TestSetupException;
-import info.javaspec.runner.FieldExample.UnsupportedConstructorException;
-import info.javaspecproto.ContextClasses;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 @RunWith(HierarchicalContextRunner.class)
 public class FieldExampleTest {

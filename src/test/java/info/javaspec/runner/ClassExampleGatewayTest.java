@@ -1,18 +1,16 @@
 package info.javaspec.runner;
 
-import static com.google.common.collect.Sets.newHashSet;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.verify;
-import info.javaspec.runner.ClassExampleGateway;
-import info.javaspec.runner.Context;
-import info.javaspec.runner.Example;
-import info.javaspec.runner.ExampleGateway;
+import com.google.common.collect.ImmutableSet;
+import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.runner.ClassExampleGateway.UnknownStepExecutionSequenceException;
 import info.javaspecproto.ContextClasses;
 import info.javaspecproto.ContextClasses.NestedWithStaticHelperClass;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.*;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -20,21 +18,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatcher;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-
-import com.google.common.collect.ImmutableSet;
-
-import de.bechte.junit.runners.context.HierarchicalContextRunner;
+import static com.google.common.collect.Sets.newHashSet;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.verify;
 
 @RunWith(HierarchicalContextRunner.class)
 public class ClassExampleGatewayTest {
