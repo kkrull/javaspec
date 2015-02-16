@@ -27,6 +27,7 @@ JavaSpec is located in the Maven Central Repository, under the following coordin
 <dependency>
   <groupId>info.javaspec</groupId>
   <artifactId>javaspec</artifactId>
+  <version>0.4.2</version>
 </dependency>
 ```
 
