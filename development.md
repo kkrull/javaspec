@@ -27,9 +27,15 @@
 
 - Merge release branch into master **`no-ff`**.
 - Tag master with new version number.
-- Merge release branch into develop.
+- Merge release branch into develop, with fast-forward.
 - Push tags and branches.
 - Delete release branch.
+
+```
+git checkout master && git merge --no-ff <release_branch>
+git tag <version_number>
+git checkout develop && git merge <release_branch>
+```
 
 ### Deployment
 
