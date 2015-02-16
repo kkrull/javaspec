@@ -6,10 +6,10 @@
     <artifactId>oss-parent</artifactId>
     <version>9</version>
   </parent>
-  
+
   <groupId>info.javaspec</groupId>
   <artifactId>javaspec</artifactId>
-  <version>0.4.1</version>
+  <version>0.4.2</version>
   <packaging>jar</packaging>
 
   <description>Spec-style testing for Java</description>
@@ -24,10 +24,21 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.1</version>
         </plugin>
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
           <version>2.5</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <systemPropertyVariables>
+              <cucumber.options>--no-monochrome</cucumber.options>
+            </systemPropertyVariables>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>

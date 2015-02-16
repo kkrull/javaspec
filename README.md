@@ -149,6 +149,7 @@ and related classes.
 
 # Future work
 
+- Ability to `@Ignore` a class or an `It`.  Better yet, `@Focus` on one, pesky test.
 - JavaSpec can use strings to allow a more natural language for describing behavior.
 - Something similar to RSpec's `shared_examples` and `shared_context` could be useful.
 - Feel free to [add an issue in GitHub](https://github.com/kkrull/javaspec/issues) if if JavaSpec's current behavior is
@@ -156,6 +157,8 @@ and related classes.
 
 # Release history
 
+- 0.4.2: Fixed [Issue 2](https://github.com/kkrull/javaspec/issues/2), so that only one instance of a context class is
+  created for each test.
 - 0.4.1: Fixed [Issue 1](https://github.com/kkrull/javaspec/issues/1), dealing with being able to instantiate non-public
   context classes.
 - 0.4.0: Initial release

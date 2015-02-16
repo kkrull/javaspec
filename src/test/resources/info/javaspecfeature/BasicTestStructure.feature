@@ -2,7 +2,7 @@ Feature: Basic structure of a JavaSpec test class
   As a developer who writes tests
   In order to write those tests quickly and maintain them more easily in the future
   I want an expressive syntax that describes the desired behavior of the production code in a concise way, without
-  sacrificing readabilty
+  sacrificing readability
   
   Scenario: Each It field is a test
     Given I have a JavaSpec test with 1 or more It fields that are assigned to no-argument lambdas
