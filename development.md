@@ -25,9 +25,11 @@
 
 ### Git
 
-- Merge release branch into master **`no-ff`**
-- Merge release branch into develop
-- Delete release branch
+- Merge release branch into master **`no-ff`**.
+- Tag master with new version number.
+- Merge release branch into develop.
+- Push tags and branches.
+- Delete release branch.
 
 ### Deployment
 
