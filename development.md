@@ -3,6 +3,7 @@
 - Bump the artifact version number in the POM.
 - Bump the expected, reportable version number in `CommandLineInterfaceSteps`.
 - When the test fails, bump the actual reportable version in `JavaSpec`.
+- Bump the version in the installation instructions in `readme.md`.
 
 ## Release start
 
