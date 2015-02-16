@@ -157,6 +157,8 @@ and related classes.
 
 # Release history
 
+- 0.4.2: Fixed [Issue 2](https://github.com/kkrull/javaspec/issues/2), so that only one instance of a context class is
+  created for each test.
 - 0.4.1: Fixed [Issue 1](https://github.com/kkrull/javaspec/issues/1), dealing with being able to instantiate non-public
   context classes.
 - 0.4.0: Initial release
