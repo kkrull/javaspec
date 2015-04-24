@@ -1,9 +1,6 @@
 package info.javaspec;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.Properties;
 
 /**
  * Command-line interface for JavaSpec.  <em>For diagnostic purposes only</em>.
@@ -59,15 +56,8 @@ public final class JavaSpec {
   }
   
   private static void printVersion() {
-    Properties properties = new Properties();
-    try {
-      InputStream propertiesStream = JavaSpec.class.getResourceAsStream("/javaspec.properties");
-      properties.load(propertiesStream);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-
-    _console.println(properties.getProperty("javaspec.version"));
+    String version = new AppConfigGateway().version();
+    _console.println(version);
     _system.exit(0);
   }
 }
