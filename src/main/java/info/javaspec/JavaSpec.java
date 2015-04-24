@@ -24,15 +24,14 @@ public final class JavaSpec {
     _console = console;
     _system = system;
   }
-  
-  @FunctionalInterface
-  public interface ExitHandler {
-    void exit(int code);
-  }
-  
+
   /* Command line interface */
   
   public static void main(String... args) {
+    new JavaSpec().run(args);
+  }
+
+  public void run(String... args) {
     if(isHelpCommand(args))
       printUsage(0);
     else if(isVersionCommand(args))
@@ -40,24 +39,30 @@ public final class JavaSpec {
     else
       printUsage(1);
   }
-  
-  private static boolean isHelpCommand(String... args) {
+
+  private boolean isHelpCommand(String... args) {
     return args.length == 0 || (args.length == 1 && "--help".equals(args[0]));
   }
-  
-  private static void printUsage(int exitCode) {
-    _console.println(String.format("Usage: java %s --version", JavaSpec.class.getName()));
+
+  private void printUsage(int exitCode) {
+    _console.println(String.format("Usage: java %s --version", getClass().getName()));
+    _console.println("--help: Show this help");
     _console.println("--version: Show the version");
     _system.exit(exitCode);
   }
-  
-  private static boolean isVersionCommand(String... args) {
+
+  private boolean isVersionCommand(String... args) {
     return args.length == 1 && "--version".equals(args[0]);
   }
-  
-  private static void printVersion() {
+
+  private void printVersion() {
     String version = new AppConfigGateway().version();
     _console.println(version);
     _system.exit(0);
+  }
+
+  @FunctionalInterface
+  public interface ExitHandler {
+    void exit(int code);
   }
 }

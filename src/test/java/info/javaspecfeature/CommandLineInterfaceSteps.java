@@ -50,6 +50,7 @@ public class CommandLineInterfaceSteps {
   @Then("^the command line interface should print a usage statement to the console that describes how it may be used$")
   public void the_command_line_interface_should_print_a_usage_statement_to_the_console() throws Exception {
     Mockito.verify(console).println("Usage: java info.javaspec.JavaSpec --version");
+    Mockito.verify(console).println("--help: Show this help");
     Mockito.verify(console).println("--version: Show the version");
     Mockito.verifyNoMoreInteractions(console);
   }
