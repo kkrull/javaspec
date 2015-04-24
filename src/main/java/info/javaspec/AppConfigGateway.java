@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+/** Loads configuration from a properties file, encoded in the given stream */
 final class AppConfigGateway {
   public String version() {
     Properties properties = new Properties();
