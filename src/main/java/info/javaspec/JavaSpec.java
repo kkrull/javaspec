@@ -1,6 +1,9 @@
 package info.javaspec;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.Properties;
 
 /**
  * Command-line interface for JavaSpec.  <em>For diagnostic purposes only</em>.
@@ -8,12 +11,10 @@ import java.io.PrintStream;
  * See JavaSpecRunner for details on running tests.
  */
 public final class JavaSpec {
-  private static final String VERSION = "0.4.2";
-  
   private static final PrintStream DEFAULT_CONSOLE = System.out;
   private static PrintStream _console = DEFAULT_CONSOLE;
   
-  private static final ExitHandler DEFAULT_SYSTEM = code -> System.exit(code);
+  private static final ExitHandler DEFAULT_SYSTEM = System::exit;
   private static ExitHandler _system = DEFAULT_SYSTEM;
   
   /* Environment */
@@ -58,7 +59,15 @@ public final class JavaSpec {
   }
   
   private static void printVersion() {
-    _console.println(VERSION);
+    Properties properties = new Properties();
+    try {
+      InputStream propertiesStream = JavaSpec.class.getResourceAsStream("/javaspec.properties");
+      properties.load(propertiesStream);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+    _console.println(properties.getProperty("javaspec.version"));
     _system.exit(0);
   }
 }
