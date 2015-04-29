@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
+import junit.framework.AssertionFailedError;
 import org.hamcrest.Matcher;
 
 public final class Assertions {
@@ -49,7 +50,20 @@ public final class Assertions {
 
     fail(String.format("Expected %s to be thrown, but no exception was thrown", expectedType));
   }
-  
+
+  public static <E extends Exception> E capture(Class<E> toCatch, Thunk thunk) {
+    try {
+      thunk.run();
+    } catch(Exception ex) {
+      if(ex.getClass() == toCatch)
+        return toCatch.cast(ex);
+      else
+        throw new AssertionFailedError(String.format("Unexpected type of exception: %s", ex));
+    }
+
+    throw new AssertionFailedError("Expected an exception to be thrown");
+  }
+
   @FunctionalInterface
   public interface Thunk {
     void run() throws Exception;
