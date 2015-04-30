@@ -1,40 +1,39 @@
 package info.javaspec;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.testutil.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static info.javaspec.testutil.Assertions.capture;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 @RunWith(HierarchicalContextRunner.class)
 public class AppConfigGatewayTest {
-  @Test
-  public void givenANonExistentResource_throwsInvalidPropertiesException() {
-    AppConfigGateway.InvalidPropertiesException ex = Assertions.capture(AppConfigGateway.InvalidPropertiesException.class,
-      () -> AppConfigGateway.fromPropertyResource(null));
-    assertThat(ex.getMessage(), equalTo("Invalid property stream: null"));
+  public class version {
+    @Test
+    public void givenANonExistentResource_throwsInvalidPropertiesException() {
+      shouldThrowInvalidPropertyException(null, "Invalid property stream: null");
+      shouldThrowInvalidPropertyException("does-not-exist.txt", "Invalid property stream: does-not-exist.txt");
+    }
+
+    @Test
+    public void givenAFileWithoutThatProperty_throwsMissingPropertyException() {
+      AppConfigGateway subject = AppConfigGateway.fromPropertyResource("/info/javaspec/not-properties.txt");
+      Exception ex = capture(AppConfigGateway.MissingPropertyException.class, subject::version);
+      assertThat(ex.getMessage(), equalTo("Missing property: javaspec.version"));
+    }
+
+    @Test
+    public void givenACompletePropertyFile_returnsTheVersion() {
+      AppConfigGateway subject = AppConfigGateway.fromPropertyResource("/info/javaspec/version.properties");
+      assertThat(subject.version(), equalTo("1.2.4.8"));
+    }
+
+    private void shouldThrowInvalidPropertyException(String resourcePath, String message) {
+      Exception ex = capture(AppConfigGateway.InvalidPropertiesException.class,
+        () -> AppConfigGateway.fromPropertyResource(resourcePath));
+      assertThat(ex.getMessage(), equalTo(message));
+    }
   }
-
-  @Test
-  public void givenANonPropertyResource_throwsInvalidPropertiesException() {
-    AppConfigGateway.InvalidPropertiesException ex = Assertions.capture(AppConfigGateway.InvalidPropertiesException.class,
-      () -> AppConfigGateway.fromPropertyResource("/info/javaspec/not-properties.txt"));
-    assertThat(ex.getMessage(), equalTo("Invalid property stream: /info/javaspec/not-properties.txt"));
-  }
-
-
-//  @Test
-//  public void givenAStreamWithoutProperties_throwsInvalidPropertyException() {
-//    AppConfigGateway.InvalidPropertiesException ex = Assertions.capture(AppConfigGateway.InvalidPropertiesException.class,
-//      () -> AppConfigGateway.fromPropertyStream(new BrokenInputStream()));
-//    assertThat(ex.getMessage(), containsString("BrokenInputStream"));
-//  }
-//
-//  @Test
-//  public void givenPropertiesLackingTheSpecifiedKey_returnsNull() {
-//    AppConfigGateway gateway = AppConfigGateway.fromProperties(new Properties());
-//    assertThat(gateway.version(), nullValue());
-//  }
 }
