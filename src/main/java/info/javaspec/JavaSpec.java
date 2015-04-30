@@ -26,7 +26,7 @@ public final class JavaSpec {
   public JavaSpec(PrintStream console, ExitHandler system) {
     this.console = console;
     this.system = system;
-    this.configGateway = new AppConfigGateway();
+    this.configGateway = AppConfigGateway.fromPropertyResource();
   }
 
   public void run(String... args) {

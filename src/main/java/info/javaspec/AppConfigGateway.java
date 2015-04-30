@@ -6,22 +6,25 @@ import java.util.Properties;
 
 /** Loads configuration from a properties file, encoded in the given stream */
 final class AppConfigGateway {
-  public static AppConfigGateway fromPropertyStream(InputStream input) {
-    Properties props = new Properties();
+  public static AppConfigGateway fromPropertyResource() {
+    return null;
+  }
+
+  public static AppConfigGateway fromPropertyResource(String resourcePath) {
+    if(resourcePath == null)
+      throw new InvalidPropertiesException(resourcePath);
+
+    InputStream propertiesStream = AppConfigGateway.class.getResourceAsStream(resourcePath);
+    Properties properties = new Properties();
     try {
-      props.load(input);
-    } catch(Exception e) {
-      throw new InvalidPropertiesException(input);
+      properties.load(propertiesStream);
+    } catch(IOException e) {
+      throw new RuntimeException("Failed to read properties", e);
     }
     return null;
   }
 
-  public static AppConfigGateway fromProperties(Properties properties) {
-    return new AppConfigGateway();
-  }
-
   private AppConfigGateway() {
-
   }
 
   public String version() {
@@ -37,8 +40,8 @@ final class AppConfigGateway {
   }
 
   public static class InvalidPropertiesException extends RuntimeException {
-    public InvalidPropertiesException(InputStream s) {
-      super(String.format("Invalid property stream: %s", s));
+    public InvalidPropertiesException(String path) {
+      super(String.format("Invalid property stream: %s", path));
     }
   }
 }
