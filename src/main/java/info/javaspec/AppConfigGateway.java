@@ -2,6 +2,7 @@ package info.javaspec;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.Properties;
 
 /** Loads configuration from a properties file, encoded in the given stream */
@@ -13,21 +14,10 @@ final class AppConfigGateway {
   }
 
   public static AppConfigGateway fromPropertyResource(String resourcePath) {
-    if(resourcePath == null)
-      throw new InvalidPropertiesException(resourcePath);
-
-    InputStream propertiesStream = AppConfigGateway.class.getResourceAsStream(resourcePath);
-    if(propertiesStream == null)
-      throw new InvalidPropertiesException(resourcePath);
-
-    Properties properties = new Properties();
-    try {
-      properties.load(propertiesStream);
-    } catch(IOException e) {
-      throw new RuntimeException("Failed to read properties", e);
-    }
-
-    return new AppConfigGateway(properties);
+    return Optional.ofNullable(AppConfigGateway.class.getResourceAsStream(resourcePath))
+      .map(AppConfigGateway::loadProperties)
+      .map(AppConfigGateway::new)
+      .orElseThrow(() -> new InvalidPropertiesException(resourcePath));
   }
 
   private AppConfigGateway(Properties config) {
@@ -35,15 +25,30 @@ final class AppConfigGateway {
   }
 
   public String version() {
-    String version = config.getProperty("javaspec.version");
-    if(version == null)
-      throw new MissingPropertyException("javaspec.version");
-    return version;
+    return Optional.ofNullable(config.getProperty("javaspec.version"))
+      .orElseThrow(() -> new MissingPropertyException("javaspec.version"));
+  }
+
+  private static Properties loadProperties(InputStream stream) {
+    Properties properties = new Properties();
+    try {
+      properties.load(stream);
+    } catch(IOException e) {
+      throw new PropertyLoadException(e);
+    }
+
+    return properties;
   }
 
   public static final class InvalidPropertiesException extends RuntimeException {
     public InvalidPropertiesException(String path) {
       super(String.format("Invalid property stream: %s", path));
+    }
+  }
+
+  public static final class PropertyLoadException extends RuntimeException {
+    public PropertyLoadException(Exception cause) {
+      super("Failed to read properties", cause);
     }
   }
 

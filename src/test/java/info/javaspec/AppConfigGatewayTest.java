@@ -13,8 +13,9 @@ public class AppConfigGatewayTest {
   public class version {
     @Test
     public void givenANonExistentResource_throwsInvalidPropertiesException() {
-      shouldThrowInvalidPropertyException(null, "Invalid property stream: null");
-      shouldThrowInvalidPropertyException("does-not-exist.txt", "Invalid property stream: does-not-exist.txt");
+      Exception ex = capture(AppConfigGateway.InvalidPropertiesException.class,
+        () -> AppConfigGateway.fromPropertyResource("does-not-exist.txt"));
+      assertThat(ex.getMessage(), equalTo("Invalid property stream: does-not-exist.txt"));
     }
 
     @Test
@@ -28,12 +29,6 @@ public class AppConfigGatewayTest {
     public void givenACompletePropertyFile_returnsTheVersion() {
       AppConfigGateway subject = AppConfigGateway.fromPropertyResource("/info/javaspec/version.properties");
       assertThat(subject.version(), equalTo("1.2.4.8"));
-    }
-
-    private void shouldThrowInvalidPropertyException(String resourcePath, String message) {
-      Exception ex = capture(AppConfigGateway.InvalidPropertiesException.class,
-        () -> AppConfigGateway.fromPropertyResource(resourcePath));
-      assertThat(ex.getMessage(), equalTo(message));
     }
   }
 }
