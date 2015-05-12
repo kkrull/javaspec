@@ -21,5 +21,5 @@ package info.javaspec.dsl;
  */
 @FunctionalInterface
 public interface Cleanup {
-  public void run() throws Exception;
+  void run() throws Exception;
 }
