@@ -119,6 +119,11 @@ public final class JavaSpecRunner extends ParentRunner<Example> {
   
   public static class NoExamplesException extends RuntimeException {
     private static final long serialVersionUID = 1L;
+
+    public NoExamplesException(Class<?> context) {
+      super(String.format("Context class %s must contain at least 1 example in an It field", context.getName()));
+    }
+
     public NoExamplesException(String contextName) {
       super(String.format("Test context '%s' must contain at least 1 example in an It field", contextName));
     }
