@@ -6,12 +6,14 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import info.javaspec.runner.Runners;
+import info.javaspec.runner.ng.NewJavaSpecRunner;
 import info.javaspec.testutil.RunListenerSpy.Event;
 import info.javaspecproto.ContextClasses;
 import info.javaspecproto.OuterContext;
 import info.javaspecproto.OuterContextWithSetup;
 import info.javaspecproto.RunWithJavaSpecRunner;
 import org.junit.runner.JUnitCore;
+import org.junit.runner.Runner;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -67,6 +69,7 @@ public final class JavaSpecRunnerSteps {
   public void i_have_a_JavaSpec_test_with_a_blank_It_field() throws Exception {
     this.testClass = ContextClasses.PendingIt.class;
   }
+
   //TODO KDK: Start moving acceptance tests, one at a time, over to a new runner
   @Given("^I have a top-level class marked to run with a JavaSpec runner$")
   public void i_have_a_top_level_class_marked_to_run_with_a_JavaSpec_runner() { /* Followed by a more specific step */ }
@@ -90,12 +93,14 @@ public final class JavaSpecRunnerSteps {
   
   @When("^I run the tests?$")
   public void i_run_the_test() throws Exception {
-    Runners.runAll(Runners.of(testClass), events::add);
+    Runner runner = new NewJavaSpecRunner(testClass);
+    Runners.runAll(runner, events::add);
   }
   
   @When("^I run the tests with a JavaSpec runner$")
   public void i_run_the_tests_with_a_JavaSpec_runner() throws Exception {
-    Runners.runAll(Runners.of(testClass), events::add);
+    Runner runner = new NewJavaSpecRunner(testClass);
+    Runners.runAll(runner, events::add);
   }
 
   @When("^I run the tests with a JUnit runner$")

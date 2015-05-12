@@ -1,3 +1,4 @@
+@wip
 Feature: Basic structure of a JavaSpec test class
   As a developer who writes tests
   In order to write those tests quickly and maintain them more easily in the future

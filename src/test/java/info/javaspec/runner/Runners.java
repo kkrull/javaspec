@@ -63,8 +63,8 @@ public final class Runners {
   }
   
   private static Stream<Throwable> flattenCauses(InitializationError root) {
-    List<Throwable> causes = new LinkedList<Throwable>();
-    Stack<InitializationError> nodesWithChildren = new Stack<InitializationError>();
+    List<Throwable> causes = new LinkedList<>();
+    Stack<InitializationError> nodesWithChildren = new Stack<>();
     nodesWithChildren.push(root);
     while (!nodesWithChildren.isEmpty()) {
       InitializationError parent = nodesWithChildren.pop();
