@@ -20,7 +20,6 @@ import static info.javaspec.testutil.Assertions.assertNoThrow;
 import static info.javaspec.testutil.Assertions.assertThrows;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 

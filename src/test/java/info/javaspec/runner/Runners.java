@@ -1,11 +1,10 @@
 package info.javaspec.runner;
 
-import static java.util.stream.Collectors.joining;
-import static org.junit.Assert.fail;
-import info.javaspec.runner.ExampleGateway;
-import info.javaspec.runner.JavaSpecRunner;
 import info.javaspec.testutil.RunListenerSpy;
 import info.javaspec.testutil.RunListenerSpy.Event;
+import org.junit.runner.Runner;
+import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.InitializationError;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -13,9 +12,8 @@ import java.util.Stack;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import org.junit.runner.Runner;
-import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.model.InitializationError;
+import static java.util.stream.Collectors.joining;
+import static org.junit.Assert.fail;
 
 public final class Runners {
   public static Stream<Throwable> initializationErrorCauses(ExampleGateway gateway) {

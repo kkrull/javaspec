@@ -1,14 +1,14 @@
 package info.javaspec.runner;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.List;
-
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
+
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Runs tests written with JavaSpec lambdas under JUnit.

@@ -1,8 +1,5 @@
 package info.javaspecproto;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import info.javaspec.dsl.Because;
 import info.javaspec.dsl.Cleanup;
 import info.javaspec.dsl.Establish;
@@ -11,6 +8,10 @@ import info.javaspec.dsl.It;
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
 import java.util.List;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 /** Inner classes are declared static to avoid the gaze of HierarchicalContextRunner when testing JavaSpec. */
 public class ContextClasses {

@@ -5,8 +5,6 @@ import org.hamcrest.Matcher;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Optional;
 

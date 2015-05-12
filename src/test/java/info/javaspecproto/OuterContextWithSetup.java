@@ -1,13 +1,14 @@
 package info.javaspecproto;
 
-import static org.hamcrest.Matchers.contains;
-import static org.junit.Assert.assertThat;
 import info.javaspec.dsl.Because;
 import info.javaspec.dsl.Establish;
 import info.javaspec.dsl.It;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import static org.hamcrest.Matchers.contains;
+import static org.junit.Assert.assertThat;
 
 public class OuterContextWithSetup {
   private List<String> context = new LinkedList<String>();

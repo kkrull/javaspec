@@ -1,6 +1,5 @@
 package info.javaspec.runner;
 
-import static java.util.stream.Collectors.toList;
 import info.javaspec.dsl.Before;
 import info.javaspec.dsl.Cleanup;
 import info.javaspec.dsl.It;
@@ -11,6 +10,8 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
 
 final class FieldExample implements Example {
   private final String contextName;

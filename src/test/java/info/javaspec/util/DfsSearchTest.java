@@ -1,24 +1,17 @@
 package info.javaspec.util;
 
+import com.google.common.primitives.Booleans;
+import de.bechte.junit.runners.context.HierarchicalContextRunner;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.util.*;
+import java.util.stream.Stream;
+
 import static info.javaspec.testutil.Assertions.assertListEquals;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import info.javaspec.util.DfsSearch;
-
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Stream;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import com.google.common.primitives.Booleans;
-
-import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 @RunWith(HierarchicalContextRunner.class)
 public class DfsSearchTest {

@@ -1,7 +1,5 @@
 package info.javaspec.runner;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 import info.javaspec.dsl.Because;
 import info.javaspec.dsl.Cleanup;
 import info.javaspec.dsl.Establish;
@@ -16,6 +14,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 final class ClassExampleGateway implements ExampleGateway {
   private final Class<?> contextClass;

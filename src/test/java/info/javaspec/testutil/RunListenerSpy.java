@@ -1,11 +1,11 @@
 package info.javaspec.testutil;
 
-import java.util.function.Consumer;
-
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
+
+import java.util.function.Consumer;
 
 public final class RunListenerSpy extends RunListener {
   private final Consumer<Event> notifyEvent;

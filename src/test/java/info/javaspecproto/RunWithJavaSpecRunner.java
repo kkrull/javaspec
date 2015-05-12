@@ -2,7 +2,6 @@ package info.javaspecproto;
 
 import info.javaspec.dsl.It;
 import info.javaspec.runner.JavaSpecRunner;
-
 import org.junit.runner.RunWith;
 
 @RunWith(JavaSpecRunner.class)

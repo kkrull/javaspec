@@ -1,9 +1,9 @@
 package info.javaspec.util;
 
-import static org.junit.Assert.*;
-import static org.junit.Assume.*;
-import info.javaspec.util.ReflectionUtil;
+import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspecproto.EmptyClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -11,10 +11,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import de.bechte.junit.runners.context.HierarchicalContextRunner;
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
 
 @RunWith(HierarchicalContextRunner.class)
 public class ReflectionUtilTest {
