@@ -1,6 +1,5 @@
 package info.javaspec.runner.ng;
 
-import info.javaspec.runner.JavaSpecRunner;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -38,7 +37,7 @@ import org.junit.runner.notification.RunNotifier;
  */
 public class NewJavaSpecRunner extends Runner {
   public NewJavaSpecRunner(Class<?> contextClass) {
-    throw new JavaSpecRunner.NoExamplesException(contextClass);
+    throw new NoExamplesException(contextClass);
   }
 
   @Override
@@ -49,5 +48,13 @@ public class NewJavaSpecRunner extends Runner {
   @Override
   public void run(RunNotifier notifier) {
     throw new UnsupportedOperationException();
+  }
+
+  public static class NoExamplesException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
+
+    public NoExamplesException(Class<?> context) {
+      super(String.format("Context class %s must contain at least 1 example in an It field", context.getName()));
+    }
   }
 }
