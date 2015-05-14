@@ -51,7 +51,20 @@ public class NewJavaSpecRunner extends Runner {
 
   @Override
   public Description getDescription() {
-    throw new UnsupportedOperationException("WORK HERE");
+    if(gateway.numExamples() == 1) {
+      //TODO KDK: Abstract the notion of the context name?
+      String exampleName = gateway.exampleNames().get(0);
+      return Description.createTestDescription(gateway.getContextClass(), exampleName);
+    }
+
+    //TODO KDK: Build a tree of suite/test descriptions
+    final Description suiteDescription = Description.createSuiteDescription(gateway.getContextClass());
+    gateway.exampleNames().stream().forEach(x -> {
+      Description test = Description.createTestDescription(gateway.getContextClass(), x);
+      suiteDescription.addChild(test);
+    });
+
+    return suiteDescription;
   }
 
   @Override
