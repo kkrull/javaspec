@@ -45,7 +45,7 @@ public class NewJavaSpecRunnerTest {
   public class getDescription {
     private Description description;
 
-    public class givenAClassWith1Example {
+    public class givenALeafContextClassWith1Example {
       @Before
       public void setup() {
         givenGatewayWithExamples(ContextClasses.OneIt.class, "only_test");
@@ -66,7 +66,7 @@ public class NewJavaSpecRunnerTest {
       }
     }
 
-    public class givenAClassWith2OrMoreExamples {
+    public class givenAContextClassWith2OrMoreExamples {
       @Before
       public void setup() {
         givenGatewayWithExamples(ContextClasses.TwoIt.class, "first_test", "second_test");
@@ -90,6 +90,34 @@ public class NewJavaSpecRunnerTest {
           contains("first_test", "second_test"));
       }
     }
+
+    public class givenANonLeafContextClass {
+      @Before
+      public void setup() {
+        givenGatewayWithNestedContext("asserts",
+          ContextClasses.NestedContext.class,
+          ContextClasses.NestedContext.inner.class
+        );
+        subject = new NewJavaSpecRunner(gateway);
+        description = subject.getDescription();
+      }
+
+      @Test
+      public void returnsASuiteDescriptionHierarchyMatchingTheContextClassHierarchy() throws Exception {
+        fail("WORK HERE");
+      }
+
+      @Test @Ignore
+      public void returnsTestDescriptionsWhereTestsAreDeclared() throws Exception {
+      }
+    }
+  }
+
+  private void givenGatewayWithNestedContext(String it, Class<?> outer, Class<?> inner) {
+//    Mockito.<Class<?>>when(gateway.getContextClass()).thenReturn(context);
+    when(gateway.hasExamples()).thenReturn(true);
+    when(gateway.numExamples()).thenReturn(1);
+//    when(gateway.exampleNames()).thenReturn(Arrays.asList(its));
   }
 
   public class testCount {

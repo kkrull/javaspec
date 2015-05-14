@@ -126,7 +126,13 @@ public class ContextClasses {
       It asserts = () -> assertEquals(42, 42);
     }
   }
-  
+
+  public static class NestedContext {
+    public class inner {
+      It asserts = () -> assertEquals(1, 1);
+    }
+  }
+
   public static class NestedFixture {
     Establish above_target_context = () -> assertEquals(1, 1);
     
