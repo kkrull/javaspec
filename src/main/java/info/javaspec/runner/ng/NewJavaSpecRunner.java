@@ -6,13 +6,13 @@ import org.junit.runner.notification.RunNotifier;
 
 /**
  * Runs tests written with JavaSpec lambdas under JUnit.
- *
+ * <p/>
  * For example, the class below results in two tests.
  * <ul>
- *   <li><code>returns_bar</code>: Creates the widget, calls foo(), and verifies that it returned "bar".</li>
- *   <li><code>prints_baz</code>: Creates the widget, calls foo(), and verifies that it wrote "baz" to the console.</li>
+ * <li><code>returns_bar</code>: Creates the widget, calls foo(), and verifies that it returned "bar".</li>
+ * <li><code>prints_baz</code>: Creates the widget, calls foo(), and verifies that it wrote "baz" to the console.</li>
  * </ul>
- *
+ * <p/>
  * <pre>
  * {@code
  * {@literal @RunWith(JavaSpecRunner.class)}
@@ -31,23 +31,37 @@ import org.junit.runner.notification.RunNotifier;
  * }
  * }
  * </pre>
- *
+ * <p/>
  * Classes WidgetFooTest and its inner class foo are both <em>context classes</em>.  See ClassExampleGateway for
  * details.
  */
 public class NewJavaSpecRunner extends Runner {
+  private final NewExampleGateway gateway;
+
   public NewJavaSpecRunner(Class<?> contextClass) {
-    throw new NoExamplesException(contextClass);
+    throw new UnsupportedOperationException("TODO KDK: Make a real ClassExampleGateway");
+  }
+
+  public NewJavaSpecRunner(NewExampleGateway gateway) {
+    this.gateway = gateway;
+
+    if(!gateway.hasExamples())
+      throw new NoExamplesException(gateway.getContextClass());
   }
 
   @Override
   public Description getDescription() {
-    throw new UnsupportedOperationException();
+    throw new UnsupportedOperationException("WORK HERE");
   }
 
   @Override
   public void run(RunNotifier notifier) {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public int testCount() {
+    return gateway.numExamples();
   }
 
   public static class NoExamplesException extends RuntimeException {
