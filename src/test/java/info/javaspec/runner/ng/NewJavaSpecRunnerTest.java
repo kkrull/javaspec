@@ -104,12 +104,20 @@ public class NewJavaSpecRunnerTest {
 
       @Test
       public void returnsASuiteDescriptionHierarchyMatchingTheContextClassHierarchy() throws Exception {
-        assertThat(description.isSuite(), is(true));
-        assertThat(description.isTest(), is(false));
+        assertThat("top description", description.getClassName(), matchesRegex("^.*ContextClasses[$]NestedContext$"));
+        assertThat("top description", description.getChildren(), hasSize(1));
+        assertThat("top description", description.isSuite(), is(true));
+        assertThat("top description", description.isTest(), is(false));
       }
 
-      @Test @Ignore
+      @Test
       public void returnsTestDescriptionsWhereTestsAreDeclared() throws Exception {
+        Description test = description.getChildren().get(0);
+        assertThat("test", test.getClassName(), matchesRegex("^.*ContextClasses[$]NestedContext[$]inner$"));
+        assertThat("test", test.getMethodName(), equalTo("asserts"));
+        assertThat("test", test.getChildren(), hasSize(0));
+        assertThat("test", test.isSuite(), is(false));
+        assertThat("test", test.isTest(), is(true));
       }
     }
   }
@@ -125,36 +133,33 @@ public class NewJavaSpecRunnerTest {
     }
   }
 
-  private void givenGatewayWithFlatContext(Class<?> context, String... exampleNames) {
-    Mockito.<Class<?>>when(gateway.rootContextClass()).thenReturn(context);
-    when(gateway.hasExamples()).thenReturn(true);
-    when(gateway.totalExamples()).thenReturn(exampleNames.length);
-
-    when(gateway.rootContextExampleNames()).thenReturn(Arrays.asList(exampleNames));
-    when(gateway.subContextClasses(context)).thenReturn(new ArrayList<>(0));
-    when(gateway.subContextExampleNames(context)).thenReturn(new ArrayList<>(0));
-  }
-
   private void givenGatewayWithNoExamples(Class<?> context) {
-    Mockito.<Class<?>>when(gateway.rootContextClass()).thenReturn(context);
     when(gateway.hasExamples()).thenReturn(false);
     when(gateway.totalExamples()).thenReturn(0);
 
-    when(gateway.rootContextExampleNames()).thenReturn(new ArrayList<>(0));
-    when(gateway.subContextClasses(context)).thenReturn(new ArrayList<>(0));
-    when(gateway.subContextExampleNames(context)).thenReturn(new ArrayList<>(0));
+    Mockito.<Class<?>>when(gateway.rootContextClass()).thenReturn(context);
+    when(gateway.exampleNames(context)).thenReturn(Lists.newArrayList());
+    when(gateway.subContextClasses(context)).thenReturn(Lists.newArrayList());
+  }
+
+  private void givenGatewayWithFlatContext(Class<?> context, String... exampleNames) {
+    when(gateway.hasExamples()).thenReturn(true);
+    when(gateway.totalExamples()).thenReturn(exampleNames.length);
+
+    Mockito.<Class<?>>when(gateway.rootContextClass()).thenReturn(context);
+    when(gateway.exampleNames(context)).thenReturn(Lists.newArrayList(exampleNames));
+    when(gateway.subContextClasses(context)).thenReturn(Lists.newArrayList());
   }
 
   private void givenGatewayWithNestedContext(Class<?> outer, Class<?> inner, String exampleName) {
-    Mockito.<Class<?>>when(gateway.rootContextClass()).thenReturn(outer);
     when(gateway.hasExamples()).thenReturn(true);
     when(gateway.totalExamples()).thenReturn(1);
 
-    when(gateway.rootContextExampleNames()).thenReturn(new ArrayList<>(0));
+    Mockito.<Class<?>>when(gateway.rootContextClass()).thenReturn(outer);
+    when(gateway.exampleNames(outer)).thenReturn(Lists.newArrayList());
     when(gateway.subContextClasses(outer)).thenReturn(Lists.newArrayList(inner));
-    when(gateway.subContextExampleNames(outer)).thenReturn(new ArrayList<>(0));
 
+    when(gateway.exampleNames(inner)).thenReturn(Lists.newArrayList(exampleName));
     when(gateway.subContextClasses(inner)).thenReturn(Lists.newArrayList());
-    when(gateway.subContextExampleNames(inner)).thenReturn(Lists.newArrayList(exampleName));
   }
 }

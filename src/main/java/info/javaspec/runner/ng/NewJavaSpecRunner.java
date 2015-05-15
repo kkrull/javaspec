@@ -4,6 +4,8 @@ import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 
+import java.util.List;
+
 /**
  * Runs tests written with JavaSpec lambdas under JUnit.
  * <p/>
@@ -51,19 +53,25 @@ public class NewJavaSpecRunner extends Runner {
 
   @Override
   public Description getDescription() {
-    if(gateway.totalExamples() == 1 && gateway.subContextClasses(gateway.rootContextClass()).isEmpty()) { //isSingletonTest
-      String exampleName = gateway.rootContextExampleNames().get(0);
-      return Description.createTestDescription(gateway.rootContextClass(), exampleName);
-    }
+    return getDescription(gateway.rootContextClass());
+  }
 
-    //TODO KDK: Build a tree of suite/test descriptions
-    final Description suiteDescription = Description.createSuiteDescription(gateway.rootContextClass());
-    gateway.rootContextExampleNames().stream().forEach(x -> {
-      Description test = Description.createTestDescription(gateway.rootContextClass(), x);
-      suiteDescription.addChild(test);
+  private Description getDescription(Class<?> contextClass) {
+    List<String> examples = gateway.exampleNames(contextClass);
+    List<Class<?>> subContextClasses = gateway.subContextClasses(contextClass);
+
+    //Convert singleton tests to a test description, instead of a suite with 1 child test
+    if(examples.size() == 1 && subContextClasses.isEmpty()) //isSingletonTest
+      return Description.createTestDescription(contextClass, examples.get(0));
+
+    final Description suite = Description.createSuiteDescription(contextClass);
+    examples.forEach(x -> {
+      Description test = Description.createTestDescription(contextClass, x);
+      suite.addChild(test);
     });
 
-    return suiteDescription;
+    subContextClasses.forEach(subContextClass -> suite.addChild(getDescription(subContextClass)));
+    return suite;
   }
 
   @Override
