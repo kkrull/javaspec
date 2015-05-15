@@ -46,21 +46,20 @@ public class NewJavaSpecRunner extends Runner {
     this.gateway = gateway;
 
     if(!gateway.hasExamples())
-      throw new NoExamplesException(gateway.getContextClass());
+      throw new NoExamplesException(gateway.rootContextClass());
   }
 
   @Override
   public Description getDescription() {
-    if(gateway.numExamples() == 1) {
-      //TODO KDK: Abstract the notion of the context name?
-      String exampleName = gateway.exampleNames().get(0);
-      return Description.createTestDescription(gateway.getContextClass(), exampleName);
+    if(gateway.totalExamples() == 1 && gateway.subContextClasses(gateway.rootContextClass()).isEmpty()) { //isSingletonTest
+      String exampleName = gateway.rootContextExampleNames().get(0);
+      return Description.createTestDescription(gateway.rootContextClass(), exampleName);
     }
 
     //TODO KDK: Build a tree of suite/test descriptions
-    final Description suiteDescription = Description.createSuiteDescription(gateway.getContextClass());
-    gateway.exampleNames().stream().forEach(x -> {
-      Description test = Description.createTestDescription(gateway.getContextClass(), x);
+    final Description suiteDescription = Description.createSuiteDescription(gateway.rootContextClass());
+    gateway.rootContextExampleNames().stream().forEach(x -> {
+      Description test = Description.createTestDescription(gateway.rootContextClass(), x);
       suiteDescription.addChild(test);
     });
 
@@ -74,7 +73,7 @@ public class NewJavaSpecRunner extends Runner {
 
   @Override
   public int testCount() {
-    return gateway.numExamples();
+    return gateway.totalExamples();
   }
 
   public static class NoExamplesException extends RuntimeException {

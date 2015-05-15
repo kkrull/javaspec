@@ -2,9 +2,14 @@ package info.javaspec.runner.ng;
 
 import java.util.List;
 
+//TODO KDK: Abstract the notion of the context name?
 interface NewExampleGateway {
-  Class<?> getContextClass();
-  List<String> exampleNames();
   boolean hasExamples();
-  int numExamples();
+  int totalExamples();
+
+  Class<?> rootContextClass();
+  List<String> rootContextExampleNames();
+
+  List<Class<?>> subContextClasses(Class<?> context);
+  List<String> subContextExampleNames(Class<?> context);
 }
