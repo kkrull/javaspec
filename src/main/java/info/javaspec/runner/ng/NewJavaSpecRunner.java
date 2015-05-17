@@ -37,7 +37,7 @@ import java.util.List;
  * Classes WidgetFooTest and its inner class foo are both <em>context classes</em>.  See ClassExampleGateway for
  * details.
  */
-public class NewJavaSpecRunner extends Runner {
+public final class NewJavaSpecRunner extends Runner {
   private final NewExampleGateway gateway;
 
   public NewJavaSpecRunner(Class<?> contextClass) {
@@ -53,25 +53,7 @@ public class NewJavaSpecRunner extends Runner {
 
   @Override
   public Description getDescription() {
-    return getDescription(gateway.rootContextClass());
-  }
-
-  private Description getDescription(Class<?> contextClass) {
-    List<String> examples = gateway.exampleNames(contextClass);
-    List<Class<?>> subContextClasses = gateway.subContextClasses(contextClass);
-
-    //Convert singleton tests to a test description, instead of a suite with 1 child test
-    if(examples.size() == 1 && subContextClasses.isEmpty()) //isSingletonTest
-      return Description.createTestDescription(contextClass, examples.get(0));
-
-    final Description suite = Description.createSuiteDescription(contextClass);
-    examples.forEach(x -> {
-      Description test = Description.createTestDescription(contextClass, x);
-      suite.addChild(test);
-    });
-
-    subContextClasses.forEach(subContextClass -> suite.addChild(getDescription(subContextClass)));
-    return suite;
+    return new DescriptionFactory(gateway.rootContextClass()).makeDescriptionTree();
   }
 
   @Override
@@ -89,6 +71,37 @@ public class NewJavaSpecRunner extends Runner {
 
     public NoExamplesException(Class<?> context) {
       super(String.format("Context class %s must contain at least 1 example in an It field", context.getName()));
+    }
+  }
+
+  private class DescriptionFactory {
+    private final Class<?> contextClass;
+    private final List<String> examples;
+    private final List<Class<?>> subContextClasses;
+
+    public DescriptionFactory(Class<?> contextClass) {
+      this.contextClass = contextClass;
+      this.examples = gateway.exampleNames(contextClass);
+      this.subContextClasses = gateway.subContextClasses(contextClass);
+    }
+
+    public Description makeDescriptionTree() {
+      if(isSingletonTest())
+        return makeTestDescription(examples.get(0));
+
+      final Description suite = Description.createSuiteDescription(contextClass);
+      examples.stream().map(this::makeTestDescription).forEach(suite::addChild);
+      subContextClasses.stream().map(x -> new DescriptionFactory(x).makeDescriptionTree()).forEach(suite::addChild);
+      return suite;
+    }
+
+    private boolean isSingletonTest() {
+      boolean isLeafContext = subContextClasses.isEmpty();
+      return isLeafContext && examples.size() == 1;
+    }
+
+    private Description makeTestDescription(String exampleName) {
+      return Description.createTestDescription(contextClass, exampleName);
     }
   }
 }

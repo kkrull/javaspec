@@ -5,23 +5,17 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.runner.ng.NewJavaSpecRunner.NoExamplesException;
 import info.javaspecproto.ContextClasses;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.mockito.Mockito;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import static info.javaspec.testutil.Assertions.capture;
 import static info.javaspec.testutil.Matchers.matchesRegex;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -55,14 +49,7 @@ public class NewJavaSpecRunnerTest {
 
       @Test
       public void returnsATestDescriptionForTheGivenClass() throws Exception {
-        assertThat(description.isSuite(), equalTo(false));
-        assertThat(description.isTest(), equalTo(true));
-        assertThat(description.getClassName(), matchesRegex("^.*ContextClasses[$]OneIt$"));
-      }
-
-      @Test
-      public void namesTheTestWithTheNameOfTheExample() throws Exception {
-        assertThat(description.getMethodName(), equalTo("only_test"));
+        assertTestDescription(description, "^.*ContextClasses[$]OneIt$", "only_test");
       }
     }
 
@@ -76,14 +63,11 @@ public class NewJavaSpecRunnerTest {
 
       @Test
       public void returnsASuiteDescriptionForTheGivenClass() {
-        assertThat(description.isSuite(), equalTo(true));
-        assertThat(description.isTest(), equalTo(false));
-        assertThat(description.getClassName(), matchesRegex("^.*ContextClasses[$]TwoIt$"));
+        assertSuiteDescription(description, "^.*ContextClasses[$]TwoIt$");
       }
 
       @Test
       public void containsChildTestDescriptionsForEachExampleInTheGivenClass() {
-        assertThat(description.getChildren(), hasSize(2));
         assertThat(description.getChildren().stream().map(Description::getClassName).collect(toList()),
           contains(matchesRegex("^.*ContextClasses[$]TwoIt$"), matchesRegex("^.*ContextClasses[$]TwoIt$")));
         assertThat(description.getChildren().stream().map(Description::getMethodName).collect(toList()),
@@ -104,21 +88,29 @@ public class NewJavaSpecRunnerTest {
 
       @Test
       public void returnsASuiteDescriptionHierarchyMatchingTheContextClassHierarchy() throws Exception {
-        assertThat("top description", description.getClassName(), matchesRegex("^.*ContextClasses[$]NestedContext$"));
-        assertThat("top description", description.getChildren(), hasSize(1));
-        assertThat("top description", description.isSuite(), is(true));
-        assertThat("top description", description.isTest(), is(false));
+        assertSuiteDescription(description, "^.*ContextClasses[$]NestedContext$");
+        assertThat(description.getChildren(), hasSize(1));
       }
 
       @Test
       public void returnsTestDescriptionsWhereTestsAreDeclared() throws Exception {
         Description test = description.getChildren().get(0);
-        assertThat("test", test.getClassName(), matchesRegex("^.*ContextClasses[$]NestedContext[$]inner$"));
-        assertThat("test", test.getMethodName(), equalTo("asserts"));
-        assertThat("test", test.getChildren(), hasSize(0));
-        assertThat("test", test.isSuite(), is(false));
-        assertThat("test", test.isTest(), is(true));
+        assertTestDescription(test, "^.*ContextClasses[$]NestedContext[$]inner$", "asserts");
+        assertThat(test.getChildren(), hasSize(0));
       }
+    }
+
+    private void assertSuiteDescription(Description description, String contextNamePattern) {
+      assertThat(description.isSuite(), equalTo(true));
+      assertThat(description.isTest(), equalTo(false));
+      assertThat(description.getClassName(), matchesRegex(contextNamePattern));
+    }
+
+    private void assertTestDescription(Description description, String contextNamePattern, String testName) {
+      assertThat(description.isSuite(), equalTo(false));
+      assertThat(description.isTest(), equalTo(true));
+      assertThat(description.getClassName(), matchesRegex(contextNamePattern));
+      assertThat(description.getMethodName(), equalTo(testName));
     }
   }
 
