@@ -4,8 +4,6 @@ import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 
-import java.util.List;
-
 /**
  * Runs tests written with JavaSpec lambdas under JUnit.
  * <p/>
@@ -41,19 +39,19 @@ public final class NewJavaSpecRunner extends Runner {
   private final NewExampleGateway gateway;
 
   public NewJavaSpecRunner(Class<?> contextClass) {
-    throw new UnsupportedOperationException("TODO KDK: Make a real ClassExampleGateway");
+    this(new ClassExampleGateway(contextClass));
   }
 
   public NewJavaSpecRunner(NewExampleGateway gateway) {
     this.gateway = gateway;
 
     if(!gateway.hasExamples())
-      throw new NoExamplesException(gateway.rootContextClass());
+      throw new NoExamplesException(gateway.rootContextName());
   }
 
   @Override
   public Description getDescription() {
-    return new DescriptionFactory(gateway.rootContextClass()).makeDescriptionTree();
+    return gateway.junitDescriptionTree();
   }
 
   @Override
@@ -69,39 +67,8 @@ public final class NewJavaSpecRunner extends Runner {
   public static class NoExamplesException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public NoExamplesException(Class<?> context) {
-      super(String.format("Context class %s must contain at least 1 example in an It field", context.getName()));
-    }
-  }
-
-  private class DescriptionFactory {
-    private final Class<?> contextClass;
-    private final List<String> exampleFieldNames;
-    private final List<Class<?>> subContextClasses;
-
-    public DescriptionFactory(Class<?> contextClass) {
-      this.contextClass = contextClass;
-      this.exampleFieldNames = gateway.exampleFieldNames(contextClass);
-      this.subContextClasses = gateway.subContextClasses(contextClass);
-    }
-
-    public Description makeDescriptionTree() {
-      if(isSingletonTest())
-        return makeTestDescription(exampleFieldNames.get(0));
-
-      final Description suite = Description.createSuiteDescription(contextClass);
-      exampleFieldNames.stream().map(this::makeTestDescription).forEach(suite::addChild);
-      subContextClasses.stream().map(x -> new DescriptionFactory(x).makeDescriptionTree()).forEach(suite::addChild);
-      return suite;
-    }
-
-    private boolean isSingletonTest() {
-      boolean isLeafContext = subContextClasses.isEmpty();
-      return isLeafContext && exampleFieldNames.size() == 1;
-    }
-
-    private Description makeTestDescription(String exampleName) {
-      return Description.createTestDescription(contextClass, exampleName);
+    public NoExamplesException(String contextName) {
+      super(String.format("Context %s must contain at least 1 example", contextName));
     }
   }
 }

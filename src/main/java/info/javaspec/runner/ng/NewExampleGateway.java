@@ -1,12 +1,11 @@
 package info.javaspec.runner.ng;
 
-import java.util.List;
+import org.junit.runner.Description;
 
 interface NewExampleGateway {
+  String rootContextName();
   boolean hasExamples();
-  List<String> exampleFieldNames(Class<?> context);
   int totalNumExamples();
 
-  Class<?> rootContextClass();
-  List<Class<?>> subContextClasses(Class<?> context);
+  Description junitDescriptionTree();
 }
