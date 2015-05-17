@@ -63,7 +63,7 @@ public final class NewJavaSpecRunner extends Runner {
 
   @Override
   public int testCount() {
-    return gateway.totalExamples();
+    return gateway.totalNumExamples();
   }
 
   public static class NoExamplesException extends RuntimeException {
@@ -76,28 +76,28 @@ public final class NewJavaSpecRunner extends Runner {
 
   private class DescriptionFactory {
     private final Class<?> contextClass;
-    private final List<String> examples;
+    private final List<String> exampleFieldNames;
     private final List<Class<?>> subContextClasses;
 
     public DescriptionFactory(Class<?> contextClass) {
       this.contextClass = contextClass;
-      this.examples = gateway.exampleNames(contextClass);
+      this.exampleFieldNames = gateway.exampleFieldNames(contextClass);
       this.subContextClasses = gateway.subContextClasses(contextClass);
     }
 
     public Description makeDescriptionTree() {
       if(isSingletonTest())
-        return makeTestDescription(examples.get(0));
+        return makeTestDescription(exampleFieldNames.get(0));
 
       final Description suite = Description.createSuiteDescription(contextClass);
-      examples.stream().map(this::makeTestDescription).forEach(suite::addChild);
+      exampleFieldNames.stream().map(this::makeTestDescription).forEach(suite::addChild);
       subContextClasses.stream().map(x -> new DescriptionFactory(x).makeDescriptionTree()).forEach(suite::addChild);
       return suite;
     }
 
     private boolean isSingletonTest() {
       boolean isLeafContext = subContextClasses.isEmpty();
-      return isLeafContext && examples.size() == 1;
+      return isLeafContext && exampleFieldNames.size() == 1;
     }
 
     private Description makeTestDescription(String exampleName) {

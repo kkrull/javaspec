@@ -127,31 +127,31 @@ public class NewJavaSpecRunnerTest {
 
   private void givenGatewayWithNoExamples(Class<?> context) {
     when(gateway.hasExamples()).thenReturn(false);
-    when(gateway.totalExamples()).thenReturn(0);
+    when(gateway.totalNumExamples()).thenReturn(0);
 
     Mockito.<Class<?>>when(gateway.rootContextClass()).thenReturn(context);
-    when(gateway.exampleNames(context)).thenReturn(Lists.newArrayList());
+    when(gateway.exampleFieldNames(context)).thenReturn(Lists.newArrayList());
     when(gateway.subContextClasses(context)).thenReturn(Lists.newArrayList());
   }
 
   private void givenGatewayWithFlatContext(Class<?> context, String... exampleNames) {
     when(gateway.hasExamples()).thenReturn(true);
-    when(gateway.totalExamples()).thenReturn(exampleNames.length);
+    when(gateway.totalNumExamples()).thenReturn(exampleNames.length);
 
     Mockito.<Class<?>>when(gateway.rootContextClass()).thenReturn(context);
-    when(gateway.exampleNames(context)).thenReturn(Lists.newArrayList(exampleNames));
+    when(gateway.exampleFieldNames(context)).thenReturn(Lists.newArrayList(exampleNames));
     when(gateway.subContextClasses(context)).thenReturn(Lists.newArrayList());
   }
 
   private void givenGatewayWithNestedContext(Class<?> outer, Class<?> inner, String exampleName) {
     when(gateway.hasExamples()).thenReturn(true);
-    when(gateway.totalExamples()).thenReturn(1);
+    when(gateway.totalNumExamples()).thenReturn(1);
 
     Mockito.<Class<?>>when(gateway.rootContextClass()).thenReturn(outer);
-    when(gateway.exampleNames(outer)).thenReturn(Lists.newArrayList());
+    when(gateway.exampleFieldNames(outer)).thenReturn(Lists.newArrayList());
     when(gateway.subContextClasses(outer)).thenReturn(Lists.newArrayList(inner));
 
-    when(gateway.exampleNames(inner)).thenReturn(Lists.newArrayList(exampleName));
+    when(gateway.exampleFieldNames(inner)).thenReturn(Lists.newArrayList(exampleName));
     when(gateway.subContextClasses(inner)).thenReturn(Lists.newArrayList());
   }
 }

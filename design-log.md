@@ -40,3 +40,43 @@ Using the gateway, the test runner needs to:
 Looking back on the old design, it strikes me as inconsistent that the test runner performs the description
 transformation, but the gateway provides the transformation to executable tests.  That explains why tree traversal logic
 exists in so many places.
+
+If the gateway makes things that aren't simple domain objects, then isn't that performing business logic?
+
+1. Should the gateway be dumb, and just return stuff?
+2. Should it be smart, and build stuff?
+
+So let's recap what some of the choices are:
+
+1. Runner runs examples and reports.
+   Gateway builds Descriptions and Examples.
+
+   - Gateway is now coupled to JUnit.  Supporting another framework means writing another runner and another gateway.
+     On the other hand, how likely is it to need to support another test framework?
+   - Class traversal logic isolated to gateway, so this removes duplication of concepts.
+   - Runner does not need to make fine-grained queries, which makes it much easier to Gateway to be abstract.
+     Gateway may not need an abstract means of identifying sub-context.
+
+2. Runner builds Descriptions, runs, and reports.
+   Gateway builds Examples.
+
+   - Runner is the only class coupled to JUnit.  Gateway can be used in other frameworks.
+   - Class traversal logic is duplicated - at least conceptually - between Runner and Gateway.
+   
+   2a. Gateway is not abstract at all.
+   
+   - Simpler to design, for now.
+   - Mocking is more difficult than it might be, with a suitable abstraction.
+   - Will be harder to have other syntax and representation for context and example, at a later time.
+   
+   2b. Gateway abstracts context and example.
+   
+   - Need abstract means of identification and/or traversal, so that the Runner can build up Descriptions.
+
+3. Runner builds Descriptions and Examples, runs, and reports.
+   Gateway provides access to context classes and example fields in non-abstract way.
+   
+   How would the gateway maintain any notion of abstraction, and still give the runner the concrete data it needs
+   to build examples?  You'd have to pass in factory methods that are impedance-matched to the concrete context and
+   example representations, which in turn means introducing more interfaces with type parameters.  That's a lot of
+   overhead and indirection for just one representation of context and example.
