@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.runner.ClassExampleGateway.UnknownStepExecutionSequenceException;
 import info.javaspecproto.ContextClasses;
-import info.javaspecproto.ContextClasses.NestedWithStaticHelperClass;
+import info.javaspecproto.ContextClasses.NestedContextAndStaticHelperClass;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Before;
@@ -90,7 +90,7 @@ public class ClassExampleGatewayTest {
       public class givenAClassWith1OrMoreNestedStaticClasses {
         @Test
         public void doesNotCreateExamplesForItFieldsDeclaredInAStaticNestedClass() {
-          assertThat(extractNames(readExamples(NestedWithStaticHelperClass.class)), contains("asserts"));
+          assertThat(extractNames(readExamples(NestedContextAndStaticHelperClass.class)), contains("asserts"));
         }
       }
     }
@@ -284,16 +284,16 @@ public class ClassExampleGatewayTest {
       public class whenANestedClassIsStatic {
         @Test
         public void doesNotMakeACorrespondingSubcontext() {
-          assertContextClasses(subContexts(ContextClasses.NestedWithStaticHelperClass.class),
-            ImmutableSet.of(NestedWithStaticHelperClass.context.class));
+          assertContextClasses(subContexts(NestedContextAndStaticHelperClass.class),
+            ImmutableSet.of(NestedContextAndStaticHelperClass.context.class));
         }
       }
       
       public class whenANestedInnerClassHasNoItFieldsInItsSubtree {
         @Test
         public void doesNotMakeACorrespondingSubcontext() {
-          assertContextClasses(subContexts(ContextClasses.NestedWithInnerHelperClass.class),
-            ImmutableSet.of(ContextClasses.NestedWithInnerHelperClass.context.class));
+          assertContextClasses(subContexts(ContextClasses.NestedContextAndInnerHelperClass.class),
+            ImmutableSet.of(ContextClasses.NestedContextAndInnerHelperClass.context.class));
         }
       }
       

@@ -166,7 +166,7 @@ public class ContextClasses {
     }
   }
   
-  public static class NestedWithInnerHelperClass {
+  public static class NestedContextAndInnerHelperClass {
     public class context { 
       It asserts = () -> assertEquals(1, 1);
       public class HelperNotAContext { /* empty */ }
@@ -177,17 +177,23 @@ public class ContextClasses {
     }
   }
   
-  public static class NestedWithStaticHelperClass {
+  public static class NestedContextAndStaticHelperClass {
     public class context { 
       It asserts = () -> assertEquals(1, 1);
     }
     
     public static class Helper {
       public void dryMyTest() { /* empty */ }
-      It is_not_a_test = () -> assertEquals(1, 1); //Static context classes are not supported
+      It is_not_a_test = () -> assertEquals(1, 1);
     }
   }
   
+  public static class StaticClassIt {
+    public static class Helper {
+      It is_not_a_test = () -> assertEquals(1, 1);
+    }
+  }
+
   public static class OneIt extends ExecutionSpy {
     public OneIt() { notifyEvent.accept("ContextClasses.OneIt::new"); }
     It only_test = () -> notifyEvent.accept("ContextClasses.OneIt::only_test");

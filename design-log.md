@@ -80,3 +80,23 @@ So let's recap what some of the choices are:
    to build examples?  You'd have to pass in factory methods that are impedance-matched to the concrete context and
    example representations, which in turn means introducing more interfaces with type parameters.  That's a lot of
    overhead and indirection for just one representation of context and example.
+
+## Kinds of classes to allow
+
+Workflows:
+
+- **Run a whole test file**: The intended target of `@RunWith` is an outer class.  It therefore can't be static.  
+  It must also have a public no-arg constructor.
+- **Run a tests in a context**: The top-level class still must have `@RunWith`, but the class passed to the runner may
+  not be the top-level class.  In this case, it must have a (implicit) constructor that takes its parent class as a
+  parameter.
+
+In the second case, should the class be allowed to be static?
+
+On one hand, JavaSpec won't need any extra logic to
+instantiate such an outer context.  As far as it knows, a static class constructor works just as well as a no-arg
+constructor on a top-level class.
+
+On the other hand, what if the static class has tests and/or context behavior inside of it?  If an `Establish` lambda
+is in a static class, there can still be multiple instances of the static class - each with its own value/side effect -
+as long as the field itself isn't static.  Maybe it's not a big deal after all?
