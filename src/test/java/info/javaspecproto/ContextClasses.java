@@ -145,7 +145,13 @@ public class ContextClasses {
       }
     }
   }
-  
+
+  public static class NestedIt {
+    public class nestedContext {
+      It tests_something_more_specific = () -> assertThat(1, equalTo(1));
+    }
+  }
+
   public static class NestedFullFixture extends ExecutionSpy {
     public NestedFullFixture() { notifyEvent.accept("ContextClasses.NestedFullFixture::new"); }
     Establish arranges = () -> notifyEvent.accept("ContextClasses.NestedFullFixture::arrange");
@@ -188,7 +194,7 @@ public class ContextClasses {
     }
   }
   
-  public static class StaticClassIt {
+  public static class NestedStaticClassIt {
     public static class Helper {
       It is_not_a_test = () -> assertEquals(1, 1);
     }
@@ -276,5 +282,9 @@ public class ContextClasses {
     Establish that = () -> subject = "established";
     It does_one_thing = () -> assertThat(subject, notNullValue());
     It does_something_else = () -> assertThat(subject, equalTo("established"));
+  }
+
+  public static class StaticIt {
+    static It looks_like_an_isolated_test_but_beware = () -> assertThat("each test", is("independent"));
   }
 }

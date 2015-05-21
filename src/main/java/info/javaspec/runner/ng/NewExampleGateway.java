@@ -5,7 +5,7 @@ import org.junit.runner.Description;
 interface NewExampleGateway {
   String rootContextName();
   boolean hasExamples();
-  int totalNumExamples();
+  long totalNumExamples();
 
   Description junitDescriptionTree();
 }

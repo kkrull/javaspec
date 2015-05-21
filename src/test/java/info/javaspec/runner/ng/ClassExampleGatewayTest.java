@@ -2,7 +2,6 @@ package info.javaspec.runner.ng;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspecproto.ContextClasses;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -27,39 +26,47 @@ public class ClassExampleGatewayTest {
   public class totalNumExamples {
     @Test
     public void givenAContextClassWith1OrMoreExamples_returnsTheNumberOfExamples() throws Exception {
-      shouldTotalNumExamples(ContextClasses.OneIt.class, 1);
+      shouldHaveTotalNumExamples(ContextClasses.OneIt.class, 1);
     }
 
     @Test
     public void givenAContextClassWithNoExamples_returns_0() throws Exception {
-      shouldTotalNumExamples(ContextClasses.Empty.class, 0);
+      shouldHaveTotalNumExamples(ContextClasses.Empty.class, 0);
     }
   }
 
-  public class givenAContextClassWith {
+  public class givenARootContextClass {
     @Test
-    public void noFieldsOfTypeIt_hasNoExamples() throws Exception {
+    public void withNoFieldsOfTypeIt_hasNoExamples() throws Exception {
       shouldNotHaveExamples(ContextClasses.Empty.class);
+      shouldHaveTotalNumExamples(ContextClasses.Empty.class, 0);
     }
 
     @Test
-    public void oneOrMoreOfInstanceFieldsOfTypeIt_hasAnExampleForEachOfThoseFields() throws Exception {
+    public void with1OrMoreOfInstanceFieldsOfTypeIt_hasAnExampleForEachOfThoseFields() throws Exception {
       shouldHaveExamples(ContextClasses.OneIt.class);
-    }
-
-    @Test @Ignore
-    public void staticFieldsOfTypeIt_doesNotCountThoseFieldsAsExamples() throws Exception {
+      shouldHaveTotalNumExamples(ContextClasses.OneIt.class, 1);
     }
 
     @Test
-    public void aNestedClassThatHasOneOrMoreInstanceFieldsOfTypeIt_hasAnExampleForEachOfThoseFields() throws Exception {
+    public void withStaticFieldsOfTypeIt_doesNotCountThoseFieldsAsExamples() throws Exception {
+      shouldNotHaveExamples(ContextClasses.StaticIt.class);
+      shouldHaveTotalNumExamples(ContextClasses.StaticIt.class, 0);
+    }
+
+    @Test
+    public void withNestedClasses_countsExamplesInThoseClasses() throws Exception {
+      shouldHaveTotalNumExamples(ContextClasses.NestedIt.class, 1);
       shouldHaveExamples(ContextClasses.NestedContext.class);
+
+      shouldHaveTotalNumExamples(ContextClasses.NestedThreeDeep.class, 1);
       shouldHaveExamples(ContextClasses.NestedThreeDeep.class);
     }
 
     @Test
-    public void aStaticInnerClassWithFieldsOfTypeIt_doesNotCountThoseFieldsAsExamples() throws Exception {
-      shouldNotHaveExamples(ContextClasses.StaticClassIt.class);
+    public void withAStaticInnerClass_doesNotCountItFieldsInThoseClassesAsExamples() throws Exception {
+      shouldHaveTotalNumExamples(ContextClasses.NestedStaticClassIt.class, 0);
+      shouldNotHaveExamples(ContextClasses.NestedStaticClassIt.class);
     }
   }
 
@@ -73,7 +80,7 @@ public class ClassExampleGatewayTest {
     assertThat(subject.hasExamples(), is(false));
   }
 
-  private void shouldTotalNumExamples(Class<?> contextClass, int numExamples) {
+  private void shouldHaveTotalNumExamples(Class<?> contextClass, long numExamples) {
     NewExampleGateway subject = new ClassExampleGateway(contextClass);
     assertThat(subject.totalNumExamples(), equalTo(numExamples));
   }

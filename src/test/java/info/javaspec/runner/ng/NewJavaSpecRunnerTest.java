@@ -58,21 +58,21 @@ public class NewJavaSpecRunnerTest {
   private void givenGatewayReturning(Description description) {
     when(gateway.rootContextName()).thenReturn("SingleExample");
     when(gateway.hasExamples()).thenReturn(true);
-    when(gateway.totalNumExamples()).thenReturn(1);
+    when(gateway.totalNumExamples()).thenReturn(1L);
     when(gateway.junitDescriptionTree()).thenReturn(description);
   }
 
   private void givenGatewayWithNoExamples(String rootContextName) {
     when(gateway.rootContextName()).thenReturn(rootContextName);
     when(gateway.hasExamples()).thenReturn(false);
-    when(gateway.totalNumExamples()).thenReturn(0);
+    when(gateway.totalNumExamples()).thenReturn(0L);
     when(gateway.junitDescriptionTree()).thenReturn(Description.EMPTY);
   }
 
   private void givenGatewayWithExamples(String... exampleNames) {
     when(gateway.rootContextName()).thenReturn("ContextWithExamples");
     when(gateway.hasExamples()).thenReturn(true);
-    when(gateway.totalNumExamples()).thenReturn(exampleNames.length);
+    when(gateway.totalNumExamples()).thenReturn((long)exampleNames.length);
 
     Description suite = Description.createSuiteDescription("ContextWithExamples");
     Stream.of(exampleNames)

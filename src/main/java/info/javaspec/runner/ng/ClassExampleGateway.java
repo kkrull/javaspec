@@ -4,7 +4,10 @@ import info.javaspec.dsl.It;
 import info.javaspec.util.ReflectionUtil;
 import org.junit.runner.Description;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class ClassExampleGateway implements NewExampleGateway {
@@ -24,27 +27,35 @@ public final class ClassExampleGateway implements NewExampleGateway {
     return hasExamples(rootContext);
   }
 
-  private boolean hasExamples(Class<?> contextClass) {
-    boolean rootContextHasExamples = ReflectionUtil.fieldsOfType(It.class, contextClass)
-//      .filter(x -> !Modifier.isStatic(x.getModifiers()))
-      .findAny()
-      .isPresent();
-//    boolean rootContextHasExamples = ReflectionUtil.hasFieldsOfType(It.class, contextClass);
-    return rootContextHasExamples || readInnerClasses(contextClass).anyMatch(this::hasExamples);
-  }
-
-  private static Stream<Class<?>> readInnerClasses(Class<?> parent) {
-//    return Stream.of(parent.getDeclaredClasses());
-    return Stream.of(parent.getDeclaredClasses()).filter(x -> !Modifier.isStatic(x.getModifiers()));
+  private boolean hasExamples(Class<?> context) {
+    boolean hasOwnExamples = readDeclaredItFields(context).findAny().isPresent();
+    return hasOwnExamples || readNestedInnerClasses(context).anyMatch(this::hasExamples);
   }
 
   @Override
-  public int totalNumExamples() {
-    return numDeclaredTests(this.rootContext);
+  public long totalNumExamples() {
+    return totalNumExamples(rootContext);
   }
 
-  private int numDeclaredTests(Class<?> context) {
-    return (int) ReflectionUtil.fieldsOfType(It.class, context).count();
+  private long totalNumExamples(Class<?> context) {
+    long declaredInSelf = readDeclaredItFields(context).count();
+    long declaredInDescendants = readNestedInnerClasses(context)
+      .map(this::totalNumExamples)
+      .collect(Collectors.summingLong(x -> x));
+
+    return declaredInSelf + declaredInDescendants;
+  }
+
+  private Stream<Field> readDeclaredItFields(Class<?> context) {
+    Predicate<Field> isInstanceField = x -> !Modifier.isStatic(x.getModifiers());
+    return ReflectionUtil.fieldsOfType(It.class, context)
+      .filter(isInstanceField);
+  }
+
+  private static Stream<Class<?>> readNestedInnerClasses(Class<?> parent) {
+    Predicate<Class<?>> isNonStaticClass = x -> !Modifier.isStatic(x.getModifiers());
+    return Stream.of(parent.getDeclaredClasses())
+      .filter(isNonStaticClass);
   }
 
   @Override

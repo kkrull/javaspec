@@ -61,7 +61,7 @@ public final class NewJavaSpecRunner extends Runner {
 
   @Override
   public int testCount() {
-    return gateway.totalNumExamples();
+    return (int)gateway.totalNumExamples(); //TODO KDK: Test edge case
   }
 
   public static class NoExamplesException extends RuntimeException {
