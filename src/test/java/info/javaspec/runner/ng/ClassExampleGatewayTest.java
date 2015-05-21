@@ -11,9 +11,19 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(HierarchicalContextRunner.class)
 public class ClassExampleGatewayTest {
-  
-
   public class hasExamples {
+    @Test
+    public void givenAContextClassWithNoTests_returnsFalse() throws Exception {
+      shouldNotHaveExamples(ContextClasses.Empty.class);
+    }
+
+    @Test
+    public void givenAContextClassWith1OrMoreTests_returnsTrue() throws Exception {
+      shouldHaveExamples(ContextClasses.OneIt.class);
+    }
+  }
+
+  public class givenARootContextClassWith {
     @Test
     public void givenAClassWithoutAnyItFields_returnsFalse() throws Exception {
       shouldNotHaveExamples(ContextClasses.Empty.class);

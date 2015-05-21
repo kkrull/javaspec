@@ -1,5 +1,6 @@
 package info.javaspecfeature;
 
+import cucumber.api.PendingException;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
@@ -26,6 +27,7 @@ import static org.hamcrest.Matchers.*;
 public final class JavaSpecRunnerSteps {
   private final List<Object> events = synchronizedList(new LinkedList<>()); //In case JUnit uses threads per test
   private Class<?> testClass;
+  private int numTests;
   
   @Before
   public void deploySpies() {
@@ -90,7 +92,13 @@ public final class JavaSpecRunnerSteps {
   }
   
   /* When */
-  
+
+  @When("^I count the tests in the class$")
+  public void I_count_the_tests() throws Exception {
+    Runner runner = new NewJavaSpecRunner(testClass);
+    this.numTests = runner.testCount();
+  }
+
   @When("^I run the tests?$")
   public void i_run_the_test() throws Exception {
     Runner runner = new NewJavaSpecRunner(testClass);
@@ -109,7 +117,12 @@ public final class JavaSpecRunnerSteps {
   }
   
   /* Then */
-  
+
+  @Then("^the test runner should return the number of tests that exist within the scope of that class$")
+  public void the_test_runner_should_return_the_number_of_tests() throws Exception {
+    assertThat(numTests, equalTo(1));
+  }
+
   @Then("^the test runner should run all the tests in the class$")
   public void the_test_runner_should_run_all_the_tests_in_the_class() throws Exception {
     assertThat(describeEvents(), executedLambdas(), hasItems("ContextClasses.OneIt::only_test"));
@@ -220,7 +233,7 @@ public final class JavaSpecRunnerSteps {
   private List<String> executedLambdas() {
     return events.stream()
       .filter(x -> x instanceof String)
-      .map(x -> (String)x)
+      .map(x -> (String) x)
       .collect(toList());
   }
   

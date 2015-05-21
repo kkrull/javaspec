@@ -3,6 +3,19 @@ Feature: Running tests
   In order to find out if and where the production code is failing
   I want to be able run the tests in an environment that runs JUnit
 
+  Scenario: Count tests
+    Given I have a class with JavaSpec tests in it
+    When I count the tests in the class
+    Then the test runner should return the number of tests that exist within the scope of that class
+
+  @wip
+  Scenario: Describe tests
+    Given I have a class with JavaSpec tests in it
+    When I describe the tests in the class
+    Then the test runner should describe test context in human-readable language
+    And the test runner should describe expected behaviors in human-readable language
+
+  @wip
   Scenario: Run JavaSpec tests with a JavaSpecRunner
     Given I have a class with JavaSpec tests in it
     When I run the tests with a JavaSpec runner
