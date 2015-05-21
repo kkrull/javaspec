@@ -40,7 +40,11 @@ public final class ClassExampleGateway implements NewExampleGateway {
 
   @Override
   public int totalNumExamples() {
-    throw new UnsupportedOperationException();
+    return numDeclaredTests(this.rootContext);
+  }
+
+  private int numDeclaredTests(Class<?> context) {
+    return (int) ReflectionUtil.fieldsOfType(It.class, context).count();
   }
 
   @Override

@@ -6,6 +6,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -13,47 +14,52 @@ import static org.junit.Assert.assertThat;
 public class ClassExampleGatewayTest {
   public class hasExamples {
     @Test
-    public void givenAContextClassWithNoTests_returnsFalse() throws Exception {
+    public void givenAContextClassWithNoExamples_returnsFalse() throws Exception {
       shouldNotHaveExamples(ContextClasses.Empty.class);
     }
 
     @Test
-    public void givenAContextClassWith1OrMoreTests_returnsTrue() throws Exception {
+    public void givenAContextClassWith1OrMoreExamples_returnsTrue() throws Exception {
       shouldHaveExamples(ContextClasses.OneIt.class);
     }
   }
 
-  public class givenARootContextClassWith {
+  public class totalNumExamples {
     @Test
-    public void givenAClassWithoutAnyItFields_returnsFalse() throws Exception {
+    public void givenAContextClassWith1OrMoreExamples_returnsTheNumberOfExamples() throws Exception {
+      shouldTotalNumExamples(ContextClasses.OneIt.class, 1);
+    }
+
+    @Test
+    public void givenAContextClassWithNoExamples_returns_0() throws Exception {
+      shouldTotalNumExamples(ContextClasses.Empty.class, 0);
+    }
+  }
+
+  public class givenAContextClassWith {
+    @Test
+    public void noFieldsOfTypeIt_hasNoExamples() throws Exception {
       shouldNotHaveExamples(ContextClasses.Empty.class);
     }
 
     @Test
-    public void givenAClassWithOneOrMoreOfItsOwnItFields_returnsTrue() throws Exception {
+    public void oneOrMoreOfInstanceFieldsOfTypeIt_hasAnExampleForEachOfThoseFields() throws Exception {
       shouldHaveExamples(ContextClasses.OneIt.class);
     }
 
+    @Test @Ignore
+    public void staticFieldsOfTypeIt_doesNotCountThoseFieldsAsExamples() throws Exception {
+    }
+
     @Test
-    public void givenAClassWithOneOrMoreItFieldsInAnInnerClass_returnsTrue() throws Exception {
+    public void aNestedClassThatHasOneOrMoreInstanceFieldsOfTypeIt_hasAnExampleForEachOfThoseFields() throws Exception {
       shouldHaveExamples(ContextClasses.NestedContext.class);
       shouldHaveExamples(ContextClasses.NestedThreeDeep.class);
     }
 
-    //Cross-cutting stuff like this can be refactored - staticItIsNotSupported.
-    //hasExamples and numExamples: givenASupportedTest_returnsTrue, etc...
     @Test
-    public void givenAStaticInnerClassWithItFields_returnsFalse() throws Exception {
-      //Tests in static classes aren't supported because there's no instances of outer classes with which to associate.
-      //Just because you could tag a static inner class @RunWith and the runner might not know the difference, it's inconsistent and doesn't allow for surrounding context to be added later.
-      //So it's not supported at this time, for consistency with usage and consistency in the progression of use.
+    public void aStaticInnerClassWithFieldsOfTypeIt_doesNotCountThoseFieldsAsExamples() throws Exception {
       shouldNotHaveExamples(ContextClasses.StaticClassIt.class);
-    }
-
-    @Test @Ignore
-    public void staticItFieldsDoNotCountAsTests() throws Exception {
-      //Static It fields aren't supported because the notion of starting the test with a clean slate breaks down
-      //Shouldn't this lead to an InitializationError in JUnit?
     }
   }
 
@@ -65,5 +71,10 @@ public class ClassExampleGatewayTest {
   private void shouldNotHaveExamples(Class<?> contextClass) {
     NewExampleGateway subject = new ClassExampleGateway(contextClass);
     assertThat(subject.hasExamples(), is(false));
+  }
+
+  private void shouldTotalNumExamples(Class<?> contextClass, int numExamples) {
+    NewExampleGateway subject = new ClassExampleGateway(contextClass);
+    assertThat(subject.totalNumExamples(), equalTo(numExamples));
   }
 }
