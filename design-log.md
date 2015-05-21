@@ -8,11 +8,11 @@ sentences can promote a more BDD style of writing tests.
 
 But who should perform this transformation?
 
-- *The test runner*: It's the only class that deals with Description objects, and it's the only interface to JUnit.  It
-  would make sense for this class to be fully aware of the fact that tests are contained in fields inside classes, and
-  of the transformation from those field/class names to test/suite names.  If that's the case, then the `ExampleGateway`
-  should be fully transparent about it providing access to classes and fields.
-- *The example gateway* could make an abstraction of class to context and of field to example.  If such an abstraction
+- **The test runner**: It's the only class that deals with Description objects, and it's the only interface to JUnit.  
+  It would make sense for this class to be fully aware of the fact that tests are contained in fields inside classes, 
+  and of the transformation from those field/class names to test/suite names.  If that's the case, then the 
+  `ExampleGateway` should be fully transparent about it providing access to classes and fields.
+- **The example gateway** could make an abstraction of class to context and of field to example.  If such an abstraction
   exists, then there's no reason to believe that all implementations would be bound by the identifier naming schemes in
   Java.  If the intention of abstracting contexts and examples is to be agnostic of where they come from, then it sounds
   like the gateway had better handle any name transformations.  However it will also need to provide some abstract means
@@ -93,9 +93,8 @@ Workflows:
 
 In the second case, should the class be allowed to be static?
 
-On one hand, JavaSpec won't need any extra logic to
-instantiate such an outer context.  As far as it knows, a static class constructor works just as well as a no-arg
-constructor on a top-level class.
+On one hand, JavaSpec won't need any extra logic to instantiate such an outer context.  As far as it knows, a static
+class constructor works just as well as a no-arg constructor on a top-level class.
 
 On the other hand, what if the static class has tests and/or context behavior inside of it?  If an `Establish` lambda
 is in a static class, there can still be multiple instances of the static class - each with its own value/side effect -

@@ -1,7 +1,6 @@
 package info.javaspec.runner.ng;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.testutil.Assertions;
 import info.javaspecproto.ContextClasses;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -12,14 +11,7 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(HierarchicalContextRunner.class)
 public class ClassExampleGatewayTest {
-  //TODO KDK: Really shouldn't allow a static class to run
-  public class constructor {
-    @Test @Ignore
-    public void givenAStaticInnerClass_throwsStatic() throws Exception {
-      Assertions.capture(ClassExampleGateway.StaticContextException.class,
-        () -> new ClassExampleGateway(ContextClasses.StaticClassIt.Helper.class));
-    }
-  }
+  
 
   public class hasExamples {
     @Test
@@ -49,7 +41,7 @@ public class ClassExampleGatewayTest {
     }
 
     @Test @Ignore
-    public void givenAClassWithAStaticItField_returnsFalse() throws Exception {
+    public void staticItFieldsDoNotCountAsTests() throws Exception {
       //Static It fields aren't supported because the notion of starting the test with a clean slate breaks down
       //Shouldn't this lead to an InitializationError in JUnit?
     }
