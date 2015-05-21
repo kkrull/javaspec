@@ -46,7 +46,7 @@ public final class NewJavaSpecRunner extends Runner {
     this.gateway = gateway;
 
     if(!gateway.hasExamples())
-      throw new NoExamplesException(gateway.rootContextName());
+      throw new NoExamples(gateway.rootContextName());
   }
 
   @Override
@@ -61,14 +61,26 @@ public final class NewJavaSpecRunner extends Runner {
 
   @Override
   public int testCount() {
-    return (int)gateway.totalNumExamples(); //TODO KDK: Test edge case
+    long numExamples = gateway.totalNumExamples();
+    if(numExamples > Integer.MAX_VALUE)
+      throw new TooManyExamples(gateway.rootContextName(), numExamples);
+    else
+      return (int) numExamples;
   }
 
-  public static class NoExamplesException extends RuntimeException {
+  public static final class NoExamples extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public NoExamplesException(String contextName) {
+    public NoExamples(String contextName) {
       super(String.format("Context %s must contain at least 1 example", contextName));
+    }
+  }
+
+  public static final class TooManyExamples extends RuntimeException {
+    private static final String FORMAT = "Context %s has more examples than JUnit can support in a single class: %d";
+
+    public TooManyExamples(String contextName, long numExamples) {
+      super(String.format(FORMAT, contextName, numExamples));
     }
   }
 }

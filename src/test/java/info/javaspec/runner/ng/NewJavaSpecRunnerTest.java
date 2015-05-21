@@ -1,13 +1,11 @@
 package info.javaspec.runner.ng;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.runner.ng.NewJavaSpecRunner.NoExamplesException;
-import info.javaspecproto.ContextClasses;
+import info.javaspec.runner.ng.NewJavaSpecRunner.NoExamples;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
-import org.mockito.Mockito;
 
 import java.util.stream.Stream;
 
@@ -15,7 +13,6 @@ import static info.javaspec.testutil.Assertions.capture;
 import static info.javaspec.testutil.Matchers.matchesRegex;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -29,7 +26,7 @@ public class NewJavaSpecRunnerTest {
       @Test
       public void throwsNoExamplesException() throws Exception {
         givenGatewayWithNoExamples("ContextClasses$Empty");
-        Exception ex = capture(NoExamplesException.class, () -> new NewJavaSpecRunner(gateway));
+        Exception ex = capture(NoExamples.class, () -> new NewJavaSpecRunner(gateway));
         assertThat(ex.getMessage(), matchesRegex("^Context .*[$]Empty must contain at least 1 example"));
       }
     }
@@ -51,6 +48,17 @@ public class NewJavaSpecRunnerTest {
         givenGatewayWithExamples("first_test", "second_test");
         subject = new NewJavaSpecRunner(gateway);
         assertThat(subject.testCount(), equalTo(2));
+      }
+    }
+
+    public class givenAClassWithMoreExamplesThanThereAreInts {
+      @Test
+      public void throwsTooManyTests() throws Exception {
+        givenGatewayWithAnEnormousNumberOfExamples("ContextWithLotsOfExamples");
+        NewJavaSpecRunner.TooManyExamples ex = capture(NewJavaSpecRunner.TooManyExamples.class,
+          () -> new NewJavaSpecRunner(gateway).testCount());
+        assertThat(ex.getMessage(),
+          equalTo("Context ContextWithLotsOfExamples has more examples than JUnit can support in a single class: 2147483648"));
       }
     }
   }
@@ -79,5 +87,12 @@ public class NewJavaSpecRunnerTest {
       .map(x -> Description.createTestDescription("ContextWithExamples", x))
       .forEach(suite::addChild);
     when(gateway.junitDescriptionTree()).thenReturn(suite);
+  }
+
+  private void givenGatewayWithAnEnormousNumberOfExamples(String contextName) {
+    when(gateway.rootContextName()).thenReturn(contextName);
+    when(gateway.hasExamples()).thenReturn(true);
+    when(gateway.totalNumExamples()).thenReturn((long)Integer.MAX_VALUE + 1);
+    when(gateway.junitDescriptionTree()).thenThrow(UnsupportedOperationException.class);
   }
 }

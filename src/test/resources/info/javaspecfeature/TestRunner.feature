@@ -8,7 +8,6 @@ Feature: Running tests
     When I count the tests in the class
     Then the test runner should return the number of tests that exist within the scope of that class
 
-  @wip
   Scenario: Describe tests
     Given I have a class with JavaSpec tests in it
     When I describe the tests in the class
