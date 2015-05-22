@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspecproto.ContextClasses;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
@@ -15,6 +16,8 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(HierarchicalContextRunner.class)
 public class ClassExampleGatewayTest {
+  private NewExampleGateway subject;
+
   public class hasExamples {
     @Test
     public void givenAContextClassWithNoExamples_returnsFalse() throws Exception {
@@ -75,7 +78,6 @@ public class ClassExampleGatewayTest {
   }
 
   public class junitDescriptionTree {
-    private NewExampleGateway subject;
     private Description description;
 
     public class givenAClassWith1ItFieldAndNoInnerClasses {
@@ -105,6 +107,20 @@ public class ClassExampleGatewayTest {
       public void setsTheMethodNameToTheFieldName_replacingUnderscoreWithSpace() throws Exception {
         assertThat(description.getMethodName(), equalTo("only test"));
       }
+    }
+
+    public class givenAClassWithNestedClasses {
+      @Test @Ignore
+      public void returnsDescriptionsForThoseClasses() throws Exception {
+      }
+    }
+  }
+
+  public class rootContextName {
+    @Test
+    public void returnsTheClassSimpleName_sinceItDescribesATestClassAndNotAContext() throws Exception {
+      subject = new ClassExampleGateway(ContextClasses.OneIt.class);
+      assertThat(subject.rootContextName(), equalTo("OneIt"));
     }
   }
 

@@ -19,7 +19,7 @@ public final class ClassExampleGateway implements NewExampleGateway {
 
   @Override
   public String rootContextName() {
-    throw new UnsupportedOperationException();
+    return rootContext.getSimpleName();
   }
 
   @Override
@@ -29,7 +29,7 @@ public final class ClassExampleGateway implements NewExampleGateway {
 
   private boolean hasExamples(Class<?> context) {
     boolean hasOwnExamples = readDeclaredItFields(context).findAny().isPresent();
-    return hasOwnExamples || readNestedInnerClasses(context).anyMatch(this::hasExamples);
+    return hasOwnExamples || readNestedClasses(context).anyMatch(this::hasExamples);
   }
 
   @Override
@@ -39,7 +39,7 @@ public final class ClassExampleGateway implements NewExampleGateway {
 
   private long totalNumExamples(Class<?> context) {
     long declaredInSelf = readDeclaredItFields(context).count();
-    long declaredInDescendants = readNestedInnerClasses(context)
+    long declaredInDescendants = readNestedClasses(context)
       .map(this::totalNumExamples)
       .collect(Collectors.summingLong(x -> x));
 
@@ -56,13 +56,11 @@ public final class ClassExampleGateway implements NewExampleGateway {
 
   private Stream<Field> readDeclaredItFields(Class<?> context) {
     Predicate<Field> isInstanceField = x -> !Modifier.isStatic(x.getModifiers());
-    return ReflectionUtil.fieldsOfType(It.class, context)
-      .filter(isInstanceField);
+    return ReflectionUtil.fieldsOfType(It.class, context).filter(isInstanceField);
   }
 
-  private static Stream<Class<?>> readNestedInnerClasses(Class<?> parent) {
-    Predicate<Class<?>> isNonStaticClass = x -> !Modifier.isStatic(x.getModifiers());
-    return Stream.of(parent.getDeclaredClasses())
-      .filter(isNonStaticClass);
+  private static Stream<Class<?>> readNestedClasses(Class<?> parent) {
+    Predicate<Class<?>> isNestedClass = x -> !Modifier.isStatic(x.getModifiers());
+    return Stream.of(parent.getDeclaredClasses()).filter(isNestedClass);
   }
 }
