@@ -99,3 +99,16 @@ class constructor works just as well as a no-arg constructor on a top-level clas
 On the other hand, what if the static class has tests and/or context behavior inside of it?  If an `Establish` lambda
 is in a static class, there can still be multiple instances of the static class - each with its own value/side effect -
 as long as the field itself isn't static.  Maybe it's not a big deal after all?
+
+
+## Clarifying the terminology
+
+- A **root context class** is the top-level class passed to `JavaSpecRunner`.  It's the outer-most level of detail
+  of abstraction at which to run tests, and it may contain test fixtures and examples just like any other context class.
+- All other **context classes** are [inner classes](https://docs.oracle.com/javase/tutorial/java/javaOO/nested.html) 
+  encosed within the root context class or another context class.  Each context class may contain test fixtures and
+  examples, or it may exist solely for the purpose of describing the system under test in a structured and readable
+  manner.
+- A **nested static class** could also contain `It` fields and the like, but it is not considered a context class at
+  this time.  It is, however, a perfectly reasonable place to put helper methods.
+

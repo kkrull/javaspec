@@ -21,7 +21,11 @@ public class ContextClasses {
   }
   
   public static class Empty {}
-  
+
+  public static class EmptyContext {
+    public class context {}
+  }
+
   public static class FailingCleanup {
     Cleanup flawed_cleanup = () -> { throw new IllegalStateException("flawed_cleanup"); };
     It may_run = () -> assertEquals(42, 42);
@@ -124,6 +128,12 @@ public class ContextClasses {
     public class inner {
       Cleanup inner_cleanup = () -> assertEquals(1, 1);
       It asserts = () -> assertEquals(42, 42);
+    }
+  }
+
+  public static class NestedBehavior {
+    public class describes_some_conditions {
+      It describes_an_expected_behavior = () -> assertThat(1, equalTo(1));
     }
   }
 

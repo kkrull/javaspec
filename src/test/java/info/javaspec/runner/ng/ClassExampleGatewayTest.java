@@ -9,9 +9,12 @@ import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.stream.Collectors.toList;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 @RunWith(HierarchicalContextRunner.class)
@@ -78,18 +81,32 @@ public class ClassExampleGatewayTest {
   }
 
   public class junitDescriptionTree {
-    private Description description;
+    private Description description; //TODO KDK: Do pruning of empty branches later?
+    private List<Description> children;
 
-    public class givenAClassWith1ItFieldAndNoInnerClasses {
+    @Test //The top-level class doesn't describe behavior; it's just a container that has to end in the word Test
+    public void setsTheTopLevelDescriptionToTheSimpleNameOfTheRootClass() throws Exception {
+      description = junitDescriptionFor(ContextClasses.OneIt.class);
+      assertThat(description.getClassName(), equalTo("OneIt"));
+    }
+
+    public class givenARootContextClassWithNoItFields_andNoDescendantInnerClasses {
+      @Test
+      public void returnsThe_EMPTY_Description() throws Exception {
+        assertThat(junitDescriptionFor(ContextClasses.Empty.class), sameInstance(Description.EMPTY));
+        assertThat(junitDescriptionFor(ContextClasses.EmptyContext.class), sameInstance(Description.EMPTY));
+      }
+    }
+
+    public class givenARootContextClassWith1ItFieldAndNoInnerClasses {
       @Before
       public void setup() throws Exception {
-        subject = new ClassExampleGateway(ContextClasses.OneIt.class);
-        description = subject.junitDescriptionTree();
+        description = junitDescriptionFor(ContextClasses.OneIt.class);
       }
 
-      @Test
+      @Test @Ignore
       public void returnsATestDescription() throws Exception {
-        assertThat(Lists.newArrayList(description.isTest(), description.isSuite()), contains(true, false));
+        assertThat(newArrayList(description.isTest(), description.isSuite()), contains(true, false));
       }
 
       @Test
@@ -97,21 +114,52 @@ public class ClassExampleGatewayTest {
         assertThat(description.isEmpty(), is(false));
         assertThat(description.testCount(), equalTo(1));
       }
+    }
 
-      @Test
-      public void setsTheClassNameAnTheContextClassName() throws Exception {
-        assertThat(description.getClassName(), equalTo("OneIt"));
+    public class givenAContextClassWith1OrMoreItFields {
+      @Before
+      public void setup() throws Exception {
+        description = junitDescriptionFor(ContextClasses.TwoIt.class);
+        children = description.getChildren();
       }
 
       @Test
-      public void setsTheMethodNameToTheFieldName_replacingUnderscoreWithSpace() throws Exception {
-        assertThat(description.getMethodName(), equalTo("only test"));
+      public void returnsASuiteDescriptionForThatContextClass() throws Exception {
+        assertThat(newArrayList(description.isTest(), description.isSuite()), contains(false, true));
+        assertThat(description.getClassName(), equalTo("TwoIt"));
+      }
+
+      @Test
+      public void theSuiteDescriptionContainsATestDescriptionForEachExample() throws Exception {
+        assertThat(children.stream().map(Description::isTest).collect(toList()), contains(true, true));
+        assertThat(children.stream().map(Description::getClassName).collect(toList()), contains("TwoIt", "TwoIt"));
+      }
+
+      @Test
+      public void eachTestDescriptionNameIsTheHumanizedVersionOfTheItFieldName() throws Exception {
+        assertThat(children.stream().map(Description::getMethodName).collect(toList()), contains("first test", "second test"));
       }
     }
 
-    public class givenAClassWithNestedClasses {
-      @Test @Ignore
-      public void returnsDescriptionsForThoseClasses() throws Exception {
+    public class givenAContextClassWithInnerClasses {
+      @Before
+      public void setup() throws Exception {
+        description = junitDescriptionFor(ContextClasses.NestedBehavior.class);
+        children = description.getChildren();
+      }
+
+      @Test
+      public void returnsSuiteDescriptionsForThoseClasses() throws Exception {
+        assertThat(children, hasSize(1));
+
+        Description descriptiveContext = children.get(0);
+        assertThat(newArrayList(descriptiveContext.isTest(), descriptiveContext.isSuite()), contains(false, true));
+      }
+
+      @Test
+      public void describesContextBehaviorWithTheHumanizedContextClassName() throws Exception {
+        Description descriptiveContext = children.get(0);
+        assertThat(descriptiveContext.getClassName(), equalTo("describes some conditions"));
       }
     }
   }
@@ -122,6 +170,11 @@ public class ClassExampleGatewayTest {
       subject = new ClassExampleGateway(ContextClasses.OneIt.class);
       assertThat(subject.rootContextName(), equalTo("OneIt"));
     }
+  }
+
+  private Description junitDescriptionFor(Class<?> rootContext) {
+    subject = new ClassExampleGateway(rootContext);
+    return subject.junitDescriptionTree();
   }
 
   private void shouldHaveExamples(Class<?> rootContextClass) {
