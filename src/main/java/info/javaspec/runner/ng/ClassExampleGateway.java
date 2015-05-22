@@ -46,6 +46,14 @@ public final class ClassExampleGateway implements NewExampleGateway {
     return declaredInSelf + declaredInDescendants;
   }
 
+  @Override
+  public Description junitDescriptionTree() {
+    Field onlyExample = readDeclaredItFields(rootContext).findAny().get();
+    return Description.createTestDescription(
+      rootContext.getSimpleName(),
+      onlyExample.getName().replace('_', ' '));
+  }
+
   private Stream<Field> readDeclaredItFields(Class<?> context) {
     Predicate<Field> isInstanceField = x -> !Modifier.isStatic(x.getModifiers());
     return ReflectionUtil.fieldsOfType(It.class, context)
@@ -56,10 +64,5 @@ public final class ClassExampleGateway implements NewExampleGateway {
     Predicate<Class<?>> isNonStaticClass = x -> !Modifier.isStatic(x.getModifiers());
     return Stream.of(parent.getDeclaredClasses())
       .filter(isNonStaticClass);
-  }
-
-  @Override
-  public Description junitDescriptionTree() {
-    throw new UnsupportedOperationException();
   }
 }

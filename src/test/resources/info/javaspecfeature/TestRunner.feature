@@ -9,10 +9,9 @@ Feature: Running tests
     Then the test runner should return the number of tests that exist within the scope of that class
 
   Scenario: Describe tests
-    Given I have a class with JavaSpec tests in it
+    Given I express desired behavior for JavaSpec through the use of Java classes and fields
     When I describe the tests in the class
-    Then the test runner should describe test context in human-readable language
-    And the test runner should describe expected behaviors in human-readable language
+    Then the test runner should describe expected behavior in human-readable language
 
   @wip
   Scenario: Run JavaSpec tests with a JavaSpecRunner

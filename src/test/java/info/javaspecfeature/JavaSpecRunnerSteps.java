@@ -13,6 +13,7 @@ import info.javaspecproto.ContextClasses;
 import info.javaspecproto.OuterContext;
 import info.javaspecproto.OuterContextWithSetup;
 import info.javaspecproto.RunWithJavaSpecRunner;
+import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Runner;
 
@@ -28,6 +29,7 @@ public final class JavaSpecRunnerSteps {
   private final List<Object> events = synchronizedList(new LinkedList<>()); //In case JUnit uses threads per test
   private Class<?> testClass;
   private int numTests;
+  private Description description;
   
   @Before
   public void deploySpies() {
@@ -90,13 +92,24 @@ public final class JavaSpecRunnerSteps {
   public void that_class_and_its_inner_classes_each_define_Establish_and_Because_fixture_lambdas() throws Exception {
     this.testClass = OuterContextWithSetup.class;
   }
-  
+
+  @Given("^I express desired behavior for JavaSpec through the use of Java classes and fields$")
+  public void I_express_desired_behavior_for_JavaSpec_through_the_use_of_Java_classes_and_fields() throws Exception {
+    this.testClass = ContextClasses.TwoIt.class;
+  }
+
   /* When */
 
   @When("^I count the tests in the class$")
   public void I_count_the_tests() throws Exception {
     Runner runner = new NewJavaSpecRunner(testClass);
     this.numTests = runner.testCount();
+  }
+
+  @When("^I describe the tests in the class$")
+  public void I_describe_the_tests() throws Exception {
+    Runner runner = new NewJavaSpecRunner(testClass);
+    this.description = runner.getDescription();
   }
 
   @When("^I run the tests?$")
@@ -204,7 +217,14 @@ public final class JavaSpecRunnerSteps {
   public void both_of_these_run_before_any_Establish_or_Because_lambdas_in_any_nested_classes() throws Exception {
     //If the test passed, then this has already been verified
   }
-  
+
+  @Then("^the test runner should describe expected behavior in human-readable language$")
+  public void the_test_runner_should_describe_expected_behavior() throws Exception {
+    assertThat(description.getClassName(), equalTo("TwoIt"));
+    assertThat(description.getChildren().stream().map(Description::getMethodName).collect(toList()),
+      contains("first test", "second test"));
+  }
+
   /* Helpers */
   
   private void assertTestPassed(Class<?> context, String itFieldName) {

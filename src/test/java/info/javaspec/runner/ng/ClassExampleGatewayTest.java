@@ -1,10 +1,14 @@
 package info.javaspec.runner.ng;
 
+import com.google.common.collect.Lists;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspecproto.ContextClasses;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -67,6 +71,40 @@ public class ClassExampleGatewayTest {
     public void withAStaticInnerClass_doesNotCountItFieldsInThoseClassesAsExamples() throws Exception {
       shouldHaveTotalNumExamples(ContextClasses.NestedStaticClassIt.class, 0);
       shouldNotHaveExamples(ContextClasses.NestedStaticClassIt.class);
+    }
+  }
+
+  public class junitDescriptionTree {
+    private NewExampleGateway subject;
+    private Description description;
+
+    public class givenAClassWith1ItFieldAndNoInnerClasses {
+      @Before
+      public void setup() throws Exception {
+        subject = new ClassExampleGateway(ContextClasses.OneIt.class);
+        description = subject.junitDescriptionTree();
+      }
+
+      @Test
+      public void returnsATestDescription() throws Exception {
+        assertThat(Lists.newArrayList(description.isTest(), description.isSuite()), contains(true, false));
+      }
+
+      @Test
+      public void hasOneTest() throws Exception {
+        assertThat(description.isEmpty(), is(false));
+        assertThat(description.testCount(), equalTo(1));
+      }
+
+      @Test
+      public void setsTheClassNameAnTheContextClassName() throws Exception {
+        assertThat(description.getClassName(), equalTo("OneIt"));
+      }
+
+      @Test
+      public void setsTheMethodNameToTheFieldName_replacingUnderscoreWithSpace() throws Exception {
+        assertThat(description.getMethodName(), equalTo("only test"));
+      }
     }
   }
 
