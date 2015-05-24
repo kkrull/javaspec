@@ -2,10 +2,15 @@ package info.javaspec.runner.ng;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.runner.ng.NewJavaSpecRunner.NoExamples;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
+import org.junit.runner.notification.RunNotifier;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import java.util.stream.Stream;
 
@@ -14,6 +19,7 @@ import static info.javaspec.testutil.Matchers.matchesRegex;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @RunWith(HierarchicalContextRunner.class)
@@ -38,6 +44,33 @@ public class NewJavaSpecRunnerTest {
       givenGatewayReturning(Description.EMPTY);
       subject = new NewJavaSpecRunner(gateway);
       assertThat(subject.getDescription(), sameInstance(Description.EMPTY));
+    }
+  }
+
+  public class run {
+    final RunNotifier notifier = Mockito.mock(RunNotifier.class);
+
+    @Before
+    public void setup() throws Exception {
+      givenGatewayWithExamples("should pass");
+      subject = new NewJavaSpecRunner(gateway);
+    }
+
+    public class givenAnIgnoredExample {
+      @Test
+      public void notifiesOfTheTestRunStarting() throws Exception {
+        Description rootSuite = gateway.junitDescriptionTree();
+        Description onlyTest = rootSuite.getChildren().get(0);
+        subject.run(notifier);
+        Mockito.verify(notifier, times(1)).fireTestIgnored(onlyTest);
+      }
+    }
+
+    public class givenAContextClassWith1OrMoreExamples {
+      @Test @Ignore
+      public void notifiesOfEachExamplesOutcome() throws Exception {
+        //Try a simple root class -> descriptive context -> 2 tests tree
+      }
     }
   }
 

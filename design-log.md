@@ -106,9 +106,14 @@ as long as the field itself isn't static.  Maybe it's not a big deal after all?
 - A **root context class** is the top-level class passed to `JavaSpecRunner`.  It's the outer-most level of detail
   of abstraction at which to run tests, and it may contain test fixtures and examples just like any other context class.
 - All other **context classes** are [inner classes](https://docs.oracle.com/javase/tutorial/java/javaOO/nested.html) 
-  encosed within the root context class or another context class.  Each context class may contain test fixtures and
+  enclosed within the root context class or another context class.  Each context class may contain test fixtures and
   examples, or it may exist solely for the purpose of describing the system under test in a structured and readable
   manner.
 - A **nested static class** could also contain `It` fields and the like, but it is not considered a context class at
   this time.  It is, however, a perfectly reasonable place to put helper methods.
 
+
+## Questions for later
+
+- `ClassExampleGateway`: Will it cause any problems if there's an empty `Description` sub-tree?
+  By that, I mean a (sequence of) suite Description that ultimately contains no test Descriptions.

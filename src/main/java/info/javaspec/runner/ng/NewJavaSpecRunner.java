@@ -56,7 +56,9 @@ public final class NewJavaSpecRunner extends Runner {
 
   @Override
   public void run(RunNotifier notifier) {
-    throw new UnsupportedOperationException();
+    Description rootSuite = getDescription();
+    Description example = rootSuite.getChildren().get(0);
+    notifier.fireTestIgnored(example);
   }
 
   @Override

@@ -79,7 +79,7 @@ public class ClassExampleGatewayTest {
   }
 
   public class junitDescriptionTree {
-    private Description description; //TODO KDK: Do pruning of empty branches later?
+    private Description description;
     private List<Description> children;
 
     @Test //The top-level class doesn't describe behavior; it's just a container that has to end in the word Test

@@ -13,7 +13,6 @@ Feature: Running tests
     When I describe the tests in the class
     Then the test runner should describe expected behavior in human-readable language
 
-  @wip
   Scenario: Run JavaSpec tests with a JavaSpecRunner
     Given I have a class with JavaSpec tests in it
     When I run the tests with a JavaSpec runner
