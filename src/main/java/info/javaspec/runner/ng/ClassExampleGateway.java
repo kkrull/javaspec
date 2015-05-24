@@ -52,10 +52,7 @@ public final class ClassExampleGateway implements NewExampleGateway {
 
   @Override
   public Description junitDescriptionTree() {
-    //JUnit seems to expect a test Description if there's only 1 test in the class.
-    Description rootSuite = junitDescriptionTree(rootContext);
-    Optional<Description> atomicTest = singleLeafTest(rootSuite);
-    return atomicTest.orElse(rootSuite);
+    return junitDescriptionTree(rootContext);
   }
 
   private Description junitDescriptionTree(Class<?> context) {
@@ -94,13 +91,5 @@ public final class ClassExampleGateway implements NewExampleGateway {
   private static Stream<Class<?>> readInnerClasses(Class<?> parent) {
     Predicate<Class<?>> isNonStatic = x -> !Modifier.isStatic(x.getModifiers());
     return Stream.of(parent.getDeclaredClasses()).filter(isNonStatic);
-  }
-
-  private Optional<Description> singleLeafTest(Description rootSuite) {
-    List<Description> children = rootSuite.getChildren();
-    if(children.size() == 1 && children.get(0).isTest())
-      return Optional.of(children.get(0));
-    else return
-      Optional.empty();
   }
 }

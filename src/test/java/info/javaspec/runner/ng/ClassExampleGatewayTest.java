@@ -92,25 +92,6 @@ public class ClassExampleGatewayTest {
       @Test
       public void returnsThe_EMPTY_Description() throws Exception {
         assertThat(junitDescriptionFor(ContextClasses.Empty.class), sameInstance(Description.EMPTY));
-//        assertThat(junitDescriptionFor(ContextClasses.EmptyContext.class), sameInstance(Description.EMPTY));
-      }
-    }
-
-    public class givenARootContextClassWith1ItFieldAndNoInnerClasses {
-      @Before
-      public void setup() throws Exception {
-        description = junitDescriptionFor(ContextClasses.OneIt.class);
-      }
-
-      @Test
-      public void returnsATestDescription() throws Exception {
-        assertThat(newArrayList(description.isTest(), description.isSuite()), contains(true, false));
-      }
-
-      @Test
-      public void hasOneTest() throws Exception {
-        assertThat(description.isEmpty(), is(false));
-        assertThat(description.testCount(), equalTo(1));
       }
     }
 
