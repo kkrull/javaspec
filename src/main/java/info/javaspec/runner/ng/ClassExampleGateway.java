@@ -3,9 +3,13 @@ package info.javaspec.runner.ng;
 import info.javaspec.dsl.It;
 import info.javaspec.util.ReflectionUtil;
 import org.junit.runner.Description;
+import sun.security.krb5.internal.crypto.Des;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -48,9 +52,10 @@ public final class ClassExampleGateway implements NewExampleGateway {
 
   @Override
   public Description junitDescriptionTree() {
-    //TODO KDK: If it's the root context and it only has 1 test, just return the test description
-    //TODO KDK: Name the root context with the *raw* class name
-    return junitDescriptionTree(rootContext);
+    //JUnit seems to expect a test Description if there's only 1 test in the class.
+    Description rootSuite = junitDescriptionTree(rootContext);
+    Optional<Description> atomicTest = singleLeafTest(rootSuite);
+    return atomicTest.orElse(rootSuite);
   }
 
   private Description junitDescriptionTree(Class<?> context) {
@@ -89,5 +94,13 @@ public final class ClassExampleGateway implements NewExampleGateway {
   private static Stream<Class<?>> readInnerClasses(Class<?> parent) {
     Predicate<Class<?>> isNonStatic = x -> !Modifier.isStatic(x.getModifiers());
     return Stream.of(parent.getDeclaredClasses()).filter(isNonStatic);
+  }
+
+  private Optional<Description> singleLeafTest(Description rootSuite) {
+    List<Description> children = rootSuite.getChildren();
+    if(children.size() == 1 && children.get(0).isTest())
+      return Optional.of(children.get(0));
+    else return
+      Optional.empty();
   }
 }
