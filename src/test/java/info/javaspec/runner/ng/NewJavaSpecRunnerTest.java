@@ -3,16 +3,12 @@ package info.javaspec.runner.ng;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.runner.ng.NewJavaSpecRunner.NoExamples;
 import info.javaspec.testutil.RunListenerSpy;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Matcher;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
-import org.mockito.Mockito;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -25,21 +21,25 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @RunWith(HierarchicalContextRunner.class)
 public class NewJavaSpecRunnerTest {
   private final NewExampleGateway gateway = mock(NewExampleGateway.class);
-  private Runner subject;
+  private final Runner subject;
+
+  public NewJavaSpecRunnerTest() {
+    when(gateway.hasExamples()).thenReturn(true);
+    subject = new NewJavaSpecRunner(gateway);
+  }
 
   public class constructor {
     public class givenAClassWithoutAnyExamples {
       @Test
       public void throwsNoExamplesException() throws Exception {
-        givenGatewayWithNoExamples("ContextClasses$Empty");
+        givenTheGatewayHasNoExamples("ContextClasses$Empty");
         Exception ex = capture(NoExamples.class, () -> new NewJavaSpecRunner(gateway));
-        assertThat(ex.getMessage(), matchesRegex("^Context .*[$]Empty must contain at least 1 example"));
+        assertThat(ex.getMessage(), matchesRegex("^Context ContextClasses[$]Empty must contain at least 1 example"));
       }
     }
   }
@@ -47,8 +47,7 @@ public class NewJavaSpecRunnerTest {
   public class getDescription {
     @Test
     public void returnsTheDescriptionProvidedByTheGateway() throws Exception {
-      givenGatewayReturning(Description.EMPTY);
-      subject = new NewJavaSpecRunner(gateway);
+      givenTheGatewayDescribes(1, Description.EMPTY);
       assertThat(subject.getDescription(), sameInstance(Description.EMPTY));
     }
   }
@@ -60,19 +59,17 @@ public class NewJavaSpecRunnerTest {
 
     @Before
     public void setup() throws Exception {
-      Mockito.stub(gateway.hasExamples()).toReturn(true);
-      subject = new NewJavaSpecRunner(gateway);
       notifier.addListener(listener);
     }
 
     public class givenAnIgnoredExample {
       @Before
       public void setup() throws Exception {
-        givenGatewayWithExamples("should pass");
+        givenTheGatewayDescribes(1, aSuiteWithATest("IgnoreMe"));
         subject.run(notifier);
       }
 
-      @Test @Ignore
+      @Test
       public void notifiesOfTheTestRunStarting() throws Exception {
         List<String> methodNames = events.stream().map(RunListenerSpy.Event::getName).collect(toList());
         assertThat(methodNames, contains("testIgnored"));
@@ -82,15 +79,12 @@ public class NewJavaSpecRunnerTest {
     public class givenAContextClassWith1OrMoreExamples {
       @Before
       public void setup() throws Exception {
-        when(gateway.rootContextName()).thenReturn("ContextWithNestedExamples");
-        when(gateway.totalNumExamples()).thenReturn(4L);
-
-        Description rootSuite = Description.createSuiteDescription("ContextWithNestedExamples");
-        rootSuite.addChild(Description.createTestDescription("ContextWithNestedExamples", "root context example 1"));
-        rootSuite.addChild(Description.createTestDescription("ContextWithNestedExamples", "root context example 2"));
-        rootSuite.addChild(suiteWithATest("subcontext 1"));
-        rootSuite.addChild(suiteWithATest("subcontext 2"));
-        when(gateway.junitDescriptionTree()).thenReturn(rootSuite);
+        givenTheGatewayDescribes(4L, aSuiteWith("ContextWithNestedExamples",
+            Description.createTestDescription("ContextWithNestedExamples", "root context example 1"),
+            Description.createTestDescription("ContextWithNestedExamples", "root context example 2"),
+            aSuiteWithATest("subcontext 1"),
+            aSuiteWithATest("subcontext 2"))
+        );
 
         subject.run(notifier);
       }
@@ -99,11 +93,7 @@ public class NewJavaSpecRunnerTest {
       public void notifiesOfEachExamplesOutcome() throws Exception {
         List<String> methodNames = events.stream().map(RunListenerSpy.Event::describedMethodName).collect(toList());
         assertThat(methodNames, contains(
-          "root context example 1",
-          "root context example 2",
-          "subcontext 1",
-          "subcontext 2"
-        ));
+          "root context example 1", "root context example 2", "subcontext 1", "subcontext 2"));
       }
     }
   }
@@ -112,16 +102,17 @@ public class NewJavaSpecRunnerTest {
     public class givenAClassWith1OrMoreExamples {
       @Test
       public void returnsTheNumberOfTestsInTheGivenContextClass() throws Exception {
-        givenGatewayWithExamples("first_test", "second_test");
-        subject = new NewJavaSpecRunner(gateway);
+        givenTheGatewayDescribes(2, aSuiteWith("TwoLeafExamples",
+          Description.createTestDescription("TwoLeafExamples", "1"),
+          Description.createTestDescription("TwoLeafExamples", "2")));
         assertThat(subject.testCount(), equalTo(2));
       }
     }
 
-    public class givenAClassWithMoreExamplesThanThereAreInts {
+    public class givenAClassWithMoreExamplesThanThereAreIntegers {
       @Test
       public void throwsTooManyTests() throws Exception {
-        givenGatewayWithAnEnormousNumberOfExamples("ContextWithLotsOfExamples");
+        givenTheGatewayHasAnEnormousNumberOfExamples("ContextWithLotsOfExamples");
         NewJavaSpecRunner.TooManyExamples ex = capture(NewJavaSpecRunner.TooManyExamples.class,
           () -> new NewJavaSpecRunner(gateway).testCount());
         assertThat(ex.getMessage(),
@@ -130,40 +121,29 @@ public class NewJavaSpecRunnerTest {
     }
   }
 
-  private void givenGatewayReturning(Description description) {
-    when(gateway.rootContextName()).thenReturn("SingleExample");
-    when(gateway.hasExamples()).thenReturn(true);
-    when(gateway.totalNumExamples()).thenReturn(1L);
+  private void givenTheGatewayHasAnEnormousNumberOfExamples(String contextName) {
+    when(gateway.rootContextName()).thenReturn(contextName);
+    when(gateway.totalNumExamples()).thenReturn((long)Integer.MAX_VALUE + 1);
+  }
+
+  private void givenTheGatewayHasNoExamples(String rootContextName) {
+    when(gateway.rootContextName()).thenReturn(rootContextName);
+    when(gateway.hasExamples()).thenReturn(false);
+  }
+
+  private void givenTheGatewayDescribes(long numTests, Description description) {
+    when(gateway.rootContextName()).thenReturn("RootContext");
+    when(gateway.totalNumExamples()).thenReturn(numTests);
     when(gateway.junitDescriptionTree()).thenReturn(description);
   }
 
-  private void givenGatewayWithNoExamples(String rootContextName) {
-    when(gateway.rootContextName()).thenReturn(rootContextName);
-    when(gateway.hasExamples()).thenReturn(false);
-    when(gateway.totalNumExamples()).thenReturn(0L);
-    when(gateway.junitDescriptionTree()).thenReturn(Description.EMPTY);
+  private static Description aSuiteWith(String name, Description... children) {
+    Description suite = Description.createSuiteDescription(name);
+    Stream.of(children).forEach(suite::addChild);
+    return suite;
   }
 
-  private void givenGatewayWithExamples(String... exampleNames) {
-    when(gateway.rootContextName()).thenReturn("ContextWithExamples");
-    when(gateway.hasExamples()).thenReturn(true);
-    when(gateway.totalNumExamples()).thenReturn((long)exampleNames.length);
-
-    Description suite = Description.createSuiteDescription("ContextWithExamples");
-    Stream.of(exampleNames)
-      .map(x -> Description.createTestDescription("ContextWithExamples", x))
-      .forEach(suite::addChild);
-    when(gateway.junitDescriptionTree()).thenReturn(suite);
-  }
-
-  private void givenGatewayWithAnEnormousNumberOfExamples(String contextName) {
-    when(gateway.rootContextName()).thenReturn(contextName);
-    when(gateway.hasExamples()).thenReturn(true);
-    when(gateway.totalNumExamples()).thenReturn((long)Integer.MAX_VALUE + 1);
-    when(gateway.junitDescriptionTree()).thenThrow(UnsupportedOperationException.class);
-  }
-
-  private Description suiteWithATest(String name) {
+  private static Description aSuiteWithATest(String name) {
     Description suite = Description.createSuiteDescription(name);
     suite.addChild(Description.createTestDescription(name, name));
     return suite;

@@ -4,6 +4,8 @@ import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 
+import java.lang.annotation.Annotation;
+
 /**
  * Runs tests written with JavaSpec lambdas under JUnit.
  * <p/>
@@ -38,8 +40,8 @@ import org.junit.runner.notification.RunNotifier;
 public final class NewJavaSpecRunner extends Runner {
   private final NewExampleGateway gateway;
 
-  public NewJavaSpecRunner(Class<?> contextClass) {
-    this(new ClassExampleGateway(contextClass));
+  public NewJavaSpecRunner(Class<?> rootContextClass) {
+    this(new ClassExampleGateway(rootContextClass));
   }
 
   public NewJavaSpecRunner(NewExampleGateway gateway) {
@@ -51,7 +53,6 @@ public final class NewJavaSpecRunner extends Runner {
 
   @Override
   public Description getDescription() {
-    //TODO KDK: Stream Example -> getDescription (letting examples build their own descriptions) instead of building descriptions in two places?
     return gateway.junitDescriptionTree();
   }
 
