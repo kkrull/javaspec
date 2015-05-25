@@ -2,6 +2,9 @@ package info.javaspec.runner.ng;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.runner.ng.NewJavaSpecRunner.NoExamples;
+import info.javaspec.testutil.RunListenerSpy;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -9,13 +12,16 @@ import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static info.javaspec.testutil.Assertions.capture;
 import static info.javaspec.testutil.Matchers.matchesRegex;
+import static java.util.Collections.synchronizedList;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
@@ -48,28 +54,56 @@ public class NewJavaSpecRunnerTest {
   }
 
   public class run {
-    final RunNotifier notifier = Mockito.mock(RunNotifier.class);
+    final List<RunListenerSpy.Event> events = synchronizedList(new LinkedList<>());
+    private final RunListenerSpy listener = new RunListenerSpy(events::add);
+    private final RunNotifier notifier = new RunNotifier();
 
     @Before
     public void setup() throws Exception {
-      givenGatewayWithExamples("should pass");
+      Mockito.stub(gateway.hasExamples()).toReturn(true);
       subject = new NewJavaSpecRunner(gateway);
+      notifier.addListener(listener);
     }
 
     public class givenAnIgnoredExample {
-      @Test
-      public void notifiesOfTheTestRunStarting() throws Exception {
-        Description rootSuite = gateway.junitDescriptionTree();
-        Description onlyTest = rootSuite.getChildren().get(0);
+      @Before
+      public void setup() throws Exception {
+        givenGatewayWithExamples("should pass");
         subject.run(notifier);
-        Mockito.verify(notifier, times(1)).fireTestIgnored(onlyTest);
+      }
+
+      @Test @Ignore
+      public void notifiesOfTheTestRunStarting() throws Exception {
+        List<String> methodNames = events.stream().map(RunListenerSpy.Event::getName).collect(toList());
+        assertThat(methodNames, contains("testIgnored"));
       }
     }
 
     public class givenAContextClassWith1OrMoreExamples {
-      @Test @Ignore
+      @Before
+      public void setup() throws Exception {
+        when(gateway.rootContextName()).thenReturn("ContextWithNestedExamples");
+        when(gateway.totalNumExamples()).thenReturn(4L);
+
+        Description rootSuite = Description.createSuiteDescription("ContextWithNestedExamples");
+        rootSuite.addChild(Description.createTestDescription("ContextWithNestedExamples", "root context example 1"));
+        rootSuite.addChild(Description.createTestDescription("ContextWithNestedExamples", "root context example 2"));
+        rootSuite.addChild(suiteWithATest("subcontext 1"));
+        rootSuite.addChild(suiteWithATest("subcontext 2"));
+        when(gateway.junitDescriptionTree()).thenReturn(rootSuite);
+
+        subject.run(notifier);
+      }
+
+      @Test
       public void notifiesOfEachExamplesOutcome() throws Exception {
-        //Try a simple root class -> descriptive context -> 2 tests tree
+        List<String> methodNames = events.stream().map(RunListenerSpy.Event::describedMethodName).collect(toList());
+        assertThat(methodNames, contains(
+          "root context example 1",
+          "root context example 2",
+          "subcontext 1",
+          "subcontext 2"
+        ));
       }
     }
   }
@@ -127,5 +161,11 @@ public class NewJavaSpecRunnerTest {
     when(gateway.hasExamples()).thenReturn(true);
     when(gateway.totalNumExamples()).thenReturn((long)Integer.MAX_VALUE + 1);
     when(gateway.junitDescriptionTree()).thenThrow(UnsupportedOperationException.class);
+  }
+
+  private Description suiteWithATest(String name) {
+    Description suite = Description.createSuiteDescription(name);
+    suite.addChild(Description.createTestDescription(name, name));
+    return suite;
   }
 }

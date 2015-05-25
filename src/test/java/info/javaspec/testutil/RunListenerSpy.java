@@ -5,6 +5,7 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public final class RunListenerSpy extends RunListener {
@@ -56,7 +57,7 @@ public final class RunListenerSpy extends RunListener {
     super.testRunFinished(result);
   }
   
-  public static class Event {
+  public static final class Event {
     public final String name;
     public final Description description;
     public final Failure failure;
@@ -81,10 +82,6 @@ public final class RunListenerSpy extends RunListener {
     
     public String describedClassName() {
       return description == null ? "<no description>" : description.getClassName();
-    }
-
-    public String describedDisplayName() {
-      return description == null ? "<no description>" : description.getDisplayName();
     }
 
     public String describedMethodName() {

@@ -51,14 +51,21 @@ public final class NewJavaSpecRunner extends Runner {
 
   @Override
   public Description getDescription() {
+    //TODO KDK: Stream Example -> getDescription (letting examples build their own descriptions) instead of building descriptions in two places?
     return gateway.junitDescriptionTree();
   }
 
   @Override
   public void run(RunNotifier notifier) {
-    Description rootSuite = getDescription();
-    Description example = rootSuite.getChildren().get(0);
-    notifier.fireTestIgnored(example);
+    //TODO KDK: Have the gateway stream Examples back, and call Example.getDescription as necessary.
+    run(getDescription(), notifier);
+  }
+
+  private void run(Description description, RunNotifier notifier) {
+    if(description.isTest())
+      notifier.fireTestIgnored(description);
+    else
+      description.getChildren().stream().forEach(x -> run(x, notifier));
   }
 
   @Override
