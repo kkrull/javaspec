@@ -117,3 +117,72 @@ as long as the field itself isn't static.  Maybe it's not a big deal after all?
 
 - `ClassExampleGateway`: Will it cause any problems if there's an empty `Description` sub-tree?
   By that, I mean a (sequence of) suite Description that ultimately contains no test Descriptions.
+
+## Runner to gateway interface
+
+It's time for another one of those big dilemas in design: *what should the gateway interface be?*
+
+Let's start with the facts that are incontrovertible and work our way back to a stable design.
+
+1. Specs, regardless of representation, are composed of:
+
+  - A **root context**, which may contain `0..n` examples and `0..n` sub-contexts, but has no parent context.
+  - A **context** which - like the root context - may contain `0..n` examples and `0..n` sub-contexts.  Unlike the root
+    context, it has 1 parent context and `1..n` ancestor contexts.
+  - Each context may also contain **test fixture** that runs before and/or after each example.
+  - An **example**, which performs some or all of the actions of the test.
+
+2. Specs are currently represented in Java code by:
+
+  - A **top level class** for the root context.
+  - A hierarchy of **inner classes**, enclosed by the root context, that represent the context hierarchy.
+  - Optional **test fixture fields** in each context class.
+  - **Example fields** in at least 1 context class.
+
+3. The `Runner` used to interface JavaSpec to JUnit needs to:
+
+  - Provide a JUnit `Description` hierarchy to summarize for observers what tests are to be run.
+  - Provide notifications about each test to listeners, with the `Description` associated with the test.
+  - Instantiate and run each test, along with whatever before/after test fixture that is necessary.
+    The manner of instantiation and execution, as well as the order of test execution, are up to the runner.
+  - Generate a `Result` for each test.
+  - Associate each `Result` with a `Description`.
+
+### Design alternatives
+
+Given those requirements, let's consider some design alternatives.
+
+1. Smart gateway: Gateway does all the work.
+
+  - `Runner.getDescription` delegates to `Gateway.junitDescriptionTree`.
+  - `Runner.run` delegates to
+    - `Gateway.getExamples` to construct examples with all necessary context and to provide a
+      runtime sequence.  It also needs to return the `Description` associated with each `Example`.
+    - `Example.run` does the actual running of the spec.
+  - DRY: The `Gateway` handles all notions of tree traversal.
+
+2. Thin gateway: Runner does all the work.
+
+  - The gateway has query methods necessary to traverse the hierarchy:
+    - root context (class)
+    - sub-contexts of a context
+    - examples in a context: This will either have to be a ready-to-execute example (complete with all test fixture), or
+      it will need to be raw access to fields that are used for arrange/act/assert/cleanup.
+  - DRY: Both the Runner and the Gateway will need to have tree-traversal logic, to some extent.
+    - The Runner will have to start at the top, and work its way down to make `Descriptions`.
+    - The gateway will have to be given a context, and work its way back up to make an `Example`.
+    - The gateway will also have to go down one level at a time, to query sub-context.
+  - Abstraction: The Gateway could be parameterized for a representation of a context and of an example.  Each Runner
+    will have to work with concrete classes.
+
+3. Smart solution-domain model: Extend `Description` and have it generate `Example`.
+
+4. Smart problem-domain model: Query `Example` and have it build `Description`.
+
+### Future maintainability
+
+After that, it may be worthwhile to spend a few minutes thinking about how each approach would stand up to different
+representations for specs.  It may be better to hold off on the actual refactoring - making an abstraction from a
+working implementation - once I've convinced myself that the implementation is going to work.
+
+1. What extra classes are needed, if there's another representation of specs?
