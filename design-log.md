@@ -160,6 +160,7 @@ Given those requirements, let's consider some design alternatives.
       runtime sequence.  It also needs to return the `Description` associated with each `Example`.
     - `Example.run` does the actual running of the spec.
   - DRY: The `Gateway` handles all notions of tree traversal.
+  - Abstraction: A new spec representation requires a new Runner and Gateway.
 
 2. Thin gateway: Runner does all the work.
 
@@ -172,17 +173,79 @@ Given those requirements, let's consider some design alternatives.
     - The Runner will have to start at the top, and work its way down to make `Descriptions`.
     - The gateway will have to be given a context, and work its way back up to make an `Example`.
     - The gateway will also have to go down one level at a time, to query sub-context.
-  - Abstraction: The Gateway could be parameterized for a representation of a context and of an example.  Each Runner
-    will have to work with concrete classes.
+  - Abstraction: 
+    - The Gateway could be parameterized for a representation of a context and of an example.  That may focus the design
+      on abstraction, but there won't be any alternative implementations at runtime unless resorting to the Service
+      Locator pattern (ew).
+    - Each Runner will have to work with concrete classes, or delegate to a parameterized Strategy that captures the
+      type of context.  If there were a new representation of tests, there would have to be a new runner because the
+      runner's constructor has to instantiate a concrete gateway class that knows about the structure of the test
+      classes.  So there's really no notion of having a runner for which you can swap out the gateway, except during
+      testing when calling a different constructor.
 
 3. Smart solution-domain model: Extend `Description` and have it generate `Example`.
 
+  - Feasibility: Impossible, because `Description` constructors are all private.
+
 4. Smart problem-domain model: Query `Example` and have it build `Description`.
 
-### Future maintainability
+  - Abstraction: Now `Example` needs to know about JUnit.
+  - It's also impossible for `Example` to build a complete `Description` below itself, without a really funky algorithm
+    that goes up the tree, and then back down.
+  - One could construct the concrete `Example` with its `Description`.  I'm pretty sure the whole `Description` tree
+    will be stuck in memory anyway, as long as 1 reference exists to the root node.
 
-After that, it may be worthwhile to spend a few minutes thinking about how each approach would stand up to different
-representations for specs.  It may be better to hold off on the actual refactoring - making an abstraction from a
-working implementation - once I've convinced myself that the implementation is going to work.
+Given all that, I think it's best to have a thin gateway.  It won't be so likely to change whne it's focusing on the
+fundamentals.  If there's a new representation, there will have to be a new runner too.
 
-1. What extra classes are needed, if there's another representation of specs?
+## Why have a gateway at all?
+
+Having a gateway seemed like a natural separation of concerns that would decrease coupling in a manner helpful for
+testing, and *possibly* helpful in production.  
+
+However, does the gateway really make testing any easier?  Let's assume for a moment that I'm using the Strategy pattern
+to get around the issue with Java Generics, allowing the Runner to be agnostic of the particular Context used by its
+test representation.  
+
+Perhaps it's best that I start by defining the specific manner in which I wish to simplify my tests.  If the Runner and
+Gateway are combined and tightly coupled to this representation of specs, then:
+
+- The Runner navigates classes and fields.  It's not so easy to make classes and fields at runtime, in a test, so
+  testing would have to be done with real classes.  As I've found in the time since making this distinction, putting all
+  those classes inside a top-level class works out pretty well.
+- I don't like having to use Test Spies for so many micro tests.  I don't mind using a few to spot-check end-to-end
+  behavior, but I'm concerned that overuse of spying would lead to brittle, hard to understand tests.
+- I could use the Factory Method pattern on the Runner to at least abstract the notion of creating and running Examples.
+- If I want to support another representation for specs later, I'll have to write a new Runner.  It may be helpful to
+  extract class traversal logic to helpers, since that behavior would at least be shared by any class-based runners.
+
+If I did have a separate gateway and the Runner isn't tied to using classes:
+
+- I need to stub queries at each node in the tree, for the Runner to create a full Description hierarchy and all the
+  Examples.
+- Running examples: For the Gateway to create each Example, it needs to get the context class and query fixture methods from each ancestor.
+
+    Runner.run(Context c):
+    Context c = Gateway.rootContext
+    for Example e in Gateway.examples(c)
+      Description test = lookup(c, e) //Cached during getDescription
+      e.run
+      RunNotifier.fireTestStarted/Ended/Ignored
+    
+    for Context s in Gateway.subcontexts(s)
+      run(s)
+    
+    Gateway.examples(ClassContext c):
+    Field[] befores = readBefores(c) ++ readBefores(c.parent)
+    Field[] afters = readAfters(c.parent) ++ readAfters(c)
+    for Field f in Class.getDeclaredFields(It.class):
+      Example e = new Example(befores, afters, f)
+      yield return e
+
+    Runner.getDescription:
+    Context c = Gateway.rootContext
+    Description suite = new Description(c.name)
+    suite += Gateway.examples(c).map(Example::name).map(Description::testDescription)
+    suite += Gateway.subcontexts(c).map(getDescription)
+
+
