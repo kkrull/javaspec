@@ -5,9 +5,13 @@ import info.javaspec.util.ReflectionUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 /** Reads specs from no-arg lambdas assigned to It fields in a hierarchy of context classes. */
 public final class ClassSpecGateway implements SpecGateway {
@@ -19,7 +23,25 @@ public final class ClassSpecGateway implements SpecGateway {
 
   @Override
   public String rootContextId() {
-    return rootContext.getName();
+    return rootContext().id;
+  }
+
+  @Override
+  public Context rootContext() {
+    return makeContext(rootContext);
+  }
+
+  @Override
+  public List<Context> getSubcontexts(Context context) {
+    return readInnerClasses(rootContext)
+      .map(this::makeContext)
+      .collect(toList());
+  }
+
+  private Context makeContext(Class<?> context) {
+    String declaredName = context.getSimpleName();
+    String displayName = context == rootContext ? declaredName : humanize(declaredName);
+    return new Context(context.getName(), displayName) { };
   }
 
   @Override
@@ -44,6 +66,21 @@ public final class ClassSpecGateway implements SpecGateway {
       .collect(Collectors.summingLong(x -> x));
 
     return declaredInSelf + declaredInDescendants;
+  }
+
+  @Override
+  public List<Spec> getSpecs(Context context) {
+    return readDeclaredItFields(rootContext)
+      .map(x -> makeSpec(x, context))
+      .collect(toList());
+  }
+
+  private static Spec makeSpec(Field itField, Context context) {
+    return new Spec(itField.getName(), humanize(itField.getName())) { };
+  }
+
+  private static String humanize(String behaviorOrContext) {
+    return behaviorOrContext.replace('_', ' ');
   }
 
   private static Stream<Field> readDeclaredItFields(Class<?> context) {

@@ -50,7 +50,25 @@ public final class NewJavaSpecRunner extends Runner {
 
   @Override
   public Description getDescription() {
-    throw new UnsupportedOperationException();
+    return suiteDescription(gateway.rootContext());
+  }
+
+  private Description suiteDescription(Context context) {
+    Description suite = Description.createSuiteDescription(context.displayName);
+
+    gateway.getSpecs(context).stream()
+      .map(x -> testDescription(context.displayName, x.displayName))
+      .forEach(suite::addChild);
+
+    gateway.getSubcontexts(context).stream()
+      .map(this::suiteDescription)
+      .forEach(suite::addChild);
+
+    return suite;
+  }
+
+  private static Description testDescription(String contextName, String testName) {
+    return Description.createTestDescription(contextName, testName);
   }
 
   @Override

@@ -4,6 +4,8 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.runner.ng.NewJavaSpecRunner.NoSpecs;
 import info.javaspec.runner.ng.NewJavaSpecRunner.TooManySpecs;
 import info.javaspec.testutil.RunListenerSpy;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -12,10 +14,13 @@ import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static info.javaspec.testutil.Assertions.capture;
 import static info.javaspec.testutil.Matchers.matchesRegex;
 import static java.util.Collections.synchronizedList;
@@ -23,6 +28,7 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -46,11 +52,92 @@ public class NewJavaSpecRunnerTest {
   }
 
   public class getDescription {
-    @Ignore
-    @Test
-    public void returnsTheDescriptionProvidedByTheGateway() throws Exception {
-      givenTheGatewayDescribes(1, Description.EMPTY);
-//      assertThat(subject.getDescription(), sameInstance(Description.EMPTY));
+    private Description description;
+
+    public class givenAContextHierarchy {
+      @Before
+      public void setup() {
+        //TODO KDK: Would this be easier to fake than to stub?
+        FakeContext bottomContext = aLeafContext("Bottom", aSpec("one"));
+        FakeContext middleContext = aNestedContext("Middle", bottomContext);
+        FakeContext rootContext = aNestedContext("Root", middleContext);
+
+        when(gateway.hasSpecs()).thenReturn(true);
+        when(gateway.countSpecs()).thenReturn(1L);
+
+        when(gateway.rootContextId()).thenReturn(rootContext.id);
+        when(gateway.rootContext()).thenReturn(rootContext);
+        when(gateway.getSpecs(rootContext)).thenReturn(rootContext.specs);
+        when(gateway.getSubcontexts(rootContext)).thenReturn(newArrayList(middleContext));
+
+        when(gateway.getSpecs(middleContext)).thenReturn(middleContext.specs);
+        when(gateway.getSubcontexts(middleContext)).thenReturn(newArrayList(bottomContext));
+
+        when(gateway.getSpecs(bottomContext)).thenReturn(bottomContext.specs);
+
+        description = subject.getDescription();
+      }
+
+      @Test
+      public void createsASuiteHierarchyMatchingTheContextHierarchy() throws Exception {
+        assertThat(description, isASuiteDescription("Root"));
+        assertThat(onlyChild(description), isASuiteDescription("Middle"));
+        assertThat(onlyChild(onlyChild(description)), isASuiteDescription("Bottom"));
+      }
+    }
+
+    public class givenAContext {
+      @Before
+      public void setup() throws Exception {
+        givenTheGatewayHasSpecs(1, aLeafContext("RootId", "RootDisplay", aSpec("one"), aSpec("two")));
+        description = subject.getDescription();
+      }
+
+      @Test
+      public void createsASuiteDescriptionForThatContext_whereTheSuiteClassNameIsTheContextDisplayName() {
+        assertThat(description, isASuiteDescription("RootDisplay"));
+      }
+
+      @Test
+      public void addsATestDescriptionForEachSpecInTheContext() throws Exception {
+        assertThat(description.getChildren(), hasSize(2));
+      }
+
+      @Test @Ignore
+      public void usesTheIdForTheDescriptionId___butHowToObserveIt() {}
+    }
+
+    public class givenASpec {
+      @Before
+      public void setup() throws Exception {
+        givenTheGatewayHasSpecs(1, aLeafContext("RootId", "RootDisplay", aSpec("oneId", "oneDisplay")));
+        description = onlyChild(subject.getDescription());
+      }
+
+      @Test
+      public void createsATestDescriptionForThatContext() {
+        assertThat(description, isATestDescription());
+      }
+
+      @Test
+      public void usesTheContextDisplayNameForTheTestClassName() {
+        assertThat(description.getClassName(), equalTo("RootDisplay"));
+      }
+
+      @Test
+      public void usesTheSpecDisplayNameForTheTestMethodName() {
+        assertThat(description.getMethodName(), equalTo("oneDisplay"));
+      }
+    }
+
+    private Description onlyChild(Description suite) {
+      List<Description> children = suite.getChildren();
+      if(children.size() != 1) {
+        String msg = String.format("Expected suite %s to have 1 child, but had %s", suite.getDisplayName(), children);
+        throw new RuntimeException(msg);
+      }
+
+      return children.get(0);
     }
   }
 
@@ -106,7 +193,7 @@ public class NewJavaSpecRunnerTest {
     public class givenAClassWith1OrMoreSpecs {
       @Test
       public void returnsTheNumberOfTestsInTheGivenContextClass() throws Exception {
-        givenTheGatewayHasSpecs(2, aContext("Root", aSpec("one"), aSpec("two")));
+        givenTheGatewayHasSpecs(2, aLeafContext("Root", aSpec("one"), aSpec("two")));
         assertThat(subject.testCount(), equalTo(2));
       }
     }
@@ -121,29 +208,43 @@ public class NewJavaSpecRunnerTest {
     }
   }
 
+  private void givenTheGatewayHasNoSpecs(String rootContextId) {
+    givenTheGatewayHasSpecs(0, aLeafContext(rootContextId));
+  }
+
   private void givenTheGatewayHasAnEnormousNumberOfSpecs(String rootContextId) {
     when(gateway.rootContextId()).thenReturn(rootContextId);
     when(gateway.hasSpecs()).thenReturn(true);
     when(gateway.countSpecs()).thenReturn((long) (Integer.MAX_VALUE) + 1);
   }
 
-  private void givenTheGatewayHasNoSpecs(String rootContextId) {
-    when(gateway.rootContextId()).thenReturn(rootContextId);
-    when(gateway.hasSpecs()).thenReturn(false);
-  }
-
-  private void givenTheGatewayHasSpecs(long numSpecs, Context rootContext) {
+  private void givenTheGatewayHasSpecs(long numSpecs, FakeContext rootContext) {
     when(gateway.rootContextId()).thenReturn(rootContext.id);
-    when(gateway.hasSpecs()).thenReturn(true);
+    when(gateway.hasSpecs()).thenReturn(numSpecs > 0);
     when(gateway.countSpecs()).thenReturn(numSpecs);
+
+    when(gateway.rootContext()).thenReturn(rootContext);
+    when(gateway.getSpecs(rootContext)).thenReturn(rootContext.specs);
   }
 
-  private Context aContext(String id, Spec... specs) {
-    return new Context(id) { };
+  private FakeContext aNestedContext(String id, FakeContext... subcontexts) {
+    return new FakeContext(id, id, new ArrayList<>(0), Arrays.asList(subcontexts));
+  }
+
+  private FakeContext aLeafContext(String id, Spec... specs) {
+    return new FakeContext(id, id, Arrays.asList(specs), new ArrayList<>(0));
+  }
+
+  private FakeContext aLeafContext(String id, String displayName, Spec... specs) {
+    return new FakeContext(id, displayName, Arrays.asList(specs), new ArrayList<>(0));
   }
 
   private Spec aSpec(String id) {
-    return new Spec() { };
+    return aSpec(id, id);
+  }
+
+  private Spec aSpec(String id, String displayName) {
+    return new Spec(id, displayName) { };
   }
 
   private void givenTheGatewayDescribes(long numTests, Description description) {
@@ -162,5 +263,52 @@ public class NewJavaSpecRunnerTest {
     Description suite = Description.createSuiteDescription(name);
     suite.addChild(Description.createTestDescription(name, name));
     return suite;
+  }
+
+  private static Matcher<Description> isATestDescription() {
+    return new BaseMatcher<Description>() {
+      @Override
+      public boolean matches(Object o) {
+        if(o == null || o.getClass() != Description.class)
+          return false;
+
+        Description other = (Description)o;
+        return other.isTest() && !other.isSuite();
+      }
+
+      @Override
+      public void describeTo(org.hamcrest.Description description) { description.appendText("a test Description"); }
+    };
+  }
+
+  private static Matcher<Description> isASuiteDescription(String className) {
+    return new BaseMatcher<Description>() {
+      @Override
+      public boolean matches(Object o) {
+        if(o == null || o.getClass() != Description.class)
+          return false;
+
+        Description other = (Description)o;
+        return !other.isTest() && other.isSuite()
+          && className.equals(other.getClassName());
+      }
+
+      @Override
+      public void describeTo(org.hamcrest.Description description) {
+        description.appendText("a suite Description named ");
+        description.appendValue(className);
+      }
+    };
+  }
+
+  private static final class FakeContext extends Context {
+    public final List<Spec> specs;
+    public final List<FakeContext> subcontexts;
+
+    public FakeContext(String id, String displayName, List<Spec> specs, List<FakeContext> subcontexts) {
+      super(id, displayName);
+      this.specs = specs;
+      this.subcontexts = subcontexts;
+    }
   }
 }
