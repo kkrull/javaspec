@@ -1,7 +1,8 @@
 package info.javaspec.runner.ng;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.runner.ng.NewJavaSpecRunner.NoExamples;
+import info.javaspec.runner.ng.NewJavaSpecRunner.NoSpecs;
+import info.javaspec.runner.ng.NewJavaSpecRunner.TooManySpecs;
 import info.javaspec.testutil.RunListenerSpy;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -36,13 +37,11 @@ public class NewJavaSpecRunnerTest {
   }
 
   public class constructor {
-    public class givenAClassWithoutAnyExamples {
-      @Test
-      public void throwsNoExamplesException() throws Exception {
-        givenTheGatewayHasNoSpecs("ContextClasses$Empty");
-        Exception ex = capture(NoExamples.class, () -> new NewJavaSpecRunner(gateway));
-        assertThat(ex.getMessage(), matchesRegex("^Context ContextClasses[$]Empty must contain at least 1 example"));
-      }
+    @Test
+    public void givenAClassWithoutAnySpecs_throwsNoSpecs() throws Exception {
+      givenTheGatewayHasNoSpecs("ContextClasses$Empty");
+      Exception ex = capture(NoSpecs.class, () -> new NewJavaSpecRunner(gateway));
+      assertThat(ex.getMessage(), matchesRegex("^Context ContextClasses[$]Empty must contain at least 1 spec"));
     }
   }
 
@@ -65,7 +64,7 @@ public class NewJavaSpecRunnerTest {
       notifier.addListener(listener);
     }
 
-    public class givenAnIgnoredExample {
+    public class givenAnIgnoredSpec {
       @Before
       public void setup() throws Exception {
         givenTheGatewayDescribes(1, aSuiteWithATest("IgnoreMe"));
@@ -80,12 +79,12 @@ public class NewJavaSpecRunnerTest {
       }
     }
 
-    public class givenAContextClassWith1OrMoreExamples {
+    public class givenAContextClassWith1OrMoreSpecs {
       @Before
       public void setup() throws Exception {
-        givenTheGatewayDescribes(4L, aSuiteWith("ContextWithNestedExamples",
-            Description.createTestDescription("ContextWithNestedExamples", "root context example 1"),
-            Description.createTestDescription("ContextWithNestedExamples", "root context example 2"),
+        givenTheGatewayDescribes(4L, aSuiteWith("ContextWithNestedSpecs",
+            Description.createTestDescription("ContextWithNestedSpecs", "root context Spec 1"),
+            Description.createTestDescription("ContextWithNestedSpecs", "root context Spec 2"),
             aSuiteWithATest("subcontext 1"),
             aSuiteWithATest("subcontext 2"))
         );
@@ -95,16 +94,16 @@ public class NewJavaSpecRunnerTest {
 
       @Test
       @Ignore
-      public void notifiesOfEachExamplesOutcome() throws Exception {
+      public void notifiesOfEachSpecsOutcome() throws Exception {
         List<String> methodNames = events.stream().map(RunListenerSpy.Event::describedMethodName).collect(toList());
         assertThat(methodNames, contains(
-          "root context example 1", "root context example 2", "subcontext 1", "subcontext 2"));
+          "root context Spec 1", "root context Spec 2", "subcontext 1", "subcontext 2"));
       }
     }
   }
 
   public class testCount {
-    public class givenAClassWith1OrMoreExamples {
+    public class givenAClassWith1OrMoreSpecs {
       @Test
       public void returnsTheNumberOfTestsInTheGivenContextClass() throws Exception {
         givenTheGatewayHasSpecs(2, aContext("Root", aSpec("one"), aSpec("two")));
@@ -112,22 +111,20 @@ public class NewJavaSpecRunnerTest {
       }
     }
 
-    public class givenAClassWithMoreExamplesThanThereAreIntegers {
-      @Ignore
+    public class givenAClassWithMoreSpecsThanThereAreIntegers {
       @Test
       public void throwsTooManyTests() throws Exception {
-        givenTheGatewayHasAnEnormousNumberOfExamples("ContextWithLotsOfExamples");
-//        NewJavaSpecRunner.TooManyExamples ex = capture(NewJavaSpecRunner.TooManyExamples.class,
-//          () -> new NewJavaSpecRunner(gateway).testCount());
-//        assertThat(ex.getMessage(),
-//          equalTo("Context ContextWithLotsOfExamples has more examples than JUnit can support in a single class: 2147483648"));
+        givenTheGatewayHasAnEnormousNumberOfSpecs("BigContext");
+        TooManySpecs ex = capture(TooManySpecs.class, () -> new NewJavaSpecRunner(gateway).testCount());
+        assertThat(ex.getMessage(), equalTo("Context BigContext has more specs than JUnit can support: 2147483648"));
       }
     }
   }
 
-  private void givenTheGatewayHasAnEnormousNumberOfExamples(String contextName) {
-//    when(gateway.rootContextName()).thenReturn(contextName);
-//    when(gateway.totalNumExamples()).thenReturn((long)Integer.MAX_VALUE + 1);
+  private void givenTheGatewayHasAnEnormousNumberOfSpecs(String rootContextId) {
+    when(gateway.rootContextId()).thenReturn(rootContextId);
+    when(gateway.hasSpecs()).thenReturn(true);
+    when(gateway.countSpecs()).thenReturn((long) (Integer.MAX_VALUE) + 1);
   }
 
   private void givenTheGatewayHasNoSpecs(String rootContextId) {
@@ -151,7 +148,7 @@ public class NewJavaSpecRunnerTest {
 
   private void givenTheGatewayDescribes(long numTests, Description description) {
 //    when(gateway.rootContextName()).thenReturn("RootContext");
-//    when(gateway.totalNumExamples()).thenReturn(numTests);
+//    when(gateway.totalNumSpecs()).thenReturn(numTests);
 //    when(gateway.junitDescriptionTree()).thenReturn(description);
   }
 

@@ -45,7 +45,7 @@ public final class NewJavaSpecRunner extends Runner {
   public NewJavaSpecRunner(SpecGateway gateway) {
     this.gateway = gateway;
     if(!gateway.hasSpecs())
-      throw new NoExamples(gateway.rootContextId());
+      throw new NoSpecs(gateway.rootContextId());
   }
 
   @Override
@@ -60,22 +60,26 @@ public final class NewJavaSpecRunner extends Runner {
 
   @Override
   public int testCount() {
-    return (int) gateway.countSpecs();
+    long numSpecs = gateway.countSpecs();
+    if(numSpecs > Integer.MAX_VALUE)
+      throw new TooManySpecs(gateway.rootContextId(), numSpecs);
+    else
+      return (int) numSpecs;
   }
 
-  public static final class NoExamples extends RuntimeException {
+  public static final class NoSpecs extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public NoExamples(String contextName) {
-      super(String.format("Context %s must contain at least 1 example", contextName));
+    public NoSpecs(String contextName) {
+      super(String.format("Context %s must contain at least 1 spec", contextName));
     }
   }
 
-  public static final class TooManyExamples extends RuntimeException {
-    private static final String FORMAT = "Context %s has more examples than JUnit can support in a single class: %d";
+  public static final class TooManySpecs extends RuntimeException {
+    private static final String FORMAT = "Context %s has more specs than JUnit can support: %d";
 
-    public TooManyExamples(String contextName, long numExamples) {
-      super(String.format(FORMAT, contextName, numExamples));
+    public TooManySpecs(String contextName, long numSpecs) {
+      super(String.format(FORMAT, contextName, numSpecs));
     }
   }
 }
