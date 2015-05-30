@@ -3,7 +3,6 @@ package info.javaspec.runner.ng;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspecproto.ContextClasses;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -160,10 +159,14 @@ public class ClassSpecGatewayTest {
     @Test
     public void givenAClassWithInstanceItFields_returnsASpecForEachField() {
       subject = new ClassSpecGateway(ContextClasses.TwoIt.class);
-      shouldHaveSpecs(subject.rootContext(), "first_test", "second_test");
+      shouldHaveSpecs(subject.rootContext(),
+        "info.javaspecproto.ContextClasses.TwoIt.first_test",
+        "info.javaspecproto.ContextClasses.TwoIt.second_test"
+      );
 
       subject = new ClassSpecGateway(ContextClasses.NestedContext.class);
-      shouldHaveSpecs(onlySubcontext(subject.rootContext()), "asserts");
+      shouldHaveSpecs(onlySubcontext(subject.rootContext()),
+        "info.javaspecproto.ContextClasses.NestedContext.inner.asserts");
     }
 
     @Test
@@ -182,8 +185,8 @@ public class ClassSpecGatewayTest {
       }
 
       @Test
-      public void identifiesTheSpecByTheDeclaredFieldName() {
-        assertThat(returned.id, equalTo("only_test"));
+      public void identifiesTheSpecByTheFullyQualifiedPathToThatField() {
+        assertThat(returned.id, equalTo("info.javaspecproto.ContextClasses.OneIt.only_test"));
       }
 
       @Test

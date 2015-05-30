@@ -75,7 +75,9 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
   }
 
   private static Spec makeSpec(Field itField, Context context) {
-    return new Spec(itField.getName(), humanize(itField.getName())) { };
+    Class<?> declaringClass = itField.getDeclaringClass();
+    String fullyQualifiedId = String.format("%s.%s", declaringClass.getCanonicalName(), itField.getName());
+    return new Spec(fullyQualifiedId, humanize(itField.getName())) { };
   }
 
   private static String humanize(String behaviorOrContext) {
