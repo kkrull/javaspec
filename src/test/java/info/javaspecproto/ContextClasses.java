@@ -295,6 +295,6 @@ public class ContextClasses {
   }
 
   public static class StaticIt {
-    static It looks_like_an_isolated_test_but_beware = () -> assertThat("each test", is("independent"));
+    static It looks_like_an_isolated_test_but_beware = () -> assertThat("this test", not("independent"));
   }
 }

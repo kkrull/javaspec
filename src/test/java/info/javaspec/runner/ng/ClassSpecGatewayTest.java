@@ -122,6 +122,12 @@ public class ClassSpecGatewayTest {
       shouldHaveSubcontexts(onlySubcontext(subject.rootContext()), "info.javaspecproto.ContextClasses$NestedThreeDeep$middle$bottom");
     }
 
+    @Test
+    public void givenAClassWithStaticHelperClasses_ignoresItFieldsInThatClass() {
+      subject = new ClassSpecGateway(ContextClasses.NestedStaticClassIt.class);
+      shouldHaveSubcontexts(subject.rootContext());
+    }
+
     public class givenAContextClass {
       private Context returned;
 
@@ -160,11 +166,11 @@ public class ClassSpecGatewayTest {
       shouldHaveSpecs(onlySubcontext(subject.rootContext()), "asserts");
     }
 
-    @Test @Ignore
-    public void givenAClassWithStaticHelperClasses_ignoresItFieldsInThatClass() {}
-
-    @Test @Ignore
-    public void givenAClassWithStaticItFields_ignoresThoseFields() {}
+    @Test
+    public void givenAClassWithStaticItFields_ignoresThoseFields() {
+      subject = new ClassSpecGateway(ContextClasses.StaticIt.class);
+      shouldHaveSpecs(subject.rootContext());
+    }
 
     public class givenASpec {
       private Spec returned;

@@ -54,10 +54,11 @@ public final class NewJavaSpecRunner extends Runner {
   }
 
   private Description suiteDescription(ClassContext context) {
-    Description suite = Description.createSuiteDescription(context.displayName);
+    String suiteClassName = context.displayName;
+    Description suite = Description.createSuiteDescription(suiteClassName, context.id);
 
     gateway.getSpecs(context).stream()
-      .map(x -> testDescription(context.displayName, x.displayName))
+      .map(x -> testDescription(x.id, suiteClassName, x.displayName))
       .forEach(suite::addChild);
 
     gateway.getSubcontexts(context).stream()
@@ -67,8 +68,8 @@ public final class NewJavaSpecRunner extends Runner {
     return suite;
   }
 
-  private static Description testDescription(String contextName, String testName) {
-    return Description.createTestDescription(contextName, testName);
+  private static Description testDescription(String testId, String className, String methodName) {
+    return Description.createTestDescription(className, methodName, testId);
   }
 
   @Override

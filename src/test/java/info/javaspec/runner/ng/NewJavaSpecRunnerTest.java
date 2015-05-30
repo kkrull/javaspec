@@ -26,9 +26,8 @@ import static info.javaspec.testutil.Matchers.matchesRegex;
 import static java.util.Collections.synchronizedList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assume.assumeThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -104,9 +103,6 @@ public class NewJavaSpecRunnerTest {
       public void addsATestDescriptionForEachSpecInTheContext() throws Exception {
         assertThat(description.getChildren(), hasSize(2));
       }
-
-      @Test @Ignore
-      public void usesTheIdForTheDescriptionId___butHowToObserveIt() {}
     }
 
     public class givenASpec {
@@ -129,6 +125,110 @@ public class NewJavaSpecRunnerTest {
       @Test
       public void usesTheSpecDisplayNameForTheTestMethodName() {
         assertThat(description.getMethodName(), equalTo("oneDisplay"));
+      }
+    }
+
+    //Two context classes in different parts of the hierarchy can have the same simple name.
+    //Make sure something unique is used for each Suite Description uniqueId.
+    public class givenAContextHierarchyWith2OrMoreInstancesOfTheSameDisplayName {
+      @Before
+      public void setup() {
+        FakeContext leftDuplicate = aLeafContext("Root$LeftSuite$SameClassName", "SameClassName", aSpec("one"));
+        FakeContext leftSuite = aNestedContext("LeftSuite", leftDuplicate);
+
+        FakeContext rightDuplicate = aLeafContext("Root$RightSuite$SameClassName", "SameClassName", aSpec("one"));
+        FakeContext rightSuite = aNestedContext("RightSuite", rightDuplicate);
+        FakeContext rootContext = aNestedContext("Root", leftSuite, rightSuite);
+
+        assumeThat(leftDuplicate.displayName, equalTo(rightDuplicate.displayName)); //Basis for Description.fUniqueId
+
+        when(gateway.hasSpecs()).thenReturn(true);
+        when(gateway.countSpecs()).thenReturn(2L);
+
+        when(gateway.rootContextId()).thenReturn(rootContext.id);
+        when(gateway.rootContext()).thenReturn(rootContext);
+        when(gateway.getSpecs(rootContext)).thenReturn(rootContext.specs);
+        when(gateway.getSubcontexts(rootContext)).thenReturn(newArrayList(leftSuite, rightSuite));
+
+        //Left fork
+        when(gateway.getSpecs(leftSuite)).thenReturn(leftSuite.specs);
+        when(gateway.getSubcontexts(leftSuite)).thenReturn(newArrayList(leftDuplicate));
+
+        when(gateway.getSpecs(leftDuplicate)).thenReturn(leftDuplicate.specs);
+        when(gateway.getSubcontexts(leftDuplicate)).thenReturn(newArrayList());
+
+        //Right fork
+        when(gateway.getSpecs(rightSuite)).thenReturn(rightSuite.specs);
+        when(gateway.getSubcontexts(rightSuite)).thenReturn(newArrayList(rightDuplicate));
+
+        when(gateway.getSpecs(rightDuplicate)).thenReturn(rightDuplicate.specs);
+        when(gateway.getSubcontexts(rightDuplicate)).thenReturn(newArrayList());
+
+        description = subject.getDescription();
+      }
+
+      @Test
+      public void theSuiteDescriptionsAreNotEqual() {
+        Description leftFork = description.getChildren().get(0);
+        Description one = onlyChild(leftFork);
+
+        Description rightFork = description.getChildren().get(1);
+        Description other = onlyChild(rightFork);
+        assertThat(one, not(equalTo(other)));
+      }
+    }
+
+    //Two specs can have the same name too, if they are declared in different parts of the hierarchy.
+    //A Test Description by default will use its class and method names to form a uniqueId, but even this combination
+    //may not be unique if the display name for the specs and their respective contexts are the same.
+    public class givenAContextHierarchyWith2OrMoreSpecsOfTheSameDisplayName {
+      @Before
+      public void setup() {
+        Spec leftSpec = aSpec("LeftSuite.same_name", "same name");
+        Spec rightSpec = aSpec("RightSuite.same_name", "same name");
+        assumeThat(leftSpec.displayName, equalTo(rightSpec.displayName)); //Part of Description.fUniqueId
+
+        FakeContext leftDuplicate = aLeafContext("Root$LeftSuite$SameClassName", "SameClassName", leftSpec);
+        FakeContext leftSuite = aNestedContext("LeftSuite", leftDuplicate);
+
+        FakeContext rightDuplicate = aLeafContext("Root$RightSuite$SameClassName", "SameClassName", rightSpec);
+        FakeContext rightSuite = aNestedContext("RightSuite", rightDuplicate);
+        FakeContext rootContext = aNestedContext("Root", leftSuite, rightSuite);
+        assumeThat(leftDuplicate.displayName, equalTo(rightDuplicate.displayName)); //Part of Description.fUniqueId
+
+        when(gateway.hasSpecs()).thenReturn(true);
+        when(gateway.countSpecs()).thenReturn(2L);
+
+        when(gateway.rootContextId()).thenReturn(rootContext.id);
+        when(gateway.rootContext()).thenReturn(rootContext);
+        when(gateway.getSpecs(rootContext)).thenReturn(rootContext.specs);
+        when(gateway.getSubcontexts(rootContext)).thenReturn(newArrayList(leftSuite, rightSuite));
+
+        //Left fork
+        when(gateway.getSpecs(leftSuite)).thenReturn(leftSuite.specs);
+        when(gateway.getSubcontexts(leftSuite)).thenReturn(newArrayList(leftDuplicate));
+
+        when(gateway.getSpecs(leftDuplicate)).thenReturn(leftDuplicate.specs);
+        when(gateway.getSubcontexts(leftDuplicate)).thenReturn(newArrayList());
+
+        //Right fork
+        when(gateway.getSpecs(rightSuite)).thenReturn(rightSuite.specs);
+        when(gateway.getSubcontexts(rightSuite)).thenReturn(newArrayList(rightDuplicate));
+
+        when(gateway.getSpecs(rightDuplicate)).thenReturn(rightDuplicate.specs);
+        when(gateway.getSubcontexts(rightDuplicate)).thenReturn(newArrayList());
+
+        description = subject.getDescription();
+      }
+
+      @Test
+      public void theTestDescriptionsAreNotEqual() {
+        Description leftFork = onlyChild(description.getChildren().get(0));
+        Description one = onlyChild(leftFork);
+
+        Description rightFork = onlyChild(description.getChildren().get(1));
+        Description other = onlyChild(rightFork);
+        assertThat(one, not(equalTo(other)));
       }
     }
 
