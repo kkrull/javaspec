@@ -3,21 +3,20 @@ package info.javaspec.runner.ng;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspecproto.ContextClasses;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static info.javaspec.testutil.Matchers.matchesRegex;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 @RunWith(HierarchicalContextRunner.class)
 public class ClassSpecGatewayTest {
-  private SpecGateway subject;
+  private SpecGateway<ClassContext> subject;
 
   public class countSpecs {
     @Test
@@ -108,28 +107,39 @@ public class ClassSpecGatewayTest {
   }
 
   public class getSubcontexts {
-    private List<Context> returned;
-
     @Test
     public void givenAClassWithNoInnerClasses_returnsEmpty() {
       subject = new ClassSpecGateway(ContextClasses.OneIt.class);
-      returned = subject.getSubcontexts(subject.rootContext());
+      List<ClassContext> returned = subject.getSubcontexts(subject.rootContext());
       assertThat(returned, hasSize(0));
     }
 
     @Test
     public void givenAClassWith1OrMoreInnerClasses_returnsAContextForEachClass() {
-      subject = new ClassSpecGateway(ContextClasses.NestedContext.class);
-      returned = subject.getSubcontexts(subject.rootContext());
-      assertThat(returned, hasSize(1));
+      subject = new ClassSpecGateway(ContextClasses.NestedThreeDeep.class);
+      shouldHaveSubcontexts(subject.rootContext(), "info.javaspecproto.ContextClasses$NestedThreeDeep$middle");
+      shouldHaveSubcontexts(onlySubcontext(subject.rootContext()), "info.javaspecproto.ContextClasses$NestedThreeDeep$middle$bottom");
     }
 
-    @Test
-    public void givenAClassNameInSnakeCase_replacesUnderscoresWithSpaces() {
-      subject = new ClassSpecGateway(ContextClasses.NestedBehavior.class);
-      returned = subject.getSubcontexts(subject.rootContext());
-      Context subContext = returned.get(0);
-      assertThat(subContext.displayName, equalTo("describes some conditions"));
+    public class givenAContextClass {
+      private Context returned;
+
+      @Before
+      public void setup() {
+        subject = new ClassSpecGateway(ContextClasses.NestedBehavior.class);
+        List<ClassContext> subcontexts = subject.getSubcontexts(subject.rootContext());
+        returned = subcontexts.get(0);
+      }
+
+      @Test
+      public void givenAClassNameInSnakeCase_replacesUnderscoresWithSpaces() {
+        assertThat(returned.displayName, equalTo("describes some conditions"));
+      }
+    }
+
+    private void shouldHaveSubcontexts(ClassContext context, String... ids) {
+      List<String> actualIds = subject.getSubcontexts(context).stream().map(x -> x.id).collect(toList());
+      assertThat(actualIds, equalTo(Arrays.asList(ids)));
     }
   }
 
@@ -143,7 +153,10 @@ public class ClassSpecGatewayTest {
     @Test
     public void givenAClassWithInstanceItFields_returnsASpecForEachField() {
       subject = new ClassSpecGateway(ContextClasses.TwoIt.class);
-      assertThat(subject.getSpecs(subject.rootContext()), hasSize(2));
+      shouldHaveSpecs(subject.rootContext(), "first_test", "second_test");
+
+      subject = new ClassSpecGateway(ContextClasses.NestedContext.class);
+      shouldHaveSpecs(onlySubcontext(subject.rootContext()), "asserts");
     }
 
     public class givenASpec {
@@ -165,6 +178,21 @@ public class ClassSpecGatewayTest {
         assertThat(returned.displayName, equalTo("only test"));
       }
     }
+
+    private void shouldHaveSpecs(ClassContext context, String... ids) {
+      List<String> actualIds = subject.getSpecs(context).stream().map(x -> x.id).collect(toList());
+      assertThat(actualIds, equalTo(Arrays.asList(ids)));
+    }
+  }
+
+  private ClassContext onlySubcontext(ClassContext parent) {
+    List<ClassContext> children = subject.getSubcontexts(parent);
+    if(children.size() != 1) {
+      String msg = String.format("Expected context %s to have 1 child, but had %d", parent.id, children.size());
+      throw new RuntimeException(msg);
+    }
+
+    return children.get(0);
   }
 
   private void shouldHaveSpecs(Class<?> rootContextClass) {

@@ -3,7 +3,6 @@ package info.javaspec.runner.ng;
 import info.javaspec.dsl.It;
 import info.javaspec.util.ReflectionUtil;
 import org.junit.runner.Description;
-import sun.security.krb5.internal.crypto.Des;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

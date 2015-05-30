@@ -36,7 +36,7 @@ import org.junit.runner.notification.RunNotifier;
  * details.
  */
 public final class NewJavaSpecRunner extends Runner {
-  private final SpecGateway gateway;
+  private final SpecGateway<ClassContext> gateway;
 
   public NewJavaSpecRunner(Class<?> rootContextClass) {
     this(new ClassSpecGateway(rootContextClass));
@@ -53,7 +53,7 @@ public final class NewJavaSpecRunner extends Runner {
     return suiteDescription(gateway.rootContext());
   }
 
-  private Description suiteDescription(Context context) {
+  private Description suiteDescription(ClassContext context) {
     Description suite = Description.createSuiteDescription(context.displayName);
 
     gateway.getSpecs(context).stream()

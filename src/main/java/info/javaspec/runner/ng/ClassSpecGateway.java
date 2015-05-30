@@ -5,7 +5,6 @@ import info.javaspec.util.ReflectionUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -14,7 +13,7 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 
 /** Reads specs from no-arg lambdas assigned to It fields in a hierarchy of context classes. */
-public final class ClassSpecGateway implements SpecGateway {
+public final class ClassSpecGateway implements SpecGateway<ClassContext> {
   private final Class<?> rootContext;
 
   public ClassSpecGateway(Class<?> rootContext) {
@@ -27,21 +26,21 @@ public final class ClassSpecGateway implements SpecGateway {
   }
 
   @Override
-  public Context rootContext() {
+  public ClassContext rootContext() {
     return makeContext(rootContext);
   }
 
   @Override
-  public List<Context> getSubcontexts(Context context) {
-    return readInnerClasses(rootContext)
+  public List<ClassContext> getSubcontexts(ClassContext context) {
+    return readInnerClasses(context.source)
       .map(this::makeContext)
       .collect(toList());
   }
 
-  private Context makeContext(Class<?> context) {
+  private ClassContext makeContext(Class<?> context) {
     String declaredName = context.getSimpleName();
     String displayName = context == rootContext ? declaredName : humanize(declaredName);
-    return new Context(context.getName(), displayName) { };
+    return new ClassContext(context.getName(), displayName, context);
   }
 
   @Override
@@ -69,8 +68,8 @@ public final class ClassSpecGateway implements SpecGateway {
   }
 
   @Override
-  public List<Spec> getSpecs(Context context) {
-    return readDeclaredItFields(rootContext)
+  public List<Spec> getSpecs(ClassContext context) {
+    return readDeclaredItFields(context.source)
       .map(x -> makeSpec(x, context))
       .collect(toList());
   }

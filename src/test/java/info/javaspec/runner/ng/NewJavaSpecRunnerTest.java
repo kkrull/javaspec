@@ -301,12 +301,12 @@ public class NewJavaSpecRunnerTest {
     };
   }
 
-  private static final class FakeContext extends Context {
+  private static final class FakeContext extends ClassContext {
     public final List<Spec> specs;
     public final List<FakeContext> subcontexts;
 
     public FakeContext(String id, String displayName, List<Spec> specs, List<FakeContext> subcontexts) {
-      super(id, displayName);
+      super(id, displayName, NewJavaSpecRunnerTest.class);
       this.specs = specs;
       this.subcontexts = subcontexts;
     }
