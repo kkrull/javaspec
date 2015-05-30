@@ -3,6 +3,7 @@ package info.javaspec.runner.ng;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspecproto.ContextClasses;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -158,6 +159,12 @@ public class ClassSpecGatewayTest {
       subject = new ClassSpecGateway(ContextClasses.NestedContext.class);
       shouldHaveSpecs(onlySubcontext(subject.rootContext()), "asserts");
     }
+
+    @Test @Ignore
+    public void givenAClassWithStaticHelperClasses_ignoresItFieldsInThatClass() {}
+
+    @Test @Ignore
+    public void givenAClassWithStaticItFields_ignoresThoseFields() {}
 
     public class givenASpec {
       private Spec returned;

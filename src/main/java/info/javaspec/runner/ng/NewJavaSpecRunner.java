@@ -42,7 +42,7 @@ public final class NewJavaSpecRunner extends Runner {
     this(new ClassSpecGateway(rootContextClass));
   }
 
-  public NewJavaSpecRunner(SpecGateway gateway) {
+  public NewJavaSpecRunner(SpecGateway<ClassContext> gateway) {
     this.gateway = gateway;
     if(!gateway.hasSpecs())
       throw new NoSpecs(gateway.rootContextId());

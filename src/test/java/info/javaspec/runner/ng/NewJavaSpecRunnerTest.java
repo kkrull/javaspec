@@ -34,7 +34,9 @@ import static org.mockito.Mockito.when;
 
 @RunWith(HierarchicalContextRunner.class)
 public class NewJavaSpecRunnerTest {
-  private final SpecGateway gateway = mock(SpecGateway.class);
+  @SuppressWarnings("unchecked") //Parameterized interface
+  private final SpecGateway<ClassContext> gateway = mock(SpecGateway.class);
+
   private final Runner subject;
 
   public NewJavaSpecRunnerTest() {
