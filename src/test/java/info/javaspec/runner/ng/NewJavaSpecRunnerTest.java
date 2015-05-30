@@ -20,33 +20,34 @@ import static info.javaspec.testutil.Matchers.matchesRegex;
 import static java.util.Collections.synchronizedList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Ignore
 @RunWith(HierarchicalContextRunner.class)
 public class NewJavaSpecRunnerTest {
-//  private final NewExampleGateway gateway = mock(NewExampleGateway.class);
-//  private final Runner subject;
+  private final SpecGateway gateway = mock(SpecGateway.class);
+  private final Runner subject;
 
   public NewJavaSpecRunnerTest() {
-//    when(gateway.hasExamples()).thenReturn(true);
-//    subject = new NewJavaSpecRunner(gateway);
+    when(gateway.hasSpecs()).thenReturn(true);
+    subject = new NewJavaSpecRunner(gateway);
   }
 
   public class constructor {
     public class givenAClassWithoutAnyExamples {
       @Test
       public void throwsNoExamplesException() throws Exception {
-        givenTheGatewayHasNoExamples("ContextClasses$Empty");
-//        Exception ex = capture(NoExamples.class, () -> new NewJavaSpecRunner(gateway));
-//        assertThat(ex.getMessage(), matchesRegex("^Context ContextClasses[$]Empty must contain at least 1 example"));
+        givenTheGatewayHasNoSpecs("ContextClasses$Empty");
+        Exception ex = capture(NoExamples.class, () -> new NewJavaSpecRunner(gateway));
+        assertThat(ex.getMessage(), matchesRegex("^Context ContextClasses[$]Empty must contain at least 1 example"));
       }
     }
   }
 
   public class getDescription {
+    @Ignore
     @Test
     public void returnsTheDescriptionProvidedByTheGateway() throws Exception {
       givenTheGatewayDescribes(1, Description.EMPTY);
@@ -71,6 +72,7 @@ public class NewJavaSpecRunnerTest {
 //        subject.run(notifier);
       }
 
+      @Ignore
       @Test
       public void notifiesOfTheTestRunStarting() throws Exception {
         List<String> methodNames = events.stream().map(RunListenerSpy.Event::getName).collect(toList());
@@ -92,6 +94,7 @@ public class NewJavaSpecRunnerTest {
       }
 
       @Test
+      @Ignore
       public void notifiesOfEachExamplesOutcome() throws Exception {
         List<String> methodNames = events.stream().map(RunListenerSpy.Event::describedMethodName).collect(toList());
         assertThat(methodNames, contains(
@@ -104,14 +107,13 @@ public class NewJavaSpecRunnerTest {
     public class givenAClassWith1OrMoreExamples {
       @Test
       public void returnsTheNumberOfTestsInTheGivenContextClass() throws Exception {
-        givenTheGatewayDescribes(2, aSuiteWith("TwoLeafExamples",
-          Description.createTestDescription("TwoLeafExamples", "1"),
-          Description.createTestDescription("TwoLeafExamples", "2")));
-//        assertThat(subject.testCount(), equalTo(2));
+        givenTheGatewayHasSpecs(2, aContext("Root", aSpec("one"), aSpec("two")));
+        assertThat(subject.testCount(), equalTo(2));
       }
     }
 
     public class givenAClassWithMoreExamplesThanThereAreIntegers {
+      @Ignore
       @Test
       public void throwsTooManyTests() throws Exception {
         givenTheGatewayHasAnEnormousNumberOfExamples("ContextWithLotsOfExamples");
@@ -128,9 +130,23 @@ public class NewJavaSpecRunnerTest {
 //    when(gateway.totalNumExamples()).thenReturn((long)Integer.MAX_VALUE + 1);
   }
 
-  private void givenTheGatewayHasNoExamples(String rootContextName) {
-//    when(gateway.rootContextName()).thenReturn(rootContextName);
-//    when(gateway.hasExamples()).thenReturn(false);
+  private void givenTheGatewayHasNoSpecs(String rootContextId) {
+    when(gateway.rootContextId()).thenReturn(rootContextId);
+    when(gateway.hasSpecs()).thenReturn(false);
+  }
+
+  private void givenTheGatewayHasSpecs(long numSpecs, Context rootContext) {
+    when(gateway.rootContextId()).thenReturn(rootContext.id);
+    when(gateway.hasSpecs()).thenReturn(true);
+    when(gateway.countSpecs()).thenReturn(numSpecs);
+  }
+
+  private Context aContext(String id, Spec... specs) {
+    return new Context(id) { };
+  }
+
+  private Spec aSpec(String id) {
+    return new Spec() { };
   }
 
   private void givenTheGatewayDescribes(long numTests, Description description) {

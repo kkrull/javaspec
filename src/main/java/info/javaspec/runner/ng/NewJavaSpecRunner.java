@@ -4,12 +4,10 @@ import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 
-import java.lang.annotation.Annotation;
-
 /**
- * Runs tests written with JavaSpec lambdas under JUnit.
+ * JUnit test runner for specs written in lambdas and organized into context classes.
  * <p/>
- * For example, the class below results in two tests.
+ * For example, the class below contains in two tests.
  * <ul>
  * <li><code>returns_bar</code>: Creates the widget, calls foo(), and verifies that it returned "bar".</li>
  * <li><code>prints_baz</code>: Creates the widget, calls foo(), and verifies that it wrote "baz" to the console.</li>
@@ -34,12 +32,20 @@ import java.lang.annotation.Annotation;
  * }
  * </pre>
  * <p/>
- * Classes WidgetFooTest and its inner class foo are both <em>context classes</em>.  See ClassExampleGateway for
+ * Classes WidgetFooTest and its inner class foo are both <em>context classes</em>.  See ClassSpecGateway for
  * details.
  */
 public final class NewJavaSpecRunner extends Runner {
+  private final SpecGateway gateway;
+
   public NewJavaSpecRunner(Class<?> rootContextClass) {
-    throw new UnsupportedOperationException();
+    this(new ClassSpecGateway(rootContextClass));
+  }
+
+  public NewJavaSpecRunner(SpecGateway gateway) {
+    this.gateway = gateway;
+    if(!gateway.hasSpecs())
+      throw new NoExamples(gateway.rootContextId());
   }
 
   @Override
@@ -54,7 +60,7 @@ public final class NewJavaSpecRunner extends Runner {
 
   @Override
   public int testCount() {
-    throw new UnsupportedOperationException();
+    return (int) gateway.countSpecs();
   }
 
   public static final class NoExamples extends RuntimeException {
