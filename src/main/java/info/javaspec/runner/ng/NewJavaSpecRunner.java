@@ -38,44 +38,23 @@ import java.lang.annotation.Annotation;
  * details.
  */
 public final class NewJavaSpecRunner extends Runner {
-  private final NewExampleGateway gateway;
-
   public NewJavaSpecRunner(Class<?> rootContextClass) {
-    this(new ClassExampleGateway(rootContextClass));
-  }
-
-  public NewJavaSpecRunner(NewExampleGateway gateway) {
-    this.gateway = gateway;
-
-    if(!gateway.hasExamples())
-      throw new NoExamples(gateway.rootContextName());
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public Description getDescription() {
-    return gateway.junitDescriptionTree();
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public void run(RunNotifier notifier) {
-    //TODO KDK: Have the gateway stream Examples back, and call Example.getDescription as necessary.
-    run(getDescription(), notifier);
-  }
-
-  private void run(Description description, RunNotifier notifier) {
-    if(description.isTest())
-      notifier.fireTestIgnored(description);
-    else
-      description.getChildren().stream().forEach(x -> run(x, notifier));
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public int testCount() {
-    long numExamples = gateway.totalNumExamples();
-    if(numExamples > Integer.MAX_VALUE)
-      throw new TooManyExamples(gateway.rootContextName(), numExamples);
-    else
-      return (int) numExamples;
+    throw new UnsupportedOperationException();
   }
 
   public static final class NoExamples extends RuntimeException {
