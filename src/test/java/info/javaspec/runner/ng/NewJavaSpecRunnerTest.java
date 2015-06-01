@@ -34,12 +34,12 @@ import static org.mockito.Mockito.when;
 @RunWith(HierarchicalContextRunner.class)
 public class NewJavaSpecRunnerTest {
   @SuppressWarnings("unchecked") //Parameterized interface
-  private final SpecGateway<ClassContext> gateway = mock(SpecGateway.class);
+  private final FakeSpecGateway gateway = new FakeSpecGateway();
 
   private final Runner subject;
 
   public NewJavaSpecRunnerTest() {
-    when(gateway.hasSpecs()).thenReturn(true);
+    gateway.init(1, aLeafContext("NonEmptyContextForInitialization", aSpec("default_spec")));
     subject = new NewJavaSpecRunner(gateway);
   }
 
@@ -58,24 +58,11 @@ public class NewJavaSpecRunnerTest {
     public class givenAContextHierarchy {
       @Before
       public void setup() {
-        //TODO KDK: Would this be easier to fake than to stub?
-        FakeContext bottomContext = aLeafContext("Bottom", aSpec("one"));
-        FakeContext middleContext = aNestedContext("Middle", bottomContext);
-        FakeContext rootContext = aNestedContext("Root", middleContext);
-
-        when(gateway.hasSpecs()).thenReturn(true);
-        when(gateway.countSpecs()).thenReturn(1L);
-
-        when(gateway.rootContextId()).thenReturn(rootContext.id);
-        when(gateway.rootContext()).thenReturn(rootContext);
-        when(gateway.getSpecs(rootContext)).thenReturn(rootContext.specs);
-        when(gateway.getSubcontexts(rootContext)).thenReturn(newArrayList(middleContext));
-
-        when(gateway.getSpecs(middleContext)).thenReturn(middleContext.specs);
-        when(gateway.getSubcontexts(middleContext)).thenReturn(newArrayList(bottomContext));
-
-        when(gateway.getSpecs(bottomContext)).thenReturn(bottomContext.specs);
-
+        gateway.init(1,
+          aNestedContext("Root",
+            aNestedContext("Middle",
+              aLeafContext("Bottom", aSpec("one"))))
+        );
         description = subject.getDescription();
       }
 
@@ -134,36 +121,13 @@ public class NewJavaSpecRunnerTest {
       @Before
       public void setup() {
         FakeContext leftDuplicate = aLeafContext("Root$LeftSuite$SameClassName", "SameClassName", aSpec("one"));
-        FakeContext leftSuite = aNestedContext("LeftSuite", leftDuplicate);
-
         FakeContext rightDuplicate = aLeafContext("Root$RightSuite$SameClassName", "SameClassName", aSpec("one"));
-        FakeContext rightSuite = aNestedContext("RightSuite", rightDuplicate);
-        FakeContext rootContext = aNestedContext("Root", leftSuite, rightSuite);
-
         assumeThat(leftDuplicate.displayName, equalTo(rightDuplicate.displayName)); //Basis for Description.fUniqueId
 
-        when(gateway.hasSpecs()).thenReturn(true);
-        when(gateway.countSpecs()).thenReturn(2L);
-
-        when(gateway.rootContextId()).thenReturn(rootContext.id);
-        when(gateway.rootContext()).thenReturn(rootContext);
-        when(gateway.getSpecs(rootContext)).thenReturn(rootContext.specs);
-        when(gateway.getSubcontexts(rootContext)).thenReturn(newArrayList(leftSuite, rightSuite));
-
-        //Left fork
-        when(gateway.getSpecs(leftSuite)).thenReturn(leftSuite.specs);
-        when(gateway.getSubcontexts(leftSuite)).thenReturn(newArrayList(leftDuplicate));
-
-        when(gateway.getSpecs(leftDuplicate)).thenReturn(leftDuplicate.specs);
-        when(gateway.getSubcontexts(leftDuplicate)).thenReturn(newArrayList());
-
-        //Right fork
-        when(gateway.getSpecs(rightSuite)).thenReturn(rightSuite.specs);
-        when(gateway.getSubcontexts(rightSuite)).thenReturn(newArrayList(rightDuplicate));
-
-        when(gateway.getSpecs(rightDuplicate)).thenReturn(rightDuplicate.specs);
-        when(gateway.getSubcontexts(rightDuplicate)).thenReturn(newArrayList());
-
+        gateway.init(2, aNestedContext("Root",
+          aNestedContext("LeftSuite", leftDuplicate),
+          aNestedContext("RightSuite", rightDuplicate))
+        );
         description = subject.getDescription();
       }
 
@@ -189,35 +153,13 @@ public class NewJavaSpecRunnerTest {
         assumeThat(leftSpec.displayName, equalTo(rightSpec.displayName)); //Part of Description.fUniqueId
 
         FakeContext leftDuplicate = aLeafContext("Root$LeftSuite$SameClassName", "SameClassName", leftSpec);
-        FakeContext leftSuite = aNestedContext("LeftSuite", leftDuplicate);
-
         FakeContext rightDuplicate = aLeafContext("Root$RightSuite$SameClassName", "SameClassName", rightSpec);
-        FakeContext rightSuite = aNestedContext("RightSuite", rightDuplicate);
-        FakeContext rootContext = aNestedContext("Root", leftSuite, rightSuite);
         assumeThat(leftDuplicate.displayName, equalTo(rightDuplicate.displayName)); //Part of Description.fUniqueId
 
-        when(gateway.hasSpecs()).thenReturn(true);
-        when(gateway.countSpecs()).thenReturn(2L);
-
-        when(gateway.rootContextId()).thenReturn(rootContext.id);
-        when(gateway.rootContext()).thenReturn(rootContext);
-        when(gateway.getSpecs(rootContext)).thenReturn(rootContext.specs);
-        when(gateway.getSubcontexts(rootContext)).thenReturn(newArrayList(leftSuite, rightSuite));
-
-        //Left fork
-        when(gateway.getSpecs(leftSuite)).thenReturn(leftSuite.specs);
-        when(gateway.getSubcontexts(leftSuite)).thenReturn(newArrayList(leftDuplicate));
-
-        when(gateway.getSpecs(leftDuplicate)).thenReturn(leftDuplicate.specs);
-        when(gateway.getSubcontexts(leftDuplicate)).thenReturn(newArrayList());
-
-        //Right fork
-        when(gateway.getSpecs(rightSuite)).thenReturn(rightSuite.specs);
-        when(gateway.getSubcontexts(rightSuite)).thenReturn(newArrayList(rightDuplicate));
-
-        when(gateway.getSpecs(rightDuplicate)).thenReturn(rightDuplicate.specs);
-        when(gateway.getSubcontexts(rightDuplicate)).thenReturn(newArrayList());
-
+        gateway.init(2, aNestedContext("Root",
+          aNestedContext("LeftSuite", leftDuplicate),
+          aNestedContext("RightSuite", rightDuplicate))
+        );
         description = subject.getDescription();
       }
 
@@ -311,22 +253,16 @@ public class NewJavaSpecRunnerTest {
   }
 
   private void givenTheGatewayHasNoSpecs(String rootContextId) {
-    givenTheGatewayHasSpecs(0, aLeafContext(rootContextId));
+    gateway.init(0, aLeafContext(rootContextId));
   }
 
   private void givenTheGatewayHasAnEnormousNumberOfSpecs(String rootContextId) {
-    when(gateway.rootContextId()).thenReturn(rootContextId);
-    when(gateway.hasSpecs()).thenReturn(true);
-    when(gateway.countSpecs()).thenReturn((long) (Integer.MAX_VALUE) + 1);
+    long numSpecs = (long) (Integer.MAX_VALUE) + 1;
+    gateway.init(numSpecs, aLeafContext(rootContextId));
   }
 
   private void givenTheGatewayHasSpecs(long numSpecs, FakeContext rootContext) {
-    when(gateway.rootContextId()).thenReturn(rootContext.id);
-    when(gateway.hasSpecs()).thenReturn(numSpecs > 0);
-    when(gateway.countSpecs()).thenReturn(numSpecs);
-
-    when(gateway.rootContext()).thenReturn(rootContext);
-    when(gateway.getSpecs(rootContext)).thenReturn(rootContext.specs);
+    gateway.init(numSpecs, rootContext);
   }
 
   private FakeContext aNestedContext(String id, FakeContext... subcontexts) {
@@ -401,6 +337,41 @@ public class NewJavaSpecRunnerTest {
         description.appendValue(className);
       }
     };
+  }
+
+  private static final class FakeSpecGateway implements SpecGateway<ClassContext> {
+    private FakeContext rootContext;
+    private long numSpecs;
+
+    public void init(long numSpecs, FakeContext rootContext) {
+      this.rootContext = rootContext;
+      this.numSpecs = numSpecs;
+    }
+
+    @Override
+    public FakeContext rootContext() { return rootContext; }
+
+    @Override
+    public String rootContextId() { return rootContext.id; }
+
+    @Override
+    public List<ClassContext> getSubcontexts(ClassContext context) {
+      return asFakeContext(context).subcontexts.stream()
+        .map(this::asClassContext)
+        .collect(toList());
+    }
+
+    @Override
+    public boolean hasSpecs() { return numSpecs > 0; }
+
+    @Override
+    public long countSpecs() { return numSpecs; }
+
+    @Override
+    public List<Spec> getSpecs(ClassContext context) { return asFakeContext(context).specs; }
+
+    private FakeContext asFakeContext(Context context) { return (FakeContext)context; }
+    private ClassContext asClassContext(FakeContext context) { return context; }
   }
 
   private static final class FakeContext extends ClassContext {
