@@ -180,16 +180,29 @@ public class NewJavaSpecRunnerTest {
       notifier.addListener(listener);
     }
 
-    public class givenAContextClassWith1OrMoreSpecs {
+    public class givenASpec {
       private Description suiteDescription;
 
+      @Before
+      public void setup() throws Exception {
+        givenTheGatewayHasSpecs(1, aLeafContext("Root", aSpec("Root::one", "one")));
+        suiteDescription = subject.getDescription();
+        subject.run(notifier);
+      }
+
+      @Test
+      public void usesAnEquivalentDescriptionToTheOneReturnedFrom_getDescription() {
+        assertThat(suiteDescription.getChildren().get(0), equalTo(events.get(0).description));
+      }
+    }
+
+    public class givenAContextClassWith1OrMoreSpecs {
       @Before
       public void setup() throws Exception {
         givenTheGatewayHasSpecs(1, aLeafContext("Root",
           aSpec("Root::one", "one"),
           aSpec("Root::two", "two")
         ));
-        suiteDescription = subject.getDescription();
         subject.run(notifier);
       }
 
@@ -200,15 +213,9 @@ public class NewJavaSpecRunnerTest {
       }
 
       @Test
-      public void notifiesOfEachSpecsOutcome() throws Exception {
+      public void notifiesOfEachSpecsOutcome() throws Exception { //TODO KDK: Change to notifications based upon the type of spec (ignore/pass/fail)
         List<String> methodNames = events.stream().map(RunListenerSpy.Event::describedMethodName).collect(toList());
         assertThat(methodNames, containsInAnyOrder("one", "two"));
-      }
-
-      @Test
-      public void usesAnEquivalentDescriptionToTheOneReturnedFrom_getDescription() {
-        Set<Description> actual = events.stream().map(x -> x.description).collect(toSet());
-        assertThat(new HashSet<>(suiteDescription.getChildren()), equalTo(actual));
       }
 
       //Technically, it's overwriting Description objects with equivalents in its internal cache.
@@ -218,8 +225,23 @@ public class NewJavaSpecRunnerTest {
     }
 
     public class givenSpecsIn1OrMoreContexts {
-      @Test @Ignore
-      public void runsTheSpecsInEachContext() {}
+      @Before
+      public void setup() throws Exception {
+        givenTheGatewayHasSpecs(1, aNestedContext("Root",
+          aLeafContext("Left", aSpec("Left::one")),
+          aLeafContext("Right", aSpec("Right::one"))
+        ));
+        subject.run(notifier);
+      }
+
+      @Test
+      public void runsSpecsInEachContext() {
+        List<Integer> runCounts = gateway.rootContext.subcontexts.stream()
+          .flatMap(x -> x.specs.stream())
+          .map(x -> x.runCount)
+          .collect(toList());
+        assertThat(runCounts, equalTo(newArrayList(1, 1)));
+      }
     }
 
     public class givenAnIgnoredSpec {

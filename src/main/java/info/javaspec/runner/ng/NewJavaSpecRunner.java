@@ -5,7 +5,6 @@ import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -81,14 +80,27 @@ public final class NewJavaSpecRunner extends Runner {
 
   @Override
   public void run(RunNotifier notifier) {
-    ClassContext context = gateway.rootContext();
-    List<Spec> specs = gateway.getSpecs(context);
-    specs.stream().forEach(x -> runSpec(x, notifier));
+    ensureTestDescriptionsMemoized();
+    runContext(gateway.rootContext(), notifier);
+  }
+
+  //No guarantee that getDescription was called earlier to trigger memoization, which is required for notifications.
+  private void ensureTestDescriptionsMemoized() {
+    if(!specDescriptions.isEmpty())
+      return;
+
+    getDescription();
+  }
+
+  private void runContext(ClassContext context, RunNotifier notifier) {
+    gateway.getSpecs(context).stream().forEach(x -> runSpec(x, notifier));
+    gateway.getSubcontexts(context).stream().forEach(x -> runContext(x, notifier));
   }
 
   private void runSpec(Spec spec, RunNotifier notifier) {
     Description specDescription = specDescriptions.get(spec.id);
     notifier.fireTestStarted(specDescription);
+    spec.run();
   }
 
   @Override
