@@ -14,22 +14,17 @@ import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Stream;
+import java.util.*;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static info.javaspec.testutil.Assertions.capture;
 import static info.javaspec.testutil.Matchers.matchesRegex;
 import static java.util.Collections.synchronizedList;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(HierarchicalContextRunner.class)
 public class NewJavaSpecRunnerTest {
@@ -148,8 +143,8 @@ public class NewJavaSpecRunnerTest {
     public class givenAContextHierarchyWith2OrMoreSpecsOfTheSameDisplayName {
       @Before
       public void setup() {
-        Spec leftSpec = aSpec("LeftSuite.same_name", "same name");
-        Spec rightSpec = aSpec("RightSuite.same_name", "same name");
+        FakeSpec leftSpec = aSpec("LeftSuite.same_name", "same name");
+        FakeSpec rightSpec = aSpec("RightSuite.same_name", "same name");
         assumeThat(leftSpec.displayName, equalTo(rightSpec.displayName)); //Part of Description.fUniqueId
 
         FakeContext leftDuplicate = aLeafContext("Root$LeftSuite$SameClassName", "SameClassName", leftSpec);
@@ -173,16 +168,6 @@ public class NewJavaSpecRunnerTest {
         assertThat(one, not(equalTo(other)));
       }
     }
-
-    private Description onlyChild(Description suite) {
-      List<Description> children = suite.getChildren();
-      if(children.size() != 1) {
-        String msg = String.format("Expected suite %s to have 1 child, but had %s", suite.getDisplayName(), children);
-        throw new RuntimeException(msg);
-      }
-
-      return children.get(0);
-    }
   }
 
   public class run {
@@ -195,10 +180,52 @@ public class NewJavaSpecRunnerTest {
       notifier.addListener(listener);
     }
 
+    public class givenAContextClassWith1OrMoreSpecs {
+      private Description suiteDescription;
+
+      @Before
+      public void setup() throws Exception {
+        givenTheGatewayHasSpecs(1, aLeafContext("Root",
+          aSpec("Root::one", "one"),
+          aSpec("Root::two", "two")
+        ));
+        suiteDescription = subject.getDescription();
+        subject.run(notifier);
+      }
+
+      @Test
+      public void runsEachSpec() {
+        List<Integer> runCounts = gateway.rootContext.specs.stream().map(x -> x.runCount).collect(toList());
+        assertThat(runCounts, equalTo(newArrayList(1, 1)));
+      }
+
+      @Test
+      public void notifiesOfEachSpecsOutcome() throws Exception {
+        List<String> methodNames = events.stream().map(RunListenerSpy.Event::describedMethodName).collect(toList());
+        assertThat(methodNames, containsInAnyOrder("one", "two"));
+      }
+
+      @Test
+      public void usesAnEquivalentDescriptionToTheOneReturnedFrom_getDescription() {
+        Set<Description> actual = events.stream().map(x -> x.description).collect(toSet());
+        assertThat(new HashSet<>(suiteDescription.getChildren()), equalTo(actual));
+      }
+
+      //Technically, it's overwriting Description objects with equivalents in its internal cache.
+      //However, this shouldn't be an issue because the context/specs are assumed to be fixed by the time it gets here
+      @Test @Ignore
+      public void whenDescribingAgain_clearsSpecDescriptionCache() {}
+    }
+
+    public class givenSpecsIn1OrMoreContexts {
+      @Test @Ignore
+      public void runsTheSpecsInEachContext() {}
+    }
+
     public class givenAnIgnoredSpec {
       @Before
       public void setup() throws Exception {
-        givenTheGatewayDescribes(1, aSuiteWithATest("IgnoreMe"));
+//        givenTheGatewayDescribes(1, aSuiteWithATest("IgnoreMe"));
 //        subject.run(notifier);
       }
 
@@ -207,28 +234,6 @@ public class NewJavaSpecRunnerTest {
       public void notifiesOfTheTestRunStarting() throws Exception {
         List<String> methodNames = events.stream().map(RunListenerSpy.Event::getName).collect(toList());
         assertThat(methodNames, contains("testIgnored"));
-      }
-    }
-
-    public class givenAContextClassWith1OrMoreSpecs {
-      @Before
-      public void setup() throws Exception {
-        givenTheGatewayDescribes(4L, aSuiteWith("ContextWithNestedSpecs",
-            Description.createTestDescription("ContextWithNestedSpecs", "root context Spec 1"),
-            Description.createTestDescription("ContextWithNestedSpecs", "root context Spec 2"),
-            aSuiteWithATest("subcontext 1"),
-            aSuiteWithATest("subcontext 2"))
-        );
-
-//        subject.run(notifier);
-      }
-
-      @Test
-      @Ignore
-      public void notifiesOfEachSpecsOutcome() throws Exception {
-        List<String> methodNames = events.stream().map(RunListenerSpy.Event::describedMethodName).collect(toList());
-        assertThat(methodNames, contains(
-          "root context Spec 1", "root context Spec 2", "subcontext 1", "subcontext 2"));
       }
     }
   }
@@ -263,44 +268,6 @@ public class NewJavaSpecRunnerTest {
 
   private void givenTheGatewayHasSpecs(long numSpecs, FakeContext rootContext) {
     gateway.init(numSpecs, rootContext);
-  }
-
-  private FakeContext aNestedContext(String id, FakeContext... subcontexts) {
-    return new FakeContext(id, id, new ArrayList<>(0), Arrays.asList(subcontexts));
-  }
-
-  private FakeContext aLeafContext(String id, Spec... specs) {
-    return new FakeContext(id, id, Arrays.asList(specs), new ArrayList<>(0));
-  }
-
-  private FakeContext aLeafContext(String id, String displayName, Spec... specs) {
-    return new FakeContext(id, displayName, Arrays.asList(specs), new ArrayList<>(0));
-  }
-
-  private Spec aSpec(String id) {
-    return aSpec(id, id);
-  }
-
-  private Spec aSpec(String id, String displayName) {
-    return new Spec(id, displayName) { };
-  }
-
-  private void givenTheGatewayDescribes(long numTests, Description description) {
-//    when(gateway.rootContextName()).thenReturn("RootContext");
-//    when(gateway.totalNumSpecs()).thenReturn(numTests);
-//    when(gateway.junitDescriptionTree()).thenReturn(description);
-  }
-
-  private static Description aSuiteWith(String name, Description... children) {
-    Description suite = Description.createSuiteDescription(name);
-    Stream.of(children).forEach(suite::addChild);
-    return suite;
-  }
-
-  private static Description aSuiteWithATest(String name) {
-    Description suite = Description.createSuiteDescription(name);
-    suite.addChild(Description.createTestDescription(name, name));
-    return suite;
   }
 
   private static Matcher<Description> isATestDescription() {
@@ -339,6 +306,36 @@ public class NewJavaSpecRunnerTest {
     };
   }
 
+  private Description onlyChild(Description suite) {
+    List<Description> children = suite.getChildren();
+    if(children.size() != 1) {
+      String msg = String.format("Expected suite %s to have 1 child, but had %s", suite.getDisplayName(), children);
+      throw new RuntimeException(msg);
+    }
+
+    return children.get(0);
+  }
+
+  private FakeContext aNestedContext(String id, FakeContext... subcontexts) {
+    return new FakeContext(id, id, new ArrayList<>(0), Arrays.asList(subcontexts));
+  }
+
+  private FakeContext aLeafContext(String id, FakeSpec... specs) {
+    return new FakeContext(id, id, Arrays.asList(specs), new ArrayList<>(0));
+  }
+
+  private FakeContext aLeafContext(String id, String displayName, FakeSpec... specs) {
+    return new FakeContext(id, displayName, Arrays.asList(specs), new ArrayList<>(0));
+  }
+
+  private FakeSpec aSpec(String id) {
+    return aSpec(id, id);
+  }
+
+  private FakeSpec aSpec(String id, String displayName) {
+    return new FakeSpec(id, displayName);
+  }
+
   private static final class FakeSpecGateway implements SpecGateway<ClassContext> {
     private FakeContext rootContext;
     private long numSpecs;
@@ -368,20 +365,37 @@ public class NewJavaSpecRunnerTest {
     public long countSpecs() { return numSpecs; }
 
     @Override
-    public List<Spec> getSpecs(ClassContext context) { return asFakeContext(context).specs; }
+    public List<Spec> getSpecs(ClassContext context) {
+      FakeContext fakeContext = asFakeContext(context);
+      return fakeContext.specs.stream()
+        .map(this::asSpec)
+        .collect(toList());
+    }
 
     private FakeContext asFakeContext(Context context) { return (FakeContext)context; }
     private ClassContext asClassContext(FakeContext context) { return context; }
+    private Spec asSpec(FakeSpec spec) { return spec; }
   }
 
   private static final class FakeContext extends ClassContext {
-    public final List<Spec> specs;
+    public final List<FakeSpec> specs;
     public final List<FakeContext> subcontexts;
 
-    public FakeContext(String id, String displayName, List<Spec> specs, List<FakeContext> subcontexts) {
+    public FakeContext(String id, String displayName, List<FakeSpec> specs, List<FakeContext> subcontexts) {
       super(id, displayName, NewJavaSpecRunnerTest.class);
       this.specs = specs;
       this.subcontexts = subcontexts;
     }
+  }
+
+  private static final class FakeSpec extends Spec {
+    public int runCount;
+
+    public FakeSpec(String id, String displayName) {
+      super(id, displayName);
+    }
+
+    @Override
+    public void run() { runCount++; }
   }
 }

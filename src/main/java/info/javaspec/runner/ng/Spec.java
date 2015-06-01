@@ -8,4 +8,6 @@ abstract class Spec {
     this.id = id;
     this.displayName = displayName;
   }
+
+  public abstract void run();
 }

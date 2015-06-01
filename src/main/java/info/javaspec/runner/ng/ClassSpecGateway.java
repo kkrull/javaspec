@@ -77,7 +77,12 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
   private static Spec makeSpec(Field itField, Context context) {
     Class<?> declaringClass = itField.getDeclaringClass();
     String fullyQualifiedId = String.format("%s.%s", declaringClass.getCanonicalName(), itField.getName());
-    return new Spec(fullyQualifiedId, humanize(itField.getName())) { };
+    return new Spec(fullyQualifiedId, humanize(itField.getName())) {
+      @Override
+      public void run() {
+        throw new UnsupportedOperationException();
+      }
+    };
   }
 
   private static String humanize(String behaviorOrContext) {

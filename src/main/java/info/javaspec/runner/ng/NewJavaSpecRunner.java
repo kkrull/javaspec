@@ -4,6 +4,10 @@ import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * JUnit test runner for specs written in lambdas and organized into context classes.
  * <p/>
@@ -37,6 +41,7 @@ import org.junit.runner.notification.RunNotifier;
  */
 public final class NewJavaSpecRunner extends Runner {
   private final SpecGateway<ClassContext> gateway;
+  private final Map<String, Description> specDescriptions = new HashMap<>();
 
   public NewJavaSpecRunner(Class<?> rootContextClass) {
     this(new ClassSpecGateway(rootContextClass));
@@ -50,31 +55,40 @@ public final class NewJavaSpecRunner extends Runner {
 
   @Override
   public Description getDescription() {
-    return suiteDescription(gateway.rootContext());
+    return makeSuiteDescription(gateway.rootContext());
   }
 
-  private Description suiteDescription(ClassContext context) {
-    String suiteClassName = context.displayName;
-    Description suite = Description.createSuiteDescription(suiteClassName, context.id);
+  private Description makeSuiteDescription(ClassContext context) {
+    String contextDisplayName = context.displayName;
+    Description suite = Description.createSuiteDescription(contextDisplayName, context.id);
 
     gateway.getSpecs(context).stream()
-      .map(x -> testDescription(x.id, suiteClassName, x.displayName))
+      .map(x -> makeAndMemoizeTestDescription(contextDisplayName, x))
       .forEach(suite::addChild);
 
     gateway.getSubcontexts(context).stream()
-      .map(this::suiteDescription)
+      .map(this::makeSuiteDescription)
       .forEach(suite::addChild);
 
     return suite;
   }
 
-  private static Description testDescription(String testId, String className, String methodName) {
-    return Description.createTestDescription(className, methodName, testId);
+  private Description makeAndMemoizeTestDescription(String contextDisplayName, Spec spec) {
+    Description testDescription = Description.createTestDescription(contextDisplayName, spec.displayName, spec.id);
+    specDescriptions.put(spec.id, testDescription);
+    return testDescription;
   }
 
   @Override
   public void run(RunNotifier notifier) {
-    throw new UnsupportedOperationException();
+    ClassContext context = gateway.rootContext();
+    List<Spec> specs = gateway.getSpecs(context);
+    specs.stream().forEach(x -> runSpec(x, notifier));
+  }
+
+  private void runSpec(Spec spec, RunNotifier notifier) {
+    Description specDescription = specDescriptions.get(spec.id);
+    notifier.fireTestStarted(specDescription);
   }
 
   @Override
