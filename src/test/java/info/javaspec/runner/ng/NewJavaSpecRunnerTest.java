@@ -14,17 +14,17 @@ import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newHashSet;
 import static info.javaspec.testutil.Assertions.capture;
 import static info.javaspec.testutil.Matchers.matchesRegex;
 import static java.util.Collections.synchronizedList;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
@@ -249,6 +249,7 @@ public class NewJavaSpecRunnerTest {
       @Test
       public void notifiesIgnored() {
         assertThat(onlyElement(events).name, equalTo("testIgnored"));
+        assertThat(onlyElement(events).description, equalTo(onlyChild(subject.getDescription())));
       }
 
       @Test
@@ -272,6 +273,7 @@ public class NewJavaSpecRunnerTest {
       @Test
       public void notifiesTestStarted() {
         assertThat(events.get(0).name, equalTo("testStarted"));
+        assertThat(events.get(0).description, equalTo(onlyChild(subject.getDescription())));
       }
 
       @Test
@@ -282,6 +284,7 @@ public class NewJavaSpecRunnerTest {
       @Test
       public void notifiesTestPassed() {
         assertThat(events.get(1).name, equalTo("testFinished"));
+        assertThat(events.get(1).description, equalTo(onlyChild(subject.getDescription())));
       }
 
       @Test
@@ -296,20 +299,34 @@ public class NewJavaSpecRunnerTest {
         givenTheGatewayHasSpecs(1, aLeafContext("Root",
           aFailingSpec("Root::one_try_and_fail", new AssertionError("Tricksy AssertionError, like JUnit throws")),
           aFailingSpec("Root::another_try_and_fail", new RuntimeException("Unchecked exception"))
-          ));
+        ));
         subject.run(notifier);
       }
 
       @Test
       public void notifiesTestStarted() {
-        Stream<RunListenerSpy.Event> testStartedEvents = events.stream().filter(x -> "testStarted".equals(x.name));
-        assertThat(testStartedEvents.collect(toList()), hasSize(2));
+        Set<Description> started = run.this.events.stream()
+          .filter(x -> "testStarted".equals(x.name))
+          .map(x -> x.description)
+          .collect(Collectors.toSet());
+
+        shouldDescribeAllTests(started);
       }
 
       @Test
       public void notifiesTestFailed_withTheExceptionThatTriggeredFailure() {
-        Stream<RunListenerSpy.Event> testStartedEvents = events.stream().filter(x -> "testFailed".equals(x.name));
-        assertThat(testStartedEvents.collect(toList()), hasSize(2));
+        Set<Description> failedDescriptions = run.this.events.stream()
+          .filter(x -> "testFailure".equals(x.name))
+          .map(x -> x.description)
+          .collect(Collectors.toSet());
+        shouldDescribeAllTests(failedDescriptions);
+
+        Set<Class<?>> failedCauses = run.this.events.stream()
+          .filter(x -> "testFailure".equals(x.name))
+          .map(x -> x.failure.getException())
+          .map(x -> x.getClass())
+          .collect(Collectors.toSet());
+        assertThat(failedCauses, equalTo(newHashSet(RuntimeException.class, AssertionError.class)));
       }
 
       @Test
@@ -318,9 +335,14 @@ public class NewJavaSpecRunnerTest {
       }
 
       @Test
-      public void runsRemainingSpecs() {
-        List<Description> descriptions = events.stream().map(x -> x.description).distinct().collect(toList());
-        assertThat(descriptions, hasSize(2));
+      public void runsRemainingSpecs_evenIfAnEarlierSpecFailed() {
+        Stream<RunListenerSpy.Event> started = events.stream().filter(x -> "testStarted".equals(x.name));
+        assertThat(started.collect(toList()), hasSize(2));
+      }
+
+      private void shouldDescribeAllTests(Set<Description> descriptions) {
+        Description rootDescription = subject.getDescription();
+        assertThat(descriptions, equalTo(new HashSet<>(rootDescription.getChildren())));
       }
     }
   }

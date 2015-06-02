@@ -109,7 +109,7 @@ public final class NewJavaSpecRunner extends Runner {
     try {
       spec.run();
     } catch(Exception | AssertionError e) {
-      Failure f = new Failure(specDescription, null);
+      Failure f = new Failure(specDescription, e);
       notifier.fireTestFailure(f);
       return;
     }
