@@ -291,19 +291,37 @@ public class NewJavaSpecRunnerTest {
     }
 
     public class whenASpecFails {
-      @Test @Ignore
-      public void notifiesTestStarted() {}
-
-      @Test @Ignore
-      public void notifiesTestFailed_withTheExceptionThatTriggeredFailure() {}
-
-      @Test @Ignore
-      public void firesNoOtherEvents() {
-        assertThat(events, hasSize(2));
+      @Before
+      public void setup() throws Exception {
+        givenTheGatewayHasSpecs(1, aLeafContext("Root",
+          aFailingSpec("Root::one_try_and_fail", new AssertionError("Tricksy AssertionError, like JUnit throws")),
+          aFailingSpec("Root::another_try_and_fail", new RuntimeException("Unchecked exception"))
+          ));
+        subject.run(notifier);
       }
 
-      @Test @Ignore
-      public void continuesRunningOtherSpecs() {}
+      @Test
+      public void notifiesTestStarted() {
+        Stream<RunListenerSpy.Event> testStartedEvents = events.stream().filter(x -> "testStarted".equals(x.name));
+        assertThat(testStartedEvents.collect(toList()), hasSize(2));
+      }
+
+      @Test
+      public void notifiesTestFailed_withTheExceptionThatTriggeredFailure() {
+        Stream<RunListenerSpy.Event> testStartedEvents = events.stream().filter(x -> "testFailed".equals(x.name));
+        assertThat(testStartedEvents.collect(toList()), hasSize(2));
+      }
+
+      @Test
+      public void firesNoOtherEvents() {
+        assertThat(events, hasSize(4));
+      }
+
+      @Test
+      public void runsRemainingSpecs() {
+        List<Description> descriptions = events.stream().map(x -> x.description).distinct().collect(toList());
+        assertThat(descriptions, hasSize(2));
+      }
     }
   }
 
@@ -406,6 +424,20 @@ public class NewJavaSpecRunnerTest {
     return new FakeSpec(id, displayName, false);
   }
 
+  private FakeSpec aFailingSpec(String id, AssertionError toThrow) {
+    return new FakeSpec(id, id, false) {
+      @Override
+      public void run() { throw toThrow; }
+    };
+  }
+
+  private FakeSpec aFailingSpec(String id, RuntimeException toThrow) {
+    return new FakeSpec(id, id, false) {
+      @Override
+      public void run() { throw toThrow; }
+    };
+  }
+
   private FakeSpec anIgnoredSpec(String id) {
     return new FakeSpec(id, id, true);
   }
@@ -466,7 +498,7 @@ public class NewJavaSpecRunnerTest {
     }
   }
 
-  private static final class FakeSpec extends Spec {
+  private static class FakeSpec extends Spec {
     private final boolean isIgnored;
     public int runCount;
 

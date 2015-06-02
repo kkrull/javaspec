@@ -2,6 +2,7 @@ package info.javaspec.runner.ng;
 
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
 import java.util.HashMap;
@@ -105,7 +106,13 @@ public final class NewJavaSpecRunner extends Runner {
     }
 
     notifier.fireTestStarted(specDescription);
-    spec.run();
+    try {
+      spec.run();
+    } catch(Exception | AssertionError e) {
+      Failure f = new Failure(specDescription, null);
+      notifier.fireTestFailure(f);
+      return;
+    }
     notifier.fireTestFinished(specDescription);
   }
 
