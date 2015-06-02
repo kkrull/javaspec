@@ -99,8 +99,14 @@ public final class NewJavaSpecRunner extends Runner {
 
   private void runSpec(Spec spec, RunNotifier notifier) {
     Description specDescription = specDescriptions.get(spec.id);
+    if(spec.isIgnored()) {
+      notifier.fireTestIgnored(specDescription);
+      return;
+    }
+
     notifier.fireTestStarted(specDescription);
     spec.run();
+    notifier.fireTestFinished(specDescription);
   }
 
   @Override

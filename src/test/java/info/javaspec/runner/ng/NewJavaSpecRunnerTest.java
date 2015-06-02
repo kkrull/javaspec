@@ -14,14 +14,17 @@ import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Stream;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static info.javaspec.testutil.Assertions.capture;
 import static info.javaspec.testutil.Matchers.matchesRegex;
 import static java.util.Collections.synchronizedList;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
@@ -180,23 +183,7 @@ public class NewJavaSpecRunnerTest {
       notifier.addListener(listener);
     }
 
-    public class givenASpec {
-      private Description suiteDescription;
-
-      @Before
-      public void setup() throws Exception {
-        givenTheGatewayHasSpecs(1, aLeafContext("Root", aSpec("Root::one", "one")));
-        suiteDescription = subject.getDescription();
-        subject.run(notifier);
-      }
-
-      @Test
-      public void usesAnEquivalentDescriptionToTheOneReturnedFrom_getDescription() {
-        assertThat(suiteDescription.getChildren().get(0), equalTo(events.get(0).description));
-      }
-    }
-
-    public class givenAContextClassWith1OrMoreSpecs {
+    public class givenAContextWith1OrMoreSpecs {
       @Before
       public void setup() throws Exception {
         givenTheGatewayHasSpecs(1, aLeafContext("Root",
@@ -207,21 +194,9 @@ public class NewJavaSpecRunnerTest {
       }
 
       @Test
-      public void runsEachSpec() {
-        List<Integer> runCounts = gateway.rootContext.specs.stream().map(x -> x.runCount).collect(toList());
-        assertThat(runCounts, equalTo(newArrayList(1, 1)));
+      public void runsEachSpecInTheContext() {
+        assertThat(gateway.rootContext.runCounts(), equalTo(newArrayList(1, 1)));
       }
-
-      @Test
-      public void notifiesOfEachSpecsOutcome() throws Exception { //TODO KDK: Change to notifications based upon the type of spec (ignore/pass/fail)
-        List<String> methodNames = events.stream().map(RunListenerSpy.Event::describedMethodName).collect(toList());
-        assertThat(methodNames, containsInAnyOrder("one", "two"));
-      }
-
-      //Technically, it's overwriting Description objects with equivalents in its internal cache.
-      //However, this shouldn't be an issue because the context/specs are assumed to be fixed by the time it gets here
-      @Test @Ignore
-      public void whenDescribingAgain_clearsSpecDescriptionCache() {}
     }
 
     public class givenSpecsIn1OrMoreContexts {
@@ -237,26 +212,98 @@ public class NewJavaSpecRunnerTest {
       @Test
       public void runsSpecsInEachContext() {
         List<Integer> runCounts = gateway.rootContext.subcontexts.stream()
-          .flatMap(x -> x.specs.stream())
-          .map(x -> x.runCount)
+          .flatMap(x -> x.runCounts().stream())
           .collect(toList());
         assertThat(runCounts, equalTo(newArrayList(1, 1)));
       }
     }
 
+    public class givenASpec {
+      private Description suiteDescription;
+
+      @Before
+      public void setup() throws Exception {
+        givenTheGatewayHasSpecs(1, aLeafContext("Root", aSpec("Root::one", "one")));
+        suiteDescription = subject.getDescription();
+        subject.run(notifier);
+      }
+
+      @Test
+      public void usesAnEquivalentDescriptionToTheOneReturnedFrom_getDescription() {
+        assertThat(suiteDescription.getChildren().get(0), equalTo(events.get(0).description));
+      }
+
+      //Technically, it's overwriting Description objects with equivalents in its internal cache.
+      //However, this shouldn't be an issue because the context/specs are assumed to be fixed by the time it gets here
+      @Test @Ignore
+      public void whenDescribingAgain_clearsSpecDescriptionCache() {}
+    }
+
     public class givenAnIgnoredSpec {
       @Before
       public void setup() throws Exception {
-//        givenTheGatewayDescribes(1, aSuiteWithATest("IgnoreMe"));
-//        subject.run(notifier);
+        givenTheGatewayHasSpecs(1, aLeafContext("Root", anIgnoredSpec("Root::ignore_me")));
+        subject.run(notifier);
       }
 
-      @Ignore
       @Test
-      public void notifiesOfTheTestRunStarting() throws Exception {
-        List<String> methodNames = events.stream().map(RunListenerSpy.Event::getName).collect(toList());
-        assertThat(methodNames, contains("testIgnored"));
+      public void notifiesIgnored() {
+        assertThat(onlyElement(events).name, equalTo("testIgnored"));
       }
+
+      @Test
+      public void doesNotRunTheSpec() {
+        assertThat(gateway.rootContext.runCounts(), equalTo(newArrayList(0)));
+      }
+
+      @Test
+      public void firesNoOtherEvents() {
+        assertThat(events, hasSize(1));
+      }
+    }
+
+    public class whenASpecPasses {
+      @Before
+      public void setup() throws Exception {
+        givenTheGatewayHasSpecs(1, aLeafContext("Root", aSpec("Root::passes")));
+        subject.run(notifier);
+      }
+
+      @Test
+      public void notifiesTestStarted() {
+        assertThat(events.get(0).name, equalTo("testStarted"));
+      }
+
+      @Test
+      public void runsTheSpec() {
+        assertThat(gateway.rootContext.runCounts(), equalTo(newArrayList(1)));
+      }
+
+      @Test
+      public void notifiesTestPassed() {
+        assertThat(events.get(1).name, equalTo("testFinished"));
+      }
+
+      @Test
+      public void firesNoOtherEvents() {
+        assertThat(events, hasSize(2));
+      }
+    }
+
+    public class whenASpecFails {
+      @Test @Ignore
+      public void notifiesTestStarted() {}
+
+      @Test @Ignore
+      public void notifiesTestFailed_withTheExceptionThatTriggeredFailure() {}
+
+      @Test @Ignore
+      public void firesNoOtherEvents() {
+        assertThat(events, hasSize(2));
+      }
+
+      @Test @Ignore
+      public void continuesRunningOtherSpecs() {}
     }
   }
 
@@ -328,14 +375,15 @@ public class NewJavaSpecRunnerTest {
     };
   }
 
-  private Description onlyChild(Description suite) {
-    List<Description> children = suite.getChildren();
-    if(children.size() != 1) {
-      String msg = String.format("Expected suite %s to have 1 child, but had %s", suite.getDisplayName(), children);
+  private Description onlyChild(Description suite) { return onlyElement(suite.getChildren()); }
+
+  private <E> E onlyElement(List<E> items) {
+    if(items.size() != 1) {
+      String msg = String.format("Expected %s to have 1 element, but has %d", items, items.size());
       throw new RuntimeException(msg);
     }
 
-    return children.get(0);
+    return items.get(0);
   }
 
   private FakeContext aNestedContext(String id, FakeContext... subcontexts) {
@@ -351,11 +399,15 @@ public class NewJavaSpecRunnerTest {
   }
 
   private FakeSpec aSpec(String id) {
-    return aSpec(id, id);
+    return new FakeSpec(id, id, false);
   }
 
   private FakeSpec aSpec(String id, String displayName) {
-    return new FakeSpec(id, displayName);
+    return new FakeSpec(id, displayName, false);
+  }
+
+  private FakeSpec anIgnoredSpec(String id) {
+    return new FakeSpec(id, id, true);
   }
 
   private static final class FakeSpecGateway implements SpecGateway<ClassContext> {
@@ -408,14 +460,23 @@ public class NewJavaSpecRunnerTest {
       this.specs = specs;
       this.subcontexts = subcontexts;
     }
+
+    public List<Integer> runCounts() {
+      return specs.stream().map(x -> x.runCount).collect(toList());
+    }
   }
 
   private static final class FakeSpec extends Spec {
+    private final boolean isIgnored;
     public int runCount;
 
-    public FakeSpec(String id, String displayName) {
+    public FakeSpec(String id, String displayName, boolean isIgnored) {
       super(id, displayName);
+      this.isIgnored = isIgnored;
     }
+
+    @Override
+    public boolean isIgnored() { return isIgnored; }
 
     @Override
     public void run() { runCount++; }

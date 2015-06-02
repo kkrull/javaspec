@@ -79,6 +79,11 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
     String fullyQualifiedId = String.format("%s.%s", declaringClass.getCanonicalName(), itField.getName());
     return new Spec(fullyQualifiedId, humanize(itField.getName())) {
       @Override
+      public boolean isIgnored() {
+        throw new UnsupportedOperationException();
+      }
+
+      @Override
       public void run() {
         throw new UnsupportedOperationException();
       }

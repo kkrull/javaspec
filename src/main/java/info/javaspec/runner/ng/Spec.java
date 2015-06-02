@@ -9,5 +9,6 @@ abstract class Spec {
     this.displayName = displayName;
   }
 
+  public abstract boolean isIgnored();
   public abstract void run();
 }
