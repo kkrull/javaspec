@@ -1,4 +1,4 @@
-package info.javaspec.runner;
+package info.javaspec.runner.old;
 
 import info.javaspec.dsl.Because;
 import info.javaspec.dsl.Cleanup;

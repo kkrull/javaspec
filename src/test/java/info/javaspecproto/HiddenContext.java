@@ -1,7 +1,7 @@
 package info.javaspecproto;
 
 import info.javaspec.dsl.It;
-import info.javaspec.runner.JavaSpecRunner;
+import info.javaspec.runner.old.JavaSpecRunner;
 import org.junit.runner.RunWith;
 
 import static org.hamcrest.Matchers.equalTo;

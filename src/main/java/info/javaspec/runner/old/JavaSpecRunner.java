@@ -1,4 +1,4 @@
-package info.javaspec.runner;
+package info.javaspec.runner.old;
 
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -48,7 +48,7 @@ public final class JavaSpecRunner extends ParentRunner<Example> {
     this(new ClassExampleGateway(contextClass));
   }
   
-  JavaSpecRunner(ExampleGateway gateway) throws InitializationError {
+  public JavaSpecRunner(ExampleGateway gateway) throws InitializationError {
     super(null); //Bypass JUnit's requirements for a context class; throw our own errors instead
     this.gateway = gateway;
     

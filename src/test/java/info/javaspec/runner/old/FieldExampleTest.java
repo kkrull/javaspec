@@ -1,9 +1,9 @@
-package info.javaspec.runner;
+package info.javaspec.runner.old;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.dsl.It;
-import info.javaspec.runner.FieldExample.TestSetupException;
-import info.javaspec.runner.FieldExample.UnsupportedConstructorException;
+import info.javaspec.runner.old.FieldExample.TestSetupException;
+import info.javaspec.runner.old.FieldExample.UnsupportedConstructorException;
 import info.javaspecproto.ContextClasses;
 import org.junit.After;
 import org.junit.Before;

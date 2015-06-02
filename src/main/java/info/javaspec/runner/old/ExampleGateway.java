@@ -1,10 +1,10 @@
-package info.javaspec.runner;
+package info.javaspec.runner.old;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-interface ExampleGateway {
+public interface ExampleGateway {
   List<Throwable> findInitializationErrors();
   
   //Context

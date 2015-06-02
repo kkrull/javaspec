@@ -1,4 +1,4 @@
-package info.javaspec.runner;
+package info.javaspec.runner.old;
 
 import java.util.LinkedHashSet;
 import java.util.Set;

@@ -1,5 +1,7 @@
 package info.javaspec.runner;
 
+import info.javaspec.runner.old.ExampleGateway;
+import info.javaspec.runner.old.JavaSpecRunner;
 import info.javaspec.testutil.RunListenerSpy;
 import info.javaspec.testutil.RunListenerSpy.Event;
 import org.junit.runner.Runner;

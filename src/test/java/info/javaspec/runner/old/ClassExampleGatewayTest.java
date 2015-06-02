@@ -1,8 +1,8 @@
-package info.javaspec.runner;
+package info.javaspec.runner.old;
 
 import com.google.common.collect.ImmutableSet;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.runner.ClassExampleGateway.UnknownStepExecutionSequenceException;
+import info.javaspec.runner.old.ClassExampleGateway.UnknownStepExecutionSequenceException;
 import info.javaspecproto.ContextClasses;
 import info.javaspecproto.ContextClasses.NestedContextAndStaticHelperClass;
 import org.hamcrest.Description;

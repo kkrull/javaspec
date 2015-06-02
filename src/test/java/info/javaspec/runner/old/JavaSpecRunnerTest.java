@@ -1,9 +1,10 @@
-package info.javaspec.runner;
+package info.javaspec.runner.old;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.runner.JavaSpecRunner.NoExamplesException;
+import info.javaspec.runner.old.JavaSpecRunner.NoExamplesException;
+import info.javaspec.runner.Runners;
 import info.javaspec.testutil.RunListenerSpy.Event;
 import info.javaspecproto.ContextClasses;
 import org.junit.Before;
@@ -32,8 +33,10 @@ import static org.mockito.Mockito.*;
 
 @RunWith(HierarchicalContextRunner.class)
 public class JavaSpecRunnerTest {
-  private @Mock ExampleGateway gateway;
-  private @Mock Example example;
+  private @Mock
+  ExampleGateway gateway;
+  private @Mock
+  Example example;
   
   @Before
   public void initMocks() { MockitoAnnotations.initMocks(this); }
@@ -94,7 +97,7 @@ public class JavaSpecRunnerTest {
         
         private void gatewayRepeatsExample(Example example, String top, String middle, String bottom) {
           gatewayHasExamples(example, example, example);
-          Context[] contexts = { 
+          Context[] contexts = {
             new Context(1, top, newHashSet(example.getName())),
             new Context(2, middle, newHashSet(example.getName())),
             new Context(3, bottom, newHashSet(example.getName())),
