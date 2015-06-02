@@ -1,11 +1,13 @@
 package info.javaspec.runner.ng;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
+import info.javaspec.dsl.It;
 import info.javaspecproto.ContextClasses;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,10 +16,14 @@ import static info.javaspec.testutil.Matchers.matchesRegex;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(HierarchicalContextRunner.class)
 public class ClassSpecGatewayTest {
   private SpecGateway<ClassContext> subject;
+  private ClassSpecGateway.LambdaSpecFactory specFactory = mock(ClassSpecGateway.LambdaSpecFactory.class);
 
   public class countSpecs {
     @Test
@@ -176,27 +182,34 @@ public class ClassSpecGatewayTest {
       shouldHaveSpecs(subject.rootContext());
     }
 
-    public class givenASpec {
+    public class givenAnInstanceItField {
+      private Spec toReturn = mock(Spec.class);
       private Spec returned;
 
       @Before
       public void setup() throws Exception {
-        subject = new ClassSpecGateway(ContextClasses.OneIt.class);
+        when(specFactory.makeSpec(Mockito.anyString(), Mockito.anyString(), Mockito.any()))
+          .thenReturn(toReturn);
+        subject = new ClassSpecGateway(ContextClasses.OneIt.class, specFactory);
         returned = subject.getSpecs(subject.rootContext()).get(0);
       }
 
       @Test
       public void identifiesTheSpecByTheFullyQualifiedPathToThatField() {
-        assertThat(returned.id, equalTo("info.javaspecproto.ContextClasses.OneIt.only_test"));
+        verify(specFactory).makeSpec(Mockito.eq("info.javaspecproto.ContextClasses.OneIt.only_test"),
+          Mockito.any(), Mockito.any());
       }
 
       @Test
       public void humanizesSnakeCasedFieldNamesByReplacingUnderscoresWithSpaces() {
-        assertThat(returned.displayName, equalTo("only test"));
+        verify(specFactory).makeSpec(Mockito.anyString(), Mockito.eq("only test"), Mockito.any());
       }
 
       @Test @Ignore
-      public void returnsASpecThatExecutesTheContentxOfTheNoArgLambdaAssignedToTheItField() {}
+      public void returnsASpecForThatField() {
+        verify(specFactory).makeSpec(Mockito.anyString(), Mockito.any(), Mockito.any(It.class));
+        assertThat(returned, sameInstance(toReturn));
+      }
     }
 
     private void shouldHaveSpecs(ClassContext context, String... ids) {

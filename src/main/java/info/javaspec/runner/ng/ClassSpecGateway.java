@@ -15,9 +15,15 @@ import static java.util.stream.Collectors.toList;
 /** Reads specs from no-arg lambdas assigned to It fields in a hierarchy of context classes. */
 public final class ClassSpecGateway implements SpecGateway<ClassContext> {
   private final Class<?> rootContext;
+  private final LambdaSpecFactory specFactory;
 
   public ClassSpecGateway(Class<?> rootContext) {
+    this(rootContext, ClassSpecGateway::makeSpec);
+  }
+
+  public ClassSpecGateway(Class<?> rootContext, LambdaSpecFactory specFactory) {
     this.rootContext = rootContext;
+    this.specFactory = specFactory;
   }
 
   @Override
@@ -74,10 +80,14 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
       .collect(toList());
   }
 
-  private static Spec makeSpec(Field itField, Context context) {
+  private Spec makeSpec(Field itField, Context context) {
     Class<?> declaringClass = itField.getDeclaringClass();
     String fullyQualifiedId = String.format("%s.%s", declaringClass.getCanonicalName(), itField.getName());
-    return new Spec(fullyQualifiedId, humanize(itField.getName())) {
+    return specFactory.makeSpec(fullyQualifiedId, humanize(itField.getName()), null);
+  }
+
+  private static Spec makeSpec(String id, String displayName, It it) {
+    return new Spec(id, displayName) {
       @Override
       public boolean isIgnored() {
         throw new UnsupportedOperationException();
@@ -88,6 +98,11 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
         throw new UnsupportedOperationException();
       }
     };
+  }
+
+  @FunctionalInterface
+  interface LambdaSpecFactory {
+    Spec makeSpec(String id, String displayName, It it);
   }
 
   private static String humanize(String behaviorOrContext) {
