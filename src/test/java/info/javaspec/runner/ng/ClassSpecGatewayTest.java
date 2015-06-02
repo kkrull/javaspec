@@ -3,6 +3,7 @@ package info.javaspec.runner.ng;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspecproto.ContextClasses;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -193,6 +194,9 @@ public class ClassSpecGatewayTest {
       public void humanizesSnakeCasedFieldNamesByReplacingUnderscoresWithSpaces() {
         assertThat(returned.displayName, equalTo("only test"));
       }
+
+      @Test @Ignore
+      public void returnsASpecThatExecutesTheContentxOfTheNoArgLambdaAssignedToTheItField() {}
     }
 
     private void shouldHaveSpecs(ClassContext context, String... ids) {
