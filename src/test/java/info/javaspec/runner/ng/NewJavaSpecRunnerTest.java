@@ -141,8 +141,7 @@ public class NewJavaSpecRunnerTest {
     }
 
     //Two specs can have the same name too, if they are declared in different parts of the hierarchy.
-    //A Test Description by default will use its class and method names to form a uniqueId, but even this combination
-    //may not be unique if the display name for the specs and their respective contexts are the same.
+    //This is a problem for test Descriptions if the identically-named fields are also in identically-named classes.
     public class givenAContextHierarchyWith2OrMoreSpecsOfTheSameDisplayName {
       @Before
       public void setup() {
@@ -232,11 +231,6 @@ public class NewJavaSpecRunnerTest {
       public void usesAnEquivalentDescriptionToTheOneReturnedFrom_getDescription() {
         assertThat(suiteDescription.getChildren().get(0), equalTo(events.get(0).description));
       }
-
-      //Technically, it's overwriting Description objects with equivalents in its internal cache.
-      //However, this shouldn't be an issue because the context/specs are assumed to be fixed by the time it gets here
-      @Test @Ignore
-      public void whenDescribingAgain_clearsSpecDescriptionCache() {}
     }
 
     public class givenAnIgnoredSpec {

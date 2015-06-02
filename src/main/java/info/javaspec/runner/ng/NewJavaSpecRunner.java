@@ -7,6 +7,8 @@ import org.junit.runner.notification.RunNotifier;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * JUnit test runner for specs written in lambdas and organized into context classes.
@@ -94,26 +96,32 @@ public final class NewJavaSpecRunner extends Runner {
   }
 
   private void runContext(ClassContext context, RunNotifier notifier) {
-    gateway.getSpecs(context).stream().forEach(x -> runSpec(x, notifier));
+    gateway.getSpecs(context).stream().forEach(x -> runSpecIfNotIgnored(x, notifier));
     gateway.getSubcontexts(context).stream().forEach(x -> runContext(x, notifier));
   }
 
-  private void runSpec(Spec spec, RunNotifier notifier) {
-    Description specDescription = specDescriptions.get(spec.id);
+  private void runSpecIfNotIgnored(Spec spec, RunNotifier notifier) {
+    Description description = specDescriptions.get(spec.id);
     if(spec.isIgnored()) {
-      notifier.fireTestIgnored(specDescription);
+      notifier.fireTestIgnored(description);
       return;
     }
 
-    notifier.fireTestStarted(specDescription);
+    notifier.fireTestStarted(description);
+    Optional<Failure> failure = runSpec(spec, description);
+    if(failure.isPresent())
+      notifier.fireTestFailure(failure.get());
+    else
+      notifier.fireTestFinished(description);
+  }
+
+  private Optional<Failure> runSpec(Spec spec, Description description) {
     try {
       spec.run();
     } catch(Exception | AssertionError e) {
-      Failure f = new Failure(specDescription, e);
-      notifier.fireTestFailure(f);
-      return;
+      return Optional.of(new Failure(description, e));
     }
-    notifier.fireTestFinished(specDescription);
+    return Optional.empty();
   }
 
   @Override
