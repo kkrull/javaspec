@@ -13,10 +13,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static info.javaspec.testutil.Matchers.matchesRegex;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
@@ -33,12 +33,12 @@ public class ClassSpecGatewayTest {
   public class countSpecs {
     @Test
     public void givenAContextClassWithNoSpecs_returns_0() throws Exception {
-      shouldHaveSpecCount(ContextClasses.Empty.class, 0);
+      shouldNotHaveSpecs(ContextClasses.Empty.class);
     }
 
     @Test
     public void givenAContextClassWith1OrMoreSpecs_returnsTheNumberOfSpecs() throws Exception {
-      shouldHaveSpecCount(ContextClasses.OneIt.class, 1);
+      shouldHaveSpecs(ContextClasses.OneIt.class, 1);
     }
   }
 
@@ -50,7 +50,7 @@ public class ClassSpecGatewayTest {
 
     @Test
     public void givenAContextClassWith1OrMoreSpecs_returnsTrue() throws Exception {
-      shouldHaveSpecs(ContextClasses.OneIt.class);
+      shouldHaveSpecs(ContextClasses.OneIt.class, 1);
     }
   }
 
@@ -58,34 +58,30 @@ public class ClassSpecGatewayTest {
     @Test
     public void withNoFieldsOfTypeIt_hasNoSpecs() throws Exception {
       shouldNotHaveSpecs(ContextClasses.Empty.class);
-      shouldHaveSpecCount(ContextClasses.Empty.class, 0);
+      shouldNotReturnAnySpecs(ContextClasses.Empty.class);
     }
 
     @Test
     public void with1OrMoreOfInstanceFieldsOfTypeIt_hasASpecForEachOfThoseFields() throws Exception {
-      shouldHaveSpecs(ContextClasses.OneIt.class);
-      shouldHaveSpecCount(ContextClasses.OneIt.class, 1);
+      shouldHaveSpecs(ContextClasses.OneIt.class, 1);
     }
 
     @Test
     public void withStaticFieldsOfTypeIt_doesNotCountThoseFieldsAsSpecs() throws Exception {
       shouldNotHaveSpecs(ContextClasses.StaticIt.class);
-      shouldHaveSpecCount(ContextClasses.StaticIt.class, 0);
+      shouldNotReturnAnySpecs(ContextClasses.StaticIt.class);
     }
 
     @Test
     public void withNestedClasses_countsSpecsInThoseClasses() throws Exception {
-      shouldHaveSpecCount(ContextClasses.NestedIt.class, 1);
-      shouldHaveSpecs(ContextClasses.NestedContext.class);
-
-      shouldHaveSpecCount(ContextClasses.NestedThreeDeep.class, 1);
-      shouldHaveSpecs(ContextClasses.NestedThreeDeep.class);
+      shouldHaveSpecs(ContextClasses.NestedIt.class, 1);
+      shouldHaveSpecs(ContextClasses.NestedThreeDeep.class, 1);
     }
 
     @Test
     public void withAStaticInnerClass_doesNotCountItFieldsInThoseClassesAsSpecs() throws Exception {
-      shouldHaveSpecCount(ContextClasses.NestedStaticClassIt.class, 0);
       shouldNotHaveSpecs(ContextClasses.NestedStaticClassIt.class);
+      shouldNotReturnAnySpecs(ContextClasses.NestedStaticClassIt.class);
     }
   }
 
@@ -163,48 +159,27 @@ public class ClassSpecGatewayTest {
 
   public class getSpecs {
     @Test
-    public void givenASpec_returnsThatSpec() {
-      Spec factoryMade = mock(Spec.class, "FactoryMade");
-      givenSpecFactoryMakes("info.javaspecproto.ContextClasses.OneIt.only_test", factoryMade);
-      subject = new ClassSpecGateway(ContextClasses.OneIt.class, specFactory);
-      assertThat(subject.getSpecs(subject.rootContext()), equalTo(newArrayList(factoryMade)));
-    }
-
-    @Test
-    public void givenAClassWithNoInstanceItFields_returnsEmpty() throws Exception {
-      subject = new ClassSpecGateway(ContextClasses.Empty.class, specFactory);
-      assertThat(subject.getSpecs(subject.rootContext()), hasSize(0));
-    }
-
-    @Test
     public void givenAClassWithInstanceItFields_returnsASpecForEachField() {
       subject = new ClassSpecGateway(ContextClasses.TwoIt.class, specFactory);
-      subject.getSpecs(subject.rootContext());
-      shouldHaveMadeSpecs("info.javaspecproto.ContextClasses.TwoIt.first_test",
-        "info.javaspecproto.ContextClasses.TwoIt.second_test");
-
-      subject = new ClassSpecGateway(ContextClasses.NestedContext.class, specFactory);
-      subject.getSpecs(onlySubcontext(subject.rootContext()));
-      shouldHaveMadeSpecs("info.javaspecproto.ContextClasses.NestedContext.inner.asserts");
+      assertThat(subject.getSpecs(subject.rootContext()), hasSize(2));
     }
 
     @Test
-    public void givenAClassWithStaticItFields_ignoresThoseFields() {
-      subject = new ClassSpecGateway(ContextClasses.StaticIt.class, specFactory);
-      shouldHaveSpecs(subject.rootContext());
+    public void givenAnInnerClassWithInstanceItFields_returnsASpecForThoseFields() {
+      subject = new ClassSpecGateway(ContextClasses.NestedContext.class, specFactory);
+      assertThat(subject.getSpecs(onlySubcontext(subject.rootContext())), hasSize(1));
     }
 
-    //TODO KDK: Refactor these tests to work with verifying calls to specFactory
     public class givenAnInstanceItField {
-      private Spec toReturn = mock(Spec.class);
-      private Spec returned;
+      private Spec toReturn = mock(Spec.class, "Factory Made");
+      private List<Spec> returned;
 
       @Before
       public void setup() throws Exception {
         when(specFactory.makeSpec(Mockito.anyString(), Mockito.anyString(), Mockito.any()))
           .thenReturn(toReturn);
         subject = new ClassSpecGateway(ContextClasses.OneIt.class, specFactory);
-        returned = subject.getSpecs(subject.rootContext()).get(0);
+        returned = subject.getSpecs(subject.rootContext());
       }
 
       @Test
@@ -213,27 +188,20 @@ public class ClassSpecGatewayTest {
           Mockito.any(), Mockito.any());
       }
 
-      @Test //TODO KDK: Move to givenASpec?
+      @Test
       public void humanizesSnakeCasedFieldNamesByReplacingUnderscoresWithSpaces() {
         verify(specFactory).makeSpec(Mockito.anyString(), Mockito.eq("only test"), Mockito.any());
       }
 
       @Test @Ignore
+      public void createsTheSpecFromTheItField() {}
+
+      @Test
       public void returnsASpecForThatField() {
         verify(specFactory).makeSpec(Mockito.anyString(), Mockito.any(), Mockito.any(It.class));
-        assertThat(returned, sameInstance(toReturn));
+        assertThat(returned, contains(sameInstance(toReturn)));
       }
     }
-
-    private void shouldHaveSpecs(ClassContext context, String... ids) {
-      List<String> actualIds = subject.getSpecs(context).stream().map(x -> x.id).collect(toList());
-      assertThat(actualIds, equalTo(Arrays.asList(ids)));
-    }
-  }
-
-  private void givenSpecFactoryMakes(String id, Spec spec) {
-    when(specFactory.makeSpec(Mockito.eq(id), Mockito.anyString(), Mockito.any(It.class)))
-      .thenReturn(spec);
   }
 
   private void givenSpecFactoryMakes(Spec spec) {
@@ -251,19 +219,21 @@ public class ClassSpecGatewayTest {
     return children.get(0);
   }
 
-  private void shouldHaveSpecs(Class<?> rootContextClass) {
+  private void shouldHaveSpecs(Class<?> rootContextClass, long totalSpecs) {
     SpecGateway subject = new ClassSpecGateway(rootContextClass, specFactory);
     assertThat(subject.hasSpecs(), is(true));
+    assertThat(subject.countSpecs(), equalTo(totalSpecs));
   }
 
   private void shouldNotHaveSpecs(Class<?> rootContextClass) {
     SpecGateway subject = new ClassSpecGateway(rootContextClass, specFactory);
     assertThat(subject.hasSpecs(), is(false));
+    assertThat(subject.countSpecs(), equalTo(0L));
   }
 
-  private void shouldHaveSpecCount(Class<?> contextClass, long numSpecs) {
-    SpecGateway subject = new ClassSpecGateway(contextClass, specFactory);
-    assertThat(subject.countSpecs(), equalTo(numSpecs));
+  private void shouldNotReturnAnySpecs(Class<?> context) {
+    subject = new ClassSpecGateway(context, specFactory);
+    assertThat(subject.getSpecs(subject.rootContext()), hasSize(0));
   }
 
   private void shouldHaveMadeSpecs(String... ids) {
