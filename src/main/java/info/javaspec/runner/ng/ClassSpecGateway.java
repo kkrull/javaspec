@@ -87,17 +87,7 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
   }
 
   private static Spec makeSpec(String id, String displayName, Field it) {
-    return new Spec(id, displayName) {
-      @Override
-      public boolean isIgnored() {
-        throw new UnsupportedOperationException();
-      }
-
-      @Override
-      public void run() {
-        throw new UnsupportedOperationException();
-      }
-    };
+    return new LambdaSpec(id, displayName);
   }
 
   @FunctionalInterface

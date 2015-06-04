@@ -14,6 +14,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static info.javaspec.testutil.Matchers.matchesRegex;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -160,9 +161,12 @@ public class ClassSpecGatewayTest {
 
   public class getSpecs {
     @Test
-    public void givenAClassWithInstanceItFields_returnsASpecForEachField() {
-      subject = new ClassSpecGateway(ContextClasses.TwoIt.class, specFactory);
-      assertThat(subject.getSpecs(subject.rootContext()), hasSize(2));
+    public void givenAClassWithInstanceItFields_returnsALambdaSpecForEachField() {
+      subject = new ClassSpecGateway(ContextClasses.TwoIt.class);
+      List<Class<?>> specClasses = subject.getSpecs(subject.rootContext()).stream()
+        .map(Spec::getClass)
+        .collect(toList());
+      assertThat(specClasses, equalTo(newArrayList(LambdaSpec.class, LambdaSpec.class)));
     }
 
     @Test
