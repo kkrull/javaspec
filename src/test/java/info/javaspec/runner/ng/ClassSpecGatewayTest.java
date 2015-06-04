@@ -6,8 +6,11 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import java.lang.reflect.Field;
@@ -160,6 +163,9 @@ public class ClassSpecGatewayTest {
   }
 
   public class getSpecs {
+    private ArgumentCaptor<List> befores = ArgumentCaptor.forClass(List.class);
+    private ArgumentCaptor<List> afters = ArgumentCaptor.forClass(List.class);
+
     @Test
     public void givenAClassWithInstanceItFields_returnAFieldSpecForEachField() {
       subject = new ClassSpecGateway(ContextClasses.TwoIt.class);
@@ -181,7 +187,7 @@ public class ClassSpecGatewayTest {
 
       @Before
       public void setup() throws Exception {
-        when(specFactory.makeSpec(Mockito.anyString(), Mockito.anyString(), Mockito.any()))
+        when(specFactory.makeSpec(Mockito.anyString(), Mockito.anyString(), Mockito.any(), Mockito.any(), Mockito.any()))
           .thenReturn(toReturn);
         subject = new ClassSpecGateway(ContextClasses.OneIt.class, specFactory);
         returned = subject.getSpecs(subject.rootContext());
@@ -190,29 +196,50 @@ public class ClassSpecGatewayTest {
       @Test
       public void identifiesTheSpecByTheFullyQualifiedPathToThatField() {
         verify(specFactory).makeSpec(Mockito.eq("info.javaspecproto.ContextClasses.OneIt.only_test"),
-          Mockito.any(), Mockito.any());
+          Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
       }
 
       @Test
       public void humanizesSnakeCasedFieldNamesByReplacingUnderscoresWithSpaces() {
-        verify(specFactory).makeSpec(Mockito.anyString(), Mockito.eq("only test"), Mockito.any());
+        verify(specFactory).makeSpec(Mockito.anyString(), Mockito.eq("only test"), Mockito.any(), Mockito.any(), Mockito.any());
       }
 
       @Test
       public void createsTheSpecFromTheItField() {
-        verify(specFactory).makeSpec(Mockito.anyString(), Mockito.anyString(), argThat(fieldNamed("only_test")));
+        verify(specFactory).makeSpec(Mockito.anyString(), Mockito.anyString(), argThat(fieldNamed("only_test")), Mockito.any(), Mockito.any());
       }
 
       @Test
       public void returnsASpecForThatField() {
-        verify(specFactory).makeSpec(Mockito.anyString(), Mockito.any(), Mockito.any());
+        verify(specFactory).makeSpec(Mockito.anyString(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
         assertThat(returned, contains(sameInstance(toReturn)));
+      }
+    }
+
+    public class givenAContextClassWithAnEstablishField {
+      @Before
+      public void setup() {
+        subject = new ClassSpecGateway(ContextClasses.WithEstablish.class, specFactory);
+        subject.getSpecs(subject.rootContext());
+      }
+
+      @Test
+      public void addsThatFieldToEachSpecsBeforeFields() {
+        verify(specFactory).makeSpec(
+          Mockito.eq("asserts"),
+          Mockito.anyString(),
+          Mockito.any(),
+          befores.capture(),
+          Mockito.any()
+        );
+        List<Field> beforesValue = befores.getValue();
+        assertThat(beforesValue, contains(fieldNamed("arrange")));
       }
     }
   }
 
   private void givenSpecFactoryMakes(Spec spec) {
-    when(specFactory.makeSpec(Mockito.anyString(), Mockito.anyString(), Mockito.any()))
+    when(specFactory.makeSpec(Mockito.anyString(), Mockito.anyString(), Mockito.any(), Mockito.any(), Mockito.any()))
       .thenReturn(spec);
   }
 

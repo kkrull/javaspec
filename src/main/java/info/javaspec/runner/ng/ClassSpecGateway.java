@@ -1,5 +1,6 @@
 package info.javaspec.runner.ng;
 
+import info.javaspec.dsl.Establish;
 import info.javaspec.dsl.It;
 import info.javaspec.util.ReflectionUtil;
 
@@ -19,7 +20,7 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
   private final FieldSpecFactory specFactory;
 
   public ClassSpecGateway(Class<?> rootContext) {
-    this(rootContext, ClassSpecGateway::makeSpec);
+    this(rootContext, FieldSpec::new);
   }
 
   public ClassSpecGateway(Class<?> rootContext, FieldSpecFactory specFactory) {
@@ -81,19 +82,16 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
       .collect(toList());
   }
 
-  private Spec makeSpec(Field itField, Context context) {
+  private Spec makeSpec(Field itField, ClassContext context) {
     Class<?> declaringClass = itField.getDeclaringClass();
     String fullyQualifiedId = String.format("%s.%s", declaringClass.getCanonicalName(), itField.getName());
-    return specFactory.makeSpec(fullyQualifiedId, humanize(itField.getName()), itField);
-  }
-
-  private static Spec makeSpec(String id, String displayName, Field it) {
-    return new FieldSpec(id, displayName, it, new ArrayList<>(0), new ArrayList<>(0));
+    List<Field> befores = ReflectionUtil.fieldsOfType(Establish.class, context.source).collect(toList());
+    return specFactory.makeSpec(fullyQualifiedId, humanize(itField.getName()), itField, befores, new ArrayList<>(0));
   }
 
   @FunctionalInterface
   interface FieldSpecFactory {
-    Spec makeSpec(String id, String displayName, Field it);
+    Spec makeSpec(String id, String displayName, Field it, List<Field> befores, List<Field> afters);
   }
 
   private static String humanize(String behaviorOrContext) {
