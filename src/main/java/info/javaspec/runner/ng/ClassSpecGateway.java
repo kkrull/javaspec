@@ -5,6 +5,7 @@ import info.javaspec.util.ReflectionUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -87,7 +88,7 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
   }
 
   private static Spec makeSpec(String id, String displayName, Field it) {
-    return new LambdaSpec(id, displayName);
+    return new LambdaSpec(id, displayName, it, new ArrayList<>(0), new ArrayList<>(0));
   }
 
   @FunctionalInterface

@@ -10,5 +10,5 @@ abstract class Spec {
   }
 
   public abstract boolean isIgnored();
-  public abstract void run();
+  public abstract void run() throws Exception;
 }
