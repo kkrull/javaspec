@@ -1,17 +1,18 @@
 package info.javaspec.runner.ng;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.dsl.It;
 import info.javaspecproto.ContextClasses;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static info.javaspec.testutil.Matchers.matchesRegex;
 import static java.util.stream.Collectors.toList;
@@ -193,19 +194,21 @@ public class ClassSpecGatewayTest {
         verify(specFactory).makeSpec(Mockito.anyString(), Mockito.eq("only test"), Mockito.any());
       }
 
-      @Test @Ignore
-      public void createsTheSpecFromTheItField() {}
+      @Test
+      public void createsTheSpecFromTheItField() {
+        verify(specFactory).makeSpec(Mockito.anyString(), Mockito.anyString(), argThat(fieldNamed("only_test")));
+      }
 
       @Test
       public void returnsASpecForThatField() {
-        verify(specFactory).makeSpec(Mockito.anyString(), Mockito.any(), Mockito.any(It.class));
+        verify(specFactory).makeSpec(Mockito.anyString(), Mockito.any(), Mockito.any());
         assertThat(returned, contains(sameInstance(toReturn)));
       }
     }
   }
 
   private void givenSpecFactoryMakes(Spec spec) {
-    when(specFactory.makeSpec(Mockito.anyString(), Mockito.anyString(), Mockito.any(It.class)))
+    when(specFactory.makeSpec(Mockito.anyString(), Mockito.anyString(), Mockito.any()))
       .thenReturn(spec);
   }
 
@@ -236,11 +239,22 @@ public class ClassSpecGatewayTest {
     assertThat(subject.getSpecs(subject.rootContext()), hasSize(0));
   }
 
-  private void shouldHaveMadeSpecs(String... ids) {
-    Stream.of(ids).forEach(id -> verify(specFactory, times(1))
-      .makeSpec(
-        Mockito.eq(id),
-        Mockito.anyString(), Mockito.any()
-      ));
+  private Matcher<Field> fieldNamed(String name) {
+    return new BaseMatcher<Field>() {
+      @Override
+      public boolean matches(Object obj) {
+        if(obj == null || obj.getClass() != Field.class)
+          return false;
+
+        Field field = (Field)obj;
+        return name.equals(field.getName());
+      }
+
+      @Override
+      public void describeTo(Description description) {
+        description.appendText("Field declared with name ");
+        description.appendValue(name);
+      }
+    };
   }
 }

@@ -83,10 +83,10 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
   private Spec makeSpec(Field itField, Context context) {
     Class<?> declaringClass = itField.getDeclaringClass();
     String fullyQualifiedId = String.format("%s.%s", declaringClass.getCanonicalName(), itField.getName());
-    return specFactory.makeSpec(fullyQualifiedId, humanize(itField.getName()), null);
+    return specFactory.makeSpec(fullyQualifiedId, humanize(itField.getName()), itField);
   }
 
-  private static Spec makeSpec(String id, String displayName, It it) {
+  private static Spec makeSpec(String id, String displayName, Field it) {
     return new Spec(id, displayName) {
       @Override
       public boolean isIgnored() {
@@ -102,7 +102,7 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
 
   @FunctionalInterface
   interface LambdaSpecFactory {
-    Spec makeSpec(String id, String displayName, It it);
+    Spec makeSpec(String id, String displayName, Field it);
   }
 
   private static String humanize(String behaviorOrContext) {
