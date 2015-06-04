@@ -1,13 +1,13 @@
 package info.javaspecproto;
 
 import info.javaspec.dsl.It;
-import info.javaspec.runner.old.JavaSpecRunner;
+import info.javaspec.runner.ng.NewJavaSpecRunner;
 import org.junit.runner.RunWith;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-@RunWith(JavaSpecRunner.class)
+@RunWith(NewJavaSpecRunner.class)
 class HiddenContext {
   @SuppressWarnings("unused") //Gets used via reflection
   private class hiddenInner {

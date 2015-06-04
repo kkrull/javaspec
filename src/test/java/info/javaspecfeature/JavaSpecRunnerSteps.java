@@ -1,6 +1,5 @@
 package info.javaspecfeature;
 
-import cucumber.api.PendingException;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
@@ -74,7 +73,6 @@ public final class JavaSpecRunnerSteps {
     this.testClass = ContextClasses.PendingIt.class;
   }
 
-  //TODO KDK: Start moving acceptance tests, one at a time, over to a new runner
   @Given("^I have a top-level class marked to run with a JavaSpec runner$")
   public void i_have_a_top_level_class_marked_to_run_with_a_JavaSpec_runner() { /* Followed by a more specific step */ }
 
