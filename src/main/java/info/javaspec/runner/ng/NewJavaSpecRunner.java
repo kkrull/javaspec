@@ -8,7 +8,6 @@ import org.junit.runner.notification.RunNotifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 /**
  * JUnit test runner for specs written in lambdas and organized into context classes.
