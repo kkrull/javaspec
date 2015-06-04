@@ -16,13 +16,13 @@ import static java.util.stream.Collectors.toList;
 /** Reads specs from no-arg lambdas assigned to It fields in a hierarchy of context classes. */
 public final class ClassSpecGateway implements SpecGateway<ClassContext> {
   private final Class<?> rootContext;
-  private final LambdaSpecFactory specFactory;
+  private final FieldSpecFactory specFactory;
 
   public ClassSpecGateway(Class<?> rootContext) {
     this(rootContext, ClassSpecGateway::makeSpec);
   }
 
-  public ClassSpecGateway(Class<?> rootContext, LambdaSpecFactory specFactory) {
+  public ClassSpecGateway(Class<?> rootContext, FieldSpecFactory specFactory) {
     this.rootContext = rootContext;
     this.specFactory = specFactory;
   }
@@ -88,11 +88,11 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
   }
 
   private static Spec makeSpec(String id, String displayName, Field it) {
-    return new LambdaSpec(id, displayName, it, new ArrayList<>(0), new ArrayList<>(0));
+    return new FieldSpec(id, displayName, it, new ArrayList<>(0), new ArrayList<>(0));
   }
 
   @FunctionalInterface
-  interface LambdaSpecFactory {
+  interface FieldSpecFactory {
     Spec makeSpec(String id, String displayName, Field it);
   }
 

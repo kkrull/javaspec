@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.fail;
 
 @RunWith(HierarchicalContextRunner.class)
-public class LambdaSpecTest {
+public class FieldSpecTest {
   public class isSkipped {
     public class whenEachJavaSpecFieldHasAnAssignedValue {
       @Test
@@ -57,7 +57,7 @@ public class LambdaSpecTest {
 
       @Test
       public void throwsUnsupportedConstructorException() {
-        assertThrows(LambdaSpec.UnsupportedConstructorException.class,
+        assertThrows(FieldSpec.UnsupportedConstructorException.class,
           is(String.format("Unable to find a no-argument constructor for class %s",
             ContextClasses.ConstructorWithArguments.class.getName())),
           NoSuchMethodException.class, subject::run);
@@ -73,7 +73,7 @@ public class LambdaSpecTest {
 
       private void assertTestSetupException(Class<?> context, String itFieldName, Class<? extends Throwable> cause) {
         Spec subject = exampleWithIt(context, itFieldName);
-        assertThrows(LambdaSpec.TestSetupException.class,
+        assertThrows(FieldSpec.TestSetupException.class,
           is(String.format("Failed to create test context %s", context.getName())),
           cause, subject::run);
       }
@@ -84,7 +84,7 @@ public class LambdaSpecTest {
       public void throwsTestSetupExceptionCausedByReflectionError() {
         //Intended to catch ReflectiveOperationException, but causing that with a fake SecurityManager was not reliable
         Spec subject = exampleWithIt(HasWrongType.class, "inaccessibleAsIt");
-        assertThrows(LambdaSpec.TestSetupException.class, startsWith("Failed to create test context"), ClassCastException.class,
+        assertThrows(FieldSpec.TestSetupException.class, startsWith("Failed to create test context"), ClassCastException.class,
           subject::run);
       }
     }
@@ -226,7 +226,7 @@ public class LambdaSpecTest {
   }
 
   private static Spec exampleWithNestedFullFixture() {
-    return new LambdaSpec(
+    return new FieldSpec(
       ContextClasses.NestedFullFixture.class.getSimpleName(),
       ContextClasses.NestedFullFixture.class.getSimpleName(),
       readField(ContextClasses.NestedFullFixture.innerContext.class, "asserts"),
@@ -237,7 +237,7 @@ public class LambdaSpecTest {
 
   private static Spec exampleWith(Class<?> context, String it, List<String> befores, List<String> afters) {
     try {
-      return new LambdaSpec(
+      return new FieldSpec(
         context.getSimpleName(),
         context.getSimpleName(),
         it == null ? null : readField(context, it),

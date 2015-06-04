@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 @RunWith(HierarchicalContextRunner.class)
 public class ClassSpecGatewayTest {
   private SpecGateway<ClassContext> subject;
-  private ClassSpecGateway.LambdaSpecFactory specFactory = mock(ClassSpecGateway.LambdaSpecFactory.class);
+  private ClassSpecGateway.FieldSpecFactory specFactory = mock(ClassSpecGateway.FieldSpecFactory.class);
 
   @Before
   public void setup() throws Exception {
@@ -161,12 +161,12 @@ public class ClassSpecGatewayTest {
 
   public class getSpecs {
     @Test
-    public void givenAClassWithInstanceItFields_returnsALambdaSpecForEachField() {
+    public void givenAClassWithInstanceItFields_returnAFieldSpecForEachField() {
       subject = new ClassSpecGateway(ContextClasses.TwoIt.class);
       List<Class<?>> specClasses = subject.getSpecs(subject.rootContext()).stream()
         .map(Spec::getClass)
         .collect(toList());
-      assertThat(specClasses, equalTo(newArrayList(LambdaSpec.class, LambdaSpec.class)));
+      assertThat(specClasses, equalTo(newArrayList(FieldSpec.class, FieldSpec.class)));
     }
 
     @Test

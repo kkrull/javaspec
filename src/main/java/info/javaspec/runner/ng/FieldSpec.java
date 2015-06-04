@@ -13,13 +13,13 @@ import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
-public class LambdaSpec extends Spec {
+public class FieldSpec extends Spec {
   private final Field assertionField;
   private final List<Field> befores;
   private final List<Field> afters;
   private TestFunction testFunction;
 
-  public LambdaSpec(String id, String displayName, Field it, List<Field> befores, List<Field> afters) {
+  public FieldSpec(String id, String displayName, Field it, List<Field> befores, List<Field> afters) {
     super(id, displayName);
     this.assertionField = it;
     this.befores = befores;
