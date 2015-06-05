@@ -10,6 +10,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -85,13 +86,15 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
   }
 
   private Spec makeSpec(Field itField, ClassContext context) {
+    List<Field> befores = new ArrayList<>();
+    onlyDeclaredField(context.source, Establish.class).ifPresent(befores::add);
+    onlyDeclaredField(context.source, Because.class).ifPresent(befores::add);
+
+    List<Field> afters = new ArrayList<>();
+    onlyDeclaredField(context.source, Cleanup.class).ifPresent(afters::add);
+
     Class<?> declaringClass = itField.getDeclaringClass();
     String fullyQualifiedId = String.format("%s.%s", declaringClass.getCanonicalName(), itField.getName());
-    List<Field> befores = Stream.concat(
-      readDeclaredFields(context.source, Establish.class),
-      readDeclaredFields(context.source, Because.class)
-    ).collect(toList());
-    List<Field> afters = readDeclaredFields(context.source, Cleanup.class).collect(toList());
     return specFactory.makeSpec(fullyQualifiedId, humanize(itField.getName()), itField, befores, afters);
   }
 
@@ -102,6 +105,15 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
 
   private static String humanize(String behaviorOrContext) {
     return behaviorOrContext.replace('_', ' ');
+  }
+
+  private static Optional<Field> onlyDeclaredField(Class<?> context, Class<?> fieldType) {
+    List<Field> fields = readDeclaredFields(context, fieldType).limit(2).collect(toList());
+    switch(fields.size()) {
+      case 0: return Optional.empty();
+      case 1: return Optional.of(fields.get(0));
+      default: throw new AmbiguousSpecFixture(context, fieldType);
+    }
   }
 
   private static Stream<Field> readDeclaredItFields(Class<?> context) {
@@ -119,6 +131,10 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
   }
 
   public static final class AmbiguousSpecFixture extends RuntimeException {
-
+    public AmbiguousSpecFixture(Class<?> contextClass, Class<?> fieldClass) {
+      super(String.format("Only 1 field of type %s is allowed in context class %s",
+        fieldClass.getSimpleName(),
+        contextClass));
+    }
   }
 }

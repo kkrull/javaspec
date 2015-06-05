@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static info.javaspec.testutil.Assertions.capture;
 import static info.javaspec.testutil.Matchers.matchesRegex;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -240,7 +241,7 @@ public class ClassSpecGatewayTest {
       }
     }
 
-    public class givenAContextClassStaticFixtureFields {
+    public class givenAContextClassWithStaticFixtureFields {
       @Before
       public void setup() {
         subject = new ClassSpecGateway(ContextClasses.StaticFixtureDoppelganger.class, specFactory);
@@ -257,14 +258,18 @@ public class ClassSpecGatewayTest {
     }
 
     public class givenTwoOrMoreOfAnyTypeOfFixtureField {
-      @Before
-      public void setup() {
-        subject = new ClassSpecGateway(ContextClasses.TwoEstablish.class, specFactory);
-      }
-
       @Test
       public void throwsAmbiguousSpecFixture() {
-        Assertions.capture(ClassSpecGateway.AmbiguousSpecFixture.class, () -> subject.getSpecs(subject.rootContext()));
+        shouldThrowAmbiguousSpecFixture(ContextClasses.TwoEstablish.class, "^Only 1 field of type Establish is allowed in context class .*[$]TwoEstablish$");
+        shouldThrowAmbiguousSpecFixture(ContextClasses.TwoBecause.class, "^Only 1 field of type Because is allowed in context class .*[$]TwoBecause$");
+        shouldThrowAmbiguousSpecFixture(ContextClasses.TwoCleanup.class, "^Only 1 field of type Cleanup is allowed in context class .*[$]TwoCleanup$");
+      }
+
+      private void shouldThrowAmbiguousSpecFixture(Class<?> context, String messagePattern) {
+        subject = new ClassSpecGateway(context, specFactory);
+        Exception exception = capture(ClassSpecGateway.AmbiguousSpecFixture.class,
+          () -> subject.getSpecs(subject.rootContext()));
+        assertThat(exception.getMessage(), matchesRegex(messagePattern));
       }
     }
   }
