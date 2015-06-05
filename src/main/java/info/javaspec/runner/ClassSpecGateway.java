@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 
 /** Reads specs from no-arg lambdas assigned to It fields in a hierarchy of context classes. */
-public final class ClassSpecGateway implements SpecGateway<ClassContext> {
+final class ClassSpecGateway implements SpecGateway<ClassContext> {
   private final Class<?> rootContext;
   private final FieldSpecFactory specFactory;
 

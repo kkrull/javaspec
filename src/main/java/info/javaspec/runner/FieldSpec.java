@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
-public class FieldSpec extends Spec {
+final class FieldSpec extends Spec {
   private final Field assertionField;
   private final List<Field> befores;
   private final List<Field> afters;
