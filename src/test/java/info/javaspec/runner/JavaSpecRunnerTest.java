@@ -1,8 +1,8 @@
 package info.javaspec.runner;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.runner.NewJavaSpecRunner.NoSpecs;
-import info.javaspec.runner.NewJavaSpecRunner.TooManySpecs;
+import info.javaspec.runner.JavaSpecRunner.NoSpecs;
+import info.javaspec.runner.JavaSpecRunner.TooManySpecs;
 import info.javaspec.testutil.RunListenerSpy;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Matcher;
@@ -28,22 +28,22 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 
 @RunWith(HierarchicalContextRunner.class)
-public class NewJavaSpecRunnerTest {
+public class JavaSpecRunnerTest {
   @SuppressWarnings("unchecked") //Parameterized interface
   private final FakeSpecGateway gateway = new FakeSpecGateway();
 
   private final Runner subject;
 
-  public NewJavaSpecRunnerTest() {
+  public JavaSpecRunnerTest() {
     gateway.init(1, aLeafContext("NonEmptyContextForInitialization", aSpec("default_spec")));
-    subject = new NewJavaSpecRunner(gateway);
+    subject = new JavaSpecRunner(gateway);
   }
 
   public class constructor {
     @Test
     public void givenAClassWithoutAnySpecs_throwsNoSpecs() throws Exception {
       givenTheGatewayHasNoSpecs("ContextClasses$Empty");
-      Exception ex = capture(NoSpecs.class, () -> new NewJavaSpecRunner(gateway));
+      Exception ex = capture(NoSpecs.class, () -> new JavaSpecRunner(gateway));
       assertThat(ex.getMessage(), matchesRegex("^Context ContextClasses[$]Empty must contain at least 1 spec"));
     }
   }
@@ -352,7 +352,7 @@ public class NewJavaSpecRunnerTest {
       @Test
       public void throwsTooManyTests() throws Exception {
         givenTheGatewayHasAnEnormousNumberOfSpecs("BigContext");
-        TooManySpecs ex = capture(TooManySpecs.class, () -> new NewJavaSpecRunner(gateway).testCount());
+        TooManySpecs ex = capture(TooManySpecs.class, () -> new JavaSpecRunner(gateway).testCount());
         assertThat(ex.getMessage(), equalTo("Context BigContext has more specs than JUnit can support: 2147483648"));
       }
     }
@@ -502,7 +502,7 @@ public class NewJavaSpecRunnerTest {
     public final List<FakeContext> subcontexts;
 
     public FakeContext(String id, String displayName, List<FakeSpec> specs, List<FakeContext> subcontexts) {
-      super(id, displayName, NewJavaSpecRunnerTest.class);
+      super(id, displayName, JavaSpecRunnerTest.class);
       this.specs = specs;
       this.subcontexts = subcontexts;
     }

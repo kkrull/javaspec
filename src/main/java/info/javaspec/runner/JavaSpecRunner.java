@@ -40,15 +40,15 @@ import java.util.Optional;
  * Classes WidgetFooTest and its inner class foo are both <em>context classes</em>.  See ClassSpecGateway for
  * details.
  */
-public final class NewJavaSpecRunner extends Runner {
+public final class JavaSpecRunner extends Runner {
   private final SpecGateway<ClassContext> gateway;
   private final Map<String, Description> specDescriptions = new HashMap<>();
 
-  public NewJavaSpecRunner(Class<?> rootContextClass) {
+  public JavaSpecRunner(Class<?> rootContextClass) {
     this(new ClassSpecGateway(rootContextClass));
   }
 
-  public NewJavaSpecRunner(SpecGateway<ClassContext> gateway) {
+  public JavaSpecRunner(SpecGateway<ClassContext> gateway) {
     this.gateway = gateway;
     if(!gateway.hasSpecs())
       throw new NoSpecs(gateway.rootContextId());

@@ -5,7 +5,7 @@ import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import info.javaspec.runner.NewJavaSpecRunner;
+import info.javaspec.runner.JavaSpecRunner;
 import info.javaspec.runner.Runners;
 import info.javaspec.testutil.RunListenerSpy.Event;
 import info.javaspecproto.ContextClasses;
@@ -100,25 +100,25 @@ public final class JavaSpecRunnerSteps {
 
   @When("^I count the tests in the class$")
   public void I_count_the_tests() throws Exception {
-    Runner runner = new NewJavaSpecRunner(testClass);
+    Runner runner = new JavaSpecRunner(testClass);
     this.numTests = runner.testCount();
   }
 
   @When("^I describe the tests in the class$")
   public void I_describe_the_tests() throws Exception {
-    Runner runner = new NewJavaSpecRunner(testClass);
+    Runner runner = new JavaSpecRunner(testClass);
     this.description = runner.getDescription();
   }
 
   @When("^I run the tests?$")
   public void i_run_the_test() throws Exception {
-    Runner runner = new NewJavaSpecRunner(testClass);
+    Runner runner = new JavaSpecRunner(testClass);
     Runners.runAll(runner, events::add);
   }
   
   @When("^I run the tests with a JavaSpec runner$")
   public void i_run_the_tests_with_a_JavaSpec_runner() throws Exception {
-    Runner runner = new NewJavaSpecRunner(testClass);
+    Runner runner = new JavaSpecRunner(testClass);
     Runners.runAll(runner, events::add);
   }
 
