@@ -1,6 +1,7 @@
 package info.javaspec.runner.ng;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
+import info.javaspec.testutil.Assertions;
 import info.javaspecproto.ContextClasses;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -236,6 +237,34 @@ public class ClassSpecGatewayTest {
       @Test
       public void addsCleanupToEachSpecsAfterFields() {
         assertThat(afters.getValue(), contains(fieldNamed("cleans")));
+      }
+    }
+
+    public class givenAContextClassStaticFixtureFields {
+      @Before
+      public void setup() {
+        subject = new ClassSpecGateway(ContextClasses.StaticFixtureDoppelganger.class, specFactory);
+        subject.getSpecs(subject.rootContext());
+        verify(specFactory).makeSpec(Mockito.endsWith(".asserts"), Mockito.anyString(),
+          Mockito.any(), befores.capture(), afters.capture());
+      }
+
+      @Test
+      public void thoseFieldsDoNotCount() {
+        assertThat(befores.getValue(), hasSize(0));
+        assertThat(afters.getValue(), hasSize(0));
+      }
+    }
+
+    public class givenTwoOrMoreOfAnyTypeOfFixtureField {
+      @Before
+      public void setup() {
+        subject = new ClassSpecGateway(ContextClasses.TwoEstablish.class, specFactory);
+      }
+
+      @Test
+      public void throwsAmbiguousSpecFixture() {
+        Assertions.capture(ClassSpecGateway.AmbiguousSpecFixture.class, () -> subject.getSpecs(subject.rootContext()));
       }
     }
   }

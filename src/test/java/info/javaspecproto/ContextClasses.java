@@ -249,7 +249,14 @@ public class ContextClasses {
     Because acts = () -> hashcode = subject.hashCode();
     It asserts;
   }
-  
+
+  public static class StaticFixtureDoppelganger {
+    static Establish arranges = () -> assertThat(1, equalTo(1));
+    static Because acts = () -> assertThat(1, equalTo(1));
+    It asserts = () -> assertThat(1, equalTo(1));
+    static Cleanup cleans = () -> assertThat(1, equalTo(1));
+  }
+
   public static class TwoBecause {
     private final List<String> orderMatters = new LinkedList<String>();
     Because act_part_one = () -> orderMatters.add("do this first");

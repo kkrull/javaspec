@@ -88,10 +88,10 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
     Class<?> declaringClass = itField.getDeclaringClass();
     String fullyQualifiedId = String.format("%s.%s", declaringClass.getCanonicalName(), itField.getName());
     List<Field> befores = Stream.concat(
-      ReflectionUtil.fieldsOfType(Establish.class, context.source),
-      ReflectionUtil.fieldsOfType(Because.class, context.source)
+      readDeclaredFields(context.source, Establish.class),
+      readDeclaredFields(context.source, Because.class)
     ).collect(toList());
-    List<Field> afters = ReflectionUtil.fieldsOfType(Cleanup.class, context.source).collect(toList());
+    List<Field> afters = readDeclaredFields(context.source, Cleanup.class).collect(toList());
     return specFactory.makeSpec(fullyQualifiedId, humanize(itField.getName()), itField, befores, afters);
   }
 
@@ -105,12 +105,20 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
   }
 
   private static Stream<Field> readDeclaredItFields(Class<?> context) {
+    return readDeclaredFields(context, It.class);
+  }
+
+  private static Stream<Field> readDeclaredFields(Class<?> context, Class<?> fieldType) {
     Predicate<Field> isInstanceField = x -> !Modifier.isStatic(x.getModifiers());
-    return ReflectionUtil.fieldsOfType(It.class, context).filter(isInstanceField);
+    return ReflectionUtil.fieldsOfType(fieldType, context).filter(isInstanceField);
   }
 
   private static Stream<Class<?>> readInnerClasses(Class<?> parent) {
     Predicate<Class<?>> isNonStatic = x -> !Modifier.isStatic(x.getModifiers());
     return Stream.of(parent.getDeclaredClasses()).filter(isNonStatic);
+  }
+
+  public static final class AmbiguousSpecFixture extends RuntimeException {
+
   }
 }
