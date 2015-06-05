@@ -101,7 +101,7 @@ public class FieldSpecTest {
         try {
           outer = Class.forName("info.javaspecproto.HiddenContext");
           return outer.getDeclaredClasses()[0];
-        } catch (ClassNotFoundException e) {
+        } catch(ClassNotFoundException e) {
           e.printStackTrace();
           fail("Unable to set up test");
           return null;
@@ -183,7 +183,7 @@ public class FieldSpecTest {
           ContextClasses.FailingEstablishWithCleanup.setEventListener(events::add);
           try {
             subject.run();
-          } catch (Throwable t) {
+          } catch(Throwable t) {
             this.thrown = t;
           }
         }
@@ -242,7 +242,7 @@ public class FieldSpecTest {
         it == null ? null : readField(context, it),
         befores.stream().map(x -> readField(context, x)).collect(toList()),
         afters.stream().map(x -> readField(context, x)).collect(toList()));
-    } catch (Exception e) {
+    } catch(Exception e) {
       throw new RuntimeException(e);
     }
   }
@@ -250,7 +250,7 @@ public class FieldSpecTest {
   private static Field readField(Class<?> context, String name) {
     try {
       return context.getDeclaredField(name);
-    } catch (Exception e) {
+    } catch(Exception e) {
       throw new RuntimeException(e);
     }
   }

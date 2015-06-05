@@ -51,7 +51,7 @@ public class FieldSpec extends Spec {
         List<Cleanup> afterValues = afters.stream().map(x -> (Cleanup)context.getAssignedValue(x)).collect(toList());
         It assertion = (It)context.getAssignedValue(assertionField);
         testFunction = new TestFunction(assertion, beforeValues, afterValues);
-      } catch (Throwable t) {
+      } catch(Throwable t) {
         throw new TestSetupException(assertionField.getDeclaringClass(), t);
       }
     }
@@ -72,7 +72,7 @@ public class FieldSpec extends Spec {
         Object declaredContext = instances.get(declaringClass);
         field.setAccessible(true);
         return field.get(declaredContext);
-      } catch (Throwable t) {
+      } catch(Throwable t) {
         throw new TestSetupException(declaringClass, t);
       }
     }
@@ -132,13 +132,13 @@ public class FieldSpec extends Spec {
       try {
         constructor = getConstructor(aClass);
         constructor.setAccessible(true);
-      } catch (Exception e) {
+      } catch(Exception e) {
         throw new UnsupportedConstructorException(aClass, e);
       }
 
       try {
         return makeInstance(constructor);
-      } catch (Exception | AssertionError e) {
+      } catch(Exception | AssertionError e) {
         throw new TestSetupException(aClass, e);
       }
     }

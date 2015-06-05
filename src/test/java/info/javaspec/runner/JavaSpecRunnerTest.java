@@ -121,8 +121,8 @@ public class JavaSpecRunnerTest {
         assumeThat(leftDuplicate.displayName, equalTo(rightDuplicate.displayName)); //Basis for Description.fUniqueId
 
         gateway.init(2, aNestedContext("Root",
-          aNestedContext("LeftSuite", leftDuplicate),
-          aNestedContext("RightSuite", rightDuplicate))
+            aNestedContext("LeftSuite", leftDuplicate),
+            aNestedContext("RightSuite", rightDuplicate))
         );
         description = subject.getDescription();
       }
@@ -152,8 +152,8 @@ public class JavaSpecRunnerTest {
         assumeThat(leftDuplicate.displayName, equalTo(rightDuplicate.displayName)); //Part of Description.fUniqueId
 
         gateway.init(2, aNestedContext("Root",
-          aNestedContext("LeftSuite", leftDuplicate),
-          aNestedContext("RightSuite", rightDuplicate))
+            aNestedContext("LeftSuite", leftDuplicate),
+            aNestedContext("RightSuite", rightDuplicate))
         );
         description = subject.getDescription();
       }
@@ -363,7 +363,7 @@ public class JavaSpecRunnerTest {
   }
 
   private void givenTheGatewayHasAnEnormousNumberOfSpecs(String rootContextId) {
-    long numSpecs = (long) (Integer.MAX_VALUE) + 1;
+    long numSpecs = (long)(Integer.MAX_VALUE) + 1;
     gateway.init(numSpecs, aLeafContext(rootContextId));
   }
 

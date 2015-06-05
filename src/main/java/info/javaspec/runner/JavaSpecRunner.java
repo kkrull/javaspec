@@ -11,13 +11,13 @@ import java.util.Optional;
 
 /**
  * JUnit test runner for specs written in lambdas and organized into context classes.
- * <p/>
+ * <p>
  * For example, the class below contains in two tests.
  * <ul>
  * <li><code>returns_bar</code>: Creates the widget, calls foo(), and verifies that it returned "bar".</li>
  * <li><code>prints_baz</code>: Creates the widget, calls foo(), and verifies that it wrote "baz" to the console.</li>
  * </ul>
- * <p/>
+ * <p>
  * <pre>
  * {@code
  * {@literal @RunWith(JavaSpecRunner.class)}
@@ -36,7 +36,7 @@ import java.util.Optional;
  * }
  * }
  * </pre>
- * <p/>
+ * <p>
  * Classes WidgetFooTest and its inner class foo are both <em>context classes</em>.  See ClassSpecGateway for
  * details.
  */
@@ -129,7 +129,7 @@ public final class JavaSpecRunner extends Runner {
     if(numSpecs > Integer.MAX_VALUE)
       throw new TooManySpecs(gateway.rootContextId(), numSpecs);
     else
-      return (int) numSpecs;
+      return (int)numSpecs;
   }
 
   public static final class NoSpecs extends RuntimeException {
