@@ -1,4 +1,4 @@
-package info.javaspec.runner.ng;
+package info.javaspec.runner;
 
 import org.junit.runner.Description;
 import org.junit.runner.Runner;

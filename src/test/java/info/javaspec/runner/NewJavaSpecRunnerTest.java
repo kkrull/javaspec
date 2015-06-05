@@ -1,13 +1,12 @@
-package info.javaspec.runner.ng;
+package info.javaspec.runner;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.runner.ng.NewJavaSpecRunner.NoSpecs;
-import info.javaspec.runner.ng.NewJavaSpecRunner.TooManySpecs;
+import info.javaspec.runner.NewJavaSpecRunner.NoSpecs;
+import info.javaspec.runner.NewJavaSpecRunner.TooManySpecs;
 import info.javaspec.testutil.RunListenerSpy;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Matcher;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
@@ -24,7 +23,6 @@ import static info.javaspec.testutil.Assertions.capture;
 import static info.javaspec.testutil.Matchers.matchesRegex;
 import static java.util.Collections.synchronizedList;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;

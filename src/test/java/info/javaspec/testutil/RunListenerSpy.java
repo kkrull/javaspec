@@ -5,7 +5,6 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 public final class RunListenerSpy extends RunListener {

@@ -1,4 +1,4 @@
-package info.javaspec.runner.ng;
+package info.javaspec.runner;
 
 abstract class Spec {
   public final String id;

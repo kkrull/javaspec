@@ -1,4 +1,4 @@
-package info.javaspec.runner.ng;
+package info.javaspec.runner;
 
 import info.javaspec.dsl.Because;
 import info.javaspec.dsl.Cleanup;
@@ -8,7 +8,9 @@ import info.javaspec.util.ReflectionUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;

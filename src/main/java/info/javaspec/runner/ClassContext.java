@@ -1,4 +1,4 @@
-package info.javaspec.runner.ng;
+package info.javaspec.runner;
 
 class ClassContext extends Context {
   public final Class<?> source;

@@ -1,4 +1,4 @@
-package info.javaspec.runner.ng;
+package info.javaspec.runner;
 
 abstract class Context {
   public final String id;

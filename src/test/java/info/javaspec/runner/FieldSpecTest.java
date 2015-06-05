@@ -1,4 +1,4 @@
-package info.javaspec.runner.ng;
+package info.javaspec.runner;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.dsl.It;
@@ -19,7 +19,6 @@ import static info.javaspec.testutil.Assertions.assertThrows;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.fail;
 
 @RunWith(HierarchicalContextRunner.class)

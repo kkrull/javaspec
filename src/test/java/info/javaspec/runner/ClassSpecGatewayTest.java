@@ -1,16 +1,17 @@
-package info.javaspec.runner.ng;
+package info.javaspec.runner;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.testutil.Assertions;
 import info.javaspecproto.ContextClasses;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
