@@ -8,10 +8,8 @@ import info.javaspec.util.ReflectionUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Stack;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -88,10 +86,8 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
 
   private Spec makeSpec(Field itField, ClassContext context) {
     FixtureFinder fixtureFinder = new FixtureFinder(context);
-    Class<?> declaringClass = itField.getDeclaringClass();
-    String fullyQualifiedId = String.format("%s.%s", declaringClass.getCanonicalName(), itField.getName());
     return specFactory.makeSpec(
-      fullyQualifiedId,
+      fullyQualifiedName(itField),
       humanize(itField.getName()),
       itField,
       fixtureFinder.findBefores(),
@@ -103,31 +99,13 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
     Spec makeSpec(String id, String displayName, Field it, List<Field> befores, List<Field> afters);
   }
 
+  private String fullyQualifiedName(Field field) {
+    Class<?> declaringClass = field.getDeclaringClass();
+    return String.format("%s.%s", declaringClass.getCanonicalName(), field.getName());
+  }
+
   private static String humanize(String behaviorOrContext) {
     return behaviorOrContext.replace('_', ' ');
-  }
-
-  private static Optional<Field> onlyDeclaredField(Class<?> context, Class<?> fieldType) {
-    List<Field> fields = readDeclaredFields(context, fieldType).limit(2).collect(toList());
-    switch(fields.size()) {
-      case 0: return Optional.empty();
-      case 1: return Optional.of(fields.get(0));
-      default: throw new AmbiguousSpecFixture(context, fieldType);
-    }
-  }
-
-  private static Stream<Field> readDeclaredItFields(Class<?> context) {
-    return readDeclaredFields(context, It.class);
-  }
-
-  private static Stream<Field> readDeclaredFields(Class<?> context, Class<?> fieldType) {
-    Predicate<Field> isInstanceField = x -> !Modifier.isStatic(x.getModifiers());
-    return ReflectionUtil.fieldsOfType(fieldType, context).filter(isInstanceField);
-  }
-
-  private static Stream<Class<?>> readInnerClasses(Class<?> parent) {
-    Predicate<Class<?>> isNonStatic = x -> !Modifier.isStatic(x.getModifiers());
-    return Stream.of(parent.getDeclaredClasses()).filter(isNonStatic);
   }
 
   public static final class AmbiguousSpecFixture extends RuntimeException {
@@ -146,26 +124,45 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
     }
 
     public List<Field> findBefores() {
-      Stack<Class<?>> contextClasses = new Stack<>();
-      for(Class<?> c = context.source; c != null; c = c.getEnclosingClass())
-        contextClasses.push(c);
-
-      List<Field> befores = new ArrayList<>();
-      while(!contextClasses.isEmpty()) {
-        Class<?> c = contextClasses.pop();
-        onlyDeclaredField(c, Establish.class).ifPresent(befores::add);
-        onlyDeclaredField(c, Because.class).ifPresent(befores::add);
+      LinkedList<Field> befores = new LinkedList<>();
+      Consumer<Field> prependToBefore = x -> befores.add(0, x);
+      for(Class<?> c = context.source; c != null; c = c.getEnclosingClass()) {
+        onlyDeclaredField(c, Because.class).ifPresent(prependToBefore);
+        onlyDeclaredField(c, Establish.class).ifPresent(prependToBefore);
       }
 
       return befores;
     }
 
     public List<Field> findAfters() {
-      List<Field> afters = new ArrayList<>();
+      List<Field> afters = new LinkedList<>();
       for(Class<?> c = context.source; c != null; c = c.getEnclosingClass())
         onlyDeclaredField(c, Cleanup.class).ifPresent(afters::add);
 
       return afters;
     }
+  }
+
+  private static Stream<Field> readDeclaredItFields(Class<?> context) {
+    return readDeclaredFields(context, It.class);
+  }
+
+  private static Optional<Field> onlyDeclaredField(Class<?> context, Class<?> fieldType) {
+    List<Field> fields = readDeclaredFields(context, fieldType).limit(2).collect(toList());
+    switch(fields.size()) {
+      case 0: return Optional.empty();
+      case 1: return Optional.of(fields.get(0));
+      default: throw new AmbiguousSpecFixture(context, fieldType);
+    }
+  }
+
+  private static Stream<Field> readDeclaredFields(Class<?> context, Class<?> fieldType) {
+    Predicate<Field> isInstanceField = x -> !Modifier.isStatic(x.getModifiers());
+    return ReflectionUtil.fieldsOfType(fieldType, context).filter(isInstanceField);
+  }
+
+  private static Stream<Class<?>> readInnerClasses(Class<?> parent) {
+    Predicate<Class<?>> isNonStatic = x -> !Modifier.isStatic(x.getModifiers());
+    return Stream.of(parent.getDeclaredClasses()).filter(isNonStatic);
   }
 }

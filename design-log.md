@@ -249,3 +249,10 @@ If I did have a separate gateway and the Runner isn't tied to using classes:
     suite += Gateway.subcontexts(c).map(getDescription)
 
 
+## 2015-06-05 Wrapping up well named specs and contexts
+
+- Move out of `ng` package
+- Format
+- Organize imports
+- Remove unused `ContextClasses`
+- DRYness check
