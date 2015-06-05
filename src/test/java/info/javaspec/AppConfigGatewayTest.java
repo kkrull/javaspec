@@ -12,16 +12,16 @@ import static org.hamcrest.Matchers.equalTo;
 public class AppConfigGatewayTest {
   public class version {
     @Test
-    public void givenANonExistentResource_throwsInvalidPropertiesException() {
-      Exception ex = capture(AppConfigGateway.InvalidPropertiesException.class,
+    public void givenANonExistentResource_throwsInvalidProperties() {
+      Exception ex = capture(AppConfigGateway.InvalidProperties.class,
         () -> AppConfigGateway.fromPropertyResource("does-not-exist.txt"));
       assertThat(ex.getMessage(), equalTo("Invalid property stream: does-not-exist.txt"));
     }
 
     @Test
-    public void givenAFileWithoutThatProperty_throwsMissingPropertyException() {
+    public void givenAFileWithoutThatProperty_throwsMissingProperty() {
       AppConfigGateway subject = AppConfigGateway.fromPropertyResource("/info/javaspec/not-properties.txt");
-      Exception ex = capture(AppConfigGateway.MissingPropertyException.class, subject::version);
+      Exception ex = capture(AppConfigGateway.MissingProperty.class, subject::version);
       assertThat(ex.getMessage(), equalTo("Missing property: javaspec.version"));
     }
 

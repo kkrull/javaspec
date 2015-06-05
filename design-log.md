@@ -252,8 +252,7 @@ If I did have a separate gateway and the Runner isn't tied to using classes:
 ## 2015-06-05 Wrapping up well named specs and contexts
 
 - Dead code check: `DfsUtil`
-- Format
-- Organize imports
 - Remove unused `ContextClasses`
 - DRYness check
 - `Stream` over `List`
+- Remove the evils imposed by CRLF line endings.

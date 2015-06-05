@@ -55,8 +55,8 @@ public class FieldSpecTest {
       private final Spec subject = exampleWithIt(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid");
 
       @Test
-      public void throwsUnsupportedConstructorException() {
-        assertThrows(FieldSpec.UnsupportedConstructorException.class,
+      public void throwsUnsupportedConstructor() {
+        assertThrows(FieldSpec.UnsupportedConstructor.class,
           is(String.format("Unable to find a no-argument constructor for class %s",
             ContextClasses.ConstructorWithArguments.class.getName())),
           NoSuchMethodException.class, subject::run);
@@ -65,14 +65,14 @@ public class FieldSpecTest {
 
     public class givenAFaultyConstructorOrInitializer {
       @Test
-      public void throwsTestSetupException() throws Exception {
-        assertTestSetupException(ContextClasses.FailingClassInitializer.class, "will_fail", AssertionError.class);
-        assertTestSetupException(ContextClasses.FailingConstructor.class, "will_fail", InvocationTargetException.class);
+      public void throwsTestSetupFailed() throws Exception {
+        assertTestSetupFailed(ContextClasses.FailingClassInitializer.class, "will_fail", AssertionError.class);
+        assertTestSetupFailed(ContextClasses.FailingConstructor.class, "will_fail", InvocationTargetException.class);
       }
 
-      private void assertTestSetupException(Class<?> context, String itFieldName, Class<? extends Throwable> cause) {
+      private void assertTestSetupFailed(Class<?> context, String itFieldName, Class<? extends Throwable> cause) {
         Spec subject = exampleWithIt(context, itFieldName);
-        assertThrows(FieldSpec.TestSetupException.class,
+        assertThrows(FieldSpec.TestSetupFailed.class,
           is(String.format("Failed to create test context %s", context.getName())),
           cause, subject::run);
       }
@@ -80,11 +80,11 @@ public class FieldSpecTest {
 
     public class whenAFieldCanNotBeAccessed {
       @Test
-      public void throwsTestSetupExceptionCausedByReflectionError() {
+      public void throwsTestSetupFailedCausedByReflectionError() {
         //Intended to catch ReflectiveOperationException, but causing that with a fake SecurityManager was not reliable
         Spec subject = exampleWithIt(HasWrongType.class, "inaccessibleAsIt");
-        assertThrows(FieldSpec.TestSetupException.class, startsWith("Failed to create test context"), ClassCastException.class,
-          subject::run);
+        assertThrows(FieldSpec.TestSetupFailed.class, startsWith("Failed to create test context"),
+          ClassCastException.class, subject::run);
       }
     }
 

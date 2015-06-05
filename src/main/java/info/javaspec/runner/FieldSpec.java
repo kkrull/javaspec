@@ -52,7 +52,7 @@ public class FieldSpec extends Spec {
         It assertion = (It)context.getAssignedValue(assertionField);
         testFunction = new TestFunction(assertion, beforeValues, afterValues);
       } catch(Throwable t) {
-        throw new TestSetupException(assertionField.getDeclaringClass(), t);
+        throw new TestSetupFailed(assertionField.getDeclaringClass(), t);
       }
     }
 
@@ -60,7 +60,7 @@ public class FieldSpec extends Spec {
   }
 
   private static final class TestContext {
-    private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
+    private final Map<Class<?>, Object> instances = new HashMap<>();
 
     public void init(Class<?> innerMostContext) {
       makeAndRememberInstance(innerMostContext);
@@ -73,7 +73,7 @@ public class FieldSpec extends Spec {
         field.setAccessible(true);
         return field.get(declaredContext);
       } catch(Throwable t) {
-        throw new TestSetupException(declaringClass, t);
+        throw new TestSetupFailed(declaringClass, t);
       }
     }
 
@@ -133,13 +133,13 @@ public class FieldSpec extends Spec {
         constructor = getConstructor(aClass);
         constructor.setAccessible(true);
       } catch(Exception e) {
-        throw new UnsupportedConstructorException(aClass, e);
+        throw new UnsupportedConstructor(aClass, e);
       }
 
       try {
         return makeInstance(constructor);
       } catch(Exception | AssertionError e) {
-        throw new TestSetupException(aClass, e);
+        throw new TestSetupFailed(aClass, e);
       }
     }
 
@@ -163,18 +163,18 @@ public class FieldSpec extends Spec {
     }
   }
 
-  public static final class TestSetupException extends RuntimeException {
+  public static final class TestSetupFailed extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public TestSetupException(Class<?> context, Throwable cause) {
+    public TestSetupFailed(Class<?> context, Throwable cause) {
       super(String.format("Failed to create test context %s", context.getName()), cause);
     }
   }
 
-  public static final class UnsupportedConstructorException extends RuntimeException {
+  public static final class UnsupportedConstructor extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public UnsupportedConstructorException(Class<?> context, Throwable cause) {
+    public UnsupportedConstructor(Class<?> context, Throwable cause) {
       super(String.format("Unable to find a no-argument constructor for class %s", context.getName()), cause);
     }
   }
