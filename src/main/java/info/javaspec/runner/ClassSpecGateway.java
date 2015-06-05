@@ -43,10 +43,8 @@ final class ClassSpecGateway implements SpecGateway<ClassContext> {
   }
 
   @Override
-  public List<ClassContext> getSubcontexts(ClassContext context) {
-    return readInnerClasses(context.source)
-      .map(this::makeContext)
-      .collect(toList());
+  public Stream<ClassContext> getSubcontexts(ClassContext context) {
+    return readInnerClasses(context.source).map(this::makeContext);
   }
 
   private ClassContext makeContext(Class<?> context) {
@@ -80,10 +78,8 @@ final class ClassSpecGateway implements SpecGateway<ClassContext> {
   }
 
   @Override
-  public List<Spec> getSpecs(ClassContext context) {
-    return readDeclaredItFields(context.source)
-      .map(x -> makeSpec(x, context))
-      .collect(toList());
+  public Stream<Spec> getSpecs(ClassContext context) {
+    return readDeclaredItFields(context.source).map(x -> makeSpec(x, context));
   }
 
   private Spec makeSpec(Field itField, ClassContext context) {

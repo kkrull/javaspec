@@ -63,11 +63,11 @@ public final class JavaSpecRunner extends Runner {
     String contextDisplayName = context.displayName;
     Description suite = Description.createSuiteDescription(contextDisplayName, context.id);
 
-    gateway.getSpecs(context).stream()
+    gateway.getSpecs(context)
       .map(x -> makeAndMemoizeTestDescription(contextDisplayName, x))
       .forEach(suite::addChild);
 
-    gateway.getSubcontexts(context).stream()
+    gateway.getSubcontexts(context)
       .map(this::makeSuiteDescription)
       .forEach(suite::addChild);
 
@@ -95,8 +95,8 @@ public final class JavaSpecRunner extends Runner {
   }
 
   private void runContext(ClassContext context, RunNotifier notifier) {
-    gateway.getSpecs(context).stream().forEach(x -> runSpecIfNotIgnored(x, notifier));
-    gateway.getSubcontexts(context).stream().forEach(x -> runContext(x, notifier));
+    gateway.getSpecs(context).forEach(x -> runSpecIfNotIgnored(x, notifier));
+    gateway.getSubcontexts(context).forEach(x -> runContext(x, notifier));
   }
 
   private void runSpecIfNotIgnored(Spec spec, RunNotifier notifier) {

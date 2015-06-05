@@ -124,7 +124,7 @@ public class ClassSpecGatewayTest {
     @Test
     public void givenAClassWithNoInnerClasses_returnsEmpty() {
       subject = new ClassSpecGateway(ContextClasses.OneIt.class, specFactory);
-      List<ClassContext> returned = subject.getSubcontexts(subject.rootContext());
+      List<ClassContext> returned = subject.getSubcontexts(subject.rootContext()).collect(toList());
       assertThat(returned, hasSize(0));
     }
 
@@ -147,7 +147,7 @@ public class ClassSpecGatewayTest {
       @Before
       public void setup() {
         subject = new ClassSpecGateway(ContextClasses.NestedBehavior.class, specFactory);
-        List<ClassContext> subcontexts = subject.getSubcontexts(subject.rootContext());
+        List<ClassContext> subcontexts = subject.getSubcontexts(subject.rootContext()).collect(toList());
         returned = subcontexts.get(0);
       }
 
@@ -158,7 +158,7 @@ public class ClassSpecGatewayTest {
     }
 
     private void shouldHaveSubcontexts(ClassContext context, String... ids) {
-      List<String> actualIds = subject.getSubcontexts(context).stream().map(x -> x.id).collect(toList());
+      List<String> actualIds = subject.getSubcontexts(context).map(x -> x.id).collect(toList());
       assertThat(actualIds, equalTo(Arrays.asList(ids)));
     }
   }
@@ -175,7 +175,7 @@ public class ClassSpecGatewayTest {
     @Test
     public void givenAClassWithInstanceItFields_returnAFieldSpecForEachField() {
       subject = new ClassSpecGateway(ContextClasses.TwoIt.class);
-      List<Class<?>> specClasses = subject.getSpecs(subject.rootContext()).stream()
+      List<Class<?>> specClasses = subject.getSpecs(subject.rootContext())
         .map(Spec::getClass)
         .collect(toList());
       assertThat(specClasses, equalTo(newArrayList(FieldSpec.class, FieldSpec.class)));
@@ -184,7 +184,7 @@ public class ClassSpecGatewayTest {
     @Test
     public void givenAnInnerClassWithInstanceItFields_returnsASpecForThoseFields() {
       subject = new ClassSpecGateway(ContextClasses.NestedContext.class, specFactory);
-      assertThat(subject.getSpecs(onlySubcontext(subject.rootContext())), hasSize(1));
+      assertThat(subject.getSpecs(onlySubcontext(subject.rootContext())).collect(toList()), hasSize(1));
     }
 
     public class givenAnInstanceItField {
@@ -196,7 +196,7 @@ public class ClassSpecGatewayTest {
         when(specFactory.makeSpec(Mockito.anyString(), Mockito.anyString(), Mockito.any(), Mockito.any(), Mockito.any()))
           .thenReturn(toReturn);
         subject = new ClassSpecGateway(ContextClasses.OneIt.class, specFactory);
-        returned = subject.getSpecs(subject.rootContext());
+        returned = subject.getSpecs(subject.rootContext()).collect(toList());
       }
 
       @Test
@@ -226,7 +226,7 @@ public class ClassSpecGatewayTest {
       @Before
       public void setup() {
         subject = new ClassSpecGateway(ContextClasses.FullFixture.class, specFactory);
-        subject.getSpecs(subject.rootContext());
+        forceGetSpecs(subject.rootContext());
         verify(specFactory).makeSpec(Mockito.endsWith(".asserts"), Mockito.anyString(),
           Mockito.any(), befores.capture(), afters.capture());
       }
@@ -246,7 +246,7 @@ public class ClassSpecGatewayTest {
       @Before
       public void setup() {
         subject = new ClassSpecGateway(ContextClasses.StaticFixtureDoppelganger.class, specFactory);
-        subject.getSpecs(subject.rootContext());
+        forceGetSpecs(subject.rootContext());
         verify(specFactory).makeSpec(Mockito.endsWith(".asserts"), Mockito.anyString(),
           Mockito.any(), befores.capture(), afters.capture());
       }
@@ -269,7 +269,7 @@ public class ClassSpecGatewayTest {
       private void shouldThrowAmbiguousSpecFixture(Class<?> context, String messagePattern) {
         subject = new ClassSpecGateway(context, specFactory);
         Exception exception = capture(ClassSpecGateway.AmbiguousSpecFixture.class,
-          () -> subject.getSpecs(subject.rootContext()));
+          () -> forceGetSpecs(subject.rootContext()));
         assertThat(exception.getMessage(), matchesRegex(messagePattern));
       }
     }
@@ -278,7 +278,7 @@ public class ClassSpecGatewayTest {
       @Before
       public void setup() {
         subject = new ClassSpecGateway(ContextClasses.HierarchicalContext.class, specFactory);
-        subject.getSpecs(onlySubcontext(subject.rootContext()));
+        forceGetSpecs(onlySubcontext(subject.rootContext()));
         verify(specFactory).makeSpec(Mockito.endsWith(".asserts"), Mockito.anyString(),
           Mockito.any(), befores.capture(), afters.capture());
       }
@@ -301,13 +301,17 @@ public class ClassSpecGatewayTest {
   }
 
   private ClassContext onlySubcontext(ClassContext parent) {
-    List<ClassContext> children = subject.getSubcontexts(parent);
+    List<ClassContext> children = subject.getSubcontexts(parent).collect(toList());
     if(children.size() != 1) {
       String msg = String.format("Expected context %s to have 1 child, but had %d", parent.id, children.size());
       throw new RuntimeException(msg);
     }
 
     return children.get(0);
+  }
+
+  private void forceGetSpecs(ClassContext context) {
+    subject.getSpecs(context).collect(toList());
   }
 
   private void shouldHaveSpecs(Class<?> rootContextClass, long totalSpecs) {
@@ -324,7 +328,7 @@ public class ClassSpecGatewayTest {
 
   private void shouldNotReturnAnySpecs(Class<?> context) {
     subject = new ClassSpecGateway(context, specFactory);
-    assertThat(subject.getSpecs(subject.rootContext()), hasSize(0));
+    assertThat(subject.getSpecs(subject.rootContext()).collect(toList()), hasSize(0));
   }
 
   private Matcher<Field> fieldNamed(String name) {

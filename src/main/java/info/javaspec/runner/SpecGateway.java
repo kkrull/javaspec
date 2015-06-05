@@ -1,14 +1,14 @@
 package info.javaspec.runner;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 /** Provides access to specs that are organized into a hierarchy of context. */
 interface SpecGateway<C extends Context> {
   C rootContext();
   String rootContextId();
-  List<C> getSubcontexts(C context);
+  Stream<C> getSubcontexts(C context);
 
   boolean hasSpecs();
   long countSpecs();
-  List<Spec> getSpecs(C context);
+  Stream<Spec> getSpecs(C context);
 }

@@ -472,10 +472,9 @@ public class JavaSpecRunnerTest {
     public String rootContextId() { return rootContext.id; }
 
     @Override
-    public List<ClassContext> getSubcontexts(ClassContext context) {
+    public Stream<ClassContext> getSubcontexts(ClassContext context) {
       return asFakeContext(context).subcontexts.stream()
-        .map(this::asClassContext)
-        .collect(toList());
+        .map(this::asClassContext);
     }
 
     @Override
@@ -485,11 +484,9 @@ public class JavaSpecRunnerTest {
     public long countSpecs() { return numSpecs; }
 
     @Override
-    public List<Spec> getSpecs(ClassContext context) {
+    public Stream<Spec> getSpecs(ClassContext context) {
       FakeContext fakeContext = asFakeContext(context);
-      return fakeContext.specs.stream()
-        .map(this::asSpec)
-        .collect(toList());
+      return fakeContext.specs.stream().map(this::asSpec);
     }
 
     private FakeContext asFakeContext(Context context) { return (FakeContext)context; }
