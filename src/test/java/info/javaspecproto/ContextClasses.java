@@ -75,6 +75,17 @@ public class ContextClasses {
     Cleanup cleans = () -> notifyEvent.accept("ContextClasses.FullFixture::cleans");
   }
 
+  public static class HierarchicalContext {
+    Establish arrange_top = () -> assertThat(1, equalTo(1));
+    Cleanup clean_top = () -> assertThat(1, equalTo(1));
+
+    public class inner {
+      Establish arrange_bottom = () -> assertThat(1, equalTo(1));
+      It asserts = () -> assertThat(1, equalTo(1));
+      Cleanup clean_bottom = () -> assertThat(1, equalTo(1));
+    }
+  }
+
   public static class NestedExamples {
     It top_level_test = () -> assertEquals(1, 1);
     

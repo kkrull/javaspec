@@ -14,7 +14,6 @@ Feature: Nested JavaSpec context classes for hierarchical testing
     Then the test runner should run tests for each It field in the top-level class
     And the test runner should run tests for each It field in an inner class
   
-  @wip
   Scenario: Context scope for a test
     Given I have a top-level class marked to run with a JavaSpec runner
     And that class and its inner classes define fixture lambdas
@@ -23,7 +22,6 @@ Feature: Nested JavaSpec context classes for hierarchical testing
     And pre-test fixture lambdas run top-down, starting with the top-level class
     And post-test fixture lambdas run bottom-up, starting with the class defining the test
   
-  @wip
   Scenario: Relative order of Establish and Because lambdas in nested contexts
     In other words, the test runner takes exactly one trip down the context class hierarchy to run pre-test lambdas
     instead of taking one trip for the Establish lambdas followed by a second trip for the Because lambdas.

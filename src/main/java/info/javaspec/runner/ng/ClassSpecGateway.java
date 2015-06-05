@@ -11,6 +11,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Stack;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -86,16 +87,15 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
   }
 
   private Spec makeSpec(Field itField, ClassContext context) {
-    List<Field> befores = new ArrayList<>();
-    onlyDeclaredField(context.source, Establish.class).ifPresent(befores::add);
-    onlyDeclaredField(context.source, Because.class).ifPresent(befores::add);
-
-    List<Field> afters = new ArrayList<>();
-    onlyDeclaredField(context.source, Cleanup.class).ifPresent(afters::add);
-
+    FixtureFinder fixtureFinder = new FixtureFinder(context);
     Class<?> declaringClass = itField.getDeclaringClass();
     String fullyQualifiedId = String.format("%s.%s", declaringClass.getCanonicalName(), itField.getName());
-    return specFactory.makeSpec(fullyQualifiedId, humanize(itField.getName()), itField, befores, afters);
+    return specFactory.makeSpec(
+      fullyQualifiedId,
+      humanize(itField.getName()),
+      itField,
+      fixtureFinder.findBefores(),
+      fixtureFinder.findAfters());
   }
 
   @FunctionalInterface
@@ -135,6 +135,37 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
       super(String.format("Only 1 field of type %s is allowed in context class %s",
         fieldClass.getSimpleName(),
         contextClass));
+    }
+  }
+
+  private static class FixtureFinder {
+    private ClassContext context;
+
+    public FixtureFinder(ClassContext context) {
+      this.context = context;
+    }
+
+    public List<Field> findBefores() {
+      Stack<Class<?>> contextClasses = new Stack<>();
+      for(Class<?> c = context.source; c != null; c = c.getEnclosingClass())
+        contextClasses.push(c);
+
+      List<Field> befores = new ArrayList<>();
+      while(!contextClasses.isEmpty()) {
+        Class<?> c = contextClasses.pop();
+        onlyDeclaredField(c, Establish.class).ifPresent(befores::add);
+        onlyDeclaredField(c, Because.class).ifPresent(befores::add);
+      }
+
+      return befores;
+    }
+
+    public List<Field> findAfters() {
+      List<Field> afters = new ArrayList<>();
+      for(Class<?> c = context.source; c != null; c = c.getEnclosingClass())
+        onlyDeclaredField(c, Cleanup.class).ifPresent(afters::add);
+
+      return afters;
     }
   }
 }

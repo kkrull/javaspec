@@ -272,6 +272,26 @@ public class ClassSpecGatewayTest {
         assertThat(exception.getMessage(), matchesRegex(messagePattern));
       }
     }
+
+    public class givenAHierarchyOfInnerClassesWithFixtureFields {
+      @Before
+      public void setup() {
+        subject = new ClassSpecGateway(ContextClasses.HierarchicalContext.class, specFactory);
+        subject.getSpecs(onlySubcontext(subject.rootContext()));
+        verify(specFactory).makeSpec(Mockito.endsWith(".asserts"), Mockito.anyString(),
+          Mockito.any(), befores.capture(), afters.capture());
+      }
+
+      @Test
+      public void ordersOuterContextBeforeInnerContext_forFixtureSetup() {
+        assertThat(befores.getValue(), contains(fieldNamed("arrange_top"), fieldNamed("arrange_bottom")));
+      }
+
+      @Test
+      public void ordersInnerContextBeforeOuterContext_forFixtureTeardown() {
+        assertThat(afters.getValue(), contains(fieldNamed("clean_bottom"), fieldNamed("clean_top")));
+      }
+    }
   }
 
   private void givenSpecFactoryMakes(Spec spec) {
