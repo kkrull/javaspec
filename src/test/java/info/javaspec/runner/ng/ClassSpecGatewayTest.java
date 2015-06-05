@@ -9,9 +9,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
+import org.mockito.*;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -163,8 +161,13 @@ public class ClassSpecGatewayTest {
   }
 
   public class getSpecs {
-    private ArgumentCaptor<List> befores = ArgumentCaptor.forClass(List.class);
-    private ArgumentCaptor<List> afters = ArgumentCaptor.forClass(List.class);
+    private @Captor ArgumentCaptor<List<Field>> befores;
+    private @Captor ArgumentCaptor<List<Field>> afters;
+
+    @Before
+    public void setup() {
+      MockitoAnnotations.initMocks(this);
+    }
 
     @Test
     public void givenAClassWithInstanceItFields_returnAFieldSpecForEachField() {
@@ -216,24 +219,23 @@ public class ClassSpecGatewayTest {
       }
     }
 
-    public class givenAContextClassWithAnEstablishField {
+    public class givenAContextClassWithZeroOrOneOfEachFixtureField {
       @Before
       public void setup() {
-        subject = new ClassSpecGateway(ContextClasses.WithEstablish.class, specFactory);
+        subject = new ClassSpecGateway(ContextClasses.FullFixture.class, specFactory);
         subject.getSpecs(subject.rootContext());
+        verify(specFactory).makeSpec(Mockito.endsWith(".asserts"), Mockito.anyString(),
+          Mockito.any(), befores.capture(), afters.capture());
       }
 
       @Test
-      public void addsThatFieldToEachSpecsBeforeFields() {
-        verify(specFactory).makeSpec(
-          Mockito.eq("asserts"),
-          Mockito.anyString(),
-          Mockito.any(),
-          befores.capture(),
-          Mockito.any()
-        );
-        List<Field> beforesValue = befores.getValue();
-        assertThat(beforesValue, contains(fieldNamed("arrange")));
+      public void addsEstablishThenBecauseToEachSpecsBeforeFields() {
+        assertThat(befores.getValue(), contains(fieldNamed("arranges"), fieldNamed("acts")));
+      }
+
+      @Test
+      public void addsCleanupToEachSpecsAfterFields() {
+        assertThat(afters.getValue(), contains(fieldNamed("cleans")));
       }
     }
   }

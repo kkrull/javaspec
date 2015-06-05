@@ -1,5 +1,7 @@
 package info.javaspec.runner.ng;
 
+import info.javaspec.dsl.Because;
+import info.javaspec.dsl.Cleanup;
 import info.javaspec.dsl.Establish;
 import info.javaspec.dsl.It;
 import info.javaspec.util.ReflectionUtil;
@@ -85,8 +87,12 @@ public final class ClassSpecGateway implements SpecGateway<ClassContext> {
   private Spec makeSpec(Field itField, ClassContext context) {
     Class<?> declaringClass = itField.getDeclaringClass();
     String fullyQualifiedId = String.format("%s.%s", declaringClass.getCanonicalName(), itField.getName());
-    List<Field> befores = ReflectionUtil.fieldsOfType(Establish.class, context.source).collect(toList());
-    return specFactory.makeSpec(fullyQualifiedId, humanize(itField.getName()), itField, befores, new ArrayList<>(0));
+    List<Field> befores = Stream.concat(
+      ReflectionUtil.fieldsOfType(Establish.class, context.source),
+      ReflectionUtil.fieldsOfType(Because.class, context.source)
+    ).collect(toList());
+    List<Field> afters = ReflectionUtil.fieldsOfType(Cleanup.class, context.source).collect(toList());
+    return specFactory.makeSpec(fullyQualifiedId, humanize(itField.getName()), itField, befores, afters);
   }
 
   @FunctionalInterface

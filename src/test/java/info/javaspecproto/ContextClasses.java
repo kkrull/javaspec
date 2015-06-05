@@ -297,9 +297,4 @@ public class ContextClasses {
   public static class StaticIt {
     static It looks_like_an_isolated_test_but_beware = () -> assertThat("this test", not("independent"));
   }
-
-  public static class WithEstablish {
-    Establish arrange = () -> assertThat(1, equalTo(1));
-    It asserts = () -> assertThat(1, equalTo(1));
-  }
 }
