@@ -22,10 +22,6 @@ public class ContextClasses {
   
   public static class Empty {}
 
-  public static class EmptyContext {
-    public class context {}
-  }
-
   public static class FailingCleanup {
     Cleanup flawed_cleanup = () -> { throw new IllegalStateException("flawed_cleanup"); };
     It may_run = () -> assertEquals(42, 42);
@@ -86,62 +82,6 @@ public class ContextClasses {
     }
   }
 
-  public static class NestedExamples {
-    It top_level_test = () -> assertEquals(1, 1);
-    
-    public class middleWithNoTests {
-      public class bottom {
-        It bottom_test = () -> assertEquals(1, 1);
-      }
-    }
-    
-    public class middleWithTest {
-      It middle_test = () -> assertEquals(1, 1);
-      
-      public class bottom {
-        It another_bottom_test = () -> assertEquals(1, 1);
-      }
-    }
-  }
-  
-  public static class NestedEstablish {
-    Establish outer_arrange = () -> assertEquals(1, 1);
-    
-    public class inner {
-      Establish inner_arrange = () -> assertEquals(1, 1);
-      It asserts = () -> assertEquals(42, 42);
-    }
-  }
-  
-  public static class NestedBecause {
-    Because outer_act = () -> assertEquals(1, 1);
-    
-    public class inner {
-      Because inner_act = () -> assertEquals(1, 1);
-      It asserts = () -> assertEquals(42, 42);
-    }
-  }
-
-  public static class NestedEstablishBecause {
-    Establish outer_arrange = () -> assertEquals(1, 1);
-    Because outer_act = () -> assertEquals(1, 1);
-    
-    public class inner {
-      Establish inner_arrange = () -> assertEquals(1, 1);
-      Because inner_act = () -> assertEquals(1, 1);
-      It asserts = () -> assertEquals(42, 42);
-    }
-  }
-  
-  public static class NestedCleanup {
-    Cleanup outer_cleanup = () -> assertEquals(1, 1);
-    
-    public class inner {
-      Cleanup inner_cleanup = () -> assertEquals(1, 1);
-      It asserts = () -> assertEquals(42, 42);
-    }
-  }
-
   public static class NestedBehavior {
     public class describes_some_conditions {
       It describes_an_expected_behavior = () -> assertThat(1, equalTo(1));
@@ -151,19 +91,6 @@ public class ContextClasses {
   public static class NestedContext {
     public class inner {
       It asserts = () -> assertEquals(1, 1);
-    }
-  }
-
-  public static class NestedFixture {
-    Establish above_target_context = () -> assertEquals(1, 1);
-    
-    public class targetContext {
-      It asserts_in_target_context = () -> assertEquals(1, 1);
-      
-      public class moreSpecificContext {
-        Establish below_target_context = () -> assertEquals(1, 1);
-        It asserts_in_more_specific_context = () -> assertEquals(1, 1);
-      }
     }
   }
 
@@ -190,28 +117,6 @@ public class ContextClasses {
       public class bottom {
         It asserts = () -> assertEquals(1, 1);
       }
-    }
-  }
-  
-  public static class NestedContextAndInnerHelperClass {
-    public class context { 
-      It asserts = () -> assertEquals(1, 1);
-      public class HelperNotAContext { /* empty */ }
-    }
-    
-    public class emptyContextThatShouldBeExcluded {
-      public class InnerHelper { /* empty */ }
-    }
-  }
-  
-  public static class NestedContextAndStaticHelperClass {
-    public class context { 
-      It asserts = () -> assertEquals(1, 1);
-    }
-    
-    public static class Helper {
-      public void dryMyTest() { /* empty */ }
-      It is_not_a_test = () -> assertEquals(1, 1);
     }
   }
   
@@ -282,15 +187,6 @@ public class ContextClasses {
     It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
   }
   
-  public static class TwoConstructors {
-    public TwoConstructors() {
-      this(42);
-    }
-    
-    public TwoConstructors(int _id) { }
-    It is_otherwise_valid = () -> assertEquals(1, 1);
-  }
-  
   public static class TwoEstablish {
     private final List<String> orderMatters = new LinkedList<String>();
     Establish setup_part_one = () -> orderMatters.add("do this first");
@@ -301,13 +197,6 @@ public class ContextClasses {
   public static class TwoIt extends ExecutionSpy {
     It first_test = () -> notifyEvent.accept("TwoIt::first_test");
     It second_test = () -> notifyEvent.accept("TwoIt::second_test");
-  }
-  
-  public static class TwoItWithEstablish {
-    private String subject;
-    Establish that = () -> subject = "established";
-    It does_one_thing = () -> assertThat(subject, notNullValue());
-    It does_something_else = () -> assertThat(subject, equalTo("established"));
   }
 
   public static class StaticIt {
