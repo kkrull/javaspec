@@ -13,7 +13,7 @@ public final class JavaSpec {
   private final AppConfigGateway configGateway;
 
   /* Command line interface */
-  
+
   public static void main(String... args) {
     main(System.out, System::exit, args);
   }

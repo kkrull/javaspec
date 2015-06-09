@@ -18,17 +18,17 @@ public class CommandLineInterfaceSteps {
   public void i_run_JavaSpec_without_any_arguments() throws Exception {
     JavaSpec.main(console, exit);
   }
-  
+
   @When("^I run JavaSpec with unsupported arguments$")
   public void i_run_JavaSpec_with_unsupported_arguments() throws Exception {
     JavaSpec.main(console, exit, "--bogus");
   }
-  
+
   @When("^I ask the JavaSpec runner for help$")
   public void i_ask_the_JavaSpec_runner_for_help() throws Exception {
     JavaSpec.main(console, exit, "--help");
   }
-  
+
   @When("^I ask the JavaSpec runner for its version$")
   public void i_ask_the_JavaSpec_runner_for_its_version() throws Exception {
     JavaSpec.main(console, exit, "--version");
@@ -47,10 +47,10 @@ public class CommandLineInterfaceSteps {
     Mockito.verify(console).println("0.5-SNAPSHOT");
     Mockito.verifyNoMoreInteractions(console);
   }
-  
+
   @Then("^the command line interface should exit with status (\\d+)$")
   public void the_command_line_interface_should_exit_with_status(int status) throws Exception {
     Mockito.verify(exit).exit(status);
     Mockito.verifyNoMoreInteractions(exit);
-  }  
+  }
 }

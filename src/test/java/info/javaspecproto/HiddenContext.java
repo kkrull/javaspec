@@ -11,6 +11,6 @@ import static org.junit.Assert.assertThat;
 class HiddenContext {
   @SuppressWarnings("unused") //Gets used via reflection
   private class hiddenInner {
-    It runs = () -> assertThat(1, equalTo(1)); 
+    It runs = () -> assertThat(1, equalTo(1));
   }
 }

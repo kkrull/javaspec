@@ -247,12 +247,3 @@ If I did have a separate gateway and the Runner isn't tied to using classes:
     Description suite = new Description(c.name)
     suite += Gateway.examples(c).map(Example::name).map(Description::testDescription)
     suite += Gateway.subcontexts(c).map(getDescription)
-
-
-## 2015-06-05 Wrapping up well named specs and contexts
-
-Back on develop:
-
-- Formatting
-- Imports
-- Remove the evils imposed by CRLF line endings.

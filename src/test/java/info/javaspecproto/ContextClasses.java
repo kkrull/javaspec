@@ -19,31 +19,31 @@ public class ContextClasses {
     public ConstructorWithArguments(int _id) { }
     It is_otherwise_valid = () -> assertEquals(1, 1);
   }
-  
-  public static class Empty {}
+
+  public static class Empty { }
 
   public static class FailingCleanup {
     Cleanup flawed_cleanup = () -> { throw new IllegalStateException("flawed_cleanup"); };
     It may_run = () -> assertEquals(42, 42);
   }
-  
+
   public static class FailingClassInitializer {
     static { assertEquals(1, 2); }
     It will_fail = () -> assertEquals(1, 1);
   }
-  
+
   public static class FailingConstructor {
     public FailingConstructor() throws HardToFindThrowable {
       throw new HardToFindThrowable();
     }
-    
+
     It will_fail = () -> assertEquals(1, 1);
-    
-    public static class HardToFindThrowable extends Throwable { 
-      private static final long serialVersionUID = 1L; 
+
+    public static class HardToFindThrowable extends Throwable {
+      private static final long serialVersionUID = 1L;
     }
   }
-  
+
   public static class FailingEstablish {
     Establish flawed_setup = () -> { throw new UnsupportedOperationException("flawed_setup"); };
     It will_never_run = () -> assertEquals(42, 42);
@@ -52,9 +52,9 @@ public class ContextClasses {
   public static class FailingEstablishWithCleanup extends ExecutionSpy {
     Establish establish = () -> {
       notifyEvent.accept("ContextClasses.FailingEstablishWithCleanup::establish");
-      throw new UnsupportedOperationException("flawed_setup"); 
+      throw new UnsupportedOperationException("flawed_setup");
     };
-    
+
     It it = () -> notifyEvent.accept("ContextClasses.FailingEstablishWithCleanup::it");
     Cleanup cleanup = () -> notifyEvent.accept("ContextClasses.FailingEstablishWithCleanup::cleanup");
   }
@@ -62,7 +62,7 @@ public class ContextClasses {
   public static class FailingIt {
     It fails = () -> assertEquals("the answer", 42);
   }
-  
+
   public static class FullFixture extends ExecutionSpy {
     public FullFixture() { notifyEvent.accept("ContextClasses.FullFixture::new"); }
     Establish arranges = () -> notifyEvent.accept("ContextClasses.FullFixture::arrange");
@@ -104,7 +104,7 @@ public class ContextClasses {
     public NestedFullFixture() { notifyEvent.accept("ContextClasses.NestedFullFixture::new"); }
     Establish arranges = () -> notifyEvent.accept("ContextClasses.NestedFullFixture::arrange");
     Cleanup cleans = () -> notifyEvent.accept("ContextClasses.NestedFullFixture::cleans");
-    
+
     public class innerContext {
       public innerContext() { notifyEvent.accept("ContextClasses.NestedFullFixture.innerContext::new"); }
       Because acts = () -> notifyEvent.accept("ContextClasses.NestedFullFixture.innerContext::act");
@@ -119,7 +119,7 @@ public class ContextClasses {
       }
     }
   }
-  
+
   public static class NestedStaticClassIt {
     public static class Helper {
       It is_not_a_test = () -> assertEquals(1, 1);
@@ -130,16 +130,16 @@ public class ContextClasses {
     public OneIt() { notifyEvent.accept("ContextClasses.OneIt::new"); }
     It only_test = () -> notifyEvent.accept("ContextClasses.OneIt::only_test");
   }
-  
+
   public static class PendingBecause {
     @SuppressWarnings("unused") private Object subject;
     private int hashcode;
-    
+
     Establish arranges = () -> subject = new Object();
     Because acts;
     It asserts = () -> assertThat(hashcode, equalTo(42));
   }
-  
+
   public static class PendingCleanup {
     private ByteArrayOutputStream subject;
     Establish arranges = () -> subject = new ByteArrayOutputStream(4);
@@ -147,20 +147,20 @@ public class ContextClasses {
     It asserts = () -> assertThat(subject.size(), equalTo(4));
     Cleanup cleans;
   }
-  
+
   public static class PendingEstablish {
     private Object subject;
     private int hashcode;
-    
+
     Establish arranges;
     Because acts = () -> hashcode = subject.hashCode();
     It asserts = () -> assertThat(hashcode, equalTo(42));
   }
-  
+
   public static class PendingIt {
     private Object subject;
     @SuppressWarnings("unused") private int hashcode;
-    
+
     Establish arranges = () -> subject = new Object();
     Because acts = () -> hashcode = subject.hashCode();
     It asserts;
@@ -179,21 +179,21 @@ public class ContextClasses {
     Because act_part_two_or_is_this_part_one = () -> orderMatters.add("do this second");
     It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
   }
-  
+
   public static class TwoCleanup {
     private final List<String> orderMatters = new LinkedList<String>();
     Cleanup cleanup_part_one = () -> orderMatters.add("do this first");
     Cleanup cleanup_part_two_or_is_this_part_one = () -> orderMatters.add("do this second");
     It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
   }
-  
+
   public static class TwoEstablish {
     private final List<String> orderMatters = new LinkedList<String>();
     Establish setup_part_one = () -> orderMatters.add("do this first");
     Establish setup_part_two_not_allowed = () -> orderMatters.add("do this second");
     It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
   }
-  
+
   public static class TwoIt extends ExecutionSpy {
     It first_test = () -> notifyEvent.accept("TwoIt::first_test");
     It second_test = () -> notifyEvent.accept("TwoIt::second_test");
