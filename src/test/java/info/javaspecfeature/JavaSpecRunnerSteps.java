@@ -5,13 +5,16 @@ import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import info.javaspec.runner.JavaSpecRunner;
 import info.javaspec.runner.Runners;
 import info.javaspec.testutil.RunListenerSpy.Event;
 import info.javaspecproto.ContextClasses;
 import info.javaspecproto.OuterContext;
 import info.javaspecproto.OuterContextWithSetup;
 import info.javaspecproto.RunWithJavaSpecRunner;
+import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
+import org.junit.runner.Runner;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +27,8 @@ import static org.hamcrest.Matchers.*;
 public final class JavaSpecRunnerSteps {
   private final List<Object> events = synchronizedList(new LinkedList<>()); //In case JUnit uses threads per test
   private Class<?> testClass;
+  private int numTests;
+  private Description description;
   
   @Before
   public void deploySpies() {
@@ -67,7 +72,7 @@ public final class JavaSpecRunnerSteps {
   public void i_have_a_JavaSpec_test_with_a_blank_It_field() throws Exception {
     this.testClass = ContextClasses.PendingIt.class;
   }
-  
+
   @Given("^I have a top-level class marked to run with a JavaSpec runner$")
   public void i_have_a_top_level_class_marked_to_run_with_a_JavaSpec_runner() { /* Followed by a more specific step */ }
 
@@ -85,17 +90,36 @@ public final class JavaSpecRunnerSteps {
   public void that_class_and_its_inner_classes_each_define_Establish_and_Because_fixture_lambdas() throws Exception {
     this.testClass = OuterContextWithSetup.class;
   }
-  
+
+  @Given("^I express desired behavior for JavaSpec through the use of Java classes and fields$")
+  public void I_express_desired_behavior_for_JavaSpec_through_the_use_of_Java_classes_and_fields() throws Exception {
+    this.testClass = ContextClasses.TwoIt.class;
+  }
+
   /* When */
-  
+
+  @When("^I count the tests in the class$")
+  public void I_count_the_tests() throws Exception {
+    Runner runner = new JavaSpecRunner(testClass);
+    this.numTests = runner.testCount();
+  }
+
+  @When("^I describe the tests in the class$")
+  public void I_describe_the_tests() throws Exception {
+    Runner runner = new JavaSpecRunner(testClass);
+    this.description = runner.getDescription();
+  }
+
   @When("^I run the tests?$")
   public void i_run_the_test() throws Exception {
-    Runners.runAll(Runners.of(testClass), events::add);
+    Runner runner = new JavaSpecRunner(testClass);
+    Runners.runAll(runner, events::add);
   }
   
   @When("^I run the tests with a JavaSpec runner$")
   public void i_run_the_tests_with_a_JavaSpec_runner() throws Exception {
-    Runners.runAll(Runners.of(testClass), events::add);
+    Runner runner = new JavaSpecRunner(testClass);
+    Runners.runAll(runner, events::add);
   }
 
   @When("^I run the tests with a JUnit runner$")
@@ -104,7 +128,12 @@ public final class JavaSpecRunnerSteps {
   }
   
   /* Then */
-  
+
+  @Then("^the test runner should return the number of tests that exist within the scope of that class$")
+  public void the_test_runner_should_return_the_number_of_tests() throws Exception {
+    assertThat(numTests, equalTo(1));
+  }
+
   @Then("^the test runner should run all the tests in the class$")
   public void the_test_runner_should_run_all_the_tests_in_the_class() throws Exception {
     assertThat(describeEvents(), executedLambdas(), hasItems("ContextClasses.OneIt::only_test"));
@@ -186,7 +215,14 @@ public final class JavaSpecRunnerSteps {
   public void both_of_these_run_before_any_Establish_or_Because_lambdas_in_any_nested_classes() throws Exception {
     //If the test passed, then this has already been verified
   }
-  
+
+  @Then("^the test runner should describe expected behavior in human-readable language$")
+  public void the_test_runner_should_describe_expected_behavior() throws Exception {
+    assertThat(description.getClassName(), equalTo("TwoIt"));
+    assertThat(description.getChildren().stream().map(Description::getMethodName).collect(toList()),
+      contains("first test", "second test"));
+  }
+
   /* Helpers */
   
   private void assertTestPassed(Class<?> context, String itFieldName) {
@@ -215,7 +251,7 @@ public final class JavaSpecRunnerSteps {
   private List<String> executedLambdas() {
     return events.stream()
       .filter(x -> x instanceof String)
-      .map(x -> (String)x)
+      .map(x -> (String) x)
       .collect(toList());
   }
   

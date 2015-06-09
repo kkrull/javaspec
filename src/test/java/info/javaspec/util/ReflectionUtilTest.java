@@ -18,12 +18,6 @@ import static org.junit.Assume.assumeTrue;
 public class ReflectionUtilTest {
   public class givenClassWithNoMatchingFields {
     @Test
-    public void hasFieldsOfType_returnsFalse() {
-      assertFalse(ReflectionUtil.hasFieldsOfType(MatchingType.class, EmptyClass.class));
-      assertFalse(ReflectionUtil.hasFieldsOfType(MatchingType.class, EmptyNestedClass.class));
-    }
-    
-    @Test
     public void fieldsOfType_returnsEmptyList() {
       assertFieldsOfType(MatchingType.class, EmptyClass.class);
       assertFieldsOfType(MatchingType.class, EmptyNestedClass.class);
@@ -36,11 +30,6 @@ public class ReflectionUtilTest {
     @Test
     public void fieldsOfType_returnsEachField() {
       assertFieldsOfType(MatchingType.class, toInspect, "matching");
-    }
-    
-    @Test
-    public void hasFieldsOfType_returnsTrue() {
-      assertTrue(ReflectionUtil.hasFieldsOfType(MatchingType.class, toInspect));
     }
   }
   

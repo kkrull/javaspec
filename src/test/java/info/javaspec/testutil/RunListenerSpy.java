@@ -56,7 +56,7 @@ public final class RunListenerSpy extends RunListener {
     super.testRunFinished(result);
   }
   
-  public static class Event {
+  public static final class Event {
     public final String name;
     public final Description description;
     public final Failure failure;
@@ -70,7 +70,7 @@ public final class RunListenerSpy extends RunListener {
     }
     
     public static Event failing(String name, Failure failure) {
-      return new Event(name, null, failure);
+      return new Event(name, failure.getDescription(), failure);
     }
     
     private Event(String name, Description description, Failure failure) {
@@ -81,10 +81,6 @@ public final class RunListenerSpy extends RunListener {
     
     public String describedClassName() {
       return description == null ? "<no description>" : description.getClassName();
-    }
-
-    public String describedDisplayName() {
-      return description == null ? "<no description>" : description.getDisplayName();
     }
 
     public String describedMethodName() {

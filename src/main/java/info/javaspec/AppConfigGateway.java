@@ -17,7 +17,7 @@ final class AppConfigGateway {
     return Optional.ofNullable(AppConfigGateway.class.getResourceAsStream(resourcePath))
       .map(AppConfigGateway::loadProperties)
       .map(AppConfigGateway::new)
-      .orElseThrow(() -> new InvalidPropertiesException(resourcePath));
+      .orElseThrow(() -> new InvalidProperties(resourcePath));
   }
 
   private AppConfigGateway(Properties config) {
@@ -26,7 +26,7 @@ final class AppConfigGateway {
 
   public String version() {
     return Optional.ofNullable(config.getProperty("javaspec.version"))
-      .orElseThrow(() -> new MissingPropertyException("javaspec.version"));
+      .orElseThrow(() -> new MissingProperty("javaspec.version"));
   }
 
   private static Properties loadProperties(InputStream stream) {
@@ -34,26 +34,26 @@ final class AppConfigGateway {
     try {
       properties.load(stream);
     } catch(IOException e) {
-      throw new PropertyLoadException(e);
+      throw new PropertyLoadFailed(e);
     }
 
     return properties;
   }
 
-  public static final class InvalidPropertiesException extends RuntimeException {
-    public InvalidPropertiesException(String path) {
+  public static final class InvalidProperties extends RuntimeException {
+    public InvalidProperties(String path) {
       super(String.format("Invalid property stream: %s", path));
     }
   }
 
-  public static final class PropertyLoadException extends RuntimeException {
-    public PropertyLoadException(Exception cause) {
+  public static final class PropertyLoadFailed extends RuntimeException {
+    public PropertyLoadFailed(Exception cause) {
       super("Failed to read properties", cause);
     }
   }
 
-  public static final class MissingPropertyException extends RuntimeException {
-    public MissingPropertyException(String name) {
+  public static final class MissingProperty extends RuntimeException {
+    public MissingProperty(String name) {
       super(String.format("Missing property: %s", name));
     }
   }

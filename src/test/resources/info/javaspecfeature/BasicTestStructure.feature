@@ -8,7 +8,7 @@ Feature: Basic structure of a JavaSpec test class
     Given I have a JavaSpec test with 1 or more It fields that are assigned to no-argument lambdas
     When I run the tests
     Then the test runner should run one test for every It field
-  
+
   Scenario: An unassigned It field is a pending test
     Given I have a JavaSpec test with a blank It field
     When I run the test
