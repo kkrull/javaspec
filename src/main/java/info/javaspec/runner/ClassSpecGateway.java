@@ -115,7 +115,7 @@ final class ClassSpecGateway implements SpecGateway<ClassContext> {
   }
 
   private static final class FixtureFinder {
-    private ClassContext context;
+    private final ClassContext context;
 
     public FixtureFinder(ClassContext context) {
       this.context = context;

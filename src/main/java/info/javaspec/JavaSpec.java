@@ -23,13 +23,13 @@ public final class JavaSpec {
     cli.run(args);
   }
 
-  public JavaSpec(PrintStream console, ExitHandler system) {
+  private JavaSpec(PrintStream console, ExitHandler system) {
     this.console = console;
     this.system = system;
     this.configGateway = AppConfigGateway.fromPropertyResource();
   }
 
-  public void run(String... args) {
+  private void run(String... args) {
     if(isHelpCommand(args))
       printUsage(0);
     else if(isVersionCommand(args))
