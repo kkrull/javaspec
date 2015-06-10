@@ -26,6 +26,8 @@
 ### Documentation
 
 - Update README
+  - Version number in Maven coordinates
+  - Version history for the new version
 - Push README to github page for use on [JavaSpec.info](http://javaspec.info)
 
 ### Git

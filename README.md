@@ -158,6 +158,8 @@ and related classes.
 
 # Release history
 
+- 0.5: Fixed an issue where specs with the same field / context class name were showing up as still running in IntelliJ.
+  Also renamed JUnit test display names to human-readable names, replacing snake case underscores with spaces.
 - 0.4.2: Fixed [Issue 2](https://github.com/kkrull/javaspec/issues/2), so that only one instance of a context class is
   created for each test.
 - 0.4.1: Fixed [Issue 1](https://github.com/kkrull/javaspec/issues/1), dealing with being able to instantiate non-public
