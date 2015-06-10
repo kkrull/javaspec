@@ -8,8 +8,4 @@ public final class ReflectionUtil {
     return Stream.of(typeToInspect.getDeclaredFields())
       .filter(x -> x.getType() == fieldType);
   }
-  
-  public static boolean hasFieldsOfType(Class<?> fieldType, Class<?> typeToInspect) {
-    return fieldsOfType(fieldType, typeToInspect).findAny().isPresent();
-  }
 }

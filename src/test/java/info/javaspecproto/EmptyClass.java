@@ -1,3 +1,3 @@
 package info.javaspecproto;
 
-public final class EmptyClass {}
+public final class EmptyClass { }

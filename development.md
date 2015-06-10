@@ -1,8 +1,12 @@
+## Tidy up
+
+- Check for TODOs
+- Clean up design log
+
 ## Update version at the start of a release branch
 
 - Bump the artifact version number in the POM.
 - Bump the expected, reportable version number in `CommandLineInterfaceSteps`.
-- When the test fails, bump the actual reportable version in `JavaSpec`.
 - Bump the version in the installation instructions in `readme.md`.
 
 ## Release start
@@ -43,6 +47,9 @@ git checkout develop && git merge <release_branch>
 The overall process is described [here](http://central.sonatype.org/pages/ossrh-guide.html#releasing-to-central).
 
 - Push to Sonatype: `./bin/mvn-sonatype`.  This will require a GPG key.
+  * Install `gnupg` in cygwin.  Make a key and upload it.
+  * Make sure `~/.m2/settings/xml` has a server entry for id `sonatype-nexus-staging`.  This ID has to match the ID in
+    the staging repository in the OSS parent POM.
 - Log in to [Sonatype](https://oss.sonatype.org/) in a browser, and find the staging repository (search).
 - Check the contents tab to make sure the compiled jar, source, javadocs and GPG keys are all present.
 - [Close](http://central.sonatype.org/pages/releasing-the-deployment.html#close-and-drop-or-release-your-staging-repository) the repository.

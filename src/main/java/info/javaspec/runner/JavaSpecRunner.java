@@ -1,24 +1,23 @@
 package info.javaspec.runner;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.List;
-
 import org.junit.runner.Description;
+import org.junit.runner.Runner;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.ParentRunner;
-import org.junit.runners.model.InitializationError;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 /**
- * Runs tests written with JavaSpec lambdas under JUnit.
- * 
- * For example, the class below results in two tests.
+ * JUnit test runner for specs written in lambdas and organized into context classes.
+ * <p>
+ * For example, the class below contains in two tests.
  * <ul>
- *   <li><code>returns_bar</code>: Creates the widget, calls foo(), and verifies that it returned "bar".</li>
- *   <li><code>prints_baz</code>: Creates the widget, calls foo(), and verifies that it wrote "baz" to the console.</li>
+ * <li><code>returns_bar</code>: Creates the widget, calls foo(), and verifies that it returned "bar".</li>
+ * <li><code>prints_baz</code>: Creates the widget, calls foo(), and verifies that it wrote "baz" to the console.</li>
  * </ul>
- * 
+ * <p>
  * <pre>
  * {@code
  * {@literal @RunWith(JavaSpecRunner.class)}
@@ -27,100 +26,125 @@ import org.junit.runners.model.InitializationError;
  *     private final PrintStreamSpy printStreamSpy = new PrintStreamSpy();
  *     private Widget subject;
  *     private String returned;
- *     
+ *
  *     Establish that = () -> subject = new Widget(printStreamSpy);
  *     Because of = () -> returned = subject.foo();
- *     
+ *
  *     It returns_bar = () -> assertEquals("bar", returned);
  *     It prints_baz = () -> assertEquals("baz", printStreamSpy.getWhatWasPrinted());
  *   }
  * }
  * }
  * </pre>
- * 
- * Classes WidgetFooTest and its inner class foo are both <em>context classes</em>.  See ClassExampleGateway for
+ * <p>
+ * Classes WidgetFooTest and its inner class foo are both <em>context classes</em>.  See ClassSpecGateway for
  * details.
  */
-public final class JavaSpecRunner extends ParentRunner<Example> {
-  private final ExampleGateway gateway;
+public final class JavaSpecRunner extends Runner {
+  private final SpecGateway<ClassContext> gateway;
+  private final Map<String, Description> specDescriptions = new HashMap<>();
 
-  public JavaSpecRunner(Class<?> contextClass) throws InitializationError {
-    this(new ClassExampleGateway(contextClass));
+  public JavaSpecRunner(Class<?> rootContextClass) {
+    this(new ClassSpecGateway(rootContextClass));
   }
-  
-  JavaSpecRunner(ExampleGateway gateway) throws InitializationError {
-    super(null); //Bypass JUnit's requirements for a context class; throw our own errors instead
+
+  public JavaSpecRunner(SpecGateway<ClassContext> gateway) {
     this.gateway = gateway;
-    
-    List<Throwable> initializationErrors = findInitializationErrors(gateway);
-    if(!initializationErrors.isEmpty()) {
-      throw new InitializationError(initializationErrors);
-    }
+    if(!gateway.hasSpecs())
+      throw new NoSpecs(gateway.rootContextId());
   }
-  
-  private List<Throwable> findInitializationErrors(ExampleGateway gateway) {
-    List<Throwable> initializationErrors = gateway.findInitializationErrors();
-    if(!gateway.hasExamples()) {
-      initializationErrors.add(new NoExamplesException(gateway.getRootContextName()));
-    }
-    
-    return initializationErrors;
-  }
-  
-  /* Describing tests */
-  
+
   @Override
   public Description getDescription() {
-    return describeSuite(gateway.getRootContext());
+    return makeSuiteDescription(gateway.rootContext());
   }
 
-  @Override
-  protected Description describeChild(Example child) {
-    return describeTest(child.getContextName(), child.getName());
-  }
+  private Description makeSuiteDescription(ClassContext context) {
+    String contextDisplayName = context.displayName;
+    Description suite = Description.createSuiteDescription(contextDisplayName, context.id);
 
-  private Description describeSuite(Context context) {
-    Description suite = Description.createSuiteDescription(context.name);
-    gateway.getSubContexts(context).stream().map(this::describeSuite).forEach(suite::addChild);
-    context.getExampleNames().stream().map(x -> describeTest(context.name, x)).forEach(suite::addChild);
+    gateway.getSpecs(context)
+      .map(x -> makeAndMemoizeTestDescription(contextDisplayName, x))
+      .forEach(suite::addChild);
+
+    gateway.getSubcontexts(context)
+      .map(this::makeSuiteDescription)
+      .forEach(suite::addChild);
+
     return suite;
-  };
-  
-  private Description describeTest(String contextName, String exampleName) {
-    return Description.createTestDescription(contextName, exampleName);
-  }
-  
-  /* Running tests */
-  
-  @Override
-  protected List<Example> getChildren() {
-    return gateway.getExamples().collect(toList());
-  }
-  
-  @Override
-  protected void runChild(Example child, RunNotifier notifier) {
-    Description description = describeChild(child);
-    if(child.isSkipped())
-      notifier.fireTestIgnored(description);
-    else
-      runExample(child, notifier, description);
   }
 
-  private void runExample(Example child, RunNotifier notifier, Description description) {
+  private Description makeAndMemoizeTestDescription(String contextDisplayName, Spec spec) {
+    Description testDescription = Description.createTestDescription(contextDisplayName, spec.displayName, spec.id);
+    specDescriptions.put(spec.id, testDescription);
+    return testDescription;
+  }
+
+  @Override
+  public void run(RunNotifier notifier) {
+    ensureTestDescriptionsMemoized();
+    runContext(gateway.rootContext(), notifier);
+  }
+
+  //No guarantee that getDescription was called earlier to trigger memoization, which is required for notifications.
+  private void ensureTestDescriptionsMemoized() {
+    if(!specDescriptions.isEmpty())
+      return;
+
+    getDescription();
+  }
+
+  private void runContext(ClassContext context, RunNotifier notifier) {
+    gateway.getSpecs(context).forEach(x -> runSpecIfNotIgnored(x, notifier));
+    gateway.getSubcontexts(context).forEach(x -> runContext(x, notifier));
+  }
+
+  private void runSpecIfNotIgnored(Spec spec, RunNotifier notifier) {
+    Description description = specDescriptions.get(spec.id);
+    if(spec.isIgnored()) {
+      notifier.fireTestIgnored(description);
+      return;
+    }
+
     notifier.fireTestStarted(description);
-    try {
-      child.run();
-    } catch (Exception | AssertionError e) {
-      notifier.fireTestFailure(new Failure(description, e));
-    } finally {
+    Optional<Failure> failure = runSpec(spec, description);
+    if(failure.isPresent())
+      notifier.fireTestFailure(failure.get());
+    else
       notifier.fireTestFinished(description);
+  }
+
+  private Optional<Failure> runSpec(Spec spec, Description description) {
+    try {
+      spec.run();
+    } catch(Exception | AssertionError e) {
+      return Optional.of(new Failure(description, e));
+    }
+    return Optional.empty();
+  }
+
+  @Override
+  public int testCount() {
+    long numSpecs = gateway.countSpecs();
+    if(numSpecs > Integer.MAX_VALUE)
+      throw new TooManySpecs(gateway.rootContextId(), numSpecs);
+    else
+      return (int)numSpecs;
+  }
+
+  public static final class NoSpecs extends RuntimeException {
+    private static final long serialVersionUID = 1L;
+
+    public NoSpecs(String contextName) {
+      super(String.format("Context %s must contain at least 1 spec", contextName));
     }
   }
-  
-  public static class NoExamplesException extends RuntimeException {
-    private static final long serialVersionUID = 1L;
-    public NoExamplesException(String contextName) {
-      super(String.format("Test context '%s' must contain at least 1 example in an It field", contextName));
+
+  public static final class TooManySpecs extends RuntimeException {
+    private static final String FORMAT = "Context %s has more specs than JUnit can support: %d";
+
+    public TooManySpecs(String contextName, long numSpecs) {
+      super(String.format(FORMAT, contextName, numSpecs));
     }
   }
 }
