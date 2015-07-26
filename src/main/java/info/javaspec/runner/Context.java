@@ -8,4 +8,7 @@ abstract class Context {
     this.id = id;
     this.displayName = displayName;
   }
+
+  public abstract boolean hasSpecs();
+  public abstract long numSpecs();
 }

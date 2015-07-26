@@ -41,11 +41,20 @@ import java.util.Optional;
  * details.
  */
 public final class JavaSpecRunner extends Runner {
-  private final SpecGateway<ClassContext> gateway;
+  private Context rootContext;
+
+  private SpecGateway<ClassContext> gateway;
   private final Map<String, Description> specDescriptions = new HashMap<>();
 
   public JavaSpecRunner(Class<?> rootContextClass) {
     this(new ClassSpecGateway(rootContextClass));
+  }
+
+  public JavaSpecRunner(Context rootContext) {
+    this.rootContext = rootContext;
+
+    if(!rootContext.hasSpecs())
+      throw new NoSpecs(rootContext.id);
   }
 
   public JavaSpecRunner(SpecGateway<ClassContext> gateway) {
@@ -125,9 +134,9 @@ public final class JavaSpecRunner extends Runner {
 
   @Override
   public int testCount() {
-    long numSpecs = gateway.countSpecs();
+    long numSpecs = rootContext.numSpecs();
     if(numSpecs > Integer.MAX_VALUE)
-      throw new TooManySpecs(gateway.rootContextId(), numSpecs);
+      throw new TooManySpecs(rootContext.id, numSpecs);
     else
       return (int)numSpecs;
   }

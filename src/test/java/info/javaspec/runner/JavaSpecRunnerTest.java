@@ -32,7 +32,7 @@ public class JavaSpecRunnerTest {
   @SuppressWarnings("unchecked") //Parameterized interface
   private final FakeSpecGateway gateway = new FakeSpecGateway();
 
-  private final Runner subject;
+  private Runner subject;
 
   public JavaSpecRunnerTest() {
     gateway.init(1, aLeafContext("NonEmptyContextForInitialization", aSpec("default_spec")));
@@ -42,8 +42,8 @@ public class JavaSpecRunnerTest {
   public class constructor {
     @Test
     public void givenAClassWithoutAnySpecs_throwsNoSpecs() throws Exception {
-      givenTheGatewayHasNoSpecs("ContextClasses$Empty");
-      Exception ex = capture(NoSpecs.class, () -> new JavaSpecRunner(gateway));
+      Context rootContext = FakeContext.withNoSpecs("ContextClasses$Empty", "Root context");
+      Exception ex = capture(NoSpecs.class, () -> new JavaSpecRunner(rootContext));
       assertThat(ex.getMessage(), matchesRegex("^Context ContextClasses[$]Empty must contain at least 1 spec"));
     }
   }
@@ -340,31 +340,18 @@ public class JavaSpecRunnerTest {
   }
 
   public class testCount {
-    public class givenAClassWith1OrMoreSpecs {
-      @Test
-      public void returnsTheNumberOfTestsInTheGivenContextClass() throws Exception {
-        givenTheGatewayHasSpecs(2, aLeafContext("Root", aSpec("one"), aSpec("two")));
-        assertThat(subject.testCount(), equalTo(2));
-      }
+    @Test
+    public void givenAContextWithAnIntegerNumberOfSpecs_delegatesToTheRootContext() throws Exception {
+      subject = new JavaSpecRunner(FakeContext.withSpecs(aSpec("one"), aSpec("two")));
+      assertThat(subject.testCount(), equalTo(2));
     }
 
-    public class givenAClassWithMoreSpecsThanThereAreIntegers {
-      @Test
-      public void throwsTooManyTests() throws Exception {
-        givenTheGatewayHasAnEnormousNumberOfSpecs("BigContext");
-        TooManySpecs ex = capture(TooManySpecs.class, () -> new JavaSpecRunner(gateway).testCount());
-        assertThat(ex.getMessage(), equalTo("Context BigContext has more specs than JUnit can support: 2147483648"));
-      }
+    @Test
+    public void givenAContextWithMoreSpecsThanIntegers_throwsTooManySpecs() throws Exception {
+      subject = new JavaSpecRunner(FakeContext.withNumSpecs("BigContext", (long)Integer.MAX_VALUE + 1));
+      TooManySpecs ex = capture(TooManySpecs.class, subject::testCount);
+      assertThat(ex.getMessage(), equalTo("Context BigContext has more specs than JUnit can support: 2147483648"));
     }
-  }
-
-  private void givenTheGatewayHasNoSpecs(String rootContextId) {
-    gateway.init(0, aLeafContext(rootContextId));
-  }
-
-  private void givenTheGatewayHasAnEnormousNumberOfSpecs(String rootContextId) {
-    long numSpecs = (long)(Integer.MAX_VALUE) + 1;
-    gateway.init(numSpecs, aLeafContext(rootContextId));
   }
 
   private void givenTheGatewayHasSpecs(long numSpecs, FakeContext rootContext) {
@@ -497,16 +484,43 @@ public class JavaSpecRunnerTest {
   private static final class FakeContext extends ClassContext {
     public final List<FakeSpec> specs;
     public final List<FakeContext> subcontexts;
+    private long numSpecs;
+
+    public static Context withNumSpecs(String id, long numSpecs) {
+      return new FakeContext(id, id, numSpecs);
+    }
+
+    public static FakeContext withSpecs(FakeSpec... specs) {
+      return new FakeContext("root", "root", Arrays.asList(specs), new ArrayList<>(0));
+    }
+
+    public static FakeContext withNoSpecs(String id, String displayName) {
+      return new FakeContext(id, displayName, new ArrayList<>(0), new ArrayList<>(0));
+    }
 
     public FakeContext(String id, String displayName, List<FakeSpec> specs, List<FakeContext> subcontexts) {
       super(id, displayName, JavaSpecRunnerTest.class);
       this.specs = specs;
       this.subcontexts = subcontexts;
+      this.numSpecs = this.specs.size();
+    }
+
+    public FakeContext(String id, String displayName, long numSpecs) {
+      super(id, displayName, JavaSpecRunnerTest.class);
+      this.specs = new ArrayList<>(0);
+      this.subcontexts = new ArrayList<>(0);
+      this.numSpecs = numSpecs;
     }
 
     public List<Integer> runCounts() {
       return specs.stream().map(x -> x.runCount).collect(toList());
     }
+
+    @Override
+    public boolean hasSpecs() { return numSpecs > 0; }
+
+    @Override
+    public long numSpecs() { return numSpecs; }
   }
 
   private static class FakeSpec extends Spec {
