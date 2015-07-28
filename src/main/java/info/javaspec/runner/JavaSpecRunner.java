@@ -65,6 +65,10 @@ public final class JavaSpecRunner extends Runner {
 
   @Override
   public Description getDescription() {
+    return rootContext.getDescription();
+  }
+
+  public Description getDescription_old() {
     return makeSuiteDescription(gateway.rootContext());
   }
 
