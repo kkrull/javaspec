@@ -68,6 +68,21 @@ public final class JavaSpecRunner extends Runner {
     return rootContext.getDescription();
   }
 
+  @Override
+  public void run(RunNotifier notifier) {
+    ensureTestDescriptionsMemoized();
+    runContext(gateway.rootContext(), notifier);
+  }
+
+  @Override
+  public int testCount() {
+    long numSpecs = rootContext.numSpecs();
+    if(numSpecs > Integer.MAX_VALUE)
+      throw new TooManySpecs(rootContext.id, numSpecs);
+    else
+      return (int)numSpecs;
+  }
+
   public Description getDescription_old() {
     return makeSuiteDescription(gateway.rootContext());
   }
@@ -91,12 +106,6 @@ public final class JavaSpecRunner extends Runner {
     Description testDescription = Description.createTestDescription(contextDisplayName, spec.displayName, spec.id);
     specDescriptions.put(spec.id, testDescription);
     return testDescription;
-  }
-
-  @Override
-  public void run(RunNotifier notifier) {
-    ensureTestDescriptionsMemoized();
-    runContext(gateway.rootContext(), notifier);
   }
 
   //No guarantee that getDescription was called earlier to trigger memoization, which is required for notifications.
@@ -134,15 +143,6 @@ public final class JavaSpecRunner extends Runner {
       return Optional.of(new Failure(description, e));
     }
     return Optional.empty();
-  }
-
-  @Override
-  public int testCount() {
-    long numSpecs = rootContext.numSpecs();
-    if(numSpecs > Integer.MAX_VALUE)
-      throw new TooManySpecs(rootContext.id, numSpecs);
-    else
-      return (int)numSpecs;
   }
 
   public static final class NoSpecs extends RuntimeException {

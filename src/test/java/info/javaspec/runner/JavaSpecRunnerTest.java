@@ -58,6 +58,13 @@ public class JavaSpecRunnerTest {
     }
   }
 
+  public class run {
+    @Test
+    public void delegatesToTheRootContext() {
+      assertThat("pending", equalTo("passing"));
+    }
+  }
+
   public class testCount {
     @Test
     public void givenAContextWithAnIntegerNumberOfSpecs_delegatesToTheRootContext() throws Exception {
@@ -81,8 +88,8 @@ public class JavaSpecRunnerTest {
         @Before
         public void setup() {
           gateway.init(1,
-            aNestedContext("Root",
-              aNestedContext("Middle",
+            FakeContext.nested("Root",
+              FakeContext.nested("Middle",
                 FakeContext.leaf("Bottom", FakeSpec.with("one"))))
           );
           description = subject.getDescription();
@@ -146,9 +153,9 @@ public class JavaSpecRunnerTest {
           FakeContext rightDuplicate = FakeContext.leaf("Root$RightSuite$SameClassName", "SameClassName", FakeSpec.with("one"));
           assumeThat(leftDuplicate.displayName, equalTo(rightDuplicate.displayName)); //Basis for Description.fUniqueId
 
-          gateway.init(2, aNestedContext("Root",
-              aNestedContext("LeftSuite", leftDuplicate),
-              aNestedContext("RightSuite", rightDuplicate))
+          gateway.init(2, FakeContext.nested("Root",
+              FakeContext.nested("LeftSuite", leftDuplicate),
+              FakeContext.nested("RightSuite", rightDuplicate))
           );
           description = subject.getDescription();
         }
@@ -177,9 +184,9 @@ public class JavaSpecRunnerTest {
           FakeContext rightDuplicate = FakeContext.leaf("Root$RightSuite$SameClassName", "SameClassName", rightSpec);
           assumeThat(leftDuplicate.displayName, equalTo(rightDuplicate.displayName)); //Part of Description.fUniqueId
 
-          gateway.init(2, aNestedContext("Root",
-              aNestedContext("LeftSuite", leftDuplicate),
-              aNestedContext("RightSuite", rightDuplicate))
+          gateway.init(2, FakeContext.nested("Root",
+              FakeContext.nested("LeftSuite", leftDuplicate),
+              FakeContext.nested("RightSuite", rightDuplicate))
           );
           description = subject.getDescription();
         }
@@ -225,7 +232,7 @@ public class JavaSpecRunnerTest {
       public class givenSpecsIn1OrMoreContexts {
         @Before
         public void setup() throws Exception {
-          givenTheGatewayHasSpecs(1, aNestedContext("Root",
+          givenTheGatewayHasSpecs(1, FakeContext.nested("Root",
             FakeContext.leaf("Left", FakeSpec.with("Left::one")),
             FakeContext.leaf("Right", FakeSpec.with("Right::one"))
           ));
@@ -260,7 +267,7 @@ public class JavaSpecRunnerTest {
       public class givenAnIgnoredSpec {
         @Before
         public void setup() throws Exception {
-          givenTheGatewayHasSpecs(1, FakeContext.leaf("Root", anIgnoredSpec("Root::ignore_me")));
+          givenTheGatewayHasSpecs(1, FakeContext.leaf("Root", FakeSpec.anIgnoredSpec("Root::ignore_me")));
           subject.run(notifier);
         }
 
@@ -315,8 +322,8 @@ public class JavaSpecRunnerTest {
         @Before
         public void setup() throws Exception {
           givenTheGatewayHasSpecs(1, FakeContext.leaf("Root",
-            aFailingSpec("Root::one_try_and_fail", new AssertionError("Tricksy AssertionError, like JUnit throws")),
-            aFailingSpec("Root::another_try_and_fail", new RuntimeException("Unchecked exception"))
+            FakeSpec.aFailingSpec("Root::one_try_and_fail", new AssertionError("Tricksy AssertionError, like JUnit throws")),
+            FakeSpec.aFailingSpec("Root::another_try_and_fail", new RuntimeException("Unchecked exception"))
           ));
           subject.run(notifier);
         }
@@ -415,29 +422,6 @@ public class JavaSpecRunnerTest {
 
       return items.get(0);
     }
-
-    //TODO KDK: Move these to factory methods on FakeContext / FakeSpec too.
-    private FakeContext aNestedContext(String id, FakeContext... subcontexts) {
-      return new FakeContext(id, id, new ArrayList<>(0), Arrays.asList(subcontexts));
-    }
-
-    private FakeSpec aFailingSpec(String id, AssertionError toThrow) {
-      return new FakeSpec(id, id, false) {
-        @Override
-        public void run() { throw toThrow; }
-      };
-    }
-
-    private FakeSpec aFailingSpec(String id, RuntimeException toThrow) {
-      return new FakeSpec(id, id, false) {
-        @Override
-        public void run() { throw toThrow; }
-      };
-    }
-
-    private FakeSpec anIgnoredSpec(String id) {
-      return new FakeSpec(id, id, true);
-    }
   }
 
   private static final class FakeSpecGateway implements SpecGateway<ClassContext> {
@@ -478,7 +462,7 @@ public class JavaSpecRunnerTest {
     private Spec asSpec(FakeSpec spec) { return spec; }
   }
 
-  //TODO KDK: Simplify these classes when data creating needs reduce
+  //TODO KDK: Remove unused factory methods once behavior has migrated
   private static final class FakeContext extends ClassContext {
     public final List<FakeSpec> specs;
     public final List<FakeContext> subcontexts;
@@ -491,6 +475,10 @@ public class JavaSpecRunnerTest {
 
     public static FakeContext leaf(String id, String displayName, FakeSpec... specs) {
       return new FakeContext(id, displayName, Arrays.asList(specs), new ArrayList<>(0));
+    }
+
+    public static FakeContext nested(String id, FakeContext... subcontexts) {
+      return new FakeContext(id, id, new ArrayList<>(0), Arrays.asList(subcontexts));
     }
 
     public static FakeContext withDescription(Description description) {
@@ -542,6 +530,24 @@ public class JavaSpecRunnerTest {
   private static class FakeSpec extends Spec {
     private final boolean isIgnored;
     public int runCount;
+
+    public static FakeSpec aFailingSpec(String id, AssertionError toThrow) {
+      return new FakeSpec(id, id, false) {
+        @Override
+        public void run() { throw toThrow; }
+      };
+    }
+
+    public static FakeSpec aFailingSpec(String id, RuntimeException toThrow) {
+      return new FakeSpec(id, id, false) {
+        @Override
+        public void run() { throw toThrow; }
+      };
+    }
+
+    public static FakeSpec anIgnoredSpec(String id) {
+      return new FakeSpec(id, id, true);
+    }
 
     public static FakeSpec with(String id) {
       return new FakeSpec(id, id, false);
