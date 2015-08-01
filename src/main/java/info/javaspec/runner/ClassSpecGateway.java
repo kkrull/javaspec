@@ -34,7 +34,7 @@ final class ClassSpecGateway implements SpecGateway<ClassContext> {
 
   @Override
   public String rootContextId() {
-    return rootContext().id;
+    return rootContext().getId();
   }
 
   @Override
@@ -44,7 +44,7 @@ final class ClassSpecGateway implements SpecGateway<ClassContext> {
 
   @Override
   public Stream<ClassContext> getSubcontexts(ClassContext context) {
-    return readInnerClasses(context.source).map(this::makeContext);
+    return readInnerClasses(context.getSource()).map(this::makeContext);
   }
 
   private ClassContext makeContext(Class<?> context) {
@@ -79,7 +79,7 @@ final class ClassSpecGateway implements SpecGateway<ClassContext> {
 
   @Override
   public Stream<Spec> getSpecs(ClassContext context) {
-    return readDeclaredItFields(context.source).map(x -> makeSpec(x, context));
+    return readDeclaredItFields(context.getSource()).map(x -> makeSpec(x, context));
   }
 
   private Spec makeSpec(Field itField, ClassContext context) {
@@ -124,7 +124,7 @@ final class ClassSpecGateway implements SpecGateway<ClassContext> {
     public List<Field> findBefores() {
       LinkedList<Field> befores = new LinkedList<>();
       Consumer<Field> prependToBefore = x -> befores.add(0, x);
-      for(Class<?> c = context.source; c != null; c = c.getEnclosingClass()) {
+      for(Class<?> c = context.getSource(); c != null; c = c.getEnclosingClass()) {
         onlyDeclaredField(c, Because.class).ifPresent(prependToBefore);
         onlyDeclaredField(c, Establish.class).ifPresent(prependToBefore);
       }
@@ -134,7 +134,7 @@ final class ClassSpecGateway implements SpecGateway<ClassContext> {
 
     public List<Field> findAfters() {
       List<Field> afters = new LinkedList<>();
-      for(Class<?> c = context.source; c != null; c = c.getEnclosingClass())
+      for(Class<?> c = context.getSource(); c != null; c = c.getEnclosingClass())
         onlyDeclaredField(c, Cleanup.class).ifPresent(afters::add);
 
       return afters;

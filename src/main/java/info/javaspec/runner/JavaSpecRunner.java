@@ -54,7 +54,7 @@ public final class JavaSpecRunner extends Runner {
     this.rootContext = rootContext;
 
     if(!rootContext.hasSpecs())
-      throw new NoSpecs(rootContext.id);
+      throw new NoSpecs(rootContext.getId());
   }
 
   public JavaSpecRunner(SpecGateway<ClassContext> gateway) {
@@ -82,7 +82,7 @@ public final class JavaSpecRunner extends Runner {
   public int testCount() {
     long numSpecs = rootContext.numSpecs();
     if(numSpecs > Integer.MAX_VALUE)
-      throw new TooManySpecs(rootContext.id, numSpecs);
+      throw new TooManySpecs(rootContext.getId(), numSpecs);
     else
       return (int)numSpecs;
   }
@@ -92,8 +92,8 @@ public final class JavaSpecRunner extends Runner {
   }
 
   private Description makeSuiteDescription(ClassContext context) {
-    String contextDisplayName = context.displayName;
-    Description suite = Description.createSuiteDescription(contextDisplayName, context.id);
+    String contextDisplayName = context.getDisplayName();
+    Description suite = Description.createSuiteDescription(contextDisplayName, context.getId());
 
     gateway.getSpecs(context)
       .map(x -> makeAndMemoizeTestDescription(contextDisplayName, x))
@@ -107,8 +107,8 @@ public final class JavaSpecRunner extends Runner {
   }
 
   private Description makeAndMemoizeTestDescription(String contextDisplayName, Spec spec) {
-    Description testDescription = Description.createTestDescription(contextDisplayName, spec.displayName, spec.id);
-    specDescriptions.put(spec.id, testDescription);
+    Description testDescription = Description.createTestDescription(contextDisplayName, spec.getDisplayName(), spec.getId());
+    specDescriptions.put(spec.getId(), testDescription);
     return testDescription;
   }
 
@@ -126,7 +126,7 @@ public final class JavaSpecRunner extends Runner {
   }
 
   private void runSpecIfNotIgnored(Spec spec, RunNotifier notifier) {
-    Description description = specDescriptions.get(spec.id);
+    Description description = specDescriptions.get(spec.getId());
     if(spec.isIgnored()) {
       notifier.fireTestIgnored(description);
       return;

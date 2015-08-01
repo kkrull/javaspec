@@ -4,12 +4,14 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
 class ClassContext extends Context {
-  public final Class<?> source;
+  private final Class<?> source;
 
   public ClassContext(String id, String displayName, Class<?> source) {
     super(id, displayName);
     this.source = source;
   }
+
+  public Class<?> getSource() { return source; }
 
   @Override
   public Description getDescription() {

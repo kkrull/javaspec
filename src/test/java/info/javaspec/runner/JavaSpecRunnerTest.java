@@ -158,7 +158,7 @@ public class JavaSpecRunnerTest {
         public void setup() {
           FakeContext leftDuplicate = FakeContext.leaf("Root$LeftSuite$SameClassName", "SameClassName", FakeSpec.with("one"));
           FakeContext rightDuplicate = FakeContext.leaf("Root$RightSuite$SameClassName", "SameClassName", FakeSpec.with("one"));
-          assumeThat(leftDuplicate.displayName, equalTo(rightDuplicate.displayName)); //Basis for Description.fUniqueId
+          assumeThat(leftDuplicate.getDisplayName(), equalTo(rightDuplicate.getDisplayName())); //Basis for Description.fUniqueId
 
           gateway.init(2, FakeContext.nested("Root",
               FakeContext.nested("LeftSuite", leftDuplicate),
@@ -185,11 +185,11 @@ public class JavaSpecRunnerTest {
         public void setup() {
           FakeSpec leftSpec = FakeSpec.with("LeftSuite.same_name", "same name");
           FakeSpec rightSpec = FakeSpec.with("RightSuite.same_name", "same name");
-          assumeThat(leftSpec.displayName, equalTo(rightSpec.displayName)); //Part of Description.fUniqueId
+          assumeThat(leftSpec.getDisplayName(), equalTo(rightSpec.getDisplayName())); //Part of Description.fUniqueId
 
           FakeContext leftDuplicate = FakeContext.leaf("Root$LeftSuite$SameClassName", "SameClassName", leftSpec);
           FakeContext rightDuplicate = FakeContext.leaf("Root$RightSuite$SameClassName", "SameClassName", rightSpec);
-          assumeThat(leftDuplicate.displayName, equalTo(rightDuplicate.displayName)); //Part of Description.fUniqueId
+          assumeThat(leftDuplicate.getDisplayName(), equalTo(rightDuplicate.getDisplayName())); //Part of Description.fUniqueId
 
           gateway.init(2, FakeContext.nested("Root",
               FakeContext.nested("LeftSuite", leftDuplicate),
@@ -444,7 +444,7 @@ public class JavaSpecRunnerTest {
     public FakeContext rootContext() { return rootContext; }
 
     @Override
-    public String rootContextId() { return rootContext.id; }
+    public String rootContextId() { return rootContext.getId(); }
 
     @Override
     public Stream<ClassContext> getSubcontexts(ClassContext context) {

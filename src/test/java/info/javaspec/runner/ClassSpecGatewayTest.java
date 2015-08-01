@@ -110,13 +110,13 @@ public class ClassSpecGatewayTest {
 
     @Test
     public void returnsAContextForTheGivenClass() throws Exception {
-      assertThat(returned.id, matchesRegex("^.*[.]ContextClasses[$]NestedBehavior[$]describes_some_conditions$"));
+      assertThat(returned.getId(), matchesRegex("^.*[.]ContextClasses[$]NestedBehavior[$]describes_some_conditions$"));
     }
 
     //The root context class is just a container.  It doesn't describe behavior, so its name doesn't get humanized.
     @Test
     public void usesTheSimpleNameForTheDisplayName() {
-      assertThat(returned.displayName, equalTo("describes_some_conditions"));
+      assertThat(returned.getDisplayName(), equalTo("describes_some_conditions"));
     }
   }
 
@@ -153,12 +153,12 @@ public class ClassSpecGatewayTest {
 
       @Test
       public void givenAClassNameInSnakeCase_replacesUnderscoresWithSpaces() {
-        assertThat(returned.displayName, equalTo("describes some conditions"));
+        assertThat(returned.getDisplayName(), equalTo("describes some conditions"));
       }
     }
 
     private void shouldHaveSubcontexts(ClassContext context, String... ids) {
-      List<String> actualIds = subject.getSubcontexts(context).map(x -> x.id).collect(toList());
+      List<String> actualIds = subject.getSubcontexts(context).map(x -> x.getId()).collect(toList());
       assertThat(actualIds, equalTo(Arrays.asList(ids)));
     }
   }
@@ -303,7 +303,7 @@ public class ClassSpecGatewayTest {
   private ClassContext onlySubcontext(ClassContext parent) {
     List<ClassContext> children = subject.getSubcontexts(parent).collect(toList());
     if(children.size() != 1) {
-      String msg = String.format("Expected context %s to have 1 child, but had %d", parent.id, children.size());
+      String msg = String.format("Expected context %s to have 1 child, but had %d", parent.getId(), children.size());
       throw new RuntimeException(msg);
     }
 

@@ -4,16 +4,20 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
 abstract class Context {
-  public final String id; //TODO KDK: Migrate to property-style methods
-  public final String displayName;
+  private final String id;
+  private final String displayName;
 
-  Context(String id, String displayName) {
+  protected Context(String id, String displayName) {
     this.id = id;
     this.displayName = displayName;
   }
+
+  public String getId() { return id; }
+  public String getDisplayName() { return displayName; }
 
   public abstract Description getDescription();
   public abstract boolean hasSpecs();
   public abstract long numSpecs();
   public abstract void run(RunNotifier notifier);
+
 }
