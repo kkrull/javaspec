@@ -70,6 +70,10 @@ public final class JavaSpecRunner extends Runner {
 
   @Override
   public void run(RunNotifier notifier) {
+    rootContext.run(notifier);
+  }
+
+  public void run_old(RunNotifier notifier) {
     ensureTestDescriptionsMemoized();
     runContext(gateway.rootContext(), notifier);
   }

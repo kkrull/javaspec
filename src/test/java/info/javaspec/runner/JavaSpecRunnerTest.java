@@ -13,6 +13,7 @@ import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
+import org.mockito.Mockito;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,6 +28,9 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(HierarchicalContextRunner.class)
 public class JavaSpecRunnerTest {
@@ -61,7 +65,10 @@ public class JavaSpecRunnerTest {
   public class run {
     @Test
     public void delegatesToTheRootContext() {
-      assertThat("pending", equalTo("passing"));
+      Context rootContext = FakeContext.anyValid();
+      subject = new JavaSpecRunner(rootContext);
+      subject.run(mock(RunNotifier.class));
+      verify(rootContext).run(Mockito.any());
     }
   }
 
@@ -468,6 +475,13 @@ public class JavaSpecRunnerTest {
     public final List<FakeContext> subcontexts;
     private long numSpecs;
     private Description description;
+
+    public static Context anyValid() {
+      Context context = mock(Context.class);
+      when(context.hasSpecs()).thenReturn(true);
+      when(context.numSpecs()).thenReturn(1L);
+      return context;
+    }
 
     public static FakeContext leaf(String id, FakeSpec... specs) {
       return new FakeContext(id, id, Arrays.asList(specs), new ArrayList<>(0));
