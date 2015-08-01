@@ -7,7 +7,6 @@ import org.junit.runner.notification.RunNotifier;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -16,21 +15,13 @@ class ClassContext extends Context {
   private final Class<?> source;
 
   public static ClassContext create(Class<?> source) {
-    return new ClassContext("", "", source);
+    return new ClassContext("", source);
   }
 
-  private ClassContext(String id, String displayName, Class<?> source) {
-    super(id, displayName);
+  private ClassContext(String id, Class<?> source) {
+    super(id);
     this.source = source;
   }
-
-  public ClassContext(String id, String displayName, Class<?> source, List<ClassContext> subcontexts) {
-    super(id, displayName);
-    this.source = source;
-    throw new UnsupportedOperationException();
-  }
-
-  public Class<?> getSource() { return source; }
 
   @Override
   public Description getDescription() {

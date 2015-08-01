@@ -102,14 +102,14 @@ public class JavaSpecRunnerTest {
     }
 
     private FakeContext(String id, String displayName, long numSpecs) {
-      super(id, displayName);
+      super(id);
       this.specs = new ArrayList<>(0);
       this.subcontexts = new ArrayList<>(0);
       this.numSpecs = numSpecs;
     }
 
     private FakeContext(String id, String displayName, List<FakeSpec> specs, List<FakeContext> subcontexts) {
-      super(id, displayName);
+      super(id);
       this.specs = specs;
       this.subcontexts = subcontexts;
       this.numSpecs = this.specs.size();

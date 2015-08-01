@@ -43,9 +43,6 @@ import java.util.Optional;
 public final class JavaSpecRunner extends Runner {
   private Context rootContext;
 
-  private SpecGateway<ClassContext> gateway;
-  private final Map<String, Description> specDescriptions = new HashMap<>();
-
   public JavaSpecRunner(Class<?> rootContextClass) {
     this(ClassContext.create(rootContextClass));
   }
@@ -55,12 +52,6 @@ public final class JavaSpecRunner extends Runner {
 
     if(!rootContext.hasSpecs())
       throw new NoSpecs(rootContext.getId());
-  }
-
-  public JavaSpecRunner(SpecGateway<ClassContext> gateway) {
-    this.gateway = gateway;
-    if(!gateway.hasSpecs())
-      throw new NoSpecs(gateway.rootContextId());
   }
 
   @Override
@@ -73,11 +64,6 @@ public final class JavaSpecRunner extends Runner {
     rootContext.run(notifier);
   }
 
-  public void run_old(RunNotifier notifier) {
-    ensureTestDescriptionsMemoized();
-    runContext(gateway.rootContext(), notifier);
-  }
-
   @Override
   public int testCount() {
     long numSpecs = rootContext.numSpecs();
@@ -85,68 +71,6 @@ public final class JavaSpecRunner extends Runner {
       throw new TooManySpecs(rootContext.getId(), numSpecs);
     else
       return (int)numSpecs;
-  }
-
-  public Description getDescription_old() {
-    return makeSuiteDescription(gateway.rootContext());
-  }
-
-  private Description makeSuiteDescription(ClassContext context) {
-    String contextDisplayName = context.getDisplayName();
-    Description suite = Description.createSuiteDescription(contextDisplayName, context.getId());
-
-    gateway.getSpecs(context)
-      .map(x -> makeAndMemoizeTestDescription(contextDisplayName, x))
-      .forEach(suite::addChild);
-
-    gateway.getSubcontexts(context)
-      .map(this::makeSuiteDescription)
-      .forEach(suite::addChild);
-
-    return suite;
-  }
-
-  private Description makeAndMemoizeTestDescription(String contextDisplayName, Spec spec) {
-    Description testDescription = Description.createTestDescription(contextDisplayName, spec.getDisplayName(), spec.getId());
-    specDescriptions.put(spec.getId(), testDescription);
-    return testDescription;
-  }
-
-  //No guarantee that getDescription was called earlier to trigger memoization, which is required for notifications.
-  private void ensureTestDescriptionsMemoized() {
-    if(!specDescriptions.isEmpty())
-      return;
-
-    getDescription();
-  }
-
-  private void runContext(ClassContext context, RunNotifier notifier) {
-    gateway.getSpecs(context).forEach(x -> runSpecIfNotIgnored(x, notifier));
-    gateway.getSubcontexts(context).forEach(x -> runContext(x, notifier));
-  }
-
-  private void runSpecIfNotIgnored(Spec spec, RunNotifier notifier) {
-    Description description = specDescriptions.get(spec.getId());
-    if(spec.isIgnored()) {
-      notifier.fireTestIgnored(description);
-      return;
-    }
-
-    notifier.fireTestStarted(description);
-    Optional<Failure> failure = runSpec(spec, description);
-    if(failure.isPresent())
-      notifier.fireTestFailure(failure.get());
-    else
-      notifier.fireTestFinished(description);
-  }
-
-  private Optional<Failure> runSpec(Spec spec, Description description) {
-    try {
-      spec.run();
-    } catch(Exception | AssertionError e) {
-      return Optional.of(new Failure(description, e));
-    }
-    return Optional.empty();
   }
 
   public static final class NoSpecs extends RuntimeException {
