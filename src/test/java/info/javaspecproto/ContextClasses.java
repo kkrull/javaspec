@@ -94,6 +94,15 @@ public class ContextClasses {
     }
   }
 
+  public static class NestedContexts {
+    public class one {
+      It asserts_one = () -> assertEquals(1, 1);
+    }
+    public class two {
+      It asserts_two = () -> assertEquals(2, 2);
+    }
+  }
+
   public static class NestedIt {
     public class nestedContext {
       It tests_something_more_specific = () -> assertThat(1, equalTo(1));
