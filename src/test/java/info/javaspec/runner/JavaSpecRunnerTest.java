@@ -3,11 +3,6 @@ package info.javaspec.runner;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.runner.JavaSpecRunner.NoSpecs;
 import info.javaspec.runner.JavaSpecRunner.TooManySpecs;
-import info.javaspec.testutil.RunListenerSpy;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Matcher;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
@@ -16,15 +11,11 @@ import org.junit.runner.notification.RunNotifier;
 import org.mockito.Mockito;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 import static info.javaspec.testutil.Assertions.capture;
 import static info.javaspec.testutil.Matchers.matchesRegex;
-import static java.util.Collections.synchronizedList;
-import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
@@ -57,9 +48,9 @@ public class JavaSpecRunnerTest {
   public class run {
     @Test
     public void delegatesToTheRootContext() {
-      Context rootContext = FakeContext.anyValid();
+      Context rootContext = FakeContext.mock();
       subject = new JavaSpecRunner(rootContext);
-      subject.run(mock(RunNotifier.class));
+      subject.run(Mockito.mock(RunNotifier.class));
       verify(rootContext).run(Mockito.any());
     }
   }
@@ -79,30 +70,17 @@ public class JavaSpecRunnerTest {
     }
   }
 
-  //TODO KDK: Remove unused factory methods once behavior has migrated
-  public static final class FakeContext extends ClassContext {
+  public static final class FakeContext extends Context {
     public final List<FakeSpec> specs;
     public final List<FakeContext> subcontexts;
     private long numSpecs;
     private Description description;
 
-    public static Context anyValid() {
-      Context context = mock(Context.class);
+    public static Context mock() {
+      Context context = Mockito.mock(Context.class);
       when(context.hasSpecs()).thenReturn(true);
       when(context.numSpecs()).thenReturn(1L);
       return context;
-    }
-
-    public static FakeContext leaf(String id, FakeSpec... specs) {
-      return new FakeContext(id, id, Arrays.asList(specs), new ArrayList<>(0));
-    }
-
-    public static FakeContext leaf(String id, String displayName, FakeSpec... specs) {
-      return new FakeContext(id, displayName, Arrays.asList(specs), new ArrayList<>(0));
-    }
-
-    public static FakeContext nested(String id, FakeContext... subcontexts) {
-      return new FakeContext(id, id, new ArrayList<>(0), Arrays.asList(subcontexts));
     }
 
     public static FakeContext withDescription(Description description) {
@@ -124,21 +102,17 @@ public class JavaSpecRunnerTest {
     }
 
     private FakeContext(String id, String displayName, long numSpecs) {
-      super(id, displayName, JavaSpecRunnerTest.class);
+      super(id, displayName);
       this.specs = new ArrayList<>(0);
       this.subcontexts = new ArrayList<>(0);
       this.numSpecs = numSpecs;
     }
 
     private FakeContext(String id, String displayName, List<FakeSpec> specs, List<FakeContext> subcontexts) {
-      super(id, displayName, JavaSpecRunnerTest.class);
+      super(id, displayName);
       this.specs = specs;
       this.subcontexts = subcontexts;
       this.numSpecs = this.specs.size();
-    }
-
-    public List<Integer> runCounts() {
-      return specs.stream().map(x -> x.runCount).collect(toList());
     }
 
     @Override
@@ -149,36 +123,19 @@ public class JavaSpecRunnerTest {
 
     @Override
     public long numSpecs() { return numSpecs; }
+
+    @Override
+    public void run(RunNotifier notifier) {
+      throw new UnsupportedOperationException();
+    }
   }
 
   private static class FakeSpec extends Spec {
     private final boolean isIgnored;
     public int runCount;
 
-    public static FakeSpec aFailingSpec(String id, AssertionError toThrow) {
-      return new FakeSpec(id, id, false) {
-        @Override
-        public void run() { throw toThrow; }
-      };
-    }
-
-    public static FakeSpec aFailingSpec(String id, RuntimeException toThrow) {
-      return new FakeSpec(id, id, false) {
-        @Override
-        public void run() { throw toThrow; }
-      };
-    }
-
-    public static FakeSpec anIgnoredSpec(String id) {
-      return new FakeSpec(id, id, true);
-    }
-
     public static FakeSpec with(String id) {
       return new FakeSpec(id, id, false);
-    }
-
-    public static FakeSpec with(String id, String displayName) {
-      return new FakeSpec(id, displayName, false);
     }
 
     public FakeSpec(String id, String displayName, boolean isIgnored) {

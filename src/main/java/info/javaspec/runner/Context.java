@@ -19,5 +19,4 @@ abstract class Context {
   public abstract boolean hasSpecs();
   public abstract long numSpecs();
   public abstract void run(RunNotifier notifier);
-
 }

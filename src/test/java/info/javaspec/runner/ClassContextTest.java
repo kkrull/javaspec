@@ -85,8 +85,9 @@ public class ClassContextTest {
     }
 
     public class given1OrMoreSubContexts {
-      @Test @Ignore
+      @Test
       public void runsEachSubcontext() throws Exception {
+        assertThat("pending", equalTo("passing"));
       }
     }
   }
@@ -103,7 +104,7 @@ public class ClassContextTest {
 
   public static final class AClassContext {
     public static ClassContext of(Class<?> source) {
-      return new ClassContext("id", "display", source);
+      return ClassContext.create(source);
     }
   }
 }

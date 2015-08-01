@@ -19,7 +19,7 @@ class ClassContext extends Context {
     return new ClassContext("", "", source);
   }
 
-  public ClassContext(String id, String displayName, Class<?> source) {
+  private ClassContext(String id, String displayName, Class<?> source) {
     super(id, displayName);
     this.source = source;
   }
