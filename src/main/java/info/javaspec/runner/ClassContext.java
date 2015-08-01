@@ -7,17 +7,17 @@ import org.junit.runner.notification.RunNotifier;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
-
 class ClassContext extends Context {
   private final Class<?> source;
+
+  public static ClassContext create(Class<?> source) {
+    return new ClassContext("", "", source);
+  }
 
   public ClassContext(String id, String displayName, Class<?> source) {
     super(id, displayName);
@@ -62,22 +62,12 @@ class ClassContext extends Context {
     return readDeclaredItFields(source);
   }
 
-  protected Stream<ClassContext> getSubContexts() {
-    return readInnerClasses(source)
-      .map(child -> new ClassContext("id", "display", child));
+  private Stream<ClassContext> getSubContexts() {
+    return readInnerClasses(source).map(ClassContext::create);
   }
 
   private static Stream<Field> readDeclaredItFields(Class<?> context) {
     return readDeclaredFields(context, It.class);
-  }
-
-  private static Optional<Field> onlyDeclaredField(Class<?> context, Class<?> fieldType) {
-    List<Field> fields = readDeclaredFields(context, fieldType).limit(2).collect(toList());
-    switch(fields.size()) {
-      case 0: return Optional.empty();
-      case 1: return Optional.of(fields.get(0));
-      default: throw new ClassSpecGateway.AmbiguousSpecFixture(context, fieldType);
-    }
   }
 
   private static Stream<Field> readDeclaredFields(Class<?> context, Class<?> fieldType) {

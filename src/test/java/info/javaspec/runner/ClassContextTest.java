@@ -1,7 +1,6 @@
 package info.javaspec.runner;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.testutil.RunListenerSpy;
 import info.javaspecproto.ContextClasses;
 import org.junit.After;
 import org.junit.Before;
@@ -12,15 +11,12 @@ import org.junit.runner.notification.RunNotifier;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 @RunWith(HierarchicalContextRunner.class)
 public class ClassContextTest {
@@ -91,11 +87,6 @@ public class ClassContextTest {
     public class given1OrMoreSubContexts {
       @Test @Ignore
       public void runsEachSubcontext() throws Exception {
-        ClassContext firstChild = Mockito.mock(ClassContext.class);
-        subject = AClassContext.withSubcontexts(firstChild);
-        RunNotifier notifier = Mockito.mock(RunNotifier.class);
-        subject.run(notifier);
-        Mockito.verify(firstChild).run(notifier);
       }
     }
   }
@@ -113,10 +104,6 @@ public class ClassContextTest {
   public static final class AClassContext {
     public static ClassContext of(Class<?> source) {
       return new ClassContext("id", "display", source);
-    }
-
-    public static ClassContext withSubcontexts(ClassContext... children) {
-      return new ClassContext("id", "name", ContextClasses.OneIt.class, newArrayList(children));
     }
   }
 }

@@ -47,7 +47,7 @@ public final class JavaSpecRunner extends Runner {
   private final Map<String, Description> specDescriptions = new HashMap<>();
 
   public JavaSpecRunner(Class<?> rootContextClass) {
-    this(new ClassSpecGateway(rootContextClass));
+    this(ClassContext.create(rootContextClass));
   }
 
   public JavaSpecRunner(Context rootContext) {
