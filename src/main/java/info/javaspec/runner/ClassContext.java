@@ -32,7 +32,9 @@ class ClassContext extends Context {
 
   @Override
   public boolean hasSpecs() {
-    throw new UnsupportedOperationException();
+    boolean hasOwnExamples = getSpecs().findAny().isPresent();
+    boolean childrenHaveExamples = getSubContexts().anyMatch(ClassContext::hasSpecs);
+    return hasOwnExamples || childrenHaveExamples;
   }
 
   @Override
@@ -80,7 +82,9 @@ class ClassContext extends Context {
   }
 
   private static Stream<Class<?>> readInnerClasses(Class<?> parent) {
-    Predicate<Class<?>> isNonStatic = x -> !Modifier.isStatic(x.getModifiers());
-    return Stream.of(parent.getDeclaredClasses()).filter(isNonStatic);
+//    Predicate<Class<?>> isNonStatic = x -> !Modifier.isStatic(x.getModifiers());
+    return Stream.of(parent.getDeclaredClasses())
+//      .filter(isNonStatic)
+      ;
   }
 }
