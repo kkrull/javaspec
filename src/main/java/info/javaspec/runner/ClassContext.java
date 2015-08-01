@@ -7,6 +7,7 @@ import org.junit.runner.notification.RunNotifier;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -21,6 +22,12 @@ class ClassContext extends Context {
   public ClassContext(String id, String displayName, Class<?> source) {
     super(id, displayName);
     this.source = source;
+  }
+
+  public ClassContext(String id, String displayName, Class<?> source, List<ClassContext> subcontexts) {
+    super(id, displayName);
+    this.source = source;
+    throw new UnsupportedOperationException();
   }
 
   public Class<?> getSource() { return source; }
@@ -49,14 +56,13 @@ class ClassContext extends Context {
 
   @Override
   public void run(RunNotifier notifier) {
-    throw new UnsupportedOperationException();
   }
 
   private Stream<Field> getSpecs() {
     return readDeclaredItFields(source);
   }
 
-  private Stream<ClassContext> getSubContexts() {
+  protected Stream<ClassContext> getSubContexts() {
     return readInnerClasses(source)
       .map(child -> new ClassContext("id", "display", child));
   }
@@ -75,16 +81,14 @@ class ClassContext extends Context {
   }
 
   private static Stream<Field> readDeclaredFields(Class<?> context, Class<?> fieldType) {
-//    Predicate<Field> isInstanceField = x -> !Modifier.isStatic(x.getModifiers());
+    Predicate<Field> isInstanceField = x -> !Modifier.isStatic(x.getModifiers());
     return ReflectionUtil.fieldsOfType(fieldType, context)
-//      .filter(isInstanceField)
-      ;
+      .filter(isInstanceField);
   }
 
   private static Stream<Class<?>> readInnerClasses(Class<?> parent) {
-//    Predicate<Class<?>> isNonStatic = x -> !Modifier.isStatic(x.getModifiers());
+    Predicate<Class<?>> isNonStatic = x -> !Modifier.isStatic(x.getModifiers());
     return Stream.of(parent.getDeclaredClasses())
-//      .filter(isNonStatic)
-      ;
+      .filter(isNonStatic);
   }
 }

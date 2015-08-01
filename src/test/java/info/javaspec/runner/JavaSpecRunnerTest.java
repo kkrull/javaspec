@@ -470,7 +470,7 @@ public class JavaSpecRunnerTest {
   }
 
   //TODO KDK: Remove unused factory methods once behavior has migrated
-  private static final class FakeContext extends ClassContext {
+  public static final class FakeContext extends ClassContext {
     public final List<FakeSpec> specs;
     public final List<FakeContext> subcontexts;
     private long numSpecs;
