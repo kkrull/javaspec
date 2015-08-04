@@ -19,7 +19,11 @@ final class FieldSpec extends Spec {
   private final List<Field> afters;
   private TestFunction testFunction;
 
-  public FieldSpec(String id, String displayName, Field it, List<Field> befores, List<Field> afters) {
+  public static FieldSpec create(String id, Field it, List<Field> befores, List<Field> afters) {
+    return new FieldSpec(id, it, befores, afters);
+  }
+
+  private FieldSpec(String id, Field it, List<Field> befores, List<Field> afters) {
     super(id);
     this.assertionField = it;
     this.befores = befores;

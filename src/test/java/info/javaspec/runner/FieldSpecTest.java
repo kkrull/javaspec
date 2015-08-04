@@ -225,8 +225,7 @@ public class FieldSpecTest {
   }
 
   private static Spec exampleWithNestedFullFixture() {
-    return new FieldSpec(
-      ContextClasses.NestedFullFixture.class.getSimpleName(),
+    return FieldSpec.create(
       ContextClasses.NestedFullFixture.class.getSimpleName(),
       readField(ContextClasses.NestedFullFixture.innerContext.class, "asserts"),
       newArrayList(readField(ContextClasses.NestedFullFixture.class, "arranges"),
@@ -236,8 +235,7 @@ public class FieldSpecTest {
 
   private static Spec exampleWith(Class<?> context, String it, List<String> befores, List<String> afters) {
     try {
-      return new FieldSpec(
-        context.getSimpleName(),
+      return FieldSpec.create(
         context.getSimpleName(),
         it == null ? null : readField(context, it),
         befores.stream().map(x -> readField(context, x)).collect(toList()),
