@@ -17,21 +17,25 @@ import static java.util.stream.Collectors.toList;
 
 class ClassContext extends Context {
   private final List<Spec> specs;
-  private final List<Context> subcontexts;
+  private final List<Context> subContexts;
 
   public static ClassContext create(Class<?> source) {
     List<Spec> specs = readDeclaredItFields(source)
-      .map(x -> FieldSpec.create("", null, new ArrayList<>(0), new ArrayList<>(0)))
+      .map(x -> FieldSpec.create(
+        "ClassContext::create",
+        null,
+        new ArrayList<>(0),
+        new ArrayList<>(0)))
       .collect(toList());
-    List<Context> subcontexts = readInnerClasses(source)
+    List<Context> subContexts = readInnerClasses(source)
       .map(ClassContext::create)
       .collect(toList());
-    return new ClassContext("", specs, subcontexts);
+    return new ClassContext("", specs, subContexts);
   }
 
-  protected ClassContext(String id, List<Spec> specs, List<Context> subcontexts) {
+  protected ClassContext(String id, List<Spec> specs, List<Context> subContexts) {
     super(id);
-    this.subcontexts = subcontexts;
+    this.subContexts = subContexts;
     this.specs = specs;
   }
 
@@ -59,12 +63,13 @@ class ClassContext extends Context {
 
   @Override
   public void run(RunNotifier notifier) {
+    getSpecs().forEach(x -> x.run(notifier));
     getSubContexts().forEach(x -> x.run(notifier));
   }
 
   private Stream<Spec> getSpecs() { return specs.stream(); }
 
-  private Stream<Context> getSubContexts() { return subcontexts.stream(); }
+  private Stream<Context> getSubContexts() { return subContexts.stream(); }
 
   private static Stream<Field> readDeclaredItFields(Class<?> context) {
     return readDeclaredFields(context, It.class);
