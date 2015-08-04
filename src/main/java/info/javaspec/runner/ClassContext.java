@@ -7,20 +7,29 @@ import org.junit.runner.notification.RunNotifier;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
+
 class ClassContext extends Context {
-  private final Class<?> source;
+  private final List<Field> specFields;
+  private final List<Context> subcontexts;
 
   public static ClassContext create(Class<?> source) {
-    return new ClassContext("", source);
+    return new ClassContext(
+      "",
+      readDeclaredItFields(source).collect(toList()),
+      readInnerClasses(source).map(ClassContext::create).collect(toList())
+    );
   }
 
-  private ClassContext(String id, Class<?> source) {
+  private ClassContext(String id, List<Field> specFields, List<Context> subcontexts) {
     super(id);
-    this.source = source;
+    this.subcontexts = subcontexts;
+    this.specFields = specFields;
   }
 
   @Override
@@ -31,7 +40,7 @@ class ClassContext extends Context {
   @Override
   public boolean hasSpecs() {
     boolean hasOwnExamples = getSpecs().findAny().isPresent();
-    boolean childrenHaveExamples = getSubContexts().anyMatch(ClassContext::hasSpecs);
+    boolean childrenHaveExamples = getSubContexts().anyMatch(Context::hasSpecs);
     return hasOwnExamples || childrenHaveExamples;
   }
 
@@ -39,7 +48,7 @@ class ClassContext extends Context {
   public long numSpecs() {
     long declaredInSelf = getSpecs().count();
     long declaredInDescendants = getSubContexts()
-      .map(ClassContext::numSpecs)
+      .map(Context::numSpecs)
       .collect(Collectors.summingLong(x -> x));
 
     return declaredInSelf + declaredInDescendants;
@@ -49,13 +58,9 @@ class ClassContext extends Context {
   public void run(RunNotifier notifier) {
   }
 
-  private Stream<Field> getSpecs() {
-    return readDeclaredItFields(source);
-  }
+  private Stream<Field> getSpecs() { return specFields.stream(); }
 
-  private Stream<ClassContext> getSubContexts() {
-    return readInnerClasses(source).map(ClassContext::create);
-  }
+  private Stream<Context> getSubContexts() { return subcontexts.stream(); }
 
   private static Stream<Field> readDeclaredItFields(Class<?> context) {
     return readDeclaredFields(context, It.class);
