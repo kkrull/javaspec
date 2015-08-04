@@ -84,10 +84,33 @@ public class ClassContextTest {
       }
     }
 
+    public class given1OrMoreSpecs {
+      private final RunNotifier notifier = Mockito.mock(RunNotifier.class);
+
+      @Test
+      public void runsEachSpec() throws Exception {
+        Spec firstChild = MockSpec.anyValid();
+        Spec secondChild = MockSpec.anyValid();
+        ClassContext subject = AClassContext.withSpecs(firstChild, secondChild);
+
+        subject.run(notifier);
+        Mockito.verify(firstChild).run(notifier);
+        Mockito.verify(secondChild).run(notifier);
+      }
+    }
+
     public class given1OrMoreSubContexts {
+      private final RunNotifier notifier = Mockito.mock(RunNotifier.class);
+
       @Test
       public void runsEachSubcontext() throws Exception {
-        assertThat("pending", equalTo("passing"));
+        ClassContext firstChild = MockContext.anyValid();
+        ClassContext secondChild = MockContext.anyValid();
+        ClassContext subject = AClassContext.withSubContexts(firstChild, secondChild);
+
+        subject.run(notifier);
+        Mockito.verify(firstChild).run(notifier);
+        Mockito.verify(secondChild).run(notifier);
       }
     }
   }
@@ -105,6 +128,26 @@ public class ClassContextTest {
   public static final class AClassContext {
     public static ClassContext of(Class<?> source) {
       return ClassContext.create(source);
+    }
+
+    public static ClassContext withSpecs(Spec... specs) {
+      return new ClassContext("", newArrayList(specs), newArrayList());
+    }
+
+    public static ClassContext withSubContexts(ClassContext... subcontexts) {
+      return new ClassContext("", newArrayList(), newArrayList(subcontexts));
+    }
+  }
+
+  public static final class MockContext {
+    public static ClassContext anyValid() {
+      return Mockito.mock(ClassContext.class);
+    }
+  }
+
+  public static final class MockSpec {
+    public static Spec anyValid() {
+      return Mockito.mock(Spec.class);
     }
   }
 }

@@ -7,6 +7,7 @@ import org.junit.runner.notification.RunNotifier;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -15,21 +16,23 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 
 class ClassContext extends Context {
-  private final List<Field> specFields;
+  private final List<Spec> specs;
   private final List<Context> subcontexts;
 
   public static ClassContext create(Class<?> source) {
-    return new ClassContext(
-      "",
-      readDeclaredItFields(source).collect(toList()),
-      readInnerClasses(source).map(ClassContext::create).collect(toList())
-    );
+    List<Spec> specs = readDeclaredItFields(source)
+      .map(x -> FieldSpec.create("", null, new ArrayList<>(0), new ArrayList<>(0)))
+      .collect(toList());
+    List<Context> subcontexts = readInnerClasses(source)
+      .map(ClassContext::create)
+      .collect(toList());
+    return new ClassContext("", specs, subcontexts);
   }
 
-  private ClassContext(String id, List<Field> specFields, List<Context> subcontexts) {
+  protected ClassContext(String id, List<Spec> specs, List<Context> subcontexts) {
     super(id);
     this.subcontexts = subcontexts;
-    this.specFields = specFields;
+    this.specs = specs;
   }
 
   @Override
@@ -56,9 +59,10 @@ class ClassContext extends Context {
 
   @Override
   public void run(RunNotifier notifier) {
+    getSubContexts().forEach(x -> x.run(notifier));
   }
 
-  private Stream<Field> getSpecs() { return specFields.stream(); }
+  private Stream<Spec> getSpecs() { return specs.stream(); }
 
   private Stream<Context> getSubContexts() { return subcontexts.stream(); }
 

@@ -3,6 +3,7 @@ package info.javaspec.runner;
 import info.javaspec.dsl.Before;
 import info.javaspec.dsl.Cleanup;
 import info.javaspec.dsl.It;
+import org.junit.runner.notification.RunNotifier;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -33,6 +34,11 @@ final class FieldSpec extends Spec {
   @Override
   public boolean isIgnored() {
     return theTestFunction().hasUnassignedFunctions();
+  }
+
+  @Override
+  public void run(RunNotifier notifier) {
+    throw new UnsupportedOperationException();
   }
 
   @Override

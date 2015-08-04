@@ -140,6 +140,9 @@ public class JavaSpecRunnerTest {
     public boolean isIgnored() { return false; }
 
     @Override
-    public void run() { return; }
+    public void run(RunNotifier notifier) { }
+
+    @Override
+    public void run() { }
   }
 }
