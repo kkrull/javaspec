@@ -3,46 +3,34 @@ package info.javaspec.runner;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public final class FakeContext extends Context {
-  public final List<FakeSpec> specs;
-  public final List<FakeContext> subcontexts;
-  private long numSpecs;
-  private Description description;
+  private final long numSpecs;
+  private final Description description;
 
   public static FakeContext withDescription(Description description) {
-    FakeContext context = new FakeContext("Root", 1);
-    context.description = description;
-    return context;
-  }
-
-  public static FakeContext withNumSpecs(String id, long numSpecs) {
-    return new FakeContext(id, numSpecs);
-  }
-
-  public static FakeContext withSpecs(FakeSpec... specs) {
-    return new FakeContext("root", Arrays.asList(specs), new ArrayList<>(0));
+    return new FakeContext("withDescription", 1, description);
   }
 
   public static FakeContext withNoSpecs(String id) {
-    return new FakeContext(id, new ArrayList<>(0), new ArrayList<>(0));
+    return new FakeContext(id, 0, suiteDescription(id));
   }
 
-  private FakeContext(String id, long numSpecs) {
+  public static FakeContext withNumSpecs(long numSpecs) {
+    return new FakeContext("withNumSpecs", numSpecs, suiteDescription("withNumSpecs"));
+  }
+
+  public static FakeContext withNumSpecs(String id, long numSpecs) {
+    return new FakeContext(id, numSpecs, suiteDescription(id));
+  }
+
+  private static Description suiteDescription(String id) {
+    return Description.createSuiteDescription(id, id);
+  }
+
+  private FakeContext(String id, long numSpecs, Description description) {
     super(id);
-    this.specs = new ArrayList<>(0);
-    this.subcontexts = new ArrayList<>(0);
     this.numSpecs = numSpecs;
-  }
-
-  private FakeContext(String id, List<FakeSpec> specs, List<FakeContext> subcontexts) {
-    super(id);
-    this.specs = specs;
-    this.subcontexts = subcontexts;
-    this.numSpecs = this.specs.size();
+    this.description = description;
   }
 
   @Override

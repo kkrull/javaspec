@@ -2,11 +2,7 @@ package info.javaspec.runner;
 
 import org.junit.runner.notification.RunNotifier;
 
-public class FakeSpec extends Spec {
-  public static FakeSpec with(String id) {
-    return new FakeSpec(id);
-  }
-
+public final class FakeSpec extends Spec {
   private FakeSpec(String id) {
     super(id);
   }

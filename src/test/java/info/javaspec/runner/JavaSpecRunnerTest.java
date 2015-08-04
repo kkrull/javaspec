@@ -53,7 +53,7 @@ public class JavaSpecRunnerTest {
   public class testCount {
     @Test
     public void givenAContextWithAnIntegerNumberOfSpecs_delegatesToTheRootContext() throws Exception {
-      subject = new JavaSpecRunner(FakeContext.withSpecs(FakeSpec.with("one"), FakeSpec.with("two")));
+      subject = new JavaSpecRunner(FakeContext.withNumSpecs(2));
       assertThat(subject.testCount(), equalTo(2));
     }
 
