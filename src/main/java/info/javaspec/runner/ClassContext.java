@@ -30,18 +30,22 @@ class ClassContext extends Context {
     List<Context> subContexts = readInnerClasses(source)
       .map(ClassContext::create)
       .collect(toList());
-    return new ClassContext("", specs, subContexts);
+    return new ClassContext(source.getSimpleName(), specs, subContexts);
   }
 
   protected ClassContext(String id, List<Spec> specs, List<Context> subContexts) {
     super(id);
-    this.subContexts = subContexts;
     this.specs = specs;
+    this.subContexts = subContexts;
   }
 
   @Override
   public Description getDescription() {
-    throw new UnsupportedOperationException();
+    Description suite = Description.createSuiteDescription(getId(), "");
+//    Description suite = Description.createSuiteDescription(displayName, id);
+//    getSpecs().forEach(x -> x.addDescriptionTo(suite));
+//    getSubContexts().map(ClassContext::describe).forEach(suite::addChild);
+    return suite;
   }
 
   @Override
