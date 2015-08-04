@@ -2,12 +2,7 @@ package info.javaspec.runner;
 
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
-import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * JUnit test runner for specs written in lambdas and organized into context classes.
@@ -51,7 +46,7 @@ public final class JavaSpecRunner extends Runner {
     this.rootContext = rootContext;
 
     if(!rootContext.hasSpecs())
-      throw new NoSpecs(rootContext.getId());
+      throw NoSpecs.forContext(rootContext.getId());
   }
 
   @Override
@@ -68,24 +63,25 @@ public final class JavaSpecRunner extends Runner {
   public int testCount() {
     long numSpecs = rootContext.numSpecs();
     if(numSpecs > Integer.MAX_VALUE)
-      throw new TooManySpecs(rootContext.getId(), numSpecs);
+      throw TooManySpecs.forContext(rootContext.getId(), numSpecs);
     else
       return (int)numSpecs;
   }
 
   public static final class NoSpecs extends RuntimeException {
-    private static final long serialVersionUID = 1L;
-
-    public NoSpecs(String contextName) {
-      super(String.format("Context %s must contain at least 1 spec", contextName));
+    public static NoSpecs forContext(String id) {
+      return new NoSpecs(String.format("Context %s must contain at least 1 spec", id));
     }
+
+    private NoSpecs(String message) { super(message); }
   }
 
   public static final class TooManySpecs extends RuntimeException {
-    private static final String FORMAT = "Context %s has more specs than JUnit can support: %d";
-
-    public TooManySpecs(String contextName, long numSpecs) {
-      super(String.format(FORMAT, contextName, numSpecs));
+    public static TooManySpecs forContext(String id, long numSpecs) {
+      String message = String.format("Context %s has more specs than JUnit can support: %d", id, numSpecs);
+      return new TooManySpecs(message);
     }
+
+    private TooManySpecs(String message) { super(message); }
   }
 }
