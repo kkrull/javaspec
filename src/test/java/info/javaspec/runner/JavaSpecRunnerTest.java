@@ -10,16 +10,15 @@ import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.mockito.Mockito;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Sets.newHashSet;
 import static info.javaspec.testutil.Assertions.capture;
 import static info.javaspec.testutil.Matchers.matchesRegex;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assume.assumeThat;
-import static org.mockito.Mockito.mock;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -30,7 +29,7 @@ public class JavaSpecRunnerTest {
   public class constructor {
     @Test
     public void givenAClassWithoutAnySpecs_throwsNoSpecs() throws Exception {
-      Context rootContext = FakeContext.withNoSpecs("ContextClasses$Empty", "Root context");
+      Context rootContext = FakeContext.withNoSpecs("ContextClasses$Empty");
       Exception ex = capture(NoSpecs.class, () -> new JavaSpecRunner(rootContext));
       assertThat(ex.getMessage(), matchesRegex("^Context ContextClasses[$]Empty must contain at least 1 spec"));
     }
@@ -39,7 +38,7 @@ public class JavaSpecRunnerTest {
   public class getDescription {
     @Test
     public void delegatesToTheRootContext() throws Exception {
-      Description description = Description.createSuiteDescription("Root", Long.valueOf(1L));
+      Description description = Description.createSuiteDescription("Root", 1L);
       subject = new JavaSpecRunner(FakeContext.withDescription(description));
       assertThat(subject.getDescription(), sameInstance(description));
     }
@@ -70,7 +69,7 @@ public class JavaSpecRunnerTest {
     }
   }
 
-  public static final class FakeContext extends Context {
+  private static final class FakeContext extends Context {
     public final List<FakeSpec> specs;
     public final List<FakeContext> subcontexts;
     private long numSpecs;
@@ -84,31 +83,31 @@ public class JavaSpecRunnerTest {
     }
 
     public static FakeContext withDescription(Description description) {
-      FakeContext context = new FakeContext("Root", "Root", 1);
+      FakeContext context = new FakeContext("Root", 1);
       context.description = description;
       return context;
     }
 
     public static FakeContext withNumSpecs(String id, long numSpecs) {
-      return new FakeContext(id, id, numSpecs);
+      return new FakeContext(id, numSpecs);
     }
 
     public static FakeContext withSpecs(FakeSpec... specs) {
-      return new FakeContext("root", "root", Arrays.asList(specs), new ArrayList<>(0));
+      return new FakeContext("root", Arrays.asList(specs), new ArrayList<>(0));
     }
 
-    public static FakeContext withNoSpecs(String id, String displayName) {
-      return new FakeContext(id, displayName, new ArrayList<>(0), new ArrayList<>(0));
+    public static FakeContext withNoSpecs(String id) {
+      return new FakeContext(id, new ArrayList<>(0), new ArrayList<>(0));
     }
 
-    private FakeContext(String id, String displayName, long numSpecs) {
+    private FakeContext(String id, long numSpecs) {
       super(id);
       this.specs = new ArrayList<>(0);
       this.subcontexts = new ArrayList<>(0);
       this.numSpecs = numSpecs;
     }
 
-    private FakeContext(String id, String displayName, List<FakeSpec> specs, List<FakeContext> subcontexts) {
+    private FakeContext(String id, List<FakeSpec> specs, List<FakeContext> subcontexts) {
       super(id);
       this.specs = specs;
       this.subcontexts = subcontexts;
@@ -125,28 +124,22 @@ public class JavaSpecRunnerTest {
     public long numSpecs() { return numSpecs; }
 
     @Override
-    public void run(RunNotifier notifier) {
-      throw new UnsupportedOperationException();
-    }
+    public void run(RunNotifier notifier) { throw new UnsupportedOperationException(); }
   }
 
   private static class FakeSpec extends Spec {
-    private final boolean isIgnored;
-    public int runCount;
-
     public static FakeSpec with(String id) {
-      return new FakeSpec(id, id, false);
+      return new FakeSpec(id);
     }
 
-    public FakeSpec(String id, String displayName, boolean isIgnored) {
-      super(id, displayName);
-      this.isIgnored = isIgnored;
+    private FakeSpec(String id) {
+      super(id);
     }
 
     @Override
-    public boolean isIgnored() { return isIgnored; }
+    public boolean isIgnored() { return false; }
 
     @Override
-    public void run() { runCount++; }
+    public void run() { return; }
   }
 }

@@ -20,7 +20,7 @@ final class FieldSpec extends Spec {
   private TestFunction testFunction;
 
   public FieldSpec(String id, String displayName, Field it, List<Field> befores, List<Field> afters) {
-    super(id, displayName);
+    super(id);
     this.assertionField = it;
     this.befores = befores;
     this.afters = afters;
