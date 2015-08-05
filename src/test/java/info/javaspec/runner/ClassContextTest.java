@@ -2,6 +2,8 @@ package info.javaspec.runner;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspecproto.ContextClasses;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -13,9 +15,15 @@ import org.mockito.Mockito;
 
 import javax.management.Descriptor;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newHashSet;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -153,11 +161,27 @@ public class ClassContextTest {
   public class getDescription {
     private Description returned;
 
-    @Test
-    public void returnsASuiteWithADisplayNameOfTheSimpleClassName() throws Exception {
-      subject = AClassContext.of(ContextClasses.OneIt.class);
-      returned = subject.getDescription();
-      assertThat(returned.getDisplayName(), equalTo("OneIt"));
+    public class givenAContextClass {
+      @Before
+      public void setup() throws Exception {
+        subject = AClassContext.of(ContextClasses.OneIt.class);
+        returned = subject.getDescription();
+      }
+
+      @Test @Ignore
+      public void returnsASuiteDescription() throws Exception {
+        assertThat(returned, DescriptionMatchers.isSuiteDescription());
+      }
+
+      @Test
+      public void namesTheRootDescriptionWithTheSimpleNameOfTheRootContextClass() throws Exception {
+        assertThat(returned.getDisplayName(), equalTo("OneIt"));
+      }
+
+      @Test
+      public void hasTestDescriptionsForEachSpecInTheContext() throws Exception {
+        assertThat(Descriptions.childDisplayNames(returned), equalTo(newHashSet("only_test")));
+      }
     }
 
     public class givenNoSpecsOrSubContexts {
@@ -263,6 +287,76 @@ public class ClassContextTest {
 
     public static ClassContext withSubContexts(Context... subContexts) {
       return new ClassContext("withSubContexts", newArrayList(), newArrayList(subContexts));
+    }
+  }
+
+  private static final class Descriptions {
+    private Descriptions() { /* static class */ }
+
+    public static Set<String> childDisplayNames(Description description) {
+      return description.getChildren().stream().map(Description::getDisplayName).collect(toSet());
+    }
+  }
+
+  private static final class DescriptionMatchers {
+    private DescriptionMatchers() { /* static class */ }
+
+    public static Matcher<? super Description> hasChildrenNamed(String... names) {
+      final Set<String> expectedNames = Stream.of(names).collect(toSet());
+
+      return new BaseMatcher<Description>() {
+        @Override
+        public boolean matches(Object item) {
+          if(item.getClass() != Description.class)
+            return false;
+
+          Description description = Description.class.cast(item);
+          Set<String> actualNames = description.getChildren().stream().map(Description::getDisplayName).collect(toSet());
+          return expectedNames.equals(actualNames);
+        }
+
+        @Override
+        public void describeTo(org.hamcrest.Description description) {
+          description.appendText("a description with children named ");
+          description.appendValueList("[", ",", "]", expectedNames);
+        }
+      };
+    }
+
+    public static Matcher<? super Description> isSuiteDescription() {
+      return new BaseMatcher<Description>() {
+        @Override
+        public boolean matches(Object item) {
+          if(item.getClass() != Description.class)
+            return false;
+
+          Description description = Description.class.cast(item);
+          return description.isSuite() && !description.isTest();
+        }
+
+        @Override
+        public void describeTo(org.hamcrest.Description description) {
+          description.appendText("a suite description");
+        }
+      };
+    }
+
+    public static Matcher<? super Description> isTestDescription() {
+      return new BaseMatcher<Description>() {
+        @Override
+        public boolean matches(Object item) {
+          if(item.getClass() != Description.class)
+            return false;
+
+          Description description = Description.class.cast(item);
+          return !description.isSuite() && description.isTest();
+        }
+
+        @Override
+        public void describeTo(org.hamcrest.Description description) {
+          description.appendText("a test description");
+        }
+      };
     }
   }
 }
