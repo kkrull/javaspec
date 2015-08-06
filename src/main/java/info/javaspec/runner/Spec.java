@@ -1,5 +1,6 @@
 package info.javaspec.runner;
 
+import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
 abstract class Spec {
@@ -13,4 +14,5 @@ abstract class Spec {
   public abstract boolean isIgnored();
   public abstract void run() throws Exception;
   public abstract void run(RunNotifier notifier);
+  public abstract void addDescriptionTo(Description suite);
 }

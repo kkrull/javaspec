@@ -21,9 +21,9 @@ class ClassContext extends Context {
 
   public static ClassContext create(Class<?> source) {
     List<Spec> specs = readDeclaredItFields(source)
-      .map(x -> FieldSpec.create(
+      .map(it -> FieldSpec.create(
         "ClassContext::create",
-        null,
+        it,
         new ArrayList<>(0),
         new ArrayList<>(0)))
       .collect(toList());
@@ -43,8 +43,8 @@ class ClassContext extends Context {
   public Description getDescription() {
     Description suite = Description.createSuiteDescription(getId(), "");
 //    Description suite = Description.createSuiteDescription(displayName, id);
-//    getSpecs().forEach(x -> x.addDescriptionTo(suite));
-//    getSubContexts().map(ClassContext::describe).forEach(suite::addChild);
+    getSpecs().forEach(x -> x.addDescriptionTo(suite));
+    getSubContexts().map(Context::getDescription).forEach(suite::addChild);
     return suite;
   }
 

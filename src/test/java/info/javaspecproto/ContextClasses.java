@@ -196,6 +196,16 @@ public class ContextClasses {
     It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
   }
 
+  public static class TwoContexts {
+    public class subcontext1 {
+      It asserts = () -> assertEquals(1, 1);
+    }
+
+    public class subcontext2 {
+      It asserts = () -> assertEquals(2, 2);
+    }
+  }
+
   public static class TwoEstablish {
     private final List<String> orderMatters = new LinkedList<String>();
     Establish setup_part_one = () -> orderMatters.add("do this first");
@@ -208,7 +218,16 @@ public class ContextClasses {
     It second_test = () -> notifyEvent.accept("TwoIt::second_test");
   }
 
+  public static class TwoIts {
+    It one = () -> assertEquals(1, 1);
+    It two = () -> assertEquals(2, 2);
+  }
+
   public static class StaticIt {
     static It looks_like_an_isolated_test_but_beware = () -> assertThat("this test", not("independent"));
+  }
+
+  public static class UnderscoreIt {
+    It read_me = () -> assertEquals(1, 1);
   }
 }

@@ -2,9 +2,6 @@ package info.javaspec.runner;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspecproto.ContextClasses;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Matcher;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -13,17 +10,10 @@ import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
 import org.mockito.Mockito;
 
-import javax.management.Descriptor;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
-
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
+import static info.javaspec.runner.Descriptions.isSuiteDescription;
+import static info.javaspec.runner.Descriptions.isTestDescription;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -34,45 +24,6 @@ public class ClassContextTest {
   private ClassContext subject;
 
   public class getDescription_reference {
-    public class givenAContextHierarchy {
-      @Test public void nop() throws Exception { }
-//      @Before
-//      public void setup() {
-//        gateway.init(1,
-//          aNestedContext("Root",
-//            aNestedContext("Middle",
-//              aLeafContext("Bottom", aSpec("one"))))
-//        );
-//        description = subject.getDescription();
-//      }
-//
-//      @Test
-//      public void createsASuiteHierarchyMatchingTheContextHierarchy() throws Exception {
-//        assertThat(description, isASuiteDescription("Root"));
-//        assertThat(onlyChild(description), isASuiteDescription("Middle"));
-//        assertThat(onlyChild(onlyChild(description)), isASuiteDescription("Bottom"));
-//      }
-    }
-
-    public class givenAContext {
-      @Test public void nop() throws Exception { }
-//      @Before
-//      public void setup() throws Exception {
-//        givenTheGatewayHasSpecs(1, aLeafContext("RootId", "RootDisplay", aSpec("one"), aSpec("two")));
-//        description = subject.getDescription();
-//      }
-//
-//      @Test
-//      public void createsASuiteDescriptionForThatContext_whereTheSuiteClassNameIsTheContextDisplayName() {
-//        assertThat(description, isASuiteDescription("RootDisplay"));
-//      }
-//
-//      @Test
-//      public void addsATestDescriptionForEachSpecInTheContext() throws Exception {
-//        assertThat(description.getChildren(), hasSize(2));
-//      }
-    }
-
     public class givenASpec {
       @Test public void nop() throws Exception { }
 //      @Before
@@ -161,36 +112,67 @@ public class ClassContextTest {
   public class getDescription {
     private Description returned;
 
-    public class givenAContextClass {
+    public class givenNoSpecsOrSubContexts {
+      @Test
+      public void hasNoChildren() throws Exception {
+        subject = AClassContext.of(ContextClasses.Empty.class);
+        returned = subject.getDescription();
+        assertThat(returned.getChildren(), equalTo(newArrayList()));
+      }
+    }
+
+    public class givenAContextClassWithSpecsOrSubContexts {
       @Before
       public void setup() throws Exception {
         subject = AClassContext.of(ContextClasses.OneIt.class);
         returned = subject.getDescription();
       }
 
-      @Test @Ignore
+      @Test
       public void returnsASuiteDescription() throws Exception {
-        assertThat(returned, DescriptionMatchers.isSuiteDescription());
+        assertThat(returned, isSuiteDescription());
       }
 
       @Test
       public void namesTheRootDescriptionWithTheSimpleNameOfTheRootContextClass() throws Exception {
         assertThat(returned.getDisplayName(), equalTo("OneIt"));
       }
-
-      @Test
-      public void hasTestDescriptionsForEachSpecInTheContext() throws Exception {
-        assertThat(Descriptions.childDisplayNames(returned), equalTo(newHashSet("only_test")));
-      }
     }
 
-    public class givenNoSpecsOrSubContexts {
+    public class givenAContextClassWithSpecs {
       @Test
-      public void returnsASuiteWithNoChildren() throws Exception {
-        subject = AClassContext.of(ContextClasses.Empty.class);
+      public void hasTestDescriptionsForEachSpecInTheContext() throws Exception {
+        subject = AClassContext.of(ContextClasses.TwoIts.class);
         returned = subject.getDescription();
-        assertThat(returned.getChildren(), equalTo(newArrayList()));
+        assertThat(Descriptions.childMethodNames(returned), equalTo(newHashSet("one", "two")));
+        assertThat(returned.getChildren(), contains(isTestDescription(), isTestDescription()));
       }
+
+      @Test
+      public void humanizesItFieldNamesIntoHumanReadableMethodNames_replacingUnderscoreWithSpace() throws Exception {
+        subject = AClassContext.of(ContextClasses.UnderscoreIt.class);
+        returned = subject.getDescription();
+        assertThat(Descriptions.childMethodNames(returned), equalTo(newHashSet("read me")));
+      }
+
+      @Test @Ignore
+      public void whatShouldItDoForClassName() throws Exception {}
+    }
+
+    public class givenAContextClassWithSubContextClasses {
+      @Test
+      public void hasSuiteDescriptionsForEachSubContextClass() throws Exception {
+        subject = AClassContext.of(ContextClasses.TwoContexts.class);
+        returned = subject.getDescription();
+        assertThat(Descriptions.childClassNames(returned), equalTo(newHashSet("subcontext1", "subcontext2")));
+        assertThat(returned.getChildren(), contains(isSuiteDescription(), isSuiteDescription()));
+      }
+
+      @Test @Ignore
+      public void humanizesSubContextClassNamesIntoHumanReadableClassNames_replacingUnderscoreWithSpace() throws Exception {}
+
+      @Test @Ignore
+      public void whatShouldItDoForMethodName() throws Exception {}
     }
   }
 
@@ -287,76 +269,6 @@ public class ClassContextTest {
 
     public static ClassContext withSubContexts(Context... subContexts) {
       return new ClassContext("withSubContexts", newArrayList(), newArrayList(subContexts));
-    }
-  }
-
-  private static final class Descriptions {
-    private Descriptions() { /* static class */ }
-
-    public static Set<String> childDisplayNames(Description description) {
-      return description.getChildren().stream().map(Description::getDisplayName).collect(toSet());
-    }
-  }
-
-  private static final class DescriptionMatchers {
-    private DescriptionMatchers() { /* static class */ }
-
-    public static Matcher<? super Description> hasChildrenNamed(String... names) {
-      final Set<String> expectedNames = Stream.of(names).collect(toSet());
-
-      return new BaseMatcher<Description>() {
-        @Override
-        public boolean matches(Object item) {
-          if(item.getClass() != Description.class)
-            return false;
-
-          Description description = Description.class.cast(item);
-          Set<String> actualNames = description.getChildren().stream().map(Description::getDisplayName).collect(toSet());
-          return expectedNames.equals(actualNames);
-        }
-
-        @Override
-        public void describeTo(org.hamcrest.Description description) {
-          description.appendText("a description with children named ");
-          description.appendValueList("[", ",", "]", expectedNames);
-        }
-      };
-    }
-
-    public static Matcher<? super Description> isSuiteDescription() {
-      return new BaseMatcher<Description>() {
-        @Override
-        public boolean matches(Object item) {
-          if(item.getClass() != Description.class)
-            return false;
-
-          Description description = Description.class.cast(item);
-          return description.isSuite() && !description.isTest();
-        }
-
-        @Override
-        public void describeTo(org.hamcrest.Description description) {
-          description.appendText("a suite description");
-        }
-      };
-    }
-
-    public static Matcher<? super Description> isTestDescription() {
-      return new BaseMatcher<Description>() {
-        @Override
-        public boolean matches(Object item) {
-          if(item.getClass() != Description.class)
-            return false;
-
-          Description description = Description.class.cast(item);
-          return !description.isSuite() && description.isTest();
-        }
-
-        @Override
-        public void describeTo(org.hamcrest.Description description) {
-          description.appendText("a test description");
-        }
-      };
     }
   }
 }

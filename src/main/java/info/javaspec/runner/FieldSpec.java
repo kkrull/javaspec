@@ -3,6 +3,7 @@ package info.javaspec.runner;
 import info.javaspec.dsl.Before;
 import info.javaspec.dsl.Cleanup;
 import info.javaspec.dsl.It;
+import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
 import java.lang.reflect.Constructor;
@@ -29,6 +30,11 @@ final class FieldSpec extends Spec {
     this.assertionField = it;
     this.befores = befores;
     this.afters = afters;
+  }
+
+  @Override
+  public void addDescriptionTo(Description suite) {
+    suite.addChild(Description.createTestDescription("className", assertionField.getName(), "id"));
   }
 
   @Override
