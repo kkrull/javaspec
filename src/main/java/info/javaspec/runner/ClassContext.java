@@ -41,7 +41,10 @@ class ClassContext extends Context {
 
   @Override
   public Description getDescription() {
-    Description suite = Description.createSuiteDescription(getId(), "");
+    Description suite = Description.createSuiteDescription(
+      getId(),
+//      humanize(getId()),
+      "");
 //    Description suite = Description.createSuiteDescription(displayName, id);
     getSpecs().forEach(x -> x.addDescriptionTo(suite));
     getSubContexts().map(Context::getDescription).forEach(suite::addChild);
@@ -89,5 +92,9 @@ class ClassContext extends Context {
     Predicate<Class<?>> isNonStatic = x -> !Modifier.isStatic(x.getModifiers());
     return Stream.of(parent.getDeclaredClasses())
       .filter(isNonStatic);
+  }
+
+  private static String humanize(String behaviorOrContext) {
+    return behaviorOrContext.replace('_', ' ');
   }
 }

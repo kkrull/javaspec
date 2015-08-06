@@ -149,14 +149,13 @@ public class ClassContextTest {
       }
 
       @Test
-      public void humanizesItFieldNamesIntoHumanReadableMethodNames_replacingUnderscoreWithSpace() throws Exception {
+      public void humanizesClassAndFieldNamesIntoHumanReadableClassAndMethodNames_replacingUnderscoreWithSpace() throws Exception {
         subject = AClassContext.of(ContextClasses.UnderscoreIt.class);
         returned = subject.getDescription();
+        assertThat(Descriptions.childClassNames(returned), equalTo(newHashSet("UnderscoreIt")));
         assertThat(Descriptions.childMethodNames(returned), equalTo(newHashSet("read me")));
+//        assertThat(Descriptions.childDisplayNames(returned), equalTo(newHashSet("read me[UnderscoreIt]")));
       }
-
-      @Test @Ignore
-      public void whatShouldItDoForClassName() throws Exception {}
     }
 
     public class givenAContextClassWithSubContextClasses {
@@ -169,7 +168,12 @@ public class ClassContextTest {
       }
 
       @Test @Ignore
-      public void humanizesSubContextClassNamesIntoHumanReadableClassNames_replacingUnderscoreWithSpace() throws Exception {}
+      public void humanizesSubContextClassNamesIntoHumanReadableClassNames_replacingUnderscoreWithSpace() throws Exception {
+        subject = AClassContext.of(ContextClasses.UnderscoreSubContext.class);
+        returned = subject.getDescription();
+        assertThat(Descriptions.childClassNames(returned), equalTo(newHashSet("read me")));
+        assertThat(returned.getChildren(), contains(isSuiteDescription(), isSuiteDescription()));
+      }
 
       @Test @Ignore
       public void whatShouldItDoForMethodName() throws Exception {}

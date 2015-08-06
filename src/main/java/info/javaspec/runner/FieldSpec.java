@@ -34,7 +34,15 @@ final class FieldSpec extends Spec {
 
   @Override
   public void addDescriptionTo(Description suite) {
-    suite.addChild(Description.createTestDescription("className", assertionField.getName(), "id"));
+    Description description = Description.createTestDescription(
+      assertionField.getDeclaringClass().getSimpleName(),
+      humanize(assertionField.getName()),
+      "id");
+    suite.addChild(description);
+  }
+
+  private static String humanize(String behaviorOrContext) {
+    return behaviorOrContext.replace('_', ' ');
   }
 
   @Override

@@ -230,4 +230,10 @@ public class ContextClasses {
   public static class UnderscoreIt {
     It read_me = () -> assertEquals(1, 1);
   }
+
+  public static class UnderscoreSubContext {
+    public class read_me {
+      It asserts = () -> assertEquals(1, 1);
+    }
+  }
 }
