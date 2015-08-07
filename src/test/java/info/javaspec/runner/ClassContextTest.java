@@ -24,30 +24,6 @@ public class ClassContextTest {
   private ClassContext subject;
 
   public class getDescription_reference {
-    public class givenASpec {
-      @Test public void nop() throws Exception { }
-//      @Before
-//      public void setup() throws Exception {
-//        givenTheGatewayHasSpecs(1, aLeafContext("RootId", "RootDisplay", aSpec("oneId", "oneDisplay")));
-//        description = onlyChild(subject.getDescription());
-//      }
-//
-//      @Test
-//      public void createsATestDescriptionForThatContext() {
-//        assertThat(description, isATestDescription());
-//      }
-//
-//      @Test
-//      public void usesTheContextDisplayNameForTheTestClassName() {
-//        assertThat(description.getClassName(), equalTo("RootDisplay"));
-//      }
-//
-//      @Test
-//      public void usesTheSpecDisplayNameForTheTestMethodName() {
-//        assertThat(description.getMethodName(), equalTo("oneDisplay"));
-//      }
-    }
-
     //Two context classes in different parts of the hierarchy can have the same simple name.
     //Make sure something unique is used for each Suite Description uniqueId.
     public class givenAContextHierarchyWith2OrMoreInstancesOfTheSameDisplayName {
@@ -149,12 +125,18 @@ public class ClassContextTest {
       }
 
       @Test
-      public void humanizesClassAndFieldNamesIntoHumanReadableClassAndMethodNames_replacingUnderscoreWithSpace() throws Exception {
+      public void setsTheDescriptionClassNameToTheDescriptionClassNameForTheParentContext() throws Exception {
+        subject = AClassContext.of(ContextClasses.OneIt.class);
+        returned = subject.getDescription();
+        assertThat(Descriptions.childClassNames(returned), equalTo(newHashSet("OneIt")));
+        assertThat("pending", equalTo("passing")); //TODO KDK: Maybe easier to test/explain this in the spec for naming contexts (should name the context and the class name of its child tests in a certain way)
+      }
+
+      @Test
+      public void setsTheDescriptionMethodNameToTheHumanizedFieldName() throws Exception {
         subject = AClassContext.of(ContextClasses.UnderscoreIt.class);
         returned = subject.getDescription();
-        assertThat(Descriptions.childClassNames(returned), equalTo(newHashSet("UnderscoreIt")));
         assertThat(Descriptions.childMethodNames(returned), equalTo(newHashSet("read me")));
-//        assertThat(Descriptions.childDisplayNames(returned), equalTo(newHashSet("read me[UnderscoreIt]")));
       }
     }
 
