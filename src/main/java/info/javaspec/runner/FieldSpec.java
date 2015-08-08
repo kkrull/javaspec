@@ -34,16 +34,13 @@ final class FieldSpec extends Spec {
 
   @Override
   public void addDescriptionTo(Description suite) {
-    Description description = Description.createTestDescription(
-      assertionField.getDeclaringClass().getSimpleName(),
-      humanize(assertionField.getName()),
-      "id");
+    Description description = Description.createTestDescription(suite.getClassName(), getDisplayName(), getId());
     suite.addChild(description);
   }
 
-  private static String humanize(String behaviorOrContext) {
-    return behaviorOrContext.replace('_', ' ');
-  }
+  private String getDisplayName() { return humanize(assertionField.getName()); }
+
+  private static String humanize(String identifier) { return identifier.replace('_', ' '); }
 
   @Override
   public boolean isIgnored() {

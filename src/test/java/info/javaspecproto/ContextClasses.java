@@ -20,6 +20,34 @@ public class ContextClasses {
     It is_otherwise_valid = () -> assertEquals(1, 1);
   }
 
+  public static class DuplicateContextNames {
+    public class Left {
+      public class Duplicate {
+        It runs_one = () -> assertEquals(1, 1);
+      }
+    }
+
+    public class Right {
+      public class Duplicate {
+        It runs_another = () -> assertEquals(2, 2);
+      }
+    }
+  }
+
+  public class DuplicateSpecNames {
+    public class OneSetOfConditions {
+      public class DuplicateContext {
+        It duplicate_behavior = () -> assertEquals(1, 1);
+      }
+    }
+
+    public class AnotherSetOfConditions {
+      public class DuplicateContext {
+        It duplicate_behavior = () -> assertEquals(2, 2);
+      }
+    }
+  }
+
   public static class Empty { }
 
   public static class FailingCleanup {

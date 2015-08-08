@@ -4,9 +4,13 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Matcher;
 import org.junit.runner.Description;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assume.assumeThat;
 
 public final class Descriptions {
   private Descriptions() { /* static class */ }
@@ -57,5 +61,18 @@ public final class Descriptions {
         description.appendText("a suite description");
       }
     };
+  }
+
+  public static Description onlyChild(Description description) {
+    List<Description> children = description.getChildren();
+    assumeThat(children.size(), equalTo(1));
+    return children.get(0);
+  }
+
+  public static Description onlyTest(Description description) {
+    if(description.getChildren().isEmpty() && description.isTest())
+      return description;
+    else
+      return onlyTest(onlyChild(description));
   }
 }

@@ -16,74 +16,13 @@ import static info.javaspec.runner.Descriptions.isSuiteDescription;
 import static info.javaspec.runner.Descriptions.isTestDescription;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
 @RunWith(HierarchicalContextRunner.class)
 public class ClassContextTest {
   private ClassContext subject;
-
-  public class getDescription_reference {
-    //Two context classes in different parts of the hierarchy can have the same simple name.
-    //Make sure something unique is used for each Suite Description uniqueId.
-    public class givenAContextHierarchyWith2OrMoreInstancesOfTheSameDisplayName {
-      @Test public void nop() throws Exception { }
-//      @Before
-//      public void setup() {
-//        FakeContext leftDuplicate = aLeafContext("Root$LeftSuite$SameClassName", "SameClassName", aSpec("one"));
-//        FakeContext rightDuplicate = aLeafContext("Root$RightSuite$SameClassName", "SameClassName", aSpec("one"));
-//        assumeThat(leftDuplicate.displayName, equalTo(rightDuplicate.displayName)); //Basis for Description.fUniqueId
-//
-//        gateway.init(2, aNestedContext("Root",
-//            aNestedContext("LeftSuite", leftDuplicate),
-//            aNestedContext("RightSuite", rightDuplicate))
-//        );
-//        description = subject.getDescription();
-//      }
-//
-//      @Test
-//      public void theSuiteDescriptionsAreNotEqual() {
-//        Description leftFork = description.getChildren().get(0);
-//        Description one = onlyChild(leftFork);
-//
-//        Description rightFork = description.getChildren().get(1);
-//        Description other = onlyChild(rightFork);
-//        assertThat(one, not(equalTo(other)));
-//      }
-    }
-
-    //Two specs can have the same name too, if they are declared in different parts of the hierarchy.
-    //This is a problem for test Descriptions if the identically-named fields are also in identically-named classes.
-    public class givenAContextHierarchyWith2OrMoreSpecsOfTheSameDisplayName {
-      @Test public void nop() throws Exception { }
-//      @Before
-//      public void setup() {
-//        FakeSpec leftSpec = aSpec("LeftSuite.same_name", "same name");
-//        FakeSpec rightSpec = aSpec("RightSuite.same_name", "same name");
-//        assumeThat(leftSpec.displayName, equalTo(rightSpec.displayName)); //Part of Description.fUniqueId
-//
-//        FakeContext leftDuplicate = aLeafContext("Root$LeftSuite$SameClassName", "SameClassName", leftSpec);
-//        FakeContext rightDuplicate = aLeafContext("Root$RightSuite$SameClassName", "SameClassName", rightSpec);
-//        assumeThat(leftDuplicate.displayName, equalTo(rightDuplicate.displayName)); //Part of Description.fUniqueId
-//
-//        gateway.init(2, aNestedContext("Root",
-//            aNestedContext("LeftSuite", leftDuplicate),
-//            aNestedContext("RightSuite", rightDuplicate))
-//        );
-//        description = subject.getDescription();
-//      }
-//
-//      @Test
-//      public void theTestDescriptionsAreNotEqual() {
-//        Description leftFork = onlyChild(description.getChildren().get(0));
-//        Description one = onlyChild(leftFork);
-//
-//        Description rightFork = onlyChild(description.getChildren().get(1));
-//        Description other = onlyChild(rightFork);
-//        assertThat(one, not(equalTo(other)));
-//      }
-    }
-  }
 
   public class getDescription {
     private Description returned;
@@ -128,7 +67,7 @@ public class ClassContextTest {
       public void setsTheDescriptionClassNameToThatOfTheParentContext() throws Exception {
         subject = AClassContext.of(ContextClasses.UnderscoreSubContext.class);
         returned = subject.getDescription();
-        assertThat(Descriptions.childClassNames(returned), equalTo(newHashSet("read me")));
+        assertThat(Descriptions.onlyTest(returned).getClassName(), equalTo("read me"));
       }
 
       @Test
@@ -136,6 +75,18 @@ public class ClassContextTest {
         subject = AClassContext.of(ContextClasses.UnderscoreIt.class);
         returned = subject.getDescription();
         assertThat(Descriptions.childMethodNames(returned), equalTo(newHashSet("read me")));
+      }
+
+      //Two specs can have the same field name, if they are declared in different parts of the hierarchy.
+      //This is a problem for test Descriptions if the identically-named fields are also in identically-named classes.
+      @Test
+      public void identifiesTestDescriptionsByTheFullyQualifiedFieldName() throws Exception {
+        subject = AClassContext.of(ContextClasses.DuplicateSpecNames.class);
+        returned = subject.getDescription();
+
+        Description leftLeaf = Descriptions.onlyTest(returned.getChildren().get(0));
+        Description rightLeaf = Descriptions.onlyTest(returned.getChildren().get(1));
+        assertThat(leftLeaf, not(equalTo(rightLeaf)));
       }
     }
 
@@ -153,6 +104,18 @@ public class ClassContextTest {
         subject = AClassContext.of(ContextClasses.UnderscoreSubContext.class);
         returned = subject.getDescription();
         assertThat(Descriptions.childClassNames(returned), equalTo(newHashSet("read me")));
+      }
+
+      //Two context classes in different parts of the hierarchy can have the same simple name.
+      //Make sure something unique is used for each Suite Description fUniqueId.
+      @Test
+      public void identifiesSuiteDescriptionsWithTheFullyQualifiedClassName() throws Exception {
+        subject = AClassContext.of(ContextClasses.DuplicateContextNames.class);
+        returned = subject.getDescription();
+
+        Description leftLeaf = Descriptions.onlyChild(returned.getChildren().get(0));
+        Description rightLeaf = Descriptions.onlyChild(returned.getChildren().get(1));
+        assertThat(leftLeaf, not(equalTo(rightLeaf)));
       }
     }
   }

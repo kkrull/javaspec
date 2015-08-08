@@ -29,9 +29,10 @@ class ClassContext extends Context {
   }
 
   private static ClassContext create(Class<?> source, String displayName) {
+    String contextId = source.getCanonicalName();
     List<Spec> specs = readDeclaredItFields(source)
       .map(it -> FieldSpec.create(
-        "ClassContext::create",
+        String.format("%s#%s", contextId, it.getName()),
         it,
         new ArrayList<>(0),
         new ArrayList<>(0)))
@@ -39,11 +40,7 @@ class ClassContext extends Context {
     List<Context> subContexts = readInnerClasses(source)
       .map(ClassContext::createSubContext)
       .collect(toList());
-    return new ClassContext(
-      source.getSimpleName(),
-      displayName,
-      specs,
-      subContexts);
+    return new ClassContext(contextId, displayName, specs, subContexts);
   }
 
   protected ClassContext(String id, String displayName, List<Spec> specs, List<Context> subContexts) {
@@ -55,10 +52,7 @@ class ClassContext extends Context {
 
   @Override
   public Description getDescription() {
-    Description suite = Description.createSuiteDescription(
-      displayName,
-      "");
-//    Description suite = Description.createSuiteDescription(displayName, id);
+    Description suite = Description.createSuiteDescription(displayName, getId());
     getSpecs().forEach(x -> x.addDescriptionTo(suite));
     getSubContexts().map(Context::getDescription).forEach(suite::addChild);
     return suite;
@@ -107,7 +101,7 @@ class ClassContext extends Context {
       .filter(isNonStatic);
   }
 
-  private static String humanize(String behaviorOrContext) {
-    return behaviorOrContext.replace('_', ' ');
+  private static String humanize(String identifier) {
+    return identifier.replace('_', ' ');
   }
 }
