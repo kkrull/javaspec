@@ -125,11 +125,10 @@ public class ClassContextTest {
       }
 
       @Test
-      public void setsTheDescriptionClassNameToTheDescriptionClassNameForTheParentContext() throws Exception {
-        subject = AClassContext.of(ContextClasses.OneIt.class);
+      public void setsTheDescriptionClassNameToThatOfTheParentContext() throws Exception {
+        subject = AClassContext.of(ContextClasses.UnderscoreSubContext.class);
         returned = subject.getDescription();
-        assertThat(Descriptions.childClassNames(returned), equalTo(newHashSet("OneIt")));
-        assertThat("pending", equalTo("passing")); //TODO KDK: Maybe easier to test/explain this in the spec for naming contexts (should name the context and the class name of its child tests in a certain way)
+        assertThat(Descriptions.childClassNames(returned), equalTo(newHashSet("read me")));
       }
 
       @Test
@@ -149,16 +148,12 @@ public class ClassContextTest {
         assertThat(returned.getChildren(), contains(isSuiteDescription(), isSuiteDescription()));
       }
 
-      @Test @Ignore
+      @Test
       public void humanizesSubContextClassNamesIntoHumanReadableClassNames_replacingUnderscoreWithSpace() throws Exception {
         subject = AClassContext.of(ContextClasses.UnderscoreSubContext.class);
         returned = subject.getDescription();
         assertThat(Descriptions.childClassNames(returned), equalTo(newHashSet("read me")));
-        assertThat(returned.getChildren(), contains(isSuiteDescription(), isSuiteDescription()));
       }
-
-      @Test @Ignore
-      public void whatShouldItDoForMethodName() throws Exception {}
     }
   }
 
@@ -246,15 +241,15 @@ public class ClassContextTest {
 
   private static final class AClassContext {
     public static ClassContext of(Class<?> source) {
-      return ClassContext.create(source);
+      return ClassContext.createRootContext(source);
     }
 
     public static ClassContext withSpecs(Spec... specs) {
-      return new ClassContext("withSpecs", newArrayList(specs), newArrayList());
+      return new ClassContext("withSpecs", "withSpecs", newArrayList(specs), newArrayList());
     }
 
     public static ClassContext withSubContexts(Context... subContexts) {
-      return new ClassContext("withSubContexts", newArrayList(), newArrayList(subContexts));
+      return new ClassContext("withSubContexts", "withSubContexts", newArrayList(), newArrayList(subContexts));
     }
   }
 }

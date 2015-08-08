@@ -39,7 +39,7 @@ public final class JavaSpecRunner extends Runner {
   private Context rootContext;
 
   public JavaSpecRunner(Class<?> rootContextClass) {
-    this(ClassContext.create(rootContextClass));
+    this(ClassContext.createRootContext(rootContextClass));
   }
 
   public JavaSpecRunner(Context rootContext) {

@@ -16,10 +16,19 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 
 class ClassContext extends Context {
+  private final String displayName;
   private final List<Spec> specs;
   private final List<Context> subContexts;
 
-  public static ClassContext create(Class<?> source) {
+  public static ClassContext createRootContext(Class<?> source) {
+    return create(source, source.getSimpleName());
+  }
+
+  private static ClassContext createSubContext(Class<?> source) {
+    return create(source, humanize(source.getSimpleName()));
+  }
+
+  private static ClassContext create(Class<?> source, String displayName) {
     List<Spec> specs = readDeclaredItFields(source)
       .map(it -> FieldSpec.create(
         "ClassContext::create",
@@ -28,13 +37,18 @@ class ClassContext extends Context {
         new ArrayList<>(0)))
       .collect(toList());
     List<Context> subContexts = readInnerClasses(source)
-      .map(ClassContext::create)
+      .map(ClassContext::createSubContext)
       .collect(toList());
-    return new ClassContext(source.getSimpleName(), specs, subContexts);
+    return new ClassContext(
+      source.getSimpleName(),
+      displayName,
+      specs,
+      subContexts);
   }
 
-  protected ClassContext(String id, List<Spec> specs, List<Context> subContexts) {
+  protected ClassContext(String id, String displayName, List<Spec> specs, List<Context> subContexts) {
     super(id);
+    this.displayName = displayName;
     this.specs = specs;
     this.subContexts = subContexts;
   }
@@ -42,8 +56,7 @@ class ClassContext extends Context {
   @Override
   public Description getDescription() {
     Description suite = Description.createSuiteDescription(
-      getId(),
-//      humanize(getId()),
+      displayName,
       "");
 //    Description suite = Description.createSuiteDescription(displayName, id);
     getSpecs().forEach(x -> x.addDescriptionTo(suite));
