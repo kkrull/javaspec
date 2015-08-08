@@ -1,4 +1,3 @@
-@wip
 Feature: Command Line Interface
   As a developer using JavaSpec out in the wild
   In order to verify my deployment process, submit a bug report, or submit a feature request
