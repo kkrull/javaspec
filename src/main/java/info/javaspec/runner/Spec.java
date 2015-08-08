@@ -10,9 +10,13 @@ abstract class Spec {
     this.id = id;
   }
 
-  public String getId() { return id; }
-  public abstract boolean isIgnored();
-  public abstract void run() throws Exception;
-  public abstract void run(RunNotifier notifier);
+  protected String getId() { return id; }
   public abstract void addDescriptionTo(Description suite);
+
+  public abstract boolean isIgnored();
+
+  @Deprecated
+  public abstract void run() throws Exception;
+
+  public abstract void run(RunNotifier notifier);
 }
