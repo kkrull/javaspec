@@ -19,10 +19,6 @@ public final class Descriptions {
     return description.getChildren().stream().map(Description::getClassName).collect(toSet());
   }
 
-  public static Set<String> childDisplayNames(Description description) {
-    return description.getChildren().stream().map(Description::getDisplayName).collect(toSet());
-  }
-
   public static Set<String> childMethodNames(Description description) {
     return description.getChildren().stream().map(Description::getMethodName).collect(toSet());
   }

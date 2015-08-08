@@ -32,7 +32,7 @@ class ClassContext extends Context {
     String contextId = source.getCanonicalName();
     List<Spec> specs = readDeclaredItFields(source)
       .map(it -> FieldSpec.create(
-        String.format("%s#%s", contextId, it.getName()),
+        contextId,
         it,
         new ArrayList<>(0),
         new ArrayList<>(0)))
@@ -50,9 +50,13 @@ class ClassContext extends Context {
     this.subContexts = subContexts;
   }
 
+  private String getDisplayName() { return displayName; }
+  private Stream<Spec> getSpecs() { return specs.stream(); }
+  private Stream<Context> getSubContexts() { return subContexts.stream(); }
+
   @Override
   public Description getDescription() {
-    Description suite = Description.createSuiteDescription(displayName, getId());
+    Description suite = Description.createSuiteDescription(getDisplayName(), getId());
     getSpecs().forEach(x -> x.addDescriptionTo(suite));
     getSubContexts().map(Context::getDescription).forEach(suite::addChild);
     return suite;
@@ -61,8 +65,8 @@ class ClassContext extends Context {
   @Override
   public boolean hasSpecs() {
     boolean hasOwnExamples = getSpecs().findAny().isPresent();
-    boolean childrenHaveExamples = getSubContexts().anyMatch(Context::hasSpecs);
-    return hasOwnExamples || childrenHaveExamples;
+    Stream<Boolean> childrenHaveExamples = getSubContexts().map(Context::hasSpecs);
+    return hasOwnExamples || childrenHaveExamples.findAny().isPresent();
   }
 
   @Override
@@ -81,24 +85,18 @@ class ClassContext extends Context {
     getSubContexts().forEach(x -> x.run(notifier));
   }
 
-  private Stream<Spec> getSpecs() { return specs.stream(); }
-
-  private Stream<Context> getSubContexts() { return subContexts.stream(); }
-
   private static Stream<Field> readDeclaredItFields(Class<?> context) {
     return readDeclaredFields(context, It.class);
   }
 
   private static Stream<Field> readDeclaredFields(Class<?> context, Class<?> fieldType) {
     Predicate<Field> isInstanceField = x -> !Modifier.isStatic(x.getModifiers());
-    return ReflectionUtil.fieldsOfType(fieldType, context)
-      .filter(isInstanceField);
+    return ReflectionUtil.fieldsOfType(fieldType, context).filter(isInstanceField);
   }
 
   private static Stream<Class<?>> readInnerClasses(Class<?> parent) {
     Predicate<Class<?>> isNonStatic = x -> !Modifier.isStatic(x.getModifiers());
-    return Stream.of(parent.getDeclaredClasses())
-      .filter(isNonStatic);
+    return Stream.of(parent.getDeclaredClasses()).filter(isNonStatic);
   }
 
   private static String humanize(String identifier) {
