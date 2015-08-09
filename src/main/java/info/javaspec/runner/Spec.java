@@ -12,11 +12,6 @@ abstract class Spec {
 
   protected String getId() { return id; }
   public abstract void addDescriptionTo(Description suite);
-
   public abstract boolean isIgnored();
-
-  @Deprecated
   public abstract void run() throws Exception;
-
-  public abstract void run(RunNotifier notifier);
 }

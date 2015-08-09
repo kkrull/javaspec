@@ -163,6 +163,12 @@ public class ClassContextTest {
   public class run {
     private final RunNotifier notifier = mock(RunNotifier.class);
 
+    @Test @Ignore
+    public void invokesTheNotifier() throws Exception {}
+
+    @Test @Ignore
+    public void createsSpecsWithContextFields() throws Exception {}
+
     public class given1OrMoreSpecs {
       @Test
       public void runsEachSpec() throws Exception {
@@ -171,8 +177,8 @@ public class ClassContextTest {
         subject = AClassContext.withSpecs(firstChild, secondChild);
 
         subject.run(notifier);
-        Mockito.verify(firstChild).run(notifier);
-        Mockito.verify(secondChild).run(notifier);
+        Mockito.verify(firstChild).run();
+        Mockito.verify(secondChild).run();
       }
     }
 

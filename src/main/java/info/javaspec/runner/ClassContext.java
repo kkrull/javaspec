@@ -81,7 +81,7 @@ class ClassContext extends Context {
 
   @Override
   public void run(RunNotifier notifier) {
-    getSpecs().forEach(x -> x.run(notifier));
+    getSpecs().forEach(x -> runSpec(x, notifier));
     getSubContexts().forEach(x -> x.run(notifier));
   }
 
@@ -101,5 +101,13 @@ class ClassContext extends Context {
 
   private static String humanize(String identifier) {
     return identifier.replace('_', ' ');
+  }
+
+  private void runSpec(Spec spec, RunNotifier notifier) {
+    try {
+      spec.run();
+    } catch(Exception e) {
+      throw new RuntimeException("Failed to run spec", e);
+    }
   }
 }

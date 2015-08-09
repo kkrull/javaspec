@@ -51,12 +51,6 @@ public class FieldSpecTest {
   }
 
   public class run {
-    @Test
-    public void supportsTheNotifierInterface() throws Exception {
-      Spec subject = exampleWithIt(ContextClasses.OneIt.class, "only_test");
-      subject.run(null);
-    }
-
     public class givenAClassWithoutACallableNoArgConstructor {
       private final Spec subject = exampleWithIt(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid");
 

@@ -18,7 +18,6 @@ Feature: Running tests
     When I run the tests with a JavaSpec runner
     Then the test runner should run all the tests in the class
 
-  @wip
   Scenario: Run JavaSpec tests with a JUnit4 runner
     Given I have a class with JavaSpec tests in it that is marked to run with a JavaSpec runner
     When I run the tests with a JUnit runner
