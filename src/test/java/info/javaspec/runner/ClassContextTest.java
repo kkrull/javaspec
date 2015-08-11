@@ -164,9 +164,6 @@ public class ClassContextTest {
     private final RunNotifier notifier = mock(RunNotifier.class);
 
     @Test @Ignore
-    public void invokesTheNotifier() throws Exception {}
-
-    @Test @Ignore
     public void createsSpecsWithContextFields() throws Exception {}
 
     public class given1OrMoreSpecs {
@@ -193,6 +190,43 @@ public class ClassContextTest {
         Mockito.verify(firstChild).run(notifier);
         Mockito.verify(secondChild).run(notifier);
       }
+    }
+
+    public class givenAContextWithAnEstablishField {
+      @Test
+      public void createsSpecsWithThatAsABeforeEachFixtureLambda() throws Exception {
+        assertThat("pending", equalTo("passing"));
+      }
+    }
+
+    public class givenAContextWithABecauseField {
+      @Test @Ignore
+      public void createsSpecsWithThatAsABeforeEachFixtureLambda() throws Exception {}
+    }
+
+    public class givenAContextWithACleanupField {
+      @Test @Ignore
+      public void createsSpecsWithThatAsAnAfterEachFixtureLambda() throws Exception {}
+    }
+
+    public class whenASpecPasses {
+      @Test @Ignore
+      public void notifiesTestSuccess() throws Exception {}
+    }
+
+    public class whenASpecThrowsAnything {
+      @Test @Ignore
+      public void runsRemainingSpecs() throws Exception {}
+    }
+
+    public class whenASpecThrowsTestSetupFailed {
+      @Test @Ignore
+      public void notifiesTestError() throws Exception {}
+    }
+
+    public class whenASpecThrowsAnythingElse {
+      @Test @Ignore
+      public void notifiesTestFailure() throws Exception {}
     }
   }
 
