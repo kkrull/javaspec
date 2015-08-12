@@ -1,4 +1,4 @@
-package info.javaspec.runner;
+package info.javaspec.spec;
 
 import static org.mockito.Mockito.mock;
 

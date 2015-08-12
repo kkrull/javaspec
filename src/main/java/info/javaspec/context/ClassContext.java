@@ -1,6 +1,8 @@
-package info.javaspec.runner;
+package info.javaspec.context;
 
 import info.javaspec.dsl.It;
+import info.javaspec.spec.FieldSpec;
+import info.javaspec.spec.Spec;
 import info.javaspec.util.ReflectionUtil;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -15,7 +17,7 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
-class ClassContext extends Context {
+public class ClassContext extends Context {
   private final String displayName;
   private final List<Spec> specs;
   private final List<Context> subContexts;

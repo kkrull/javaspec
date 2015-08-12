@@ -4,7 +4,6 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Matcher;
 import org.junit.runner.Description;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 

@@ -1,6 +1,9 @@
-package info.javaspec.runner;
+package info.javaspec.context;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
+import info.javaspec.runner.Descriptions;
+import info.javaspec.spec.MockSpec;
+import info.javaspec.spec.Spec;
 import info.javaspecproto.ContextClasses;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -14,9 +17,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 import static info.javaspec.runner.Descriptions.isSuiteDescription;
 import static info.javaspec.runner.Descriptions.isTestDescription;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -179,8 +180,8 @@ public class ClassContextTest {
     public class given1OrMoreSubContexts {
       @Test
       public void runsEachSubContext() throws Exception {
-        Context firstChild = info.javaspec.runner.MockContext.anyValid();
-        Context secondChild = info.javaspec.runner.MockContext.anyValid();
+        Context firstChild = MockContext.anyValid();
+        Context secondChild = MockContext.anyValid();
         subject = AClassContext.withSubContexts(firstChild, secondChild);
 
         subject.run(notifier);
@@ -244,19 +245,5 @@ public class ClassContextTest {
   public void aSubContextIs_aNonStaticInnerClass() throws Exception {
     subject = AClassContext.of(ContextClasses.NestedStaticClassIt.class);
     assertThat(subject.numSpecs(), equalTo(0L));
-  }
-
-  private static final class AClassContext {
-    public static ClassContext of(Class<?> source) {
-      return ClassContext.createRootContext(source);
-    }
-
-    public static ClassContext withSpecs(Spec... specs) {
-      return new ClassContext("withSpecs", "withSpecs", newArrayList(specs), newArrayList());
-    }
-
-    public static ClassContext withSubContexts(Context... subContexts) {
-      return new ClassContext("withSubContexts", "withSubContexts", newArrayList(), newArrayList(subContexts));
-    }
   }
 }

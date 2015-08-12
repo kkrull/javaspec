@@ -1,4 +1,4 @@
-package info.javaspec.runner;
+package info.javaspec.spec;
 
 import info.javaspec.dsl.Before;
 import info.javaspec.dsl.Cleanup;
@@ -10,7 +10,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-final class FieldSpec extends Spec {
+public final class FieldSpec extends Spec {
   private final String displayName;
   private final Field assertionField;
   private final List<Field> befores;

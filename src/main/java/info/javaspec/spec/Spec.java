@@ -1,9 +1,8 @@
-package info.javaspec.runner;
+package info.javaspec.spec;
 
 import org.junit.runner.Description;
-import org.junit.runner.notification.RunNotifier;
 
-abstract class Spec {
+public abstract class Spec {
   private final String id;
 
   protected Spec(String id) {

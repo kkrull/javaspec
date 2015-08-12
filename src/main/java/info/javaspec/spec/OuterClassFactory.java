@@ -1,4 +1,4 @@
-package info.javaspec.runner;
+package info.javaspec.spec;
 
 import java.lang.reflect.Constructor;
 

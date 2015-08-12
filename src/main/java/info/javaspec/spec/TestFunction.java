@@ -1,4 +1,4 @@
-package info.javaspec.runner;
+package info.javaspec.spec;
 
 import info.javaspec.dsl.Before;
 import info.javaspec.dsl.Cleanup;

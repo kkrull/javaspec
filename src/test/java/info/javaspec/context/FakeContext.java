@@ -1,4 +1,4 @@
-package info.javaspec.runner;
+package info.javaspec.context;
 
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;

@@ -1,6 +1,9 @@
 package info.javaspec.runner;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
+import info.javaspec.context.Context;
+import info.javaspec.context.FakeContext;
+import info.javaspec.context.MockContext;
 import info.javaspec.runner.JavaSpecRunner.NoSpecs;
 import info.javaspec.runner.JavaSpecRunner.TooManySpecs;
 import org.junit.Test;

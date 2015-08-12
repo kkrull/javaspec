@@ -1,9 +1,9 @@
-package info.javaspec.runner;
+package info.javaspec.context;
 
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
-abstract class Context {
+public abstract class Context {
   private final String id;
 
   protected Context(String id) {

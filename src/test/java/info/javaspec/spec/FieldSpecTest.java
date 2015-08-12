@@ -1,4 +1,4 @@
-package info.javaspec.runner;
+package info.javaspec.spec;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.dsl.It;
