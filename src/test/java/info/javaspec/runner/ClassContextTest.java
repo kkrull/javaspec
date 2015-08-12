@@ -163,9 +163,6 @@ public class ClassContextTest {
   public class run {
     private final RunNotifier notifier = mock(RunNotifier.class);
 
-    @Test @Ignore
-    public void createsSpecsWithContextFields() throws Exception {}
-
     public class given1OrMoreSpecs {
       @Test
       public void runsEachSpec() throws Exception {
@@ -193,8 +190,15 @@ public class ClassContextTest {
     }
 
     public class givenAContextWithAnEstablishField {
-      @Test
+      @Test @Ignore
       public void createsSpecsWithThatAsABeforeEachFixtureLambda() throws Exception {
+        //Option 1: Create a real spec with real fields that have observable side effects.
+        //- meant to test: Call to FieldSpec#new
+        //- also depends on: Working FieldSpec#run
+
+        //Option 2: Extract ClassContext#create methods into ContextFactory.  DI factory method (FieldSpec#new).
+
+        //Option 3: DI factory method (FieldSpec#new) into ClassContext#create methods.
         assertThat("pending", equalTo("passing"));
       }
     }
