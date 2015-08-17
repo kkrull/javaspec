@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
+import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -20,6 +21,7 @@ import static info.javaspec.runner.Descriptions.isTestDescription;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 
 @RunWith(HierarchicalContextRunner.class)
 public class ClassContextTest {
@@ -165,15 +167,31 @@ public class ClassContextTest {
     private final RunNotifier notifier = mock(RunNotifier.class);
 
     public class given1OrMoreSpecs {
+      private final Spec firstChild = MockSpec.anyValid();
+      private final Spec secondChild = MockSpec.anyValid();
+
+      @Before
+      public void setup() throws Exception {
+        subject = classContextWithSpecs(firstChild, secondChild);
+        subject.run(notifier);
+      }
+
       @Test
       public void runsEachSpec() throws Exception {
-        Spec firstChild = MockSpec.anyValid();
-        Spec secondChild = MockSpec.anyValid();
-        subject = classContextWithSpecs(firstChild, secondChild);
-
-        subject.run(notifier);
         Mockito.verify(firstChild).run();
         Mockito.verify(secondChild).run();
+      }
+
+      @Test
+      public void notifiesWhenStartingEachTest() throws Exception {
+        InOrder sequence = Mockito.inOrder(notifier, firstChild, secondChild);
+        sequence.verify(notifier).fireTestStarted(Mockito.any(Description.class));
+        sequence.verify(firstChild).run();
+        sequence.verify(notifier).fireTestStarted(Mockito.any(Description.class));
+        sequence.verify(secondChild).run();
+        sequence.verifyNoMoreInteractions();
+
+        assertThat("pending", equalTo("passing")); //TODO KDK: Need a description from the Spec, but that's nosy.  Shouldn't Spec guard its own Description and run with a given notifier?
       }
     }
 

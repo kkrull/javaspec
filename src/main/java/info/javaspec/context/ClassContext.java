@@ -55,7 +55,8 @@ public class ClassContext extends Context {
     getSubContexts().forEach(x -> x.run(notifier));
   }
 
-  private void runSpec(Spec spec, RunNotifier notifier) { //TODO KDK: Work here
+  private void runSpec(Spec spec, RunNotifier notifier) {
+    notifier.fireTestStarted(null);
     try {
       spec.run();
     } catch(Exception e) {

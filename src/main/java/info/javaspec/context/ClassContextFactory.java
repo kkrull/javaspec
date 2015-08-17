@@ -29,7 +29,7 @@ public class ClassContextFactory {
       .map(it -> FieldSpec.create(
         contextId,
         it,
-        new ArrayList<>(0), //TODO KDK: Work here too
+        new ArrayList<>(0),
         new ArrayList<>(0)))
       .collect(toList());
     List<Context> subContexts = readInnerClasses(source)
