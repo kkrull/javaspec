@@ -1,49 +1,17 @@
 package info.javaspec.context;
 
-import info.javaspec.dsl.It;
-import info.javaspec.spec.FieldSpec;
 import info.javaspec.spec.Spec;
-import info.javaspec.util.ReflectionUtil;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
 
 public class ClassContext extends Context {
   private final String displayName;
   private final List<Spec> specs;
   private final List<Context> subContexts;
-
-  public static ClassContext createRootContext(Class<?> source) {
-    return create(source, source.getSimpleName());
-  }
-
-  private static ClassContext createSubContext(Class<?> source) {
-    return create(source, humanize(source.getSimpleName()));
-  }
-
-  private static ClassContext create(Class<?> source, String displayName) {
-    String contextId = source.getCanonicalName();
-    List<Spec> specs = readDeclaredItFields(source)
-      .map(it -> FieldSpec.create(
-        contextId,
-        it,
-        new ArrayList<>(0),
-        new ArrayList<>(0)))
-      .collect(toList());
-    List<Context> subContexts = readInnerClasses(source)
-      .map(ClassContext::createSubContext)
-      .collect(toList());
-    return new ClassContext(contextId, displayName, specs, subContexts);
-  }
 
   protected ClassContext(String id, String displayName, List<Spec> specs, List<Context> subContexts) {
     super(id);
@@ -87,25 +55,7 @@ public class ClassContext extends Context {
     getSubContexts().forEach(x -> x.run(notifier));
   }
 
-  private static Stream<Field> readDeclaredItFields(Class<?> context) {
-    return readDeclaredFields(context, It.class);
-  }
-
-  private static Stream<Field> readDeclaredFields(Class<?> context, Class<?> fieldType) {
-    Predicate<Field> isInstanceField = x -> !Modifier.isStatic(x.getModifiers());
-    return ReflectionUtil.fieldsOfType(fieldType, context).filter(isInstanceField);
-  }
-
-  private static Stream<Class<?>> readInnerClasses(Class<?> parent) {
-    Predicate<Class<?>> isNonStatic = x -> !Modifier.isStatic(x.getModifiers());
-    return Stream.of(parent.getDeclaredClasses()).filter(isNonStatic);
-  }
-
-  private static String humanize(String identifier) {
-    return identifier.replace('_', ' ');
-  }
-
-  private void runSpec(Spec spec, RunNotifier notifier) {
+  private void runSpec(Spec spec, RunNotifier notifier) { //TODO KDK: Work here
     try {
       spec.run();
     } catch(Exception e) {

@@ -1,6 +1,6 @@
 package info.javaspec.runner;
 
-import info.javaspec.context.ClassContext;
+import info.javaspec.context.ClassContextFactory;
 import info.javaspec.context.Context;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
@@ -41,7 +41,7 @@ public final class JavaSpecRunner extends Runner {
   private Context rootContext;
 
   public JavaSpecRunner(Class<?> rootContextClass) {
-    this(ClassContext.createRootContext(rootContextClass));
+    this(ClassContextFactory.createRootContext(rootContextClass));
   }
 
   public JavaSpecRunner(Context rootContext) {

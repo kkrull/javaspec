@@ -15,8 +15,8 @@ import org.mockito.Mockito;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
-import static info.javaspec.context.ClassContextFactory.classContextWithSpecs;
-import static info.javaspec.context.ClassContextFactory.classContextWithSubContexts;
+import static info.javaspec.context.TestClassContextFactory.classContextWithSpecs;
+import static info.javaspec.context.TestClassContextFactory.classContextWithSubContexts;
 import static info.javaspec.runner.Descriptions.isSuiteDescription;
 import static info.javaspec.runner.Descriptions.isTestDescription;
 import static org.hamcrest.Matchers.*;
@@ -33,7 +33,7 @@ public class ClassContextTest {
     public class givenNoSpecsOrSubContexts {
       @Test
       public void hasNoChildren() throws Exception {
-        subject = ClassContext.createRootContext(ContextClasses.Empty.class);
+        subject = ClassContextFactory.createRootContext(ContextClasses.Empty.class);
         returned = subject.getDescription();
         assertThat(returned.getChildren(), equalTo(newArrayList()));
       }
@@ -42,7 +42,7 @@ public class ClassContextTest {
     public class givenAContextClassWithSpecsOrSubContexts {
       @Before
       public void setup() throws Exception {
-        subject = ClassContext.createRootContext(ContextClasses.OneIt.class);
+        subject = ClassContextFactory.createRootContext(ContextClasses.OneIt.class);
         returned = subject.getDescription();
       }
 
@@ -60,7 +60,7 @@ public class ClassContextTest {
     public class givenAContextClassWithSpecs {
       @Test
       public void hasTestDescriptionsForEachSpecInTheContext() throws Exception {
-        subject = ClassContext.createRootContext(ContextClasses.TwoIts.class);
+        subject = ClassContextFactory.createRootContext(ContextClasses.TwoIts.class);
         returned = subject.getDescription();
         assertThat(Descriptions.childMethodNames(returned), equalTo(newHashSet("one", "two")));
         assertThat(returned.getChildren(), contains(isTestDescription(), isTestDescription()));
@@ -68,14 +68,14 @@ public class ClassContextTest {
 
       @Test
       public void setsTheDescriptionClassNameToThatOfTheParentContext() throws Exception {
-        subject = ClassContext.createRootContext(ContextClasses.UnderscoreSubContext.class);
+        subject = ClassContextFactory.createRootContext(ContextClasses.UnderscoreSubContext.class);
         returned = subject.getDescription();
         assertThat(Descriptions.onlyTest(returned).getClassName(), equalTo("read me"));
       }
 
       @Test
       public void setsTheDescriptionMethodNameToTheHumanizedFieldName() throws Exception {
-        subject = ClassContext.createRootContext(ContextClasses.UnderscoreIt.class);
+        subject = ClassContextFactory.createRootContext(ContextClasses.UnderscoreIt.class);
         returned = subject.getDescription();
         assertThat(Descriptions.childMethodNames(returned), equalTo(newHashSet("read me")));
       }
@@ -84,7 +84,7 @@ public class ClassContextTest {
       //This is a problem for test Descriptions if the identically-named fields are also in identically-named classes.
       @Test
       public void identifiesTestDescriptionsByTheFullyQualifiedFieldName() throws Exception {
-        subject = ClassContext.createRootContext(ContextClasses.DuplicateSpecNames.class);
+        subject = ClassContextFactory.createRootContext(ContextClasses.DuplicateSpecNames.class);
         returned = subject.getDescription();
 
         Description leftLeaf = Descriptions.onlyTest(returned.getChildren().get(0));
@@ -96,7 +96,7 @@ public class ClassContextTest {
     public class givenAContextClassWithSubContextClasses {
       @Test
       public void hasSuiteDescriptionsForEachSubContextClass() throws Exception {
-        subject = ClassContext.createRootContext(ContextClasses.TwoContexts.class);
+        subject = ClassContextFactory.createRootContext(ContextClasses.TwoContexts.class);
         returned = subject.getDescription();
         assertThat(Descriptions.childClassNames(returned), equalTo(newHashSet("subcontext1", "subcontext2")));
         assertThat(returned.getChildren(), contains(isSuiteDescription(), isSuiteDescription()));
@@ -104,7 +104,7 @@ public class ClassContextTest {
 
       @Test
       public void humanizesSubContextClassNamesIntoHumanReadableClassNames_replacingUnderscoreWithSpace() throws Exception {
-        subject = ClassContext.createRootContext(ContextClasses.UnderscoreSubContext.class);
+        subject = ClassContextFactory.createRootContext(ContextClasses.UnderscoreSubContext.class);
         returned = subject.getDescription();
         assertThat(Descriptions.childClassNames(returned), equalTo(newHashSet("read me")));
       }
@@ -113,7 +113,7 @@ public class ClassContextTest {
       //Make sure something unique is used for each Suite Description fUniqueId.
       @Test
       public void identifiesSuiteDescriptionsWithTheFullyQualifiedClassName() throws Exception {
-        subject = ClassContext.createRootContext(ContextClasses.DuplicateContextNames.class);
+        subject = ClassContextFactory.createRootContext(ContextClasses.DuplicateContextNames.class);
         returned = subject.getDescription();
 
         Description leftLeaf = Descriptions.onlyChild(returned.getChildren().get(0));
@@ -126,19 +126,19 @@ public class ClassContextTest {
   public class hasSpecs {
     @Test
     public void givenAClassWithoutAnySpecs_returns_false() throws Exception {
-      subject = ClassContext.createRootContext(ContextClasses.Empty.class);
+      subject = ClassContextFactory.createRootContext(ContextClasses.Empty.class);
       assertThat(subject.hasSpecs(), equalTo(false));
     }
 
     @Test
     public void givenAClassWithSpecs_returns_true() throws Exception {
-      subject = ClassContext.createRootContext(ContextClasses.OneIt.class);
+      subject = ClassContextFactory.createRootContext(ContextClasses.OneIt.class);
       assertThat(subject.hasSpecs(), equalTo(true));
     }
 
     @Test
     public void givenAClassWhereASubContextHasSpecs_returns_true() throws Exception {
-      subject = ClassContext.createRootContext(ContextClasses.NestedIt.class);
+      subject = ClassContextFactory.createRootContext(ContextClasses.NestedIt.class);
       assertThat(subject.hasSpecs(), equalTo(true));
     }
   }
@@ -146,19 +146,19 @@ public class ClassContextTest {
   public class numSpecs {
     @Test
     public void givenNoSpecsOrChildContexts_returns_0() throws Exception {
-      subject = ClassContext.createRootContext(ContextClasses.Empty.class);
+      subject = ClassContextFactory.createRootContext(ContextClasses.Empty.class);
       assertThat(subject.numSpecs(), equalTo(0L));
     }
 
     @Test
     public void givenAClassWith1OrMoreSpecs_countsThoseSpecs() throws Exception {
-      subject = ClassContext.createRootContext(ContextClasses.TwoIt.class);
+      subject = ClassContextFactory.createRootContext(ContextClasses.TwoIt.class);
       assertThat(subject.numSpecs(), equalTo(2L));
     }
 
     @Test
     public void givenAClassWithSubContexts_sumsSpecsInThoseClasses() throws Exception {
-      subject = ClassContext.createRootContext(ContextClasses.NestedContexts.class);
+      subject = ClassContextFactory.createRootContext(ContextClasses.NestedContexts.class);
       assertThat(subject.numSpecs(), equalTo(2L));
     }
   }
@@ -239,13 +239,13 @@ public class ClassContextTest {
 
   @Test
   public void aSpecIs_anNonStaticItField() throws Exception {
-    subject = ClassContext.createRootContext(ContextClasses.StaticIt.class);
+    subject = ClassContextFactory.createRootContext(ContextClasses.StaticIt.class);
     assertThat(subject.numSpecs(), equalTo(0L));
   }
 
   @Test
   public void aSubContextIs_aNonStaticInnerClass() throws Exception {
-    subject = ClassContext.createRootContext(ContextClasses.NestedStaticClassIt.class);
+    subject = ClassContextFactory.createRootContext(ContextClasses.NestedStaticClassIt.class);
     assertThat(subject.numSpecs(), equalTo(0L));
   }
 }
