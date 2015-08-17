@@ -11,6 +11,9 @@ public final class FakeSpec extends Spec {
   public void addDescriptionTo(Description suite) { }
 
   @Override
+  public Description getDescription() { throw new UnsupportedOperationException(); }
+
+  @Override
   public boolean isIgnored() { return false; }
 
   @Override

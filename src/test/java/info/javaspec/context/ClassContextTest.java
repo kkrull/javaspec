@@ -21,7 +21,6 @@ import static info.javaspec.runner.Descriptions.isTestDescription;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 
 @RunWith(HierarchicalContextRunner.class)
 public class ClassContextTest {
@@ -167,8 +166,10 @@ public class ClassContextTest {
     private final RunNotifier notifier = mock(RunNotifier.class);
 
     public class given1OrMoreSpecs {
-      private final Spec firstChild = MockSpec.anyValid();
-      private final Spec secondChild = MockSpec.anyValid();
+      private final Description firstDescription = FakeDescription.descriptionWithId("1");
+      private final Spec firstChild = MockSpec.withDescription(firstDescription);
+      private final Description secondDescription = FakeDescription.descriptionWithId("2");
+      private final Spec secondChild = MockSpec.withDescription(secondDescription);
 
       @Before
       public void setup() throws Exception {
@@ -183,15 +184,15 @@ public class ClassContextTest {
       }
 
       @Test
-      public void notifiesWhenStartingEachTest() throws Exception {
+      public void notifiesWhenStartingAndEndingEachTest() throws Exception {
         InOrder sequence = Mockito.inOrder(notifier, firstChild, secondChild);
-        sequence.verify(notifier).fireTestStarted(Mockito.any(Description.class));
+        sequence.verify(notifier).fireTestStarted(Mockito.same(firstDescription));
         sequence.verify(firstChild).run();
-        sequence.verify(notifier).fireTestStarted(Mockito.any(Description.class));
+        sequence.verify(notifier).fireTestFinished(Mockito.same(firstDescription));
+        sequence.verify(notifier).fireTestStarted(Mockito.same(secondDescription));
         sequence.verify(secondChild).run();
+        sequence.verify(notifier).fireTestFinished(Mockito.same(secondDescription));
         sequence.verifyNoMoreInteractions();
-
-        assertThat("pending", equalTo("passing")); //TODO KDK: Need a description from the Spec, but that's nosy.  Shouldn't Spec guard its own Description and run with a given notifier?
       }
     }
 
@@ -238,8 +239,10 @@ public class ClassContextTest {
     }
 
     public class whenASpecThrowsAnything {
-      @Test @Ignore
-      public void runsRemainingSpecs() throws Exception {}
+      @Test
+      public void runsRemainingSpecs() throws Exception {
+        assertThat("passing", equalTo("pending"));
+      }
     }
 
     public class whenASpecThrowsTestSetupFailed {

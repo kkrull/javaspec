@@ -32,6 +32,11 @@ public final class FieldSpec extends Spec {
     this.afters = afters;
   }
 
+  @Override
+  public Description getDescription() {
+    throw new UnsupportedOperationException();
+  }
+
   private String getDisplayName() { return displayName; }
 
   @Override

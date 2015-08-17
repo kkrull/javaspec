@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mock;
 public final class MockSpec {
   public static Spec withDescription(Description description) {
     Spec spec = anyValid();
+    Mockito.when(spec.getDescription()).thenReturn(description);
     return spec;
   }
 

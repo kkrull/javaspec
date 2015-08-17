@@ -56,11 +56,12 @@ public class ClassContext extends Context {
   }
 
   private void runSpec(Spec spec, RunNotifier notifier) {
-    notifier.fireTestStarted(null);
+    notifier.fireTestStarted(spec.getDescription()); //TODO KDK: Is there a reasonable way to have the spec encapsulate the description?
     try {
       spec.run();
     } catch(Exception e) {
       throw new RuntimeException("Failed to run spec", e);
     }
+    notifier.fireTestFinished(spec.getDescription());
   }
 }

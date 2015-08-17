@@ -10,6 +10,7 @@ public abstract class Spec {
   }
 
   protected String getId() { return id; }
+  public abstract Description getDescription();
   public abstract void addDescriptionTo(Description suite);
   public abstract boolean isIgnored();
   public abstract void run() throws Exception;
