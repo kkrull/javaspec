@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
-class ClassContextFactory {
+public class ClassContextFactory {
   public static ClassContext createRootContext(Class<?> source) {
     return create(source, source.getSimpleName());
   }

@@ -15,8 +15,6 @@ import org.mockito.Mockito;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
-import static info.javaspec.context.TestClassContextFactory.classContextWithSpecs;
-import static info.javaspec.context.TestClassContextFactory.classContextWithSubContexts;
 import static info.javaspec.runner.Descriptions.isSuiteDescription;
 import static info.javaspec.runner.Descriptions.isTestDescription;
 import static org.hamcrest.Matchers.*;
@@ -247,5 +245,13 @@ public class ClassContextTest {
   public void aSubContextIs_aNonStaticInnerClass() throws Exception {
     subject = ClassContextFactory.createRootContext(ContextClasses.NestedStaticClassIt.class);
     assertThat(subject.numSpecs(), equalTo(0L));
+  }
+
+  private static ClassContext classContextWithSpecs(Spec... specs) {
+    return new ClassContext("classContextWithSpecs", "classContextWithSpecs", newArrayList(specs), newArrayList());
+  }
+
+  private static ClassContext classContextWithSubContexts(Context... subContexts) {
+    return new ClassContext("classContextWithSubContexts", "classContextWithSubContexts", newArrayList(), newArrayList(subContexts));
   }
 }
