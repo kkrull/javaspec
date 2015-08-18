@@ -2,6 +2,7 @@ package info.javaspec.context;
 
 import info.javaspec.spec.Spec;
 import org.junit.runner.Description;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
 import java.util.List;
@@ -56,11 +57,11 @@ public class ClassContext extends Context {
   }
 
   private void runSpec(Spec spec, RunNotifier notifier) {
-    notifier.fireTestStarted(spec.getDescription()); //TODO KDK: Is there a reasonable way to have the spec encapsulate the description?
+    notifier.fireTestStarted(spec.getDescription()); //TODO KDK: Is there a reasonable way to have the spec encapsulate the description?  Where should the behavior be described/tested?  If it's in the right place, the tests will survive the refactoring.
     try {
       spec.run();
-    } catch(Exception e) {
-      notifier.fireTestFailure(null);
+    } catch(Exception ex) {
+      notifier.fireTestFailure(new Failure(spec.getDescription(), ex));
       return;
     }
     notifier.fireTestFinished(spec.getDescription());

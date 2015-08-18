@@ -12,8 +12,7 @@ import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
-import org.mockito.InOrder;
-import org.mockito.Mockito;
+import org.mockito.*;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
@@ -168,9 +167,9 @@ public class ClassContextTest {
 
     public class given1OrMoreSpecs {
       private final Description firstDescription = FakeDescription.descriptionWithId("1");
-      private final Spec firstChild = MockSpec.withDescription(firstDescription);
+      private final Spec firstChild = MockSpec.that().hasDescription(firstDescription).build();
       private final Description secondDescription = FakeDescription.descriptionWithId("2");
-      private final Spec secondChild = MockSpec.withDescription(secondDescription);
+      private final Spec secondChild = MockSpec.that().hasDescription(secondDescription).build();
 
       @Before
       public void setup() throws Exception {
@@ -199,8 +198,8 @@ public class ClassContextTest {
 
     public class given2OrMoreSpecs {
       public class whenOneSpecThrows {
-        private final Spec firstSpec = MockSpec.thatDies();
-        private final Spec secondSpec = MockSpec.thatDies();
+        private final Spec firstSpec = MockSpec.that().diesWhenRun().build();
+        private final Spec secondSpec = MockSpec.that().diesWhenRun().build();
 
         @Before
         public void setup() throws Exception {
@@ -254,17 +253,8 @@ public class ClassContextTest {
     }
 
     public class whenASpecPasses {
-      @Test @Ignore
-      public void notifiesTestSuccess() throws Exception {}
-    }
-
-    public class whenASpecThrowsTestSetupFailed {
-      @Test @Ignore
-      public void notifiesTestError() throws Exception {}
-    }
-
-    public class whenASpecThrowsAnythingElse {
-      private final Spec spec = MockSpec.thatDies();
+      private final Description description = FakeDescription.descriptionWithId("passes");
+      private final Spec spec = MockSpec.that().hasDescription(description).build();
 
       @Before
       public void setup() throws Exception {
@@ -273,13 +263,47 @@ public class ClassContextTest {
       }
 
       @Test
-      public void notifiesTestFailure() throws Exception {
+      public void notifiesTestSuccess() throws Exception {
         InOrder sequence = Mockito.inOrder(notifier, spec);
         sequence.verify(notifier).fireTestStarted(Mockito.any(Description.class));
         sequence.verify(spec).run();
-        sequence.verify(notifier).fireTestFailure(Mockito.any(Failure.class));
-        assertThat("failure", equalTo("fully populated"));
+        sequence.verify(notifier).fireTestFinished(Mockito.eq(description));
         sequence.verifyNoMoreInteractions();
+      }
+    }
+
+    public class whenASpecThrowsTestSetupFailed {
+      @Test @Ignore
+      public void notifiesTestAssumptionFailed() throws Exception {}
+    }
+
+    public class whenASpecThrowsAnythingElse {
+      private @Captor ArgumentCaptor<Failure> failureCaptor;
+
+      private final Description description = FakeDescription.descriptionWithId("failing");
+      private final Spec spec = MockSpec.that()
+        .hasDescription(description)
+        .diesWhenRun(new AssertionError("sufferin' succotash")) //TODO KDK: Catch whatever JUnit's Assert throws
+        .build();
+
+      @Before
+      public void setup() throws Exception {
+        MockitoAnnotations.initMocks(this);
+        subject = classContextWithSpecs(spec);
+        subject.run(notifier);
+      }
+
+      @Test
+      public void notifiesTestFailureWithTheTestDescriptionAndThrownException() throws Exception {
+        InOrder sequence = Mockito.inOrder(notifier, spec);
+        sequence.verify(notifier).fireTestStarted(Mockito.any(Description.class));
+        sequence.verify(spec).run();
+        sequence.verify(notifier).fireTestFailure(failureCaptor.capture());
+        sequence.verifyNoMoreInteractions();
+
+        Failure failure = failureCaptor.getValue();
+        assertThat(failure.getDescription(), sameInstance(description));
+        assertThat(failure.getException().getMessage(), equalTo("sufferin' succotash"));
       }
     }
   }
