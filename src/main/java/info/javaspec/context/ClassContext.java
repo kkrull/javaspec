@@ -5,33 +5,37 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ClassContext extends Context {
-  private final String displayName;
+  private final Description description;
   private final List<Spec> specs;
   private final List<Context> subContexts;
 
-  protected ClassContext(String id, String displayName, List<Spec> specs, List<Context> subContexts) {
+  protected ClassContext(String id, String displayName) {
     super(id);
-    this.displayName = displayName;
-    this.specs = specs;
-    this.subContexts = subContexts;
+    this.description = Description.createSuiteDescription(displayName, getId());
+    this.specs = new LinkedList<>();
+    this.subContexts = new LinkedList<>();
   }
 
-  private String getDisplayName() { return displayName; }
   private Stream<Spec> getSpecs() { return specs.stream(); }
+  public void addSpec(Spec spec) {
+    specs.add(spec);
+    spec.addDescriptionTo(description);
+  }
+
   private Stream<Context> getSubContexts() { return subContexts.stream(); }
+  public void addSubContext(Context context) {
+    subContexts.add(context);
+    description.addChild(context.getDescription());
+  }
 
   @Override
-  public Description getDescription() {
-    Description suite = Description.createSuiteDescription(getDisplayName(), getId());
-    getSpecs().forEach(x -> x.addDescriptionTo(suite));
-    getSubContexts().map(Context::getDescription).forEach(suite::addChild);
-    return suite;
-  }
+  public Description getDescription() { return description; }
 
   @Override
   public boolean hasSpecs() {
@@ -57,7 +61,7 @@ public class ClassContext extends Context {
   }
 
   private void runSpec(Spec spec, RunNotifier notifier) {
-    notifier.fireTestStarted(spec.getDescription()); //TODO KDK: Is there a reasonable way to have the spec encapsulate the description?  Where should the behavior be described/tested?  If it's in the right place, the tests will survive the refactoring.
+    notifier.fireTestStarted(spec.getDescription());
     try {
       spec.run();
     } catch(Exception | AssertionError ex) {

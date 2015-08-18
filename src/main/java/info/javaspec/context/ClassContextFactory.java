@@ -2,17 +2,13 @@ package info.javaspec.context;
 
 import info.javaspec.dsl.It;
 import info.javaspec.spec.FieldSpec;
-import info.javaspec.spec.Spec;
 import info.javaspec.util.ReflectionUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
 
 public class ClassContextFactory {
   public static ClassContext createRootContext(Class<?> source) {
@@ -25,17 +21,25 @@ public class ClassContextFactory {
 
   private static ClassContext create(Class<?> source, String displayName) {
     String contextId = source.getCanonicalName();
-    List<Spec> specs = readDeclaredItFields(source)
-      .map(it -> FieldSpec.create(
-        contextId,
-        it,
-        new ArrayList<>(0),
-        new ArrayList<>(0)))
-      .collect(toList());
-    List<Context> subContexts = readInnerClasses(source)
+    ClassContext context = new ClassContext(contextId, displayName);
+
+    readDeclaredItFields(source)
+      .map(it -> createFieldSpec(contextId, it))
+      .forEach(context::addSpec);
+
+    readInnerClasses(source)
       .map(ClassContextFactory::createSubContext)
-      .collect(toList());
-    return new ClassContext(contextId, displayName, specs, subContexts);
+      .forEach(context::addSubContext);
+
+    return context;
+  }
+
+  private static FieldSpec createFieldSpec(String contextId, Field it) {
+    return FieldSpec.create(
+      contextId,
+      it,
+      new ArrayList<>(0),
+      new ArrayList<>(0));
   }
 
   private static Stream<Field> readDeclaredItFields(Class<?> context) {

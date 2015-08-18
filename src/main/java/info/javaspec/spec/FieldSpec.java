@@ -15,6 +15,7 @@ public final class FieldSpec extends Spec {
   private final Field assertionField;
   private final List<Field> befores;
   private final List<Field> afters;
+  private Description description;
   private TestFunction testFunction;
 
   public static FieldSpec create(String contextId, Field it, List<Field> befores, List<Field> afters) {
@@ -33,15 +34,13 @@ public final class FieldSpec extends Spec {
   }
 
   @Override
-  public Description getDescription() {
-    throw new UnsupportedOperationException();
-  }
+  public Description getDescription() { return description; }
 
   private String getDisplayName() { return displayName; }
 
   @Override
   public void addDescriptionTo(Description suite) {
-    Description description = Description.createTestDescription(suite.getClassName(), getDisplayName(), getId());
+    description = Description.createTestDescription(suite.getClassName(), getDisplayName(), getId());
     suite.addChild(description);
   }
 

@@ -14,6 +14,8 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.mockito.*;
 
+import java.util.stream.Stream;
+
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 import static info.javaspec.runner.Descriptions.isSuiteDescription;
@@ -321,10 +323,14 @@ public class ClassContextTest {
   }
 
   private static ClassContext classContextWithSpecs(Spec... specs) {
-    return new ClassContext("classContextWithSpecs", "classContextWithSpecs", newArrayList(specs), newArrayList());
+    ClassContext context = new ClassContext("classContextWithSpecs", "classContextWithSpecs");
+    Stream.of(specs).forEach(context::addSpec);
+    return context;
   }
 
   private static ClassContext classContextWithSubContexts(Context... subContexts) {
-    return new ClassContext("classContextWithSubContexts", "classContextWithSubContexts", newArrayList(), newArrayList(subContexts));
+    ClassContext context = new ClassContext("classContextWithSubContexts", "classContextWithSubContexts");
+    Stream.of(subContexts).forEach(context::addSubContext);
+    return context;
   }
 }
