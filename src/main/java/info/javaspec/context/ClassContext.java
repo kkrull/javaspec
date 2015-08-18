@@ -60,7 +60,7 @@ public class ClassContext extends Context {
     notifier.fireTestStarted(spec.getDescription()); //TODO KDK: Is there a reasonable way to have the spec encapsulate the description?  Where should the behavior be described/tested?  If it's in the right place, the tests will survive the refactoring.
     try {
       spec.run();
-    } catch(Exception ex) {
+    } catch(Exception | AssertionError ex) {
       notifier.fireTestFailure(new Failure(spec.getDescription(), ex));
       return;
     }
