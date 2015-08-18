@@ -64,6 +64,7 @@ public class ClassContext extends Context {
       notifier.fireTestFailure(new Failure(spec.getDescription(), ex));
       return;
     }
+
     notifier.fireTestFinished(spec.getDescription());
   }
 }

@@ -166,9 +166,9 @@ public class ClassContextTest {
     private final RunNotifier notifier = mock(RunNotifier.class);
 
     public class given1OrMoreSpecs {
-      private final Description firstDescription = FakeDescription.descriptionWithId("1");
+      private final Description firstDescription = DescriptionFactory.descriptionWithId("1");
       private final Spec firstChild = MockSpec.that().hasDescription(firstDescription).build();
-      private final Description secondDescription = FakeDescription.descriptionWithId("2");
+      private final Description secondDescription = DescriptionFactory.descriptionWithId("2");
       private final Spec secondChild = MockSpec.that().hasDescription(secondDescription).build();
 
       @Before
@@ -253,7 +253,7 @@ public class ClassContextTest {
     }
 
     public class whenASpecPasses {
-      private final Description description = FakeDescription.descriptionWithId("passes");
+      private final Description description = DescriptionFactory.descriptionWithId("passes");
       private final Spec spec = MockSpec.that().hasDescription(description).build();
 
       @Before
@@ -280,7 +280,7 @@ public class ClassContextTest {
     public class whenASpecThrowsAnythingElse {
       private @Captor ArgumentCaptor<Failure> failureCaptor;
 
-      private final Description description = FakeDescription.descriptionWithId("failing");
+      private final Description description = DescriptionFactory.descriptionWithId("failing");
       private final Spec spec = MockSpec.that()
         .hasDescription(description)
         .diesWhenRun(new AssertionError("sufferin' succotash")) //TODO KDK: Catch whatever JUnit's Assert throws
