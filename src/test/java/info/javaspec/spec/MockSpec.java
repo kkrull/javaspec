@@ -1,14 +1,25 @@
 package info.javaspec.spec;
 
 import org.junit.runner.Description;
-import org.mockito.Mockito;
 
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 public final class MockSpec {
+  public static Spec thatDies() {
+    Spec spec = anyValid();
+
+    try {
+      doThrow(new RuntimeException("bang!")).when(spec).run();
+    } catch(Exception e) {
+      throw new AssertionError("Failed test setup", e);
+    }
+
+    return spec;
+  }
+
   public static Spec withDescription(Description description) {
     Spec spec = anyValid();
-    Mockito.when(spec.getDescription()).thenReturn(description);
+    when(spec.getDescription()).thenReturn(description);
     return spec;
   }
 

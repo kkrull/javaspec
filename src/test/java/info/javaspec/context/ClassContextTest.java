@@ -10,6 +10,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
@@ -196,6 +197,25 @@ public class ClassContextTest {
       }
     }
 
+    public class given2OrMoreSpecs {
+      public class whenOneSpecThrows {
+        private final Spec firstSpec = MockSpec.thatDies();
+        private final Spec secondSpec = MockSpec.thatDies();
+
+        @Before
+        public void setup() throws Exception {
+          subject = classContextWithSpecs(firstSpec, secondSpec);
+          subject.run(notifier);
+        }
+
+        @Test
+        public void runsAllRemainingSpecs() throws Exception {
+          Mockito.verify(firstSpec).run();
+          Mockito.verify(secondSpec).run();
+        }
+      }
+    }
+
     public class given1OrMoreSubContexts {
       @Test
       public void runsEachSubContext() throws Exception {
@@ -238,21 +258,29 @@ public class ClassContextTest {
       public void notifiesTestSuccess() throws Exception {}
     }
 
-    public class whenASpecThrowsAnything {
-      @Test
-      public void runsRemainingSpecs() throws Exception {
-        assertThat("passing", equalTo("pending"));
-      }
-    }
-
     public class whenASpecThrowsTestSetupFailed {
       @Test @Ignore
       public void notifiesTestError() throws Exception {}
     }
 
     public class whenASpecThrowsAnythingElse {
-      @Test @Ignore
-      public void notifiesTestFailure() throws Exception {}
+      private final Spec spec = MockSpec.thatDies();
+
+      @Before
+      public void setup() throws Exception {
+        subject = classContextWithSpecs(spec);
+        subject.run(notifier);
+      }
+
+      @Test
+      public void notifiesTestFailure() throws Exception {
+        InOrder sequence = Mockito.inOrder(notifier, spec);
+        sequence.verify(notifier).fireTestStarted(Mockito.any(Description.class));
+        sequence.verify(spec).run();
+        sequence.verify(notifier).fireTestFailure(Mockito.any(Failure.class));
+        assertThat("failure", equalTo("fully populated"));
+        sequence.verifyNoMoreInteractions();
+      }
     }
   }
 

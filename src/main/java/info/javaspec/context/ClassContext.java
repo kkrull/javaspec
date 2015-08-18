@@ -60,7 +60,8 @@ public class ClassContext extends Context {
     try {
       spec.run();
     } catch(Exception e) {
-      throw new RuntimeException("Failed to run spec", e);
+      notifier.fireTestFailure(null);
+      return;
     }
     notifier.fireTestFinished(spec.getDescription());
   }
