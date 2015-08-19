@@ -1,5 +1,6 @@
 package info.javaspec.context;
 
+import info.javaspec.spec.Spec;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
@@ -35,6 +36,9 @@ public final class FakeContext extends Context {
 
   @Override
   public Description getDescription() { return description; }
+
+  @Override
+  public void addSpec(Spec spec) { throw new UnsupportedOperationException(); }
 
   @Override
   public boolean hasSpecs() { return numSpecs > 0; }

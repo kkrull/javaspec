@@ -1,5 +1,7 @@
 package info.javaspec.context;
 
+import info.javaspec.spec.FieldSpec;
+import info.javaspec.spec.Spec;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
@@ -14,12 +16,14 @@ public abstract class Context {
 
   public String getId() { return id; }
 
+  public abstract Description getDescription();
   public Description describeSpec(Serializable specId, String displayName) {
     return Description.createTestDescription(getDescription().getClassName(), displayName, specId);
   }
 
-  public abstract Description getDescription();
+  public abstract void addSpec(Spec spec);
   public abstract boolean hasSpecs();
   public abstract long numSpecs();
+
   public abstract void run(RunNotifier notifier);
 }

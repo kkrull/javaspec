@@ -27,6 +27,8 @@ public class ClassContext extends Context {
   }
 
   private Stream<Spec> getSpecs() { return specs.stream(); }
+
+  @Override
   public void addSpec(Spec spec) {
     specs.add(spec);
     spec.addDescriptionTo(suiteDescription);
