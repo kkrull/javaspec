@@ -10,13 +10,15 @@ import java.lang.reflect.Modifier;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static info.javaspec.util.SpecDesignator.identifierToDisplayName;
+
 public class ContextFactory {
   public static ClassContext createRootContext(Class<?> source) {
     return create(source, source.getSimpleName());
   }
 
   private static ClassContext createSubContext(Class<?> source) {
-    return create(source, humanize(source.getSimpleName()));
+    return create(source, identifierToDisplayName(source.getSimpleName()));
   }
 
   private static ClassContext create(Class<?> source, String displayName) {
@@ -47,9 +49,5 @@ public class ContextFactory {
   private static Stream<Class<?>> readInnerClasses(Class<?> parent) {
     Predicate<Class<?>> isNonStatic = x -> !Modifier.isStatic(x.getModifiers());
     return Stream.of(parent.getDeclaredClasses()).filter(isNonStatic);
-  }
-
-  private static String humanize(String identifier) {
-    return identifier.replace('_', ' ');
   }
 }
