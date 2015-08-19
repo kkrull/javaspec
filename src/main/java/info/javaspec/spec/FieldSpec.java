@@ -11,27 +11,27 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 public final class FieldSpec extends Spec {
-  private final Description description;
+  private final Description testDescription;
   private final Field assertionField;
   private final List<Field> befores;
   private final List<Field> afters;
 
   private TestFunction testFunction;
 
-  protected FieldSpec(String id, Description description, Field it, List<Field> befores, List<Field> afters) {
+  protected FieldSpec(String id, Description testDescription, Field it, List<Field> befores, List<Field> afters) {
     super(id);
-    this.description = description;
+    this.testDescription = testDescription;
     this.assertionField = it;
     this.befores = befores;
     this.afters = afters;
   }
 
   @Override
-  public Description getDescription() { return description; }
+  public Description getDescription() { return testDescription; }
 
   @Override
   public void addDescriptionTo(Description suite) {
-    suite.addChild(description);
+    suite.addChild(testDescription);
   }
 
   @Override

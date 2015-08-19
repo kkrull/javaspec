@@ -1,11 +1,15 @@
 package info.javaspec.spec;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
+import info.javaspec.context.Context;
+import info.javaspec.context.ContextFactory;
+import info.javaspec.context.FakeContext;
 import info.javaspec.dsl.It;
 import info.javaspecproto.ContextClasses;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 
 import java.lang.reflect.Field;
@@ -226,24 +230,20 @@ public class FieldSpecTest {
 
   private static Spec exampleWithNestedFullFixture() {
     return SpecFactory.create(
-      ContextClasses.NestedFullFixture.class.getSimpleName(),
-      ContextClasses.NestedFullFixture.class.getSimpleName(),
-      readField(ContextClasses.NestedFullFixture.innerContext.class, "asserts"),
-      newArrayList(readField(ContextClasses.NestedFullFixture.class, "arranges"),
-        readField(ContextClasses.NestedFullFixture.innerContext.class, "acts")),
-      newArrayList(readField(ContextClasses.NestedFullFixture.class, "cleans")));
+      FakeContext.withDescription(Description.createSuiteDescription(ContextClasses.NestedFullFixture.class)),
+      readField(ContextClasses.NestedFullFixture.innerContext.class, "asserts"));
   }
 
-  private static Spec exampleWith(Class<?> context, String it, List<String> befores, List<String> afters) {
+  private static Spec exampleWith(Class<?> contextClass, String it, List<String> befores, List<String> afters) {
     try {
-      return SpecFactory.create(
-        context.getSimpleName(),
-        context.getSimpleName(),
-        it == null ? null : readField(context, it),
-        befores.stream().map(x -> readField(context, x)).collect(toList()),
-        afters.stream().map(x -> readField(context, x)).collect(toList()));
+      return new FieldSpec(
+        it,
+        Description.createTestDescription(contextClass, it),
+        it == null ? null : readField(contextClass, it),
+        befores.stream().map(x -> readField(contextClass, x)).collect(toList()),
+        afters.stream().map(x -> readField(contextClass, x)).collect(toList()));
     } catch(Exception e) {
-      throw new RuntimeException(e);
+      throw new RuntimeException("Test setup failed", e);
     }
   }
 

@@ -17,7 +17,7 @@ public class SpecFactory {
       new ArrayList<>(0));
   }
 
-  public static FieldSpec create(String contextId, String descriptionClassName, Field it, List<Field> befores, List<Field> afters) {
+  private static FieldSpec create(String contextId, String descriptionClassName, Field it, List<Field> befores, List<Field> afters) {
     String id = String.format("%s#%s", contextId, it.getName());
     Description testDescription = Description.createTestDescription(descriptionClassName, humanize(it.getName()), id);
     return new FieldSpec(id, testDescription, it, befores, afters);
