@@ -2,6 +2,7 @@ package info.javaspec.context;
 
 import info.javaspec.dsl.It;
 import info.javaspec.spec.SpecFactory;
+import info.javaspec.util.ReflectionBasedFactory;
 import info.javaspec.util.ReflectionUtil;
 import org.junit.runner.Description;
 
@@ -10,28 +11,31 @@ import java.lang.reflect.Modifier;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static info.javaspec.util.SpecDesignator.identifierToDisplayName;
-
-public class ContextFactory {
+public class ContextFactory extends ReflectionBasedFactory {
   public static ClassContext createRootContext(Class<?> source) {
+    return new ContextFactory().createRootContextDelegate(source);
+  }
+
+  private ClassContext createRootContextDelegate(Class<?> source) {
     return create(source, source.getSimpleName());
   }
 
-  private static ClassContext createSubContext(Class<?> source) {
+  private ClassContext createSubContext(Class<?> source) {
     return create(source, identifierToDisplayName(source.getSimpleName()));
   }
 
-  private static ClassContext create(Class<?> source, String displayName) {
+  private ClassContext create(Class<?> source, String displayName) {
     String contextId = source.getCanonicalName();
-    Description suite = Description.createSuiteDescription(displayName, contextId);
-    ClassContext context = new ClassContext(contextId, suite);
+    ClassContext context = new ClassContext(contextId, Description.createSuiteDescription(displayName, contextId));
 
+    SpecFactory specFactory = new SpecFactory();
     readDeclaredItFields(source)
-      .map(it -> SpecFactory.create(context, it))
+      .map(it -> specFactory.create(context, it))
       .forEach(context::addSpec);
 
+    ContextFactory contextFactory = new ContextFactory();
     readInnerClasses(source)
-      .map(ContextFactory::createSubContext)
+      .map(contextFactory::createSubContext)
       .forEach(context::addSubContext);
 
     return context;

@@ -24,6 +24,7 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
+import static org.junit.runner.Description.createSuiteDescription;
 
 @RunWith(HierarchicalContextRunner.class)
 public class FieldSpecTest {
@@ -229,8 +230,9 @@ public class FieldSpecTest {
   }
 
   private static Spec exampleWithNestedFullFixture() {
-    return SpecFactory.create(
-      FakeContext.withDescription(Description.createSuiteDescription(ContextClasses.NestedFullFixture.class)),
+    SpecFactory specFactory = new SpecFactory();
+    return specFactory.create(
+      FakeContext.withDescription(createSuiteDescription(ContextClasses.NestedFullFixture.class)),
       readField(ContextClasses.NestedFullFixture.innerContext.class, "asserts"));
   }
 
