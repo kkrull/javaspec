@@ -1,6 +1,7 @@
 package info.javaspec.spec;
 
 import org.junit.runner.Description;
+import org.junit.runner.notification.RunNotifier;
 
 public class PendingSpec extends Spec {
   private final Description testDescription;
@@ -28,5 +29,10 @@ public class PendingSpec extends Spec {
   @Override
   public void run() throws Exception {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void run(RunNotifier notifier) {
+    notifier.fireTestIgnored(getDescription());
   }
 }

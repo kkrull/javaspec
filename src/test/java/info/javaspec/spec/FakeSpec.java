@@ -1,6 +1,7 @@
 package info.javaspec.spec;
 
 import org.junit.runner.Description;
+import org.junit.runner.notification.RunNotifier;
 
 public final class FakeSpec extends Spec {
   private FakeSpec(String id) {
@@ -18,4 +19,9 @@ public final class FakeSpec extends Spec {
 
   @Override
   public void run() { }
+
+  @Override
+  public void run(RunNotifier notifier) {
+    throw new UnsupportedOperationException();
+  }
 }

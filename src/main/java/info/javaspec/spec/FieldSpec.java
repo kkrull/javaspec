@@ -4,6 +4,8 @@ import info.javaspec.dsl.Before;
 import info.javaspec.dsl.Cleanup;
 import info.javaspec.dsl.It;
 import org.junit.runner.Description;
+import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunNotifier;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -37,6 +39,19 @@ public final class FieldSpec extends Spec {
   @Override
   public boolean isIgnored() {
     return theTestFunction().hasUnassignedFunctions();
+  }
+
+  @Override
+  public void run(RunNotifier notifier) {
+    notifier.fireTestStarted(getDescription());
+    try {
+      run();
+    } catch(Exception | AssertionError ex) {
+      notifier.fireTestFailure(new Failure(getDescription(), ex));
+      return;
+    }
+
+    notifier.fireTestFinished(getDescription());
   }
 
   @Override
