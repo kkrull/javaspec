@@ -65,6 +65,11 @@ public class ClassContext extends Context {
   }
 
   private void runSpec(Spec spec, RunNotifier notifier) {
+    if(spec.isIgnored()) {
+      notifier.fireTestIgnored(spec.getDescription());
+      return;
+    }
+
     notifier.fireTestStarted(spec.getDescription());
     try {
       spec.run();
