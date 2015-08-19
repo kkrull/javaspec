@@ -3,6 +3,7 @@ package info.javaspec.context;
 import info.javaspec.dsl.It;
 import info.javaspec.spec.FieldSpec;
 import info.javaspec.util.ReflectionUtil;
+import org.junit.runner.Description;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class ClassContextFactory {
+public class ContextFactory {
   public static ClassContext createRootContext(Class<?> source) {
     return create(source, source.getSimpleName());
   }
@@ -21,22 +22,24 @@ public class ClassContextFactory {
 
   private static ClassContext create(Class<?> source, String displayName) {
     String contextId = source.getCanonicalName();
-    ClassContext context = new ClassContext(contextId, displayName);
+    Description suite = Description.createSuiteDescription(displayName, contextId);
+    ClassContext context = new ClassContext(contextId, suite);
 
     readDeclaredItFields(source)
-      .map(it -> createFieldSpec(contextId, it))
+      .map(it -> createFieldSpec(context, it))
       .forEach(context::addSpec);
 
     readInnerClasses(source)
-      .map(ClassContextFactory::createSubContext)
+      .map(ContextFactory::createSubContext)
       .forEach(context::addSubContext);
 
     return context;
   }
 
-  private static FieldSpec createFieldSpec(String contextId, Field it) {
+  private static FieldSpec createFieldSpec(Context context, Field it) {
     return FieldSpec.create(
-      contextId,
+      context.getId(),
+      context.getDescription().getClassName(),
       it,
       new ArrayList<>(0),
       new ArrayList<>(0));

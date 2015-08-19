@@ -11,23 +11,24 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 public final class FieldSpec extends Spec {
-  private final String displayName;
+  private final Description description;
   private final Field assertionField;
   private final List<Field> befores;
   private final List<Field> afters;
-  private Description description;
+
   private TestFunction testFunction;
 
-  public static FieldSpec create(String contextId, Field it, List<Field> befores, List<Field> afters) {
+  public static FieldSpec create(String contextId, String descriptionClassName, Field it, List<Field> befores, List<Field> afters) {
     String id = String.format("%s#%s", contextId, it.getName());
-    return new FieldSpec(id, humanize(it.getName()), it, befores, afters);
+    Description testDescription = Description.createTestDescription(descriptionClassName, humanize(it.getName()), id);
+    return new FieldSpec(id, testDescription, it, befores, afters);
   }
 
   private static String humanize(String identifier) { return identifier.replace('_', ' '); }
 
-  private FieldSpec(String id, String displayName, Field it, List<Field> befores, List<Field> afters) {
+  private FieldSpec(String id, Description description, Field it, List<Field> befores, List<Field> afters) {
     super(id);
-    this.displayName = displayName;
+    this.description = description;
     this.assertionField = it;
     this.befores = befores;
     this.afters = afters;
@@ -36,11 +37,8 @@ public final class FieldSpec extends Spec {
   @Override
   public Description getDescription() { return description; }
 
-  private String getDisplayName() { return displayName; }
-
   @Override
   public void addDescriptionTo(Description suite) {
-    description = Description.createTestDescription(suite.getClassName(), getDisplayName(), getId());
     suite.addChild(description);
   }
 

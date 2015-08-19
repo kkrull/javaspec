@@ -11,13 +11,17 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ClassContext extends Context {
-  private final Description description;
+  private final Description suiteDescription;
   private final List<Spec> specs;
   private final List<Context> subContexts;
 
   protected ClassContext(String id, String displayName) {
+    this(id, Description.createSuiteDescription(displayName, id));
+  }
+
+  protected ClassContext(String id, Description suiteDescription) {
     super(id);
-    this.description = Description.createSuiteDescription(displayName, getId());
+    this.suiteDescription = suiteDescription;
     this.specs = new LinkedList<>();
     this.subContexts = new LinkedList<>();
   }
@@ -25,17 +29,17 @@ public class ClassContext extends Context {
   private Stream<Spec> getSpecs() { return specs.stream(); }
   public void addSpec(Spec spec) {
     specs.add(spec);
-    spec.addDescriptionTo(description);
+    spec.addDescriptionTo(suiteDescription);
   }
 
   private Stream<Context> getSubContexts() { return subContexts.stream(); }
   public void addSubContext(Context context) {
     subContexts.add(context);
-    description.addChild(context.getDescription());
+    suiteDescription.addChild(context.getDescription());
   }
 
   @Override
-  public Description getDescription() { return description; }
+  public Description getDescription() { return suiteDescription; }
 
   @Override
   public boolean hasSpecs() {
