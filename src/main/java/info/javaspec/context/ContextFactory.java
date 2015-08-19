@@ -1,13 +1,12 @@
 package info.javaspec.context;
 
 import info.javaspec.dsl.It;
-import info.javaspec.spec.FieldSpec;
+import info.javaspec.spec.SpecFactory;
 import info.javaspec.util.ReflectionUtil;
 import org.junit.runner.Description;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -26,7 +25,7 @@ public class ContextFactory {
     ClassContext context = new ClassContext(contextId, suite);
 
     readDeclaredItFields(source)
-      .map(it -> createFieldSpec(context, it))
+      .map(it -> SpecFactory.create(context, it))
       .forEach(context::addSpec);
 
     readInnerClasses(source)
@@ -34,15 +33,6 @@ public class ContextFactory {
       .forEach(context::addSubContext);
 
     return context;
-  }
-
-  private static FieldSpec createFieldSpec(Context context, Field it) {
-    return FieldSpec.create(
-      context.getId(),
-      context.getDescription().getClassName(),
-      it,
-      new ArrayList<>(0),
-      new ArrayList<>(0));
   }
 
   private static Stream<Field> readDeclaredItFields(Class<?> context) {

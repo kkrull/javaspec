@@ -18,15 +18,7 @@ public final class FieldSpec extends Spec {
 
   private TestFunction testFunction;
 
-  public static FieldSpec create(String contextId, String descriptionClassName, Field it, List<Field> befores, List<Field> afters) {
-    String id = String.format("%s#%s", contextId, it.getName());
-    Description testDescription = Description.createTestDescription(descriptionClassName, humanize(it.getName()), id);
-    return new FieldSpec(id, testDescription, it, befores, afters);
-  }
-
-  private static String humanize(String identifier) { return identifier.replace('_', ' '); }
-
-  private FieldSpec(String id, Description description, Field it, List<Field> befores, List<Field> afters) {
+  protected FieldSpec(String id, Description description, Field it, List<Field> befores, List<Field> afters) {
     super(id);
     this.description = description;
     this.assertionField = it;
