@@ -34,9 +34,13 @@ public class SpecFactory extends ReflectionBasedFactory {
     return ReflectionUtil.fieldsOfType(fieldType, contextClass).filter(isInstanceField);
   }
 
-  public FieldSpec create(Field it) {
+  public Spec create(Field it) {
     String id = String.format("%s#%s", context.getId(), it.getName());
     Description description = context.describeSpec(id, identifierToDisplayName(it.getName()));
-    return new FieldSpec(id, description, it, new ArrayList<>(0), new ArrayList<>(0));
+    FieldSpec spec = new FieldSpec(id, description, it, new ArrayList<>(0), new ArrayList<>(0));
+    if(spec.isIgnored())
+      return new PendingSpec(id, description);
+    else
+      return spec;
   }
 }
