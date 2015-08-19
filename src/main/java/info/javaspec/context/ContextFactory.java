@@ -28,9 +28,9 @@ public class ContextFactory extends ReflectionBasedFactory {
     String contextId = source.getCanonicalName();
     ClassContext context = new ClassContext(contextId, Description.createSuiteDescription(displayName, contextId));
 
-    SpecFactory specFactory = new SpecFactory();
+    SpecFactory specFactory = new SpecFactory(context);
     readDeclaredItFields(source)
-      .map(it -> specFactory.create(context, it))
+      .map(specFactory::create)
       .forEach(context::addSpec);
 
     ContextFactory contextFactory = new ContextFactory();

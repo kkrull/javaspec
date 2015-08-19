@@ -9,7 +9,6 @@ Feature: Basic structure of a JavaSpec test class
     When I run the tests
     Then the test runner should run one test for every It field
 
-  @wip
   Scenario: An unassigned It field is a pending test
     Given I have a JavaSpec test with a blank It field
     When I run the test

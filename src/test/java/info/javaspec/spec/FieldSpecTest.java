@@ -2,7 +2,6 @@ package info.javaspec.spec;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.context.Context;
-import info.javaspec.context.ContextFactory;
 import info.javaspec.context.FakeContext;
 import info.javaspec.dsl.It;
 import info.javaspecproto.ContextClasses;
@@ -230,10 +229,9 @@ public class FieldSpecTest {
   }
 
   private static Spec exampleWithNestedFullFixture() {
-    SpecFactory specFactory = new SpecFactory();
-    return specFactory.create(
-      FakeContext.withDescription(createSuiteDescription(ContextClasses.NestedFullFixture.class)),
-      readField(ContextClasses.NestedFullFixture.innerContext.class, "asserts"));
+    Context context = FakeContext.withDescription(createSuiteDescription(ContextClasses.NestedFullFixture.class));
+    SpecFactory specFactory = new SpecFactory(context);
+    return specFactory.create(readField(ContextClasses.NestedFullFixture.innerContext.class, "asserts"));
   }
 
   private static Spec exampleWith(Class<?> contextClass, String it, List<String> befores, List<String> afters) {
