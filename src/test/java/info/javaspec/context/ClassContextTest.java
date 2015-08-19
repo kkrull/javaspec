@@ -169,10 +169,8 @@ public class ClassContextTest {
     private final RunNotifier notifier = mock(RunNotifier.class);
 
     public class given1OrMoreSpecs {
-      private final Description firstDescription = descriptionWithId("1");
-      private final Spec firstChild = MockSpec.that().hasDescription(firstDescription).build();
-      private final Description secondDescription = descriptionWithId("2");
-      private final Spec secondChild = MockSpec.that().hasDescription(secondDescription).build();
+      private final Spec firstChild = MockSpec.that().build();
+      private final Spec secondChild = MockSpec.that().build();
 
       @Before
       public void setup() throws Exception {
@@ -182,39 +180,8 @@ public class ClassContextTest {
 
       @Test
       public void runsEachSpec() throws Exception {
-        Mockito.verify(firstChild).run();
-        Mockito.verify(secondChild).run();
-      }
-
-      @Test
-      public void notifiesWhenStartingAndEndingEachTest() throws Exception {
-        InOrder sequence = Mockito.inOrder(notifier, firstChild, secondChild);
-        sequence.verify(notifier).fireTestStarted(Mockito.same(firstDescription));
-        sequence.verify(firstChild).run();
-        sequence.verify(notifier).fireTestFinished(Mockito.same(firstDescription));
-        sequence.verify(notifier).fireTestStarted(Mockito.same(secondDescription));
-        sequence.verify(secondChild).run();
-        sequence.verify(notifier).fireTestFinished(Mockito.same(secondDescription));
-        sequence.verifyNoMoreInteractions();
-      }
-    }
-
-    public class given2OrMoreSpecs {
-      public class whenOneSpecThrows {
-        private final Spec firstSpec = MockSpec.that().diesWhenRun().build();
-        private final Spec secondSpec = MockSpec.that().diesWhenRun().build();
-
-        @Before
-        public void setup() throws Exception {
-          subject = classContextWithSpecs(firstSpec, secondSpec);
-          subject.run(notifier);
-        }
-
-        @Test
-        public void runsAllRemainingSpecs() throws Exception {
-          Mockito.verify(firstSpec).run();
-          Mockito.verify(secondSpec).run();
-        }
+        Mockito.verify(firstChild).run(notifier);
+        Mockito.verify(secondChild).run(notifier);
       }
     }
 
@@ -228,85 +195,6 @@ public class ClassContextTest {
         subject.run(notifier);
         Mockito.verify(firstChild).run(notifier);
         Mockito.verify(secondChild).run(notifier);
-      }
-    }
-
-    public class givenAContextWithAnEstablishField {
-      @Test @Ignore
-      public void createsSpecsWithThatAsABeforeEachFixtureLambda() throws Exception {
-        //Option 1: Create a real spec with real fields that have observable side effects.
-        //- meant to test: Call to FieldSpec#new
-        //- also depends on: Working FieldSpec#run
-
-        //Option 2: Extract ClassContext#create methods into ContextFactory.  DI factory method (FieldSpec#new).
-
-        //Option 3: DI factory method (FieldSpec#new) into ClassContext#create methods.
-        assertThat("pending", equalTo("passing"));
-      }
-    }
-
-    public class givenAContextWithABecauseField {
-      @Test @Ignore
-      public void createsSpecsWithThatAsABeforeEachFixtureLambda() throws Exception {}
-    }
-
-    public class givenAContextWithACleanupField {
-      @Test @Ignore
-      public void createsSpecsWithThatAsAnAfterEachFixtureLambda() throws Exception {}
-    }
-
-    public class whenASpecPasses {
-      private final Description description = descriptionWithId("passes");
-      private final Spec spec = MockSpec.that().hasDescription(description).build();
-
-      @Before
-      public void setup() throws Exception {
-        subject = classContextWithSpecs(spec);
-        subject.run(notifier);
-      }
-
-      @Test
-      public void notifiesTestSuccess() throws Exception {
-        InOrder sequence = Mockito.inOrder(notifier, spec);
-        sequence.verify(notifier).fireTestStarted(Mockito.any(Description.class));
-        sequence.verify(spec).run();
-        sequence.verify(notifier).fireTestFinished(Mockito.eq(description));
-        sequence.verifyNoMoreInteractions();
-      }
-    }
-
-    public class whenASpecThrowsTestSetupFailed {
-      @Test @Ignore
-      public void notifiesTestAssumptionFailed() throws Exception {}
-    }
-
-    public class whenASpecThrowsAnythingElse {
-      private @Captor ArgumentCaptor<Failure> failureCaptor;
-
-      private final Description description = descriptionWithId("failing");
-      private final Spec spec = MockSpec.that()
-        .hasDescription(description)
-        .diesWhenRun(new AssertionError("sufferin' succotash")) //TODO KDK: Catch whatever JUnit's Assert throws
-        .build();
-
-      @Before
-      public void setup() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        subject = classContextWithSpecs(spec);
-        subject.run(notifier);
-      }
-
-      @Test
-      public void notifiesTestFailureWithTheTestDescriptionAndThrownException() throws Exception {
-        InOrder sequence = Mockito.inOrder(notifier, spec);
-        sequence.verify(notifier).fireTestStarted(Mockito.any(Description.class));
-        sequence.verify(spec).run();
-        sequence.verify(notifier).fireTestFailure(failureCaptor.capture());
-        sequence.verifyNoMoreInteractions();
-
-        Failure failure = failureCaptor.getValue();
-        assertThat(failure.getDescription(), sameInstance(description));
-        assertThat(failure.getException().getMessage(), equalTo("sufferin' succotash"));
       }
     }
   }

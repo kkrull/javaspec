@@ -62,24 +62,7 @@ public class ClassContext extends Context {
 
   @Override
   public void run(RunNotifier notifier) {
-    getSpecs().forEach(x -> runSpec(x, notifier));
+    getSpecs().forEach(x -> x.run(notifier));
     getSubContexts().forEach(x -> x.run(notifier));
-  }
-
-  private void runSpec(Spec spec, RunNotifier notifier) {
-    if(spec.isIgnored()) {
-      notifier.fireTestIgnored(spec.getDescription());
-      return;
-    }
-
-    notifier.fireTestStarted(spec.getDescription());
-    try {
-      spec.run();
-    } catch(Exception | AssertionError ex) {
-      notifier.fireTestFailure(new Failure(spec.getDescription(), ex));
-      return;
-    }
-
-    notifier.fireTestFinished(spec.getDescription());
   }
 }
