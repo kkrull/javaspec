@@ -33,9 +33,8 @@ public class ContextFactory extends ReflectionBasedFactory {
       .map(specFactory::create)
       .forEach(context::addSpec);
 
-    ContextFactory contextFactory = new ContextFactory();
     readInnerClasses(source)
-      .map(contextFactory::createSubContext)
+      .map(this::createSubContext)
       .forEach(context::addSubContext);
 
     return context;
