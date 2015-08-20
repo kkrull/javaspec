@@ -74,18 +74,11 @@ final class FieldSpec extends Spec {
         It assertion = (It)context.getAssignedValue(assertionField);
         testFunction = new TestFunction(assertion, beforeValues, afterValues);
       } catch(Throwable t) {
-        throw new TestSetupFailed(assertionField.getDeclaringClass(), t);
+        throw TestSetupFailed.forClass(assertionField.getDeclaringClass(), t);
       }
     }
 
     return testFunction;
   }
 
-  public static final class TestSetupFailed extends RuntimeException {
-    private static final long serialVersionUID = 1L;
-
-    public TestSetupFailed(Class<?> context, Throwable cause) {
-      super(String.format("Failed to create test context %s", context.getName()), cause);
-    }
-  }
 }

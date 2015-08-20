@@ -28,7 +28,7 @@ final class SpecExecutionContext {
       field.setAccessible(true);
       return field.get(declaredContext);
     } catch(Throwable t) {
-      throw new FieldSpec.TestSetupFailed(declaringClass, t);
+      throw TestSetupFailed.forClass(declaringClass, t);
     }
   }
 

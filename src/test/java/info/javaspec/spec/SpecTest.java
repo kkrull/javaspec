@@ -7,7 +7,6 @@ import info.javaspec.dsl.It;
 import info.javaspecproto.ContextClasses;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
@@ -87,7 +86,7 @@ public class SpecTest {
 
       private void assertTestSetupFailed(Class<?> context, String itFieldName, Class<? extends Throwable> cause) {
         Spec subject = exampleWithIt(context, itFieldName);
-        assertThrows(FieldSpec.TestSetupFailed.class,
+        assertThrows(TestSetupFailed.class,
           is(String.format("Failed to create test context %s", context.getName())),
           cause, subject::run);
       }
@@ -98,7 +97,7 @@ public class SpecTest {
       public void throwsTestSetupFailedCausedByReflectionError() {
         //Intended to catch ReflectiveOperationException, but causing that with a fake SecurityManager was not reliable
         Spec subject = exampleWithIt(HasWrongType.class, "inaccessibleAsIt");
-        assertThrows(FieldSpec.TestSetupFailed.class, startsWith("Failed to create test context"),
+        assertThrows(TestSetupFailed.class, startsWith("Failed to create test context"),
           ClassCastException.class, subject::run);
       }
     }

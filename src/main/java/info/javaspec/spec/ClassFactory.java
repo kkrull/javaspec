@@ -15,7 +15,7 @@ abstract class ClassFactory {
     try {
       return makeInstance(constructor);
     } catch(Exception | AssertionError e) {
-      throw new FieldSpec.TestSetupFailed(aClass, e);
+      throw TestSetupFailed.forClass(aClass, e);
     }
   }
 

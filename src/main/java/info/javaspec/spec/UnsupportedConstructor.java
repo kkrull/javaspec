@@ -1,6 +1,6 @@
 package info.javaspec.spec;
 
-public final class UnsupportedConstructor extends RuntimeException {
+final class UnsupportedConstructor extends RuntimeException {
   private static final long serialVersionUID = 1L;
 
   public static UnsupportedConstructor forClass(Class<?> context, Throwable cause) {
