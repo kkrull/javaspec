@@ -38,12 +38,14 @@ public class SpecFactory extends ReflectionBasedFactory {
   public Spec create(Field it) {
     String id = String.format("%s#%s", context.getId(), it.getName());
     Description description = context.describeSpec(id, identifierToDisplayName(it.getName()));
-
-    SpecExecutionContext executionContext = SpecExecutionContext.forDeclaringClass(it.getDeclaringClass());
-    Optional<?> assignedValue = Optional.ofNullable(executionContext.getAssignedValue(it));
-    return assignedValue
+    return getAssignedValue(it)
       .map(x -> new FieldSpec(id, description, it, new ArrayList<>(0), new ArrayList<>(0)))
       .map(Spec.class::cast)
       .orElseGet(() -> new PendingSpec(id, description));
+  }
+
+  private Optional<?> getAssignedValue(Field it) {
+    SpecExecutionContext executionContext = SpecExecutionContext.forDeclaringClass(it.getDeclaringClass());
+    return Optional.ofNullable(executionContext.getAssignedValue(it));
   }
 }

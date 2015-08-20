@@ -7,10 +7,13 @@ import info.javaspec.dsl.It;
 import info.javaspecproto.ContextClasses;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.lang.reflect.Field;
@@ -64,6 +67,15 @@ public class FieldSpecTest {
       private final Spec subject = exampleWithIt(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid");
 
       @Test
+      public void notifiesTestFailureWithUnsupportedConstructor() throws Exception {
+        ArgumentCaptor<Failure> failureCaptor = ArgumentCaptor.forClass(Failure.class);
+        subject.run(notifier);
+        Mockito.verify(notifier).fireTestFailure(failureCaptor.capture());
+        assertThat(failureCaptor.getValue(), notNullValue());
+        assertThat("pending", equalTo("passing")); //TODO KDK: Verify that UnsupportedConstructor is thrown with a plausible message
+      }
+
+      @Test @Ignore
       public void throwsUnsupportedConstructor() {
         assertThrows(FieldSpec.UnsupportedConstructor.class,
           is(String.format("Unable to find a no-argument constructor for class %s",
