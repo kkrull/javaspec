@@ -67,7 +67,7 @@ public final class FieldSpec extends Spec {
 
   private TestFunction theTestFunction() {
     if(testFunction == null) {
-      TestContext context = TestContext.forDeclaringClass(assertionField.getDeclaringClass());
+      SpecExecutionContext context = SpecExecutionContext.forDeclaringClass(assertionField.getDeclaringClass());
       try {
         List<Before> beforeValues = befores.stream().map(x -> (Before)context.getAssignedValue(x)).collect(toList());
         List<Cleanup> afterValues = afters.stream().map(x -> (Cleanup)context.getAssignedValue(x)).collect(toList());

@@ -10,16 +10,16 @@ import java.util.Map;
  *
  * When multiple specs are in the same (declaration) context, a distinct execution context will be used for each spec.
  */
-final class TestContext {
+final class SpecExecutionContext {
   private final Map<Class<?>, Object> instances = new HashMap<>();
 
-  public static TestContext forDeclaringClass(Class<?> declaringClass) {
-    TestContext executionContext = new TestContext();
+  public static SpecExecutionContext forDeclaringClass(Class<?> declaringClass) {
+    SpecExecutionContext executionContext = new SpecExecutionContext();
     executionContext.makeAndRememberInstance(declaringClass);
     return executionContext;
   }
 
-  private TestContext() { }
+  private SpecExecutionContext() { }
 
   public Object getAssignedValue(Field field) {
     Class<?> declaringClass = field.getDeclaringClass();
