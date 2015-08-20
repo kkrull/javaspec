@@ -10,6 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.junit.runner.notification.RunNotifier;
+import org.mockito.Mockito;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -24,6 +26,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 import static org.junit.runner.Description.createSuiteDescription;
+import static org.mockito.Mockito.mock;
 
 @RunWith(HierarchicalContextRunner.class)
 public class FieldSpecTest {
@@ -55,6 +58,8 @@ public class FieldSpecTest {
   }
 
   public class run {
+    private final RunNotifier notifier = mock(RunNotifier.class);
+
     public class givenAClassWithoutACallableNoArgConstructor {
       private final Spec subject = exampleWithIt(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid");
 

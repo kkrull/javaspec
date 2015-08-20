@@ -14,10 +14,6 @@ public class ClassContext extends Context {
   private final List<Spec> specs;
   private final List<Context> subContexts;
 
-  protected ClassContext(String id, String displayName) {
-    this(id, Description.createSuiteDescription(displayName, id));
-  }
-
   protected ClassContext(String id, Description suiteDescription) {
     super(id);
     this.suiteDescription = suiteDescription;
