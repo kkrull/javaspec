@@ -24,6 +24,7 @@ import java.util.List;
 import static com.google.common.collect.Lists.newArrayList;
 import static info.javaspec.testutil.Assertions.assertNoThrow;
 import static info.javaspec.testutil.Assertions.assertThrows;
+import static info.javaspec.testutil.Matchers.matchesRegex;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -71,13 +72,14 @@ public class FieldSpecTest {
         ArgumentCaptor<Failure> failureCaptor = ArgumentCaptor.forClass(Failure.class);
         subject.run(notifier);
         Mockito.verify(notifier).fireTestFailure(failureCaptor.capture());
-        assertThat(failureCaptor.getValue(), notNullValue());
-        assertThat("pending", equalTo("passing")); //TODO KDK: Verify that UnsupportedConstructor is thrown with a plausible message
+        Failure value = failureCaptor.getValue();
+        assertThat(value.getException(), instanceOf(UnsupportedConstructor.class));
+        assertThat(value.getException().getMessage(), matchesRegex("^Unable to find a no-argument constructor for class .*ConstructorWithArguments$"));
       }
 
       @Test @Ignore
       public void throwsUnsupportedConstructor() {
-        assertThrows(FieldSpec.UnsupportedConstructor.class,
+        assertThrows(UnsupportedConstructor.class,
           is(String.format("Unable to find a no-argument constructor for class %s",
             ContextClasses.ConstructorWithArguments.class.getName())),
           NoSuchMethodException.class, subject::run);

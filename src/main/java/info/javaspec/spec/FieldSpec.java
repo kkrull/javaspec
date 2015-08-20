@@ -88,12 +88,4 @@ public final class FieldSpec extends Spec {
       super(String.format("Failed to create test context %s", context.getName()), cause);
     }
   }
-
-  public static final class UnsupportedConstructor extends RuntimeException {
-    private static final long serialVersionUID = 1L;
-
-    public UnsupportedConstructor(Class<?> context, Throwable cause) {
-      super(String.format("Unable to find a no-argument constructor for class %s", context.getName()), cause);
-    }
-  }
 }

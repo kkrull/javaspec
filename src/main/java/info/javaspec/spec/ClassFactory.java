@@ -9,7 +9,7 @@ abstract class ClassFactory {
       constructor = getConstructor(aClass);
       constructor.setAccessible(true);
     } catch(Exception e) {
-      throw new FieldSpec.UnsupportedConstructor(aClass, e);
+      throw UnsupportedConstructor.forClass(aClass, e);
     }
 
     try {
