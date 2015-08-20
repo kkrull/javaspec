@@ -1,4 +1,4 @@
-package info.javaspec.runner;
+package info.javaspec.junit;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Matcher;

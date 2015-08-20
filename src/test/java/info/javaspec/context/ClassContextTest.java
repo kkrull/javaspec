@@ -1,16 +1,14 @@
 package info.javaspec.context;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.runner.Descriptions;
+import info.javaspec.junit.Descriptions;
 import info.javaspec.spec.MockSpec;
 import info.javaspec.spec.Spec;
 import info.javaspecproto.ContextClasses;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
-import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.mockito.*;
 
@@ -18,9 +16,9 @@ import java.util.stream.Stream;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
-import static info.javaspec.context.DescriptionFactory.descriptionWithId;
-import static info.javaspec.runner.Descriptions.isSuiteDescription;
-import static info.javaspec.runner.Descriptions.isTestDescription;
+import static info.javaspec.junit.DescriptionFactory.descriptionWithId;
+import static info.javaspec.junit.Descriptions.isSuiteDescription;
+import static info.javaspec.junit.Descriptions.isTestDescription;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;

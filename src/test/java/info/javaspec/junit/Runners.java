@@ -1,7 +1,6 @@
-package info.javaspec.runner;
+package info.javaspec.junit;
 
-import info.javaspec.testutil.RunListenerSpy;
-import info.javaspec.testutil.RunListenerSpy.Event;
+import info.javaspec.junit.RunListenerSpy.Event;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 
