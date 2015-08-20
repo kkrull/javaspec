@@ -80,5 +80,4 @@ final class FieldSpec extends Spec {
 
     return testFunction;
   }
-
 }

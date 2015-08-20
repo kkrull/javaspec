@@ -5,6 +5,7 @@ import info.javaspec.context.Context;
 import info.javaspec.context.FakeContext;
 import info.javaspec.dsl.It;
 import info.javaspecproto.ContextClasses;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,15 +62,19 @@ public class SpecTest {
   }
 
   public class run {
+    private Spec subject;
     private final RunNotifier notifier = mock(RunNotifier.class);
+    private final ArgumentCaptor<Failure> failureCaptor = ArgumentCaptor.forClass(Failure.class);
 
     public class givenAClassWithoutACallableNoArgConstructor {
-      private final Spec subject = exampleWithIt(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid");
+      @Before
+      public void setup() throws Exception {
+        subject = exampleWithIt(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid");
+        subject.run(notifier);
+      }
 
       @Test
       public void notifiesTestFailureWithUnsupportedConstructor() throws Exception {
-        ArgumentCaptor<Failure> failureCaptor = ArgumentCaptor.forClass(Failure.class);
-        subject.run(notifier);
         Mockito.verify(notifier).fireTestFailure(failureCaptor.capture());
         Failure value = failureCaptor.getValue();
         assertThat(value.getException(), instanceOf(UnsupportedConstructor.class));
@@ -79,16 +84,18 @@ public class SpecTest {
 
     public class givenAFaultyConstructorOrInitializer {
       @Test
-      public void throwsTestSetupFailed() throws Exception {
-        assertTestSetupFailed(ContextClasses.FailingClassInitializer.class, "will_fail", AssertionError.class);
+      public void notifiesWithTestSetupFailed() throws Exception {
         assertTestSetupFailed(ContextClasses.FailingConstructor.class, "will_fail", InvocationTargetException.class);
+        assertTestSetupFailed(ContextClasses.FailingClassInitializer.class, "will_fail", AssertionError.class);
       }
 
       private void assertTestSetupFailed(Class<?> context, String itFieldName, Class<? extends Throwable> cause) {
-        Spec subject = exampleWithIt(context, itFieldName);
         assertThrows(TestSetupFailed.class,
           is(String.format("Failed to create test context %s", context.getName())),
-          cause, subject::run);
+          cause, () -> {
+            subject = exampleWithIt(context, itFieldName);
+            subject.run(notifier);
+          });
       }
     }
 
