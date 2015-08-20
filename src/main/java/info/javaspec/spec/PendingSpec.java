@@ -3,10 +3,10 @@ package info.javaspec.spec;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
-public class PendingSpec extends Spec {
+final class PendingSpec extends Spec {
   private final Description testDescription;
 
-  public PendingSpec(String id, Description description) {
+  PendingSpec(String id, Description description) {
     super(id);
     this.testDescription = description;
   }

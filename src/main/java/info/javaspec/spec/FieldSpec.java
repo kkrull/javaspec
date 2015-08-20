@@ -12,7 +12,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-public final class FieldSpec extends Spec {
+final class FieldSpec extends Spec {
   private final Description testDescription;
   private final Field assertionField;
   private final List<Field> befores;
@@ -20,7 +20,7 @@ public final class FieldSpec extends Spec {
 
   private TestFunction testFunction;
 
-  protected FieldSpec(String id, Description testDescription, Field it, List<Field> befores, List<Field> afters) {
+  FieldSpec(String id, Description testDescription, Field it, List<Field> befores, List<Field> afters) {
     super(id);
     this.testDescription = testDescription;
     this.assertionField = it;

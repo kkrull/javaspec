@@ -76,14 +76,6 @@ public class SpecTest {
         assertThat(value.getException(), instanceOf(UnsupportedConstructor.class));
         assertThat(value.getException().getMessage(), matchesRegex("^Unable to find a no-argument constructor for class .*ConstructorWithArguments$"));
       }
-
-      @Test @Ignore
-      public void throwsUnsupportedConstructor() {
-        assertThrows(UnsupportedConstructor.class,
-          is(String.format("Unable to find a no-argument constructor for class %s",
-            ContextClasses.ConstructorWithArguments.class.getName())),
-          NoSuchMethodException.class, subject::run);
-      }
     }
 
     public class givenAFaultyConstructorOrInitializer {
