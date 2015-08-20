@@ -9,6 +9,7 @@ import org.junit.runner.Description;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -37,10 +38,13 @@ public class SpecFactory extends ReflectionBasedFactory {
   public Spec create(Field it) {
     String id = String.format("%s#%s", context.getId(), it.getName());
     Description description = context.describeSpec(id, identifierToDisplayName(it.getName()));
-    FieldSpec spec = new FieldSpec(id, description, it, new ArrayList<>(0), new ArrayList<>(0));
-    if(spec.isIgnored())
-      return new PendingSpec(id, description);
-    else
-      return spec;
+
+    TestContext stuffInTheTest = new TestContext();
+    stuffInTheTest.init(it.getDeclaringClass());
+    Optional<?> assignedValue = Optional.ofNullable(stuffInTheTest.getAssignedValue(it));
+    return assignedValue
+      .map(x -> new FieldSpec(id, description, it, new ArrayList<>(0), new ArrayList<>(0)))
+      .map(Spec.class::cast)
+      .orElseGet(() -> new PendingSpec(id, description));
   }
 }
