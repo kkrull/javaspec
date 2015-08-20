@@ -5,12 +5,21 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * An instance of the object(s) in which a spec exists and executes.
+ *
+ * When multiple specs are in the same (declaration) context, a distinct execution context will be used for each spec.
+ */
 final class TestContext {
   private final Map<Class<?>, Object> instances = new HashMap<>();
 
-  public void init(Class<?> innerMostContext) {
-    makeAndRememberInstance(innerMostContext);
+  public static TestContext forDeclaringClass(Class<?> declaringClass) {
+    TestContext executionContext = new TestContext();
+    executionContext.makeAndRememberInstance(declaringClass);
+    return executionContext;
   }
+
+  private TestContext() { }
 
   public Object getAssignedValue(Field field) {
     Class<?> declaringClass = field.getDeclaringClass();

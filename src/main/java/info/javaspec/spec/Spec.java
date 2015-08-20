@@ -14,6 +14,6 @@ public abstract class Spec {
   public abstract Description getDescription();
   public abstract void addDescriptionTo(Description suite);
   public abstract boolean isIgnored();
-  public abstract void run() throws Exception;
+  public abstract void run() throws Exception; //TODO KDK: Remove (work here)
   public abstract void run(RunNotifier notifier);
 }

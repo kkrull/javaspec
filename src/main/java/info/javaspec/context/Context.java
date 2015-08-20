@@ -6,6 +6,7 @@ import org.junit.runner.notification.RunNotifier;
 
 import java.io.Serializable;
 
+/** A grouping of related specs, which may be further divided into sub-groups (sub-contexts) */
 public abstract class Context {
   private final String id;
 
