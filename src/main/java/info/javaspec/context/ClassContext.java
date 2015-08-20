@@ -2,7 +2,6 @@ package info.javaspec.context;
 
 import info.javaspec.spec.Spec;
 import org.junit.runner.Description;
-import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
 import java.util.LinkedList;

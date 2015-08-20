@@ -14,7 +14,6 @@ Feature: Basic structure of a JavaSpec test class
     When I run the test
     Then the test runner should ignore the test
 
-  @wip
   Scenario: Relative order of execution for test fixture lambdas
     Given I have a JavaSpec test with test fixture lambdas
     When I run the test
