@@ -33,7 +33,7 @@ import static org.junit.runner.Description.createSuiteDescription;
 import static org.mockito.Mockito.mock;
 
 @RunWith(HierarchicalContextRunner.class)
-public class FieldSpecTest {
+public class SpecTest {
   public class isIgnored {
     public class whenEachJavaSpecFieldHasAnAssignedValue {
       @Test
