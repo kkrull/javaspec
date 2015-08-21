@@ -5,7 +5,6 @@ import info.javaspec.context.Context;
 import info.javaspec.context.FakeContext;
 import info.javaspec.dsl.It;
 import info.javaspecproto.ContextClasses;
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,6 +33,9 @@ import static org.mockito.Mockito.mock;
 
 @RunWith(HierarchicalContextRunner.class)
 public class SpecTest {
+  private Spec subject;
+  private final RunNotifier notifier = mock(RunNotifier.class);
+
   public class isIgnored {
     public class whenEachJavaSpecFieldHasAnAssignedValue {
       @Test
@@ -62,23 +64,12 @@ public class SpecTest {
   }
 
   public class run {
-    private Spec subject;
-    private final RunNotifier notifier = mock(RunNotifier.class);
-    private final ArgumentCaptor<Failure> failureCaptor = ArgumentCaptor.forClass(Failure.class);
-
     public class givenAClassWithoutACallableNoArgConstructor {
-      @Before
-      public void setup() throws Exception {
-        subject = exampleWithIt(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid");
-        subject.run(notifier);
-      }
-
       @Test
       public void notifiesTestFailureWithUnsupportedConstructor() throws Exception {
-        Mockito.verify(notifier).fireTestFailure(failureCaptor.capture());
-        Failure value = failureCaptor.getValue();
-        assertThat(value.getException(), instanceOf(UnsupportedConstructor.class));
-        assertThat(value.getException().getMessage(), matchesRegex("^Unable to find a no-argument constructor for class .*ConstructorWithArguments$"));
+        Failure failure = reportedFailure(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid");
+        assertThat(failure.getException(), instanceOf(UnsupportedConstructor.class));
+        assertThat(failure.getException().getMessage(), matchesRegex("^Unable to find a no-argument constructor for class .*ConstructorWithArguments$"));
       }
     }
 
@@ -102,7 +93,7 @@ public class SpecTest {
         //Intended to catch ReflectiveOperationException, but causing that with a fake SecurityManager was not reliable
         Spec subject = exampleWithIt(HasWrongType.class, "inaccessibleAsIt");
         assertThrows(TestSetupFailed.class, startsWith("Failed to create test context"),
-          ClassCastException.class, subject::run);
+          ClassCastException.class, () -> subject.run(notifier));
       }
     }
 
@@ -233,14 +224,20 @@ public class SpecTest {
     }
 
     private void assertTestSetupFailed(Class<?> context, String itFieldName, Class<? extends Throwable> cause) {
-      subject = exampleWithIt(context, itFieldName);
-      subject.run(notifier);
-
-      Mockito.verify(notifier).fireTestFailure(failureCaptor.capture());
-      Failure value = failureCaptor.getValue();
+      Failure value = reportedFailure(context, itFieldName);
       assertThat(value.getException(), instanceOf(TestSetupFailed.class));
       assertThat(value.getException().getMessage(), matchesRegex("^Failed to create test context .*$"));
       assertThat(value.getException().getCause(), instanceOf(cause));
+    }
+
+    private Failure reportedFailure(Class<?> context, String itFieldName) {
+      Spec subject = exampleWithIt(context, itFieldName);
+      RunNotifier notifier = mock(RunNotifier.class);
+      subject.run(notifier);
+
+      ArgumentCaptor<Failure> failureCaptor = ArgumentCaptor.forClass(Failure.class);
+      Mockito.verify(notifier).fireTestFailure(failureCaptor.capture());
+      return failureCaptor.getValue();
     }
   }
 
