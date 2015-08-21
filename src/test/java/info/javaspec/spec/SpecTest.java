@@ -68,35 +68,52 @@ public class SpecTest {
   public class run {
     private final RunNotifier notifier = mock(RunNotifier.class);
 
-    public class givenAClassWithoutACallableNoArgConstructor {
+    public class itNotifiesTestFailureGiven {
       @Test
-      public void notifiesTestFailureWithUnsupportedConstructor() throws Exception {
+      public void aReflectiveOperationException() {
+        //Intended to catch ReflectiveOperationException, but causing that with a fake SecurityManager was not reliable
+        Failure failure = reportedFailure(runNotifications(HasWrongType.class, "inaccessibleAsIt"));
+        assertThat(failure.getException(), isThrowableMatching(TestSetupFailed.class, "Failed to create test context .*"));
+      }
+
+      @Test
+      public void aContextClassWithoutACallableNoArgConstructor() throws Exception {
         Failure failure = reportedFailure(runNotifications(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid"));
         assertThat(failure.getException(), Matchers.isThrowableMatching(UnsupportedConstructor.class,
           "^Unable to find a no-argument constructor for class .*ConstructorWithArguments$"));
       }
-    }
 
-    public class givenAFaultyConstructor {
       @Test
-      public void notifiesWithTestSetupFailed() throws Exception {
+      public void anExplodingConstructor() throws Exception {
         assertTestSetupFailed(ContextClasses.FailingConstructor.class, "will_fail", InvocationTargetException.class);
       }
-    }
 
-    public class givenAFaultyInitializer {
       @Test
-      public void notifiesWithTestSetupFailed() throws Exception {
+      public void anExplodingClassInitializer() throws Exception {
         assertTestSetupFailed(ContextClasses.FailingClassInitializer.class, "will_fail", AssertionError.class);
       }
-    }
 
-    public class whenAFieldCanNotBeAccessed {
+      @Test @Ignore
+      public void anExplodingEstablishLambda() {
+        subject = SpecBuilder.forClass(ContextClasses.FailingEstablish.class)
+          .withBeforeFieldsNamed("flawed_setup")
+          .buildForItFieldNamed("will_never_run");
+        assertThrows(UnsupportedOperationException.class, equalTo("flawed_setup"), () -> subject.run());
+      }
+
       @Test
-      public void throwsTestSetupFailedCausedByReflectionError() {
-        //Intended to catch ReflectiveOperationException, but causing that with a fake SecurityManager was not reliable
-        Failure failure = reportedFailure(runNotifications(HasWrongType.class, "inaccessibleAsIt"));
-        assertThat(failure.getException(), isThrowableMatching(TestSetupFailed.class, "Failed to create test context .*"));
+      public void anExplodingItLambda() {
+        subject = SpecBuilder.forClass(ContextClasses.FailingIt.class).buildForItFieldNamed("fails");
+        Failure failure = reportedFailure(subject);
+        assertThat(failure.getException(), instanceOf(AssertionError.class));
+      }
+
+      @Test @Ignore
+      public void anExplodingCleanupLambda() {
+        subject = SpecBuilder.forClass(ContextClasses.FailingCleanup.class)
+          .withAfterFieldsNamed("flawed_cleanup")
+          .buildForItFieldNamed("may_run");
+        assertThrows(IllegalStateException.class, equalTo("flawed_cleanup"), subject::run);
       }
     }
 
@@ -138,7 +155,7 @@ public class SpecTest {
         ContextClasses.FullFixture.setEventListener(null);
       }
 
-      @Test
+      @Test @Ignore
       public void instantiatesContextClassesThenRunsSetupThenAssertsThenCleansUp() throws Exception {
         assertThat(events, contains(
           "ContextClasses.FullFixture::new",
@@ -155,13 +172,13 @@ public class SpecTest {
         subject = SpecBuilder
           .forClass(ContextClasses.NestedThreeDeep.middle.bottom.class)
           .buildForItFieldNamed("asserts");
-        assertNoThrow(subject::run);
+        assertNoThrow(() -> subject.run(notifier));
       }
 
       @Test
       public void usesTheTreeOfContextObjectsToRunTheFixtureLambdas() throws Exception {
         subject = exampleWithNestedFullFixture();
-        assertNoThrow(subject::run);
+        assertNoThrow(() -> subject.run(notifier));
       }
 
       private Spec exampleWithNestedFullFixture() {
@@ -171,30 +188,7 @@ public class SpecTest {
       }
     }
 
-    public class whenATestFunctionThrows {
-      @Test
-      public void notifiesTestFailureWithTheOriginalException() { //TODO KDK: Isn't there a test for this already?
-        subject = SpecBuilder.forClass(ContextClasses.FailingEstablish.class)
-          .withBeforeFieldsNamed("flawed_setup")
-          .buildForItFieldNamed("will_never_run");
-        assertThrows(UnsupportedOperationException.class, equalTo("flawed_setup"), () -> subject.run(notifier));
-      }
-
-      @Test
-      public void throwsWhateverItThrows() {
-        subject = SpecBuilder.forClass(ContextClasses.FailingIt.class).buildForItFieldNamed("fails");
-        assertThrows(AssertionError.class, anything(), subject::run);
-      }
-
-      @Test
-      public void throwsWhateverCleanupThrows() {
-        subject = SpecBuilder.forClass(ContextClasses.FailingCleanup.class)
-          .withAfterFieldsNamed("flawed_cleanup")
-          .buildForItFieldNamed("may_run");
-        assertThrows(IllegalStateException.class, equalTo("flawed_cleanup"), subject::run);
-      }
-    }
-
+    //TODO KDK: Given an establish field
     public class givenACleanupField {
       public class whenASetupActionOrAssertionFunctionThrows {
         private final List<String> events = new LinkedList<>();
@@ -249,8 +243,16 @@ public class SpecTest {
     }
   }
 
+  private static Failure reportedFailure(Spec spec) {
+    return reportedFailure(runNotifications(spec));
+  }
+
   private static RunNotifier runNotifications(Class<?> context, String itFieldName) {
     Spec subject = SpecBuilder.forClass(context).buildForItFieldNamed(itFieldName);
+    return runNotifications(subject);
+  }
+
+  private static RunNotifier runNotifications(Spec subject) {
     RunNotifier notifier = mock(RunNotifier.class);
     subject.run(notifier);
     return notifier;
