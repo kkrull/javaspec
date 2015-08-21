@@ -167,8 +167,8 @@ public class ClassContextTest {
     private final RunNotifier notifier = mock(RunNotifier.class);
 
     public class given1OrMoreSpecs {
-      private final Spec firstChild = MockSpec.that().build();
-      private final Spec secondChild = MockSpec.that().build();
+      private final Spec firstChild = mock(Spec.class);
+      private final Spec secondChild = mock(Spec.class);
 
       @Before
       public void setup() throws Exception {
