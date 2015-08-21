@@ -4,6 +4,7 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.context.Context;
 import info.javaspec.context.FakeContext;
 import info.javaspec.dsl.It;
+import info.javaspec.testutil.Matchers;
 import info.javaspecproto.ContextClasses;
 import org.junit.After;
 import org.junit.Before;
@@ -21,6 +22,7 @@ import java.util.List;
 
 import static info.javaspec.testutil.Assertions.assertNoThrow;
 import static info.javaspec.testutil.Assertions.assertThrows;
+import static info.javaspec.testutil.Matchers.isThrowableMatching;
 import static info.javaspec.testutil.Matchers.matchesRegex;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -70,9 +72,8 @@ public class SpecTest {
       @Test
       public void notifiesTestFailureWithUnsupportedConstructor() throws Exception {
         Failure failure = reportedFailure(runNotifications(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid"));
-        assertThat(failure.getException(), instanceOf(UnsupportedConstructor.class));
-        assertThat(failure.getException().getMessage(),
-          matchesRegex("^Unable to find a no-argument constructor for class .*ConstructorWithArguments$"));
+        assertThat(failure.getException(), Matchers.isThrowableMatching(UnsupportedConstructor.class,
+          "^Unable to find a no-argument constructor for class .*ConstructorWithArguments$"));
       }
     }
 
@@ -91,21 +92,19 @@ public class SpecTest {
     }
 
     public class whenAFieldCanNotBeAccessed {
-      @Test @Ignore
+      @Test
       public void throwsTestSetupFailedCausedByReflectionError() {
         //Intended to catch ReflectiveOperationException, but causing that with a fake SecurityManager was not reliable
-        subject = SpecBuilder.forClass(HasWrongType.class).buildForItFieldNamed("inaccessibleAsIt");
-        assertThrows(TestSetupFailed.class, startsWith("Failed to create test context"),
-          ClassCastException.class, () -> subject.run(notifier)); //TODO KDK: Work here converting #run over
+        Failure failure = reportedFailure(runNotifications(HasWrongType.class, "inaccessibleAsIt"));
+        assertThat(failure.getException(), isThrowableMatching(TestSetupFailed.class, "Failed to create test context .*"));
       }
     }
 
     public class givenANonPublicContextClass {
       @Test
       public void obtainsAccessToItsConstructor() throws Exception {
-        subject = SpecBuilder.forClass(getHiddenClass())
-          .buildForItFieldNamed("runs");
-        subject.run();
+        subject = SpecBuilder.forClass(getHiddenClass()).buildForItFieldNamed("runs");
+        subject.run(notifier);
       }
 
       private Class<?> getHiddenClass() {
@@ -174,11 +173,11 @@ public class SpecTest {
 
     public class whenATestFunctionThrows {
       @Test
-      public void throwsWhateverEstablishOrBecauseThrows() {
+      public void notifiesTestFailureWithTheOriginalException() { //TODO KDK: Isn't there a test for this already?
         subject = SpecBuilder.forClass(ContextClasses.FailingEstablish.class)
           .withBeforeFieldsNamed("flawed_setup")
           .buildForItFieldNamed("will_never_run");
-        assertThrows(UnsupportedOperationException.class, equalTo("flawed_setup"), subject::run);
+        assertThrows(UnsupportedOperationException.class, equalTo("flawed_setup"), () -> subject.run(notifier));
       }
 
       @Test

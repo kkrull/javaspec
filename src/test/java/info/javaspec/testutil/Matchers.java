@@ -9,9 +9,27 @@ import java.util.regex.Pattern;
 public final class Matchers {
   private Matchers() { /* static class */ }
 
+  public static Matcher<Throwable> isThrowableMatching(Class<? extends Throwable> expectedClass, String messageRegex) {
+    return new BaseMatcher<Throwable>() {
+      public boolean matches(Object item) {
+        if(item == null || item.getClass() != expectedClass)
+          return false;
+
+        Throwable actual = expectedClass.cast(item);
+        return Pattern.matches(messageRegex, actual.getMessage());
+      }
+
+      public void describeTo(Description description) {
+        description.appendText("Exception of type ");
+        description.appendValue(expectedClass);
+        description.appendText(" with message matching regex ");
+        description.appendValue(messageRegex);
+      }
+    };
+  }
+
   public static Matcher<String> matchesRegex(String pattern) {
     return new BaseMatcher<String>() {
-      @Override
       public boolean matches(Object item) {
         if(item == null || item.getClass() != String.class)
           return false;
@@ -20,7 +38,6 @@ public final class Matchers {
         return Pattern.matches(pattern, actual);
       }
 
-      @Override
       public void describeTo(Description description) {
         description.appendText("String matching pattern ");
         description.appendValue(pattern);
