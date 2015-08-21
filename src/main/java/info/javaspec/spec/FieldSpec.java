@@ -44,8 +44,16 @@ final class FieldSpec extends Spec {
   @Override
   public void run(RunNotifier notifier) {
     notifier.fireTestStarted(getDescription());
+    TestFunction f;
     try {
-      run();
+      f = theTestFunction();
+    } catch(Exception ex) {
+      notifier.fireTestFailure(new Failure(getDescription(), ex));
+      return;
+    }
+
+    try {
+      f.assertion.run();
     } catch(Exception | AssertionError ex) {
       notifier.fireTestFailure(new Failure(getDescription(), ex));
       return;

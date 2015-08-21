@@ -82,20 +82,17 @@ public class SpecTest {
       }
     }
 
-    public class givenAFaultyConstructorOrInitializer {
+    public class givenAFaultyConstructor {
       @Test
       public void notifiesWithTestSetupFailed() throws Exception {
         assertTestSetupFailed(ContextClasses.FailingConstructor.class, "will_fail", InvocationTargetException.class);
-        assertTestSetupFailed(ContextClasses.FailingClassInitializer.class, "will_fail", AssertionError.class);
       }
+    }
 
-      private void assertTestSetupFailed(Class<?> context, String itFieldName, Class<? extends Throwable> cause) {
-        assertThrows(TestSetupFailed.class,
-          is(String.format("Failed to create test context %s", context.getName())),
-          cause, () -> {
-            subject = exampleWithIt(context, itFieldName);
-            subject.run(notifier);
-          });
+    public class givenAFaultyInitializer {
+      @Test
+      public void notifiesWithTestSetupFailed() throws Exception {
+        assertTestSetupFailed(ContextClasses.FailingClassInitializer.class, "will_fail", AssertionError.class);
       }
     }
 
@@ -233,6 +230,17 @@ public class SpecTest {
       Spec subject = exampleWithIt(ConstructorWithSideEffects.class, "expects_to_be_run_once");
       subject.isIgnored();
       subject.run();
+    }
+
+    private void assertTestSetupFailed(Class<?> context, String itFieldName, Class<? extends Throwable> cause) {
+      subject = exampleWithIt(context, itFieldName);
+      subject.run(notifier);
+
+      Mockito.verify(notifier).fireTestFailure(failureCaptor.capture());
+      Failure value = failureCaptor.getValue();
+      assertThat(value.getException(), instanceOf(TestSetupFailed.class));
+      assertThat(value.getException().getMessage(), matchesRegex("^Failed to create test context .*$"));
+      assertThat(value.getException().getCause(), instanceOf(cause));
     }
   }
 
