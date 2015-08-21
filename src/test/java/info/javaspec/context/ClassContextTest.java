@@ -2,7 +2,6 @@ package info.javaspec.context;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.junit.Descriptions;
-import info.javaspec.spec.MockSpec;
 import info.javaspec.spec.Spec;
 import info.javaspecproto.ContextClasses;
 import org.junit.Before;
@@ -10,7 +9,7 @@ import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
-import org.mockito.*;
+import org.mockito.Mockito;
 
 import java.util.stream.Stream;
 

@@ -1,40 +1,32 @@
 package info.javaspec.spec;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.context.Context;
-import info.javaspec.context.FakeContext;
 import info.javaspec.dsl.It;
 import info.javaspecproto.ContextClasses;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static info.javaspec.testutil.Assertions.assertNoThrow;
 import static info.javaspec.testutil.Assertions.assertThrows;
 import static info.javaspec.testutil.Matchers.matchesRegex;
-import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
-import static org.junit.runner.Description.createSuiteDescription;
 import static org.mockito.Mockito.mock;
 
 @RunWith(HierarchicalContextRunner.class)
 public class SpecTest {
   private Spec subject;
-  private final RunNotifier notifier = mock(RunNotifier.class);
 
   public class isIgnored {
     public class whenEachJavaSpecFieldHasAnAssignedValue {
@@ -51,25 +43,32 @@ public class SpecTest {
         shouldBeSkipped(ContextClasses.PendingBecause.class, true);
         shouldBeSkipped(ContextClasses.PendingIt.class, true);
 
-        Spec pendingCleanup = SpecBuilder.exampleWith(ContextClasses.PendingCleanup.class, "asserts",
-          newArrayList("arranges", "acts"), newArrayList("cleans"));
-        assertThat(pendingCleanup.isIgnored(), equalTo(true));
+        subject = SpecBuilder.forClass(ContextClasses.PendingCleanup.class)
+          .withBeforeFieldsNamed("arranges", "acts")
+          .withAfterFieldsNamed("cleans")
+          .buildForItFieldNamed("asserts");
+        assertThat(subject.isIgnored(), equalTo(true));
       }
     }
 
     private void shouldBeSkipped(Class<?> contextClass, boolean isIgnored) {
-      Spec subject = SpecBuilder.exampleWith(contextClass, "asserts", newArrayList("arranges", "acts"), newArrayList());
+      subject = SpecBuilder.forClass(contextClass)
+        .withBeforeFieldsNamed("arranges", "acts")
+        .buildForItFieldNamed("asserts");
       assertThat(subject.isIgnored(), equalTo(isIgnored));
     }
   }
 
   public class run {
+    private final RunNotifier notifier = mock(RunNotifier.class);
+
     public class givenAClassWithoutACallableNoArgConstructor {
       @Test
       public void notifiesTestFailureWithUnsupportedConstructor() throws Exception {
         Failure failure = reportedFailure(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid");
         assertThat(failure.getException(), instanceOf(UnsupportedConstructor.class));
-        assertThat(failure.getException().getMessage(), matchesRegex("^Unable to find a no-argument constructor for class .*ConstructorWithArguments$"));
+        assertThat(failure.getException().getMessage(),
+          matchesRegex("^Unable to find a no-argument constructor for class .*ConstructorWithArguments$"));
       }
     }
 
@@ -91,17 +90,17 @@ public class SpecTest {
       @Test
       public void throwsTestSetupFailedCausedByReflectionError() {
         //Intended to catch ReflectiveOperationException, but causing that with a fake SecurityManager was not reliable
-        Spec subject = SpecBuilder.exampleWithIt(HasWrongType.class, "inaccessibleAsIt");
+        subject = SpecBuilder.forClass(HasWrongType.class).buildForItFieldNamed("inaccessibleAsIt");
         assertThrows(TestSetupFailed.class, startsWith("Failed to create test context"),
-          ClassCastException.class, () -> subject.run());
+          ClassCastException.class, () -> subject.run()); //TODO KDK: Work here converting #run over
       }
     }
 
     public class givenANonPublicContextClass {
-      private final Spec subject = SpecBuilder.exampleWithIt(getHiddenClass(), "runs");
-
       @Test
       public void obtainsAccessToItsConstructor() throws Exception {
+        subject = SpecBuilder.forClass(getHiddenClass())
+          .buildForItFieldNamed("runs");
         subject.run();
       }
 
@@ -119,11 +118,14 @@ public class SpecTest {
     }
 
     public class givenFieldsAccessibleFromAContextClass {
-      private final List<String> events = new LinkedList<String>();
-      private final Spec subject = SpecBuilder.exampleWithFullFixture();
+      private final List<String> events = new LinkedList<>();
 
       @Before
       public void spy() throws Exception {
+        subject = SpecBuilder.forClass(ContextClasses.FullFixture.class)
+          .withBeforeFieldsNamed("arranges", "acts")
+          .withAfterFieldsNamed("cleans")
+          .buildForItFieldNamed("asserts");
         ContextClasses.FullFixture.setEventListener(events::add);
         subject.run();
       }
@@ -147,13 +149,15 @@ public class SpecTest {
     public class givenANestedContext {
       @Test
       public void instantiatesTheNestedContextClasses() throws Exception {
-        Spec subject = SpecBuilder.exampleWithIt(ContextClasses.NestedThreeDeep.middle.bottom.class, "asserts");
+        subject = SpecBuilder
+          .forClass(ContextClasses.NestedThreeDeep.middle.bottom.class)
+          .buildForItFieldNamed("asserts");
         assertNoThrow(subject::run);
       }
 
       @Test
       public void usesTheTreeOfContextObjectsToRunTheFixtureLambdas() throws Exception {
-        Spec subject = SpecBuilder.exampleWithNestedFullFixture();
+        subject = SpecBuilder.exampleWithNestedFullFixture();
         assertNoThrow(subject::run);
       }
     }
@@ -161,34 +165,39 @@ public class SpecTest {
     public class whenATestFunctionThrows {
       @Test
       public void throwsWhateverEstablishOrBecauseThrows() {
-        Spec subject = SpecBuilder.exampleWith(ContextClasses.FailingEstablish.class, "will_never_run",
-          newArrayList("flawed_setup"), newArrayList());
+        subject = SpecBuilder.forClass(ContextClasses.FailingEstablish.class)
+          .withBeforeFieldsNamed("flawed_setup")
+          .buildForItFieldNamed("will_never_run");
         assertThrows(UnsupportedOperationException.class, equalTo("flawed_setup"), subject::run);
       }
 
       @Test
       public void throwsWhateverItThrows() {
-        Spec subject = SpecBuilder.exampleWithIt(ContextClasses.FailingIt.class, "fails");
+        subject = SpecBuilder.forClass(ContextClasses.FailingIt.class).buildForItFieldNamed("fails");
         assertThrows(AssertionError.class, anything(), subject::run);
       }
 
       @Test
       public void throwsWhateverCleanupThrows() {
-        Spec subject = SpecBuilder.exampleWith(ContextClasses.FailingCleanup.class, "may_run",
-          newArrayList(), newArrayList("flawed_cleanup"));
+        subject = SpecBuilder.forClass(ContextClasses.FailingCleanup.class)
+          .withAfterFieldsNamed("flawed_cleanup")
+          .buildForItFieldNamed("may_run");
         assertThrows(IllegalStateException.class, equalTo("flawed_cleanup"), subject::run);
       }
     }
 
     public class givenACleanupField {
       public class whenASetupActionOrAssertionFunctionThrows {
-        private final List<String> events = new LinkedList<String>();
-        private final Spec subject = SpecBuilder.exampleWith(ContextClasses.FailingEstablishWithCleanup.class, "it",
-          newArrayList("establish"), newArrayList("cleanup"));
+        private final List<String> events = new LinkedList<>();
         private Throwable thrown;
 
         @Before
         public void spy() throws Exception {
+          subject = SpecBuilder.forClass(ContextClasses.FailingEstablishWithCleanup.class)
+            .withBeforeFieldsNamed("establish")
+            .withAfterFieldsNamed("cleanup")
+            .buildForItFieldNamed("it");
+
           ContextClasses.FailingEstablishWithCleanup.setEventListener(events::add);
           try {
             subject.run();
@@ -218,7 +227,7 @@ public class SpecTest {
 
     @Test //Issue 2: code run at instantiation may have undesired side effects if run a second time
     public void runsWithTheSameInstanceThatWasUsedToCheckIfTheTestIsSkipped() throws Exception {
-      Spec subject = SpecBuilder.exampleWithIt(ConstructorWithSideEffects.class, "expects_to_be_run_once");
+      subject = SpecBuilder.forClass(ConstructorWithSideEffects.class).buildForItFieldNamed("expects_to_be_run_once");
       subject.isIgnored();
       subject.run();
     }
@@ -229,16 +238,16 @@ public class SpecTest {
       assertThat(value.getException().getMessage(), matchesRegex("^Failed to create test context .*$"));
       assertThat(value.getException().getCause(), instanceOf(cause));
     }
+  }
 
-    private Failure reportedFailure(Class<?> context, String itFieldName) {
-      Spec subject = SpecBuilder.exampleWithIt(context, itFieldName);
-      RunNotifier notifier = mock(RunNotifier.class);
-      subject.run(notifier);
+  private static Failure reportedFailure(Class<?> context, String itFieldName) {
+    Spec subject = SpecBuilder.forClass(context).buildForItFieldNamed(itFieldName);
+    RunNotifier notifier = mock(RunNotifier.class);
+    subject.run(notifier);
 
-      ArgumentCaptor<Failure> failureCaptor = ArgumentCaptor.forClass(Failure.class);
-      Mockito.verify(notifier).fireTestFailure(failureCaptor.capture());
-      return failureCaptor.getValue();
-    }
+    ArgumentCaptor<Failure> failureCaptor = ArgumentCaptor.forClass(Failure.class);
+    Mockito.verify(notifier).fireTestFailure(failureCaptor.capture());
+    return failureCaptor.getValue();
   }
 
   public static class HasWrongType {
