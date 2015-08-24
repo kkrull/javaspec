@@ -52,8 +52,23 @@ final class FieldSpec extends Spec {
       return;
     }
 
+    //TODO KDK: Cleanup and test-drive before/after running
     try {
+      f.befores.forEach(x -> {
+        try {
+          x.run();
+        } catch(Exception e) {
+          e.printStackTrace();
+        }
+      });
       f.assertion.run();
+      f.afters.forEach(x -> {
+        try {
+          x.run();
+        } catch(Exception e) {
+          e.printStackTrace();
+        }
+      });
     } catch(Exception | AssertionError ex) {
       notifier.fireTestFailure(new Failure(getDescription(), ex));
       return;

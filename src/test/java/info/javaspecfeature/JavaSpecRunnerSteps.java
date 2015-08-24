@@ -19,6 +19,7 @@ import org.junit.runner.Runner;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.synchronizedList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -151,28 +152,27 @@ public final class JavaSpecRunnerSteps {
 
   @Then("^the test runner should run the test within the context of the test fixture$")
   public void the_test_runner_should_run_the_test_within_the_context_of_the_test_fixture() throws Exception {
-    assertThat(describeEvents(), executedLambdas(), hasSize(5));
+    assertThat(executedLambdas(), equalTo(newArrayList(
+      "ContextClasses.FullFixture::new", //Check if all fields are assigned
+      "ContextClasses.FullFixture::new",
+      "ContextClasses.FullFixture::arrange",
+      "ContextClasses.FullFixture::act",
+      "ContextClasses.FullFixture::assert",
+      "ContextClasses.FullFixture::cleans"
+    )));
   }
 
   @Then("^the test runner should run the Establish lambda first.*$")
-  public void the_test_runner_should_run_the_Establish_lambda_first() throws Exception {
-    assertThat(describeEvents(), executedLambdas().get(1), equalTo("ContextClasses.FullFixture::arrange"));
-  }
+  public void the_test_runner_should_run_the_Establish_lambda_first() throws Exception { /* covered by prior step */ }
 
   @Then("^the test runner should run the Because lambda second.*$")
-  public void the_test_runner_should_run_the_Because_lambda_second() throws Exception {
-    assertThat(describeEvents(), executedLambdas().get(2), equalTo("ContextClasses.FullFixture::act"));
-  }
+  public void the_test_runner_should_run_the_Because_lambda_second() throws Exception { /* covered by prior step */ }
 
   @Then("^the test runner should run the It lambda third.*$")
-  public void the_test_runner_should_run_the_It_lambda_third() throws Exception {
-    assertThat(describeEvents(), executedLambdas().get(3), equalTo("ContextClasses.FullFixture::assert"));
-  }
+  public void the_test_runner_should_run_the_It_lambda_third() throws Exception { /* covered by prior step */ }
 
   @Then("^the test runner should run the Cleanup lambda fourth.*$")
-  public void the_test_runner_should_run_the_Cleanup_lambda_fourth() throws Exception {
-    assertThat(describeEvents(), executedLambdas().get(4), equalTo("ContextClasses.FullFixture::cleans"));
-  }
+  public void the_test_runner_should_run_the_Cleanup_lambda_fourth() throws Exception { /* covered by prior step */ }
 
   @Then("^the test runner should ignore the test$")
   public void the_test_runner_should_ignore_the_test() throws Exception {

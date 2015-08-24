@@ -156,15 +156,14 @@ public class SpecTest {
         ContextClasses.FullFixture.setEventListener(null);
       }
 
-      @Test 
+      @Test
       public void instantiatesContextClassesThenRunsSetupThenAssertsThenCleansUp() throws Exception {
         assertThat(events, equalTo(newArrayList(
           "ContextClasses.FullFixture::new",
           "ContextClasses.FullFixture::arrange",
-          //"ContextClasses.FullFixture::act",
-          "ContextClasses.FullFixture::assert"
-          //"ContextClasses.FullFixture::cleans"
-          )));
+          "ContextClasses.FullFixture::act",
+          "ContextClasses.FullFixture::assert",
+          "ContextClasses.FullFixture::cleans")));
       }
     }
 
