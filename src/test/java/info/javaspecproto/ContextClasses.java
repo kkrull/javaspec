@@ -116,6 +116,17 @@ public class ContextClasses {
     }
   }
 
+  public static class NestedCleanup extends ExecutionSpy {
+    public NestedCleanup() { notifyEvent.accept("ContextClasses.NestedCleanup::new"); }
+    Cleanup cleans = () -> notifyEvent.accept("ContextClasses.NestedCleanup::cleans");
+
+    public class innerContext {
+      public innerContext() { notifyEvent.accept("ContextClasses.NestedCleanup.innerContext::new"); }
+      Cleanup cleans = () -> notifyEvent.accept("ContextClasses.NestedCleanup::innerContext::cleans");
+      It asserts = () -> notifyEvent.accept("ContextClasses.NestedCleanup.innerContext::asserts");
+    }
+  }
+
   public static class NestedContext {
     public class inner {
       It asserts = () -> assertEquals(1, 1);

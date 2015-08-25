@@ -39,8 +39,7 @@ public class SpecFactory extends ReflectionBasedFactory {
     Description description = context.describeSpec(id, identifierToDisplayName(it.getName()));
 
     List<Field> beforeFields = readBeforeSpecFields(it.getDeclaringClass());
-    List<Field> afterFields = new ArrayList<>();
-    onlyDeclaredField(it.getDeclaringClass(), Cleanup.class).ifPresent(afterFields::add);
+    List<Field> afterFields = readAfterSpecFields(it.getDeclaringClass());
 
     return getAssignedValue(it)
       .map(x -> new FieldSpec(id, description, it, beforeFields, afterFields))
@@ -48,15 +47,23 @@ public class SpecFactory extends ReflectionBasedFactory {
       .orElseGet(() -> new PendingSpec(id, description));
   }
 
-  private List<Field> readBeforeSpecFields(Class<?> declaringClass) {
+  private List<Field> readBeforeSpecFields(Class<?> assertionClass) {
     LinkedList<Field> fields = new LinkedList<>();
     Consumer<Field> prependToFields = x -> fields.add(0, x);
-    for(Class<?> c = declaringClass; c != null; c = c.getEnclosingClass()) {
+    for(Class<?> c = assertionClass; c != null; c = c.getEnclosingClass()) {
       onlyDeclaredField(c, Because.class).ifPresent(prependToFields);
       onlyDeclaredField(c, Establish.class).ifPresent(prependToFields);
     }
 
     return fields;
+  }
+
+  private List<Field> readAfterSpecFields(Class<?> assertionClass) {
+    List<Field> afters = new LinkedList<>();
+    for(Class<?> c = assertionClass; c != null; c = c.getEnclosingClass())
+      onlyDeclaredField(c, Cleanup.class).ifPresent(afters::add);
+
+    return afters;
   }
 
   private static Optional<Field> onlyDeclaredField(Class<?> context, Class<?> fieldType) {

@@ -177,6 +177,31 @@ public class SpecTest {
       }
     }
 
+    public class givenANestedContextWithAfterSpecLambdasAtMultipleLevels {
+      @Before
+      public void setup() throws Exception {
+        subject = getSpec(ContextClasses.NestedCleanup.innerContext.class, "asserts");
+        ContextClasses.NestedEstablish.setEventListener(events::add);
+        subject.run(notifier);
+      }
+
+      @After
+      public void releaseSpy() {
+        ContextClasses.NestedCleanup.setEventListener(null);
+      }
+
+      @Test
+      public void runsAfterSpecLambdasInsideOutAfterTheAssertion() throws Exception {
+        assertThat(events, equalTo(newArrayList(
+          "ContextClasses.NestedCleanup::new",
+          "ContextClasses.NestedCleanup.innerContext::new",
+          "ContextClasses.NestedCleanup.innerContext::asserts",
+          "ContextClasses.NestedCleanup::innerContext::cleans",
+          "ContextClasses.NestedCleanup::cleans"
+        )));
+      }
+    }
+
     public class givenACleanupField {
       public class whenASetupActionOrAssertionFunctionThrows {
         private Throwable thrown;
