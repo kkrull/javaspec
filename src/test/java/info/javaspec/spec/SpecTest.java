@@ -124,18 +124,6 @@ public class SpecTest {
         subject = SpecBuilder.forClass(getHiddenClass()).buildForItFieldNamed("runs");
         subject.run(notifier);
       }
-
-      private Class<?> getHiddenClass() {
-        Class<?> outer;
-        try {
-          outer = Class.forName("info.javaspecproto.HiddenContext");
-          return outer.getDeclaredClasses()[0];
-        } catch(ClassNotFoundException e) {
-          e.printStackTrace();
-          fail("Unable to set up test");
-          return null;
-        }
-      }
     }
 
     public class givenFieldsAccessibleFromAContextClass {
@@ -143,12 +131,9 @@ public class SpecTest {
 
       @Before
       public void spy() throws Exception {
-        Context context = FakeContext.withDescription(createSuiteDescription(ContextClasses.FullFixture.class));
-        SpecFactory specFactory = new SpecFactory(context);
-        subject = specFactory.create(SpecBuilder.readField(ContextClasses.FullFixture.class, "asserts"));
-        
+        subject = getSpec(ContextClasses.FullFixture.class, "asserts");
         ContextClasses.FullFixture.setEventListener(events::add);
-        subject.run();
+        subject.run(notifier);
       }
 
       @After
@@ -178,14 +163,8 @@ public class SpecTest {
 
       @Test
       public void usesTheTreeOfContextObjectsToRunTheFixtureLambdas() throws Exception {
-        subject = exampleWithNestedFullFixture();
+        subject = getSpec(ContextClasses.NestedFullFixture.innerContext.class, "asserts");
         assertNoThrow(() -> subject.run(notifier));
-      }
-
-      private Spec exampleWithNestedFullFixture() {
-        Context context = FakeContext.withDescription(createSuiteDescription(ContextClasses.NestedFullFixture.class));
-        SpecFactory specFactory = new SpecFactory(context);
-        return specFactory.create(SpecBuilder.readField(ContextClasses.NestedFullFixture.innerContext.class, "asserts"));
       }
     }
 
@@ -243,6 +222,12 @@ public class SpecTest {
     }
   }
 
+  private Spec getSpec(Class<?> declaringClass, String fieldName) {
+    Context context = FakeContext.withDescription(createSuiteDescription(declaringClass));
+    SpecFactory specFactory = new SpecFactory(context);
+    return specFactory.create(SpecBuilder.readField(declaringClass, fieldName));
+  }
+
   private static Failure reportedFailure(Spec spec) {
     return reportedFailure(runNotifications(spec));
   }
@@ -262,6 +247,18 @@ public class SpecTest {
     ArgumentCaptor<Failure> captor = ArgumentCaptor.forClass(Failure.class);
     Mockito.verify(notifier).fireTestFailure(captor.capture());
     return captor.getValue();
+  }
+
+  private static Class<?> getHiddenClass() {
+    Class<?> outer;
+    try {
+      outer = Class.forName("info.javaspecproto.HiddenContext");
+      return outer.getDeclaredClasses()[0];
+    } catch(ClassNotFoundException e) {
+      e.printStackTrace();
+      fail("Unable to set up test");
+      return null;
+    }
   }
 
   public static class HasWrongType {

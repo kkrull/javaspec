@@ -52,7 +52,6 @@ final class FieldSpec extends Spec {
       return;
     }
 
-    //TODO KDK: Cleanup and test-drive before/after running
     try {
       f.befores.forEach(x -> {
         try {

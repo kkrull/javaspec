@@ -43,11 +43,11 @@ public class SpecBuilder {
     return readField(contextClass, name);
   }
 
-  public static Field readField(Class<?> context, String name) {
+  public static Field readField(Class<?> declaringClassName, String name) {
     try {
-      return context.getDeclaredField(name);
+      return declaringClassName.getDeclaredField(name);
     } catch(Exception e) {
-      String message = String.format("Failed to read field %s from %s", name, context);
+      String message = String.format("Failed to read field %s from %s", name, declaringClassName);
       throw new RuntimeException(message, e);
     }
   }
