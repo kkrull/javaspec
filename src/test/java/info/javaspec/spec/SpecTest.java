@@ -204,8 +204,6 @@ public class SpecTest {
 
     public class givenACleanupField {
       public class whenASetupActionOrAssertionFunctionThrows {
-        private Throwable thrown;
-
         @Before
         public void spy() throws Exception {
           subject = SpecBuilder.forClass(ContextClasses.FailingEstablishWithCleanup.class)
@@ -214,11 +212,12 @@ public class SpecTest {
             .buildForItFieldNamed("it");
 
           ContextClasses.FailingEstablishWithCleanup.setEventListener(events::add);
-          try {
-            subject.run();
-          } catch(Throwable t) {
-            this.thrown = t;
-          }
+          subject.run(notifier);
+//          try {
+//            subject.run();
+//          } catch(Throwable t) {
+//            this.thrown = t;
+//          }
         }
 
         @After
@@ -234,8 +233,9 @@ public class SpecTest {
         }
 
         @Test
-        public void stillThrowsTheOriginalException() {
-          assertThat(thrown.getMessage(), equalTo("flawed_setup"));
+        public void firesFailureWithTheOriginalException() {
+          Failure failure = reportedFailure(notifier);
+          assertThat(failure.getException().getMessage(), equalTo("flawed_setup"));
         }
       }
     }
