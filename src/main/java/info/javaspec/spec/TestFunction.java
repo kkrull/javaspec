@@ -7,9 +7,9 @@ import info.javaspec.dsl.It;
 import java.util.List;
 
 final class TestFunction {
-  public final It assertion;
-  public final List<Before> befores;
-  public final List<Cleanup> afters;
+  private final It assertion;
+  private final List<Before> befores;
+  private final List<Cleanup> afters;
 
   public TestFunction(It assertion, List<Before> befores, List<Cleanup> afters) {
     this.assertion = assertion;
@@ -19,5 +19,17 @@ final class TestFunction {
 
   public boolean hasUnassignedFunctions() {
     return assertion == null || befores.contains(null) || afters.contains(null);
+  }
+
+  public void runBeforeSpec() throws Exception {
+    for(Before before : befores) { before.run(); }
+  }
+
+  public void runSpec() throws Exception {
+    assertion.run();
+  }
+
+  public void runAfterSpec() throws Exception {
+    for(Cleanup after : afters) { after.run(); }
   }
 }

@@ -53,21 +53,9 @@ final class FieldSpec extends Spec {
     }
 
     try {
-      f.befores.forEach(x -> {
-        try {
-          x.run();
-        } catch(Exception e) {
-          e.printStackTrace();
-        }
-      });
-      f.assertion.run();
-      f.afters.forEach(x -> {
-        try {
-          x.run();
-        } catch(Exception e) {
-          e.printStackTrace();
-        }
-      });
+      f.runBeforeSpec();
+      f.runSpec();
+      f.runAfterSpec();
     } catch(Exception | AssertionError ex) {
       notifier.fireTestFailure(new Failure(getDescription(), ex));
       return;
@@ -80,10 +68,13 @@ final class FieldSpec extends Spec {
   public void run() throws Exception {
     TestFunction f = theTestFunction();
     try {
-      for(Before before : f.befores) { before.run(); }
-      f.assertion.run();
+      f.runBeforeSpec();
+      f.runSpec();
+//      for(Before before : f.befores) { before.run(); }
+//      f.assertion.run();
     } finally {
-      for(Cleanup after : f.afters) { after.run(); }
+      f.runAfterSpec();
+//      for(Cleanup after : f.afters) { after.run(); }
     }
   }
 
