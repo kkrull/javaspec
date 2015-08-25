@@ -21,7 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static info.javaspec.testutil.Assertions.assertNoThrow;
 import static info.javaspec.testutil.Assertions.assertThrows;
 import static info.javaspec.testutil.Matchers.isThrowableMatching;
 import static info.javaspec.testutil.Matchers.matchesRegex;
@@ -176,18 +175,6 @@ public class SpecTest {
           "ContextClasses.NestedEstablish.innerContext::asserts"
         )));
       }
-    }
-
-    public class givenAContextClassWithMultipleBeforeSpecFields {
-      @Test
-      public void triggersTestFailureWithAmbiguousSpecFixture() throws Exception {
-        assertThat("pending", equalTo("passing"));
-      }
-    }
-
-    public class givenAContextClassWithMultipleAfterSpecFields {
-      @Test @Ignore
-      public void triggersTestFailureWithAmbiguousSpecFixture() throws Exception {}
     }
 
     public class givenACleanupField {

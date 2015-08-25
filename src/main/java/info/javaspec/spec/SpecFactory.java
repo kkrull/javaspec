@@ -1,7 +1,10 @@
 package info.javaspec.spec;
 
 import info.javaspec.context.Context;
-import info.javaspec.dsl.*;
+import info.javaspec.dsl.Because;
+import info.javaspec.dsl.Cleanup;
+import info.javaspec.dsl.Establish;
+import info.javaspec.dsl.It;
 import info.javaspec.util.ReflectionBasedFactory;
 import info.javaspec.util.ReflectionUtil;
 import org.junit.runner.Description;
@@ -36,7 +39,8 @@ public class SpecFactory extends ReflectionBasedFactory {
     Description description = context.describeSpec(id, identifierToDisplayName(it.getName()));
 
     List<Field> beforeFields = readBeforeSpecFields(it.getDeclaringClass());
-    List<Field> afterFields = readDeclaredFields(it.getDeclaringClass(), Cleanup.class).collect(toList());
+    List<Field> afterFields = new ArrayList<>();
+    onlyDeclaredField(it.getDeclaringClass(), Cleanup.class).ifPresent(afterFields::add);
 
     return getAssignedValue(it)
       .map(x -> new FieldSpec(id, description, it, beforeFields, afterFields))

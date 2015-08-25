@@ -221,15 +221,22 @@ public class ContextClasses {
     static Cleanup cleans = () -> assertThat(1, equalTo(1));
   }
 
+  public static class TwoEstablish {
+    private final List<String> orderMatters = new LinkedList<>();
+    Establish arrange_part_one = () -> orderMatters.add("do this first");
+    Establish arrange_part_two_or_is_this_part_one = () -> orderMatters.add("do this second");
+    It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
+  }
+
   public static class TwoBecause {
-    private final List<String> orderMatters = new LinkedList<String>();
+    private final List<String> orderMatters = new LinkedList<>();
     Because act_part_one = () -> orderMatters.add("do this first");
     Because act_part_two_or_is_this_part_one = () -> orderMatters.add("do this second");
     It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
   }
 
   public static class TwoCleanup {
-    private final List<String> orderMatters = new LinkedList<String>();
+    private final List<String> orderMatters = new LinkedList<>();
     Cleanup cleanup_part_one = () -> orderMatters.add("do this first");
     Cleanup cleanup_part_two_or_is_this_part_one = () -> orderMatters.add("do this second");
     It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
@@ -243,13 +250,6 @@ public class ContextClasses {
     public class subcontext2 {
       It asserts = () -> assertEquals(2, 2);
     }
-  }
-
-  public static class TwoEstablish {
-    private final List<String> orderMatters = new LinkedList<String>();
-    Establish setup_part_one = () -> orderMatters.add("do this first");
-    Establish setup_part_two_not_allowed = () -> orderMatters.add("do this second");
-    It runs = () -> assertThat(orderMatters, contains("do this first", "do this second"));
   }
 
   public static class TwoIt extends ExecutionSpy {
