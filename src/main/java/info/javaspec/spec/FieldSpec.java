@@ -12,7 +12,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-final class FieldSpec extends Spec { //TODO KDK: Rename to DeclaredSpec?
+final class FieldSpec extends Spec { //TODO KDK: Rename to DeclaredSpec?  Keep it as FieldSpec and use state pattern internally to switch from fields to Establish/It/etc?
   private final Description testDescription;
   private final Field assertionField;
   private final List<Field> befores;

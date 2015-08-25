@@ -131,6 +131,17 @@ public class ContextClasses {
     }
   }
 
+  public static class NestedEstablish extends ExecutionSpy {
+    public NestedEstablish() { notifyEvent.accept("ContextClasses.NestedEstablish::new"); }
+    Establish arranges = () -> notifyEvent.accept("ContextClasses.NestedEstablish::arranges");
+
+    public class innerContext {
+      public innerContext() { notifyEvent.accept("ContextClasses.NestedEstablish.innerContext::new"); }
+      Establish arranges = () -> notifyEvent.accept("ContextClasses.NestedEstablish::innerContext::arranges");
+      It asserts = () -> notifyEvent.accept("ContextClasses.NestedEstablish.innerContext::asserts");
+    }
+  }
+
   public static class NestedIt {
     public class nestedContext {
       It tests_something_more_specific = () -> assertThat(1, equalTo(1));

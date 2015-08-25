@@ -34,6 +34,7 @@ import static org.mockito.Mockito.mock;
 @RunWith(HierarchicalContextRunner.class)
 public class SpecTest {
   private Spec subject;
+  private final List<String> events = new LinkedList<>();
 
   public class isIgnored {
     public class whenEachJavaSpecFieldHasAnAssignedValue {
@@ -152,30 +153,45 @@ public class SpecTest {
       }
     }
 
-    public class givenANestedContext {
-      @Test
-      public void instantiatesTheNestedContextClasses() throws Exception {
-        subject = SpecBuilder
-          .forClass(ContextClasses.NestedThreeDeep.middle.bottom.class)
-          .buildForItFieldNamed("asserts");
-        assertNoThrow(() -> subject.run(notifier));
+    public class givenANestedContextWithBeforeSpecLambdasAtMultipleLevels {
+      @Before
+      public void setup() throws Exception {
+        subject = getSpec(ContextClasses.NestedEstablish.innerContext.class, "asserts");
+        ContextClasses.NestedEstablish.setEventListener(events::add);
+        subject.run(notifier);
+      }
+
+      @After
+      public void releaseSpy() {
+        ContextClasses.NestedEstablish.setEventListener(null);
       }
 
       @Test
-      public void usesTheTreeOfContextObjectsToRunTheFixtureLambdas() throws Exception {
-        subject = getSpec(ContextClasses.NestedFullFixture.innerContext.class, "asserts");
-        assertNoThrow(() -> subject.run(notifier));
+      public void runsBeforeSpecLambdasOutsideInBeforeTheAssertion() throws Exception {
+        assertThat(events, equalTo(newArrayList(
+          "ContextClasses.NestedEstablish::new",
+          "ContextClasses.NestedEstablish.innerContext::new",
+          "ContextClasses.NestedEstablish::arranges",
+          "ContextClasses.NestedEstablish::innerContext::arranges",
+          "ContextClasses.NestedEstablish.innerContext::asserts"
+        )));
       }
+    }
 
+    public class givenAContextClassWithMultipleBeforeSpecFields {
       @Test
-      public void runsEstablishLambdasInParentContextsFromOutsideIn() throws Exception {
+      public void triggersTestFailureWithAmbiguousSpecFixture() throws Exception {
         assertThat("pending", equalTo("passing"));
       }
     }
 
+    public class givenAContextClassWithMultipleAfterSpecFields {
+      @Test @Ignore
+      public void triggersTestFailureWithAmbiguousSpecFixture() throws Exception {}
+    }
+
     public class givenACleanupField {
       public class whenASetupActionOrAssertionFunctionThrows {
-        private final List<String> events = new LinkedList<>();
         private Throwable thrown;
 
         @Before
