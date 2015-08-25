@@ -12,13 +12,13 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-final class FieldSpec extends Spec {
+final class FieldSpec extends Spec { //TODO KDK: Rename to DeclaredSpec?
   private final Description testDescription;
   private final Field assertionField;
   private final List<Field> befores;
   private final List<Field> afters;
 
-  private TestFunction testFunction;
+  private RunnableSpec runnableSpec;
 
   FieldSpec(String id, Description testDescription, Field it, List<Field> befores, List<Field> afters) {
     super(id);
@@ -38,24 +38,24 @@ final class FieldSpec extends Spec {
 
   @Override
   public boolean isIgnored() {
-    return theTestFunction().hasUnassignedFunctions();
+    return theRunnableSpec().hasUnassignedFunctions();
   }
 
   @Override
   public void run(RunNotifier notifier) {
     notifier.fireTestStarted(getDescription());
-    TestFunction f;
+    RunnableSpec spec;
     try {
-      f = theTestFunction();
+      spec = theRunnableSpec();
     } catch(Exception ex) {
       notifier.fireTestFailure(new Failure(getDescription(), ex));
       return;
     }
 
     try {
-      f.runBeforeSpec();
-      f.runSpec();
-      f.runAfterSpec();
+      spec.runBeforeSpec();
+      spec.runSpec();
+      spec.runAfterSpec();
     } catch(Exception | AssertionError ex) {
       notifier.fireTestFailure(new Failure(getDescription(), ex));
       return;
@@ -66,31 +66,28 @@ final class FieldSpec extends Spec {
 
   @Override
   public void run() throws Exception {
-    TestFunction f = theTestFunction();
+    RunnableSpec spec = theRunnableSpec();
     try {
-      f.runBeforeSpec();
-      f.runSpec();
-//      for(Before before : f.befores) { before.run(); }
-//      f.assertion.run();
+      spec.runBeforeSpec();
+      spec.runSpec();
     } finally {
-      f.runAfterSpec();
-//      for(Cleanup after : f.afters) { after.run(); }
+      spec.runAfterSpec();
     }
   }
 
-  private TestFunction theTestFunction() {
-    if(testFunction == null) {
+  private RunnableSpec theRunnableSpec() {
+    if(runnableSpec == null) {
       SpecExecutionContext context = SpecExecutionContext.forDeclaringClass(assertionField.getDeclaringClass());
       try {
         List<Before> beforeValues = befores.stream().map(x -> (Before)context.getAssignedValue(x)).collect(toList());
         List<Cleanup> afterValues = afters.stream().map(x -> (Cleanup)context.getAssignedValue(x)).collect(toList());
         It assertion = (It)context.getAssignedValue(assertionField);
-        testFunction = new TestFunction(assertion, beforeValues, afterValues);
+        runnableSpec = new RunnableSpec(assertion, beforeValues, afterValues);
       } catch(Throwable t) {
         throw TestSetupFailed.forClass(assertionField.getDeclaringClass(), t);
       }
     }
 
-    return testFunction;
+    return runnableSpec;
   }
 }

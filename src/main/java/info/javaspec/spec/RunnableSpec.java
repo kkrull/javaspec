@@ -6,12 +6,12 @@ import info.javaspec.dsl.It;
 
 import java.util.List;
 
-final class TestFunction {
+final class RunnableSpec {
   private final It assertion;
   private final List<Before> befores;
   private final List<Cleanup> afters;
 
-  public TestFunction(It assertion, List<Before> befores, List<Cleanup> afters) {
+  public RunnableSpec(It assertion, List<Before> befores, List<Cleanup> afters) {
     this.assertion = assertion;
     this.befores = befores;
     this.afters = afters;
