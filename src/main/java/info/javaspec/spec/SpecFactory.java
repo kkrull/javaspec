@@ -30,7 +30,7 @@ public class SpecFactory extends ReflectionBasedFactory {
       .forEach(context::addSpec);
   }
 
-  public Spec create(Field it) {
+  Spec create(Field it) {
     String id = String.format("%s#%s", context.getId(), it.getName());
     Description description = context.describeSpec(id, identifierToDisplayName(it.getName()));
 

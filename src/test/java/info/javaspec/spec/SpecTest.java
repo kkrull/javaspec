@@ -166,6 +166,11 @@ public class SpecTest {
         subject = getSpec(ContextClasses.NestedFullFixture.innerContext.class, "asserts");
         assertNoThrow(() -> subject.run(notifier));
       }
+
+      @Test
+      public void runsEstablishLambdasInParentContextsFromOutsideIn() throws Exception {
+        assertThat("pending", equalTo("passing"));
+      }
     }
 
     public class givenACleanupField {
