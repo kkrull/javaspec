@@ -1,5 +1,6 @@
 package info.javaspec.spec;
 
+import info.javaspec.context.AmbiguousFixture;
 import info.javaspec.context.Context;
 import info.javaspec.dsl.Because;
 import info.javaspec.dsl.Cleanup;
@@ -11,7 +12,6 @@ import org.junit.runner.Description;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -71,7 +71,7 @@ public class SpecFactory extends ReflectionBasedFactory {
     switch(fields.size()) {
       case 0: return Optional.empty();
       case 1: return Optional.of(fields.get(0));
-      default: throw new AmbiguousSpecFixture(context, fieldType);
+      default: throw AmbiguousFixture.forFieldOfType(fieldType, context);
     }
   }
 
@@ -87,13 +87,5 @@ public class SpecFactory extends ReflectionBasedFactory {
   private Optional<?> getAssignedValue(Field it) {
     SpecExecutionContext executionContext = SpecExecutionContext.forDeclaringClass(it.getDeclaringClass());
     return Optional.ofNullable(executionContext.getAssignedValue(it));
-  }
-
-  public static final class AmbiguousSpecFixture extends RuntimeException {
-    public AmbiguousSpecFixture(Class<?> contextClass, Class<?> fieldClass) {
-      super(String.format("Only 1 field of type %s is allowed in context class %s",
-        fieldClass.getSimpleName(),
-        contextClass));
-    }
   }
 }
