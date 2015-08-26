@@ -37,11 +37,6 @@ final class FieldSpec extends Spec {
   }
 
   @Override
-  public boolean isIgnored() {
-    return theRunnableSpec().hasUnassignedFunctions();
-  }
-
-  @Override
   public void run(RunNotifier notifier) {
     notifier.fireTestStarted(getDescription());
     RunnableSpec spec;

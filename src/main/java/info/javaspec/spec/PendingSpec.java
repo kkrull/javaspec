@@ -22,11 +22,6 @@ final class PendingSpec extends Spec {
   }
 
   @Override
-  public boolean isIgnored() {
-    return true;
-  }
-
-  @Override
   public void run(RunNotifier notifier) {
     notifier.fireTestIgnored(getDescription());
   }

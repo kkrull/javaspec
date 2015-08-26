@@ -41,10 +41,16 @@ public class SpecFactory extends ReflectionBasedFactory {
     List<Field> beforeFields = readBeforeSpecFields(it.getDeclaringClass());
     List<Field> afterFields = readAfterSpecFields(it.getDeclaringClass());
 
-    return getAssignedValue(it)
-      .map(x -> new FieldSpec(id, description, it, beforeFields, afterFields))
-      .map(Spec.class::cast)
-      .orElseGet(() -> new PendingSpec(id, description));
+    //TODO KDK: Refactor here
+    Stream<Field> allFields = Stream.concat(
+      beforeFields.stream(),
+      Stream.concat(Stream.of(it), afterFields.stream()));
+    Stream<Optional<?>> assignedValues = allFields.map(this::getAssignedValue);
+    if(assignedValues.allMatch(Optional::isPresent)) {
+      return new FieldSpec(id, description, it, beforeFields, afterFields);
+    } else {
+      return new PendingSpec(id, description);
+    }
   }
 
   private List<Field> readBeforeSpecFields(Class<?> assertionClass) {
@@ -84,8 +90,8 @@ public class SpecFactory extends ReflectionBasedFactory {
     return ReflectionUtil.fieldsOfType(fieldType, contextClass).filter(isInstanceField);
   }
 
-  private Optional<?> getAssignedValue(Field it) {
-    SpecExecutionContext executionContext = SpecExecutionContext.forDeclaringClass(it.getDeclaringClass());
-    return Optional.ofNullable(executionContext.getAssignedValue(it));
+  private Optional<?> getAssignedValue(Field field) {
+    SpecExecutionContext executionContext = SpecExecutionContext.forDeclaringClass(field.getDeclaringClass());
+    return Optional.ofNullable(executionContext.getAssignedValue(field));
   }
 }

@@ -41,33 +41,22 @@ public class SpecTest {
     public class itFiresTestIgnored_given {
       @Test
       public void anUnassignedEstablishField() throws Exception {
-        shouldBeSkipped(ContextClasses.PendingEstablish.class, true);
+        shouldBeIgnored(getSpec(ContextClasses.PendingEstablish.class, "asserts"));
       }
 
       @Test
       public void anUnassignedBecauseField() throws Exception {
-        shouldBeSkipped(ContextClasses.PendingBecause.class, true);
+        shouldBeIgnored(getSpec(ContextClasses.PendingBecause.class, "asserts"));
       }
 
       @Test
       public void anUnassignedItField() {
-        shouldBeSkipped(ContextClasses.PendingIt.class, true);
+        shouldBeIgnored(getSpec(ContextClasses.PendingIt.class, "asserts"));
       }
 
       @Test
       public void anUnassignedCleanupField() throws Exception {
-        subject = SpecBuilder.forClass(ContextClasses.PendingCleanup.class)
-          .withBeforeFieldsNamed("arranges", "acts")
-          .withAfterFieldsNamed("cleans")
-          .buildForItFieldNamed("asserts");
-        assertThat(subject.isIgnored(), equalTo(true));
-      }
-
-      private void shouldBeSkipped(Class<?> contextClass, boolean isIgnored) {
-        subject = SpecBuilder.forClass(contextClass)
-          .withBeforeFieldsNamed("arranges", "acts")
-          .buildForItFieldNamed("asserts");
-        assertThat(subject.isIgnored(), equalTo(isIgnored));
+        shouldBeIgnored(getSpec(ContextClasses.PendingCleanup.class, "asserts"));
       }
     }
 
@@ -259,6 +248,13 @@ public class SpecTest {
     Context context = FakeContext.withDescription(createSuiteDescription(declaringClass));
     SpecFactory specFactory = new SpecFactory(context);
     return specFactory.create(SpecBuilder.readField(declaringClass, fieldName));
+  }
+
+  private static void shouldBeIgnored(Spec subject) {
+    RunNotifier notifier = mock(RunNotifier.class);
+    subject.run(notifier);
+    verify(notifier).fireTestIgnored(Mockito.any());
+    Mockito.verifyNoMoreInteractions(notifier);
   }
 
   private static Failure reportedFailure(Spec spec) {
