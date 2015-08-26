@@ -109,12 +109,13 @@ public class SpecTest {
         assertThat(failure.getException(), instanceOf(AssertionError.class));
       }
 
-      @Test @Ignore
+      @Test
       public void anExplodingCleanupLambda() {
         subject = SpecBuilder.forClass(ContextClasses.FailingCleanup.class)
           .withAfterFieldsNamed("flawed_cleanup")
           .buildForItFieldNamed("may_run");
-        assertThrows(IllegalStateException.class, equalTo("flawed_cleanup"), subject::run);
+        Failure failure = reportedFailure(subject);
+        assertThat(failure.getException(), instanceOf(AssertionError.class));
       }
     }
 
@@ -213,11 +214,6 @@ public class SpecTest {
 
           ContextClasses.FailingEstablishWithCleanup.setEventListener(events::add);
           subject.run(notifier);
-//          try {
-//            subject.run();
-//          } catch(Throwable t) {
-//            this.thrown = t;
-//          }
         }
 
         @After

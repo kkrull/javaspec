@@ -51,7 +51,7 @@ public class ContextClasses {
   public static class Empty { }
 
   public static class FailingCleanup {
-    Cleanup flawed_cleanup = () -> { throw new IllegalStateException("flawed_cleanup"); };
+    Cleanup flawed_cleanup = () -> assertEquals(42, -1);
     It may_run = () -> assertEquals(42, 42);
   }
 
