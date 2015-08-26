@@ -56,7 +56,7 @@ final class FieldSpec extends Spec {
     } finally {
       try {
         spec.runAfterSpec();
-      } catch(Exception | AssertionError ex) { //TODO KDK: What if the test already failed, and cleanup failed too?  Shouldn't only notify of the first failure?
+      } catch(Exception | AssertionError ex) {
         notifier.fireTestFailure(new Failure(getDescription(), ex));
       }
     }
