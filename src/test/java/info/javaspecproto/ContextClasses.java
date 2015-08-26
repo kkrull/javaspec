@@ -73,7 +73,7 @@ public class ContextClasses {
   }
 
   public static class FailingEstablish {
-    Establish flawed_setup = () -> { throw new UnsupportedOperationException("flawed_setup"); };
+    Establish flawed_setup = () -> assertEquals(42, -1);
     It will_never_run = () -> assertEquals(42, 42);
   }
 

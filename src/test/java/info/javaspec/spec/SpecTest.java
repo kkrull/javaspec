@@ -94,12 +94,13 @@ public class SpecTest {
         assertTestSetupFailed(ContextClasses.FailingClassInitializer.class, "will_fail", AssertionError.class);
       }
 
-      @Test @Ignore
+      @Test
       public void anExplodingEstablishLambda() {
         subject = SpecBuilder.forClass(ContextClasses.FailingEstablish.class)
           .withBeforeFieldsNamed("flawed_setup")
           .buildForItFieldNamed("will_never_run");
-        assertThrows(UnsupportedOperationException.class, equalTo("flawed_setup"), () -> subject.run());
+        Failure failure = reportedFailure(subject);
+        assertThat(failure.getException(), instanceOf(AssertionError.class));
       }
 
       @Test
