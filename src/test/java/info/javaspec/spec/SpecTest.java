@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static info.javaspec.testutil.Assertions.capture;
 import static info.javaspec.testutil.Matchers.isThrowableMatching;
 import static info.javaspec.testutil.Matchers.matchesRegex;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -59,19 +60,23 @@ public class SpecTest {
       }
     }
 
+    public class itThrowsUnsupportedConstructorGiven {
+      @Test
+      public void aContextClassWithoutACallableNoArgConstructor() throws Exception {
+        UnsupportedConstructor ex = capture(UnsupportedConstructor.class, () ->
+          getSpec(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid"));
+        assertThat(ex.getMessage(), matchesRegex(
+          "^Unable to find a no-argument constructor for class .*ConstructorWithArguments$"));
+      }
+    }
+
     public class itNotifiesTestFailureGiven {
       @Test
       public void aReflectiveOperationException() {
         //Intended to catch ReflectiveOperationException, but causing that with a fake SecurityManager was not reliable
-        Failure failure = reportedFailure(runNotifications(ContextClasses.WrongTypeField.class, "inaccessibleAsIt"));
+        subject = getSpec(ContextClasses.WrongTypeField.class, "inaccessibleAsIt");
+        Failure failure = reportedFailure(subject);
         assertThat(failure.getException(), isThrowableMatching(TestSetupFailed.class, "Failed to create test context .*"));
-      }
-
-      @Test
-      public void aContextClassWithoutACallableNoArgConstructor() throws Exception {
-        Failure failure = reportedFailure(runNotifications(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid"));
-        assertThat(failure.getException(), Matchers.isThrowableMatching(UnsupportedConstructor.class,
-          "^Unable to find a no-argument constructor for class .*ConstructorWithArguments$"));
       }
 
       @Test
@@ -86,25 +91,21 @@ public class SpecTest {
 
       @Test
       public void anExplodingEstablishLambda() {
-        subject = SpecBuilder.forClass(ContextClasses.FailingEstablish.class)
-          .withBeforeFieldsNamed("flawed_setup")
-          .buildForItFieldNamed("will_never_run");
+        subject = getSpec(ContextClasses.FailingEstablish.class, "will_never_run");
         Failure failure = reportedFailure(subject);
         assertThat(failure.getException(), instanceOf(AssertionError.class));
       }
 
       @Test
       public void anExplodingItLambda() {
-        subject = SpecBuilder.forClass(ContextClasses.FailingIt.class).buildForItFieldNamed("fails");
+        subject = getSpec(ContextClasses.FailingIt.class, "fails");
         Failure failure = reportedFailure(subject);
         assertThat(failure.getException(), instanceOf(AssertionError.class));
       }
 
       @Test
       public void anExplodingCleanupLambda() {
-        subject = SpecBuilder.forClass(ContextClasses.FailingCleanup.class)
-          .withAfterFieldsNamed("flawed_cleanup")
-          .buildForItFieldNamed("may_run");
+        subject = getSpec(ContextClasses.FailingCleanup.class, "may_run");
         Failure failure = reportedFailure(subject);
         assertThat(failure.getException(), instanceOf(AssertionError.class));
       }
@@ -113,7 +114,7 @@ public class SpecTest {
     public class givenANonPublicContextClass {
       @Test
       public void obtainsAccessToItsConstructor() throws Exception {
-        subject = SpecBuilder.forClass(getHiddenClass()).buildForItFieldNamed("runs");
+        subject = getSpec(getHiddenClass(), "runs");
         subject.run(notifier);
       }
     }
@@ -198,11 +199,7 @@ public class SpecTest {
       public class whenASetupActionOrAssertionFunctionThrows {
         @Before
         public void spy() throws Exception {
-          subject = SpecBuilder.forClass(ContextClasses.FailingEstablishWithCleanup.class)
-            .withBeforeFieldsNamed("establish")
-            .withAfterFieldsNamed("cleanup")
-            .buildForItFieldNamed("it");
-
+          subject = getSpec(ContextClasses.FailingEstablishWithCleanup.class, "it");
           ContextClasses.FailingEstablishWithCleanup.setEventListener(events::add);
           subject.run(notifier);
         }
@@ -261,7 +258,7 @@ public class SpecTest {
   }
 
   private static RunNotifier runNotifications(Class<?> context, String itFieldName) {
-    Spec subject = SpecBuilder.forClass(context).buildForItFieldNamed(itFieldName);
+    Spec subject = SpecBuilder.forClass(context).buildForItFieldNamed(itFieldName); //TODO KDK: work here refactor away from this an on to getSpec / SpecFactory
     return runNotifications(subject);
   }
 
