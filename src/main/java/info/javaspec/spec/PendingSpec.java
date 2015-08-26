@@ -27,11 +27,6 @@ final class PendingSpec extends Spec {
   }
 
   @Override
-  public void run() throws Exception {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
   public void run(RunNotifier notifier) {
     notifier.fireTestIgnored(getDescription());
   }

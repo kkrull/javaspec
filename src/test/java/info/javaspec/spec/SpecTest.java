@@ -21,53 +21,55 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static info.javaspec.testutil.Assertions.assertThrows;
 import static info.javaspec.testutil.Matchers.isThrowableMatching;
 import static info.javaspec.testutil.Matchers.matchesRegex;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 import static org.junit.runner.Description.createSuiteDescription;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 @RunWith(HierarchicalContextRunner.class)
 public class SpecTest {
   private Spec subject;
   private final List<String> events = new LinkedList<>();
 
-  public class isIgnored {
-    public class whenEachJavaSpecFieldHasAnAssignedValue {
-      @Test
-      public void returnsFalse() {
-        shouldBeSkipped(ContextClasses.FullFixture.class, false);
-      }
-    }
+  public class run {
+    private final RunNotifier notifier = mock(RunNotifier.class);
 
-    public class when1OrMoreJavaSpecFieldsDoNotHaveAnAssignedValue {
+    public class itFiresTestIgnored_given {
       @Test
-      public void returnsTrue() {
+      public void anUnassignedEstablishField() throws Exception {
         shouldBeSkipped(ContextClasses.PendingEstablish.class, true);
-        shouldBeSkipped(ContextClasses.PendingBecause.class, true);
-        shouldBeSkipped(ContextClasses.PendingIt.class, true);
+      }
 
+      @Test
+      public void anUnassignedBecauseField() throws Exception {
+        shouldBeSkipped(ContextClasses.PendingBecause.class, true);
+      }
+
+      @Test
+      public void anUnassignedItField() {
+        shouldBeSkipped(ContextClasses.PendingIt.class, true);
+      }
+
+      @Test
+      public void anUnassignedCleanupField() throws Exception {
         subject = SpecBuilder.forClass(ContextClasses.PendingCleanup.class)
           .withBeforeFieldsNamed("arranges", "acts")
           .withAfterFieldsNamed("cleans")
           .buildForItFieldNamed("asserts");
         assertThat(subject.isIgnored(), equalTo(true));
       }
-    }
 
-    private void shouldBeSkipped(Class<?> contextClass, boolean isIgnored) {
-      subject = SpecBuilder.forClass(contextClass)
-        .withBeforeFieldsNamed("arranges", "acts")
-        .buildForItFieldNamed("asserts");
-      assertThat(subject.isIgnored(), equalTo(isIgnored));
+      private void shouldBeSkipped(Class<?> contextClass, boolean isIgnored) {
+        subject = SpecBuilder.forClass(contextClass)
+          .withBeforeFieldsNamed("arranges", "acts")
+          .buildForItFieldNamed("asserts");
+        assertThat(subject.isIgnored(), equalTo(isIgnored));
+      }
     }
-  }
-
-  public class run {
-    private final RunNotifier notifier = mock(RunNotifier.class);
 
     public class itNotifiesTestFailureGiven {
       @Test
@@ -237,11 +239,12 @@ public class SpecTest {
       }
     }
 
+    @Ignore
     @Test //Issue 2: code run at instantiation may have undesired side effects if run a second time
     public void runsWithTheSameInstanceThatWasUsedToCheckIfTheTestIsSkipped() throws Exception {
-      subject = SpecBuilder.forClass(ConstructorWithSideEffects.class).buildForItFieldNamed("expects_to_be_run_once");
-      subject.isIgnored();
-      subject.run();
+      subject = getSpec(ConstructorWithSideEffects.class,"expects_to_be_run_once");
+      subject.run(notifier);
+      verify(notifier, never()).fireTestFailure(Mockito.any());
     }
 
     private void assertTestSetupFailed(Class<?> context, String itFieldName, Class<? extends Throwable> cause) {
@@ -275,7 +278,7 @@ public class SpecTest {
 
   private static Failure reportedFailure(RunNotifier notifier) {
     ArgumentCaptor<Failure> captor = ArgumentCaptor.forClass(Failure.class);
-    Mockito.verify(notifier).fireTestFailure(captor.capture());
+    verify(notifier).fireTestFailure(captor.capture());
     return captor.getValue();
   }
 

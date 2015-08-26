@@ -12,7 +12,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-final class FieldSpec extends Spec { //TODO KDK: Rename to DeclaredSpec?  Keep it as FieldSpec and use state pattern internally to switch from fields to Establish/It/etc?
+final class FieldSpec extends Spec {
   private final Description testDescription;
   private final Field assertionField;
   private final List<Field> befores;
@@ -67,17 +67,6 @@ final class FieldSpec extends Spec { //TODO KDK: Rename to DeclaredSpec?  Keep i
     }
 
     notifier.fireTestFinished(getDescription());
-  }
-
-  @Override
-  public void run() throws Exception {
-    RunnableSpec spec = theRunnableSpec();
-    try {
-      spec.runBeforeSpec();
-      spec.runSpec();
-    } finally {
-      spec.runAfterSpec();
-    }
   }
 
   private RunnableSpec theRunnableSpec() {
