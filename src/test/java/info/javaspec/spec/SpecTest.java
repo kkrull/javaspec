@@ -3,7 +3,6 @@ package info.javaspec.spec;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.context.Context;
 import info.javaspec.context.FakeContext;
-import info.javaspec.dsl.It;
 import info.javaspec.testutil.Matchers;
 import info.javaspecproto.ContextClasses;
 import org.junit.After;
@@ -64,7 +63,7 @@ public class SpecTest {
       @Test
       public void aReflectiveOperationException() {
         //Intended to catch ReflectiveOperationException, but causing that with a fake SecurityManager was not reliable
-        Failure failure = reportedFailure(runNotifications(HasWrongType.class, "inaccessibleAsIt"));
+        Failure failure = reportedFailure(runNotifications(ContextClasses.WrongTypeField.class, "inaccessibleAsIt"));
         assertThat(failure.getException(), isThrowableMatching(TestSetupFailed.class, "Failed to create test context .*"));
       }
 
@@ -231,7 +230,7 @@ public class SpecTest {
     @Ignore
     @Test //Issue 2: code run at instantiation may have undesired side effects if run a second time
     public void runsWithTheSameInstanceThatWasUsedToCheckIfTheTestIsSkipped() throws Exception {
-      subject = getSpec(ConstructorWithSideEffects.class,"expects_to_be_run_once");
+      subject = getSpec(ContextClasses.ConstructorWithSideEffects.class,"expects_to_be_run_once");
       subject.run(notifier);
       verify(notifier, never()).fireTestFailure(Mockito.any());
     }
@@ -288,15 +287,5 @@ public class SpecTest {
       fail("Unable to set up test");
       return null;
     }
-  }
-
-  public static class HasWrongType {
-    public Object inaccessibleAsIt = new Object();
-  }
-
-  public static final class ConstructorWithSideEffects {
-    private static int _numTimesInitialized = 0;
-    public ConstructorWithSideEffects() { _numTimesInitialized++; }
-    It expects_to_be_run_once = () -> assertThat(_numTimesInitialized, equalTo(1));
   }
 }

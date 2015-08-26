@@ -4,6 +4,7 @@ import info.javaspec.dsl.Because;
 import info.javaspec.dsl.Cleanup;
 import info.javaspec.dsl.Establish;
 import info.javaspec.dsl.It;
+import org.hamcrest.MatcherAssert;
 
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
@@ -14,10 +15,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 /** Inner classes are declared static to avoid the gaze of HierarchicalContextRunner when testing JavaSpec. */
+@SuppressWarnings("unused")
 public class ContextClasses {
   public static class ConstructorWithArguments {
     public ConstructorWithArguments(int _id) { }
     It is_otherwise_valid = () -> assertEquals(1, 1);
+  }
+
+  public static final class ConstructorWithSideEffects {
+    private static int _numTimesInitialized = 0;
+    public ConstructorWithSideEffects() { _numTimesInitialized++; }
+    It expects_to_be_run_once = () -> MatcherAssert.assertThat(_numTimesInitialized, equalTo(1));
   }
 
   public static class DuplicateContextNames {
@@ -88,7 +96,7 @@ public class ContextClasses {
   }
 
   public static class FailingIt {
-    It fails = () -> assertEquals("the answer", 42);
+    It fails = () -> assertEquals(42, -1);
   }
 
   public static class FullFixture extends ExecutionSpy {
@@ -191,7 +199,7 @@ public class ContextClasses {
   }
 
   public static class PendingBecause {
-    @SuppressWarnings("unused") private Object subject;
+    private Object subject;
     private int hashcode;
 
     Establish arranges = () -> subject = new Object();
@@ -218,7 +226,7 @@ public class ContextClasses {
 
   public static class PendingIt {
     private Object subject;
-    @SuppressWarnings("unused") private int hashcode;
+    private int hashcode;
 
     Establish arranges = () -> subject = new Object();
     Because acts = () -> hashcode = subject.hashCode();
@@ -285,5 +293,9 @@ public class ContextClasses {
     public class read_me {
       It asserts = () -> assertEquals(1, 1);
     }
+  }
+
+  public static class WrongTypeField {
+    public Object inaccessibleAsIt = new Object();
   }
 }
