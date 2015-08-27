@@ -39,6 +39,37 @@ public class SpecTest {
   public class run {
     private final RunNotifier notifier = mock(RunNotifier.class);
 
+    @Test
+    public void itThrowsFaultyClassInitializer_givenAnExplodingClassInitializer() throws Exception {
+      Context context = FakeContext.withDescription(createSuiteDescription("FailingClassInitializer"));
+      FaultyClassInitializer ex = capture(FaultyClassInitializer.class, () -> {
+        SpecFactory specFactory = new SpecFactory(context);
+        specFactory.addSpecsFromClass(FailingClassInitializer.class);
+      });
+
+      assertThat(ex.getMessage(),
+        matchesRegex("^Failed to load class .*FailingClassInitializer.* due to a faulty static initializer$"));
+      assertThat(ex.getCause(), instanceOf(ExceptionInInitializerError.class));
+    }
+
+    public class itThrowsUnsupportedConstructor_given {
+      @Test
+      public void aContextClassWithoutACallableNoArgConstructor() throws Exception {
+        UnsupportedConstructor ex = capture(UnsupportedConstructor.class, () ->
+          getSpec(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid"));
+        assertThat(ex.getMessage(), matchesRegex(
+          "^Unable to find a no-argument constructor for class .*ConstructorWithArguments$"));
+      }
+
+      @Test
+      public void anExplodingConstructor() throws Exception {
+        UnsupportedConstructor ex = capture(UnsupportedConstructor.class, () ->
+          getSpec(ContextClasses.FailingConstructor.class, "will_fail"));
+        assertThat(ex, instanceOf(UnsupportedConstructor.class));
+        assertThat(ex.getCause(), instanceOf(InvocationTargetException.class));
+      }
+    }
+
     public class itFiresTestIgnored_given {
       @Test
       public void anUnassignedEstablishField() throws Exception {
@@ -59,74 +90,6 @@ public class SpecTest {
       public void anUnassignedCleanupField() throws Exception {
         shouldBeIgnored(getSpec(ContextClasses.PendingCleanup.class, "asserts"));
       }
-    }
-
-    public class itThrowsUnsupportedConstructor_given {
-      @Test
-      public void aContextClassWithoutACallableNoArgConstructor() throws Exception {
-        UnsupportedConstructor ex = capture(UnsupportedConstructor.class, () ->
-          getSpec(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid"));
-        assertThat(ex.getMessage(), matchesRegex(
-          "^Unable to find a no-argument constructor for class .*ConstructorWithArguments$"));
-      }
-
-      @Test
-      public void anExplodingConstructor() throws Exception {
-        UnsupportedConstructor ex = capture(UnsupportedConstructor.class, () ->
-          getSpec(ContextClasses.FailingConstructor.class, "will_fail"));
-        assertThat(ex, instanceOf(UnsupportedConstructor.class));
-        assertThat(ex.getCause(), instanceOf(InvocationTargetException.class));
-      }
-
-      @Test
-      public void anExplodingClassInitializer() throws Exception {
-        Context context = FakeContext.withDescription(createSuiteDescription("FailingClassInitializer"));
-        FaultyClassInitializer ex = capture(FaultyClassInitializer.class, () -> {
-          SpecFactory specFactory = new SpecFactory(context);
-          specFactory.addSpecsFromClass(FailingClassInitializer.class);
-        });
-
-        assertThat(ex.getMessage(),
-          matchesRegex("^Failed to load class .*FailingClassInitializer.* due to a faulty static initializer$"));
-        assertThat(ex.getCause(), instanceOf(ExceptionInInitializerError.class));
-      }
-    }
-
-    public class itNotifiesTestFailure_given {
-      @Test
-      public void aReflectiveOperationException() {
-        //Intended to catch ReflectiveOperationException, but causing that with a fake SecurityManager was not reliable
-        subject = getSpec(ContextClasses.WrongTypeField.class, "inaccessibleAsIt");
-        Failure failure = reportedFailure(subject);
-        assertThat(failure.getException(), isThrowableMatching(TestSetupFailed.class, "Failed to create test context .*"));
-      }
-
-      @Test
-      public void anExplodingEstablishLambda() {
-        subject = getSpec(ContextClasses.FailingEstablish.class, "will_never_run");
-        Failure failure = reportedFailure(subject);
-        assertThat(failure.getException(), instanceOf(AssertionError.class));
-      }
-
-      @Test
-      public void anExplodingItLambda() {
-        subject = getSpec(ContextClasses.FailingIt.class, "fails");
-        Failure failure = reportedFailure(subject);
-        assertThat(failure.getException(), instanceOf(AssertionError.class));
-      }
-
-      @Test
-      public void anExplodingCleanupLambda() {
-        subject = getSpec(ContextClasses.FailingCleanup.class, "may_run");
-        Failure failure = reportedFailure(subject);
-        assertThat(failure.getException(), instanceOf(AssertionError.class));
-      }
-    }
-
-    @Test
-    public void givenANonPublicContextClass_obtainsAccessToItsConstructor() throws Exception {
-      subject = getSpec(ContextClasses.hiddenClass(), "runs");
-      subject.run(notifier);
     }
 
     public class givenFieldsAccessibleFromAContextClass {
@@ -234,12 +197,49 @@ public class SpecTest {
       }
     }
 
+    @Test
+    public void givenANonPublicContextClass_obtainsAccessToItsConstructor() throws Exception {
+      subject = getSpec(ContextClasses.hiddenClass(), "runs");
+      subject.run(notifier);
+    }
+
     @Ignore
     @Test //Issue 2: code run at instantiation may have undesired side effects if run a second time
     public void runsWithTheSameInstanceThatWasUsedToCheckIfTheTestIsSkipped() throws Exception {
       subject = getSpec(ContextClasses.ConstructorWithSideEffects.class, "expects_to_be_run_once");
       subject.run(notifier);
       verify(notifier, never()).fireTestFailure(Mockito.any());
+    }
+
+    public class itNotifiesTestFailure_given {
+      @Test
+      public void aReflectiveOperationException() {
+        //Intended to catch ReflectiveOperationException, but causing that with a fake SecurityManager was not reliable
+        subject = getSpec(ContextClasses.WrongTypeField.class, "inaccessibleAsIt");
+        Failure failure = reportedFailure(subject);
+        assertThat(failure.getException(), isThrowableMatching(TestSetupFailed.class, "Failed to create test context .*"));
+      }
+
+      @Test
+      public void anExplodingEstablishLambda() {
+        subject = getSpec(ContextClasses.FailingEstablish.class, "will_never_run");
+        Failure failure = reportedFailure(subject);
+        assertThat(failure.getException(), instanceOf(AssertionError.class));
+      }
+
+      @Test
+      public void anExplodingItLambda() {
+        subject = getSpec(ContextClasses.FailingIt.class, "fails");
+        Failure failure = reportedFailure(subject);
+        assertThat(failure.getException(), instanceOf(AssertionError.class));
+      }
+
+      @Test
+      public void anExplodingCleanupLambda() {
+        subject = getSpec(ContextClasses.FailingCleanup.class, "may_run");
+        Failure failure = reportedFailure(subject);
+        assertThat(failure.getException(), instanceOf(AssertionError.class));
+      }
     }
   }
 
