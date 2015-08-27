@@ -14,7 +14,6 @@ Feature: Nested JavaSpec context classes for hierarchical testing
     Then the test runner should run tests for each It field in the top-level class
     And the test runner should run tests for each It field in an inner class
 
-  @wip
   Scenario: Context scope for a test
     Given I have a top-level class marked to run with a JavaSpec runner
     And that class and its inner classes define fixture lambdas

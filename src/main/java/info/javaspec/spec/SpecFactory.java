@@ -41,7 +41,7 @@ public class SpecFactory extends ReflectionBasedFactory {
     List<Field> beforeFields = readBeforeSpecFields(it.getDeclaringClass());
     List<Field> afterFields = readAfterSpecFields(it.getDeclaringClass());
 
-    //TODO KDK: Refactor here
+    //TODO KDK: Refactor here to make a FieldSpec that internally switches its state from Fields to assigned Before/After/It values -xor- a Pending Spec
     Stream<Field> allFields = Stream.concat(
       beforeFields.stream(),
       Stream.concat(Stream.of(it), afterFields.stream()));
@@ -91,7 +91,7 @@ public class SpecFactory extends ReflectionBasedFactory {
   }
 
   private Optional<?> getAssignedValue(Field field) {
-    SpecExecutionContext executionContext = SpecExecutionContext.forDeclaringClass(field.getDeclaringClass()); //TODO KDK: Dies somewhere around here
+    SpecExecutionContext executionContext = SpecExecutionContext.forDeclaringClass(field.getDeclaringClass());
     return Optional.ofNullable(executionContext.getAssignedValue(field));
   }
 }
