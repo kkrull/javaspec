@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 /** Inner classes are declared static to avoid the gaze of HierarchicalContextRunner when testing JavaSpec. */
-@SuppressWarnings("unused")
+//@SuppressWarnings("unused")
 public class ContextClasses {
   public static Class<?> hiddenClass() {
     Class<?> outer;
@@ -52,7 +52,7 @@ public class ContextClasses {
     }
   }
 
-  public class DuplicateSpecNames {
+  public static class DuplicateSpecNames {
     public class OneSetOfConditions {
       public class DuplicateContext {
         It duplicate_behavior = () -> assertEquals(1, 1);
@@ -112,23 +112,6 @@ public class ContextClasses {
     Cleanup cleans = () -> notifyEvent.accept("ContextClasses.FullFixture::cleans");
   }
 
-  public static class HierarchicalContext {
-    Establish arrange_top = () -> assertThat(1, equalTo(1));
-    Cleanup clean_top = () -> assertThat(1, equalTo(1));
-
-    public class inner {
-      Establish arrange_bottom = () -> assertThat(1, equalTo(1));
-      It asserts = () -> assertThat(1, equalTo(1));
-      Cleanup clean_bottom = () -> assertThat(1, equalTo(1));
-    }
-  }
-
-  public static class NestedBehavior {
-    public class describes_some_conditions {
-      It describes_an_expected_behavior = () -> assertThat(1, equalTo(1));
-    }
-  }
-
   public static class NestedCleanup extends ExecutionSpy {
     public NestedCleanup() { notifyEvent.accept("ContextClasses.NestedCleanup::new"); }
     Cleanup cleans = () -> notifyEvent.accept("ContextClasses.NestedCleanup::cleans");
@@ -137,12 +120,6 @@ public class ContextClasses {
       public innerContext() { notifyEvent.accept("ContextClasses.NestedCleanup.innerContext::new"); }
       Cleanup cleans = () -> notifyEvent.accept("ContextClasses.NestedCleanup::innerContext::cleans");
       It asserts = () -> notifyEvent.accept("ContextClasses.NestedCleanup.innerContext::asserts");
-    }
-  }
-
-  public static class NestedContext {
-    public class inner {
-      It asserts = () -> assertEquals(1, 1);
     }
   }
 
@@ -169,26 +146,6 @@ public class ContextClasses {
   public static class NestedIt {
     public class nestedContext {
       It tests_something_more_specific = () -> assertThat(1, equalTo(1));
-    }
-  }
-
-  public static class NestedFullFixture extends ExecutionSpy {
-    public NestedFullFixture() { notifyEvent.accept("ContextClasses.NestedFullFixture::new"); }
-    Establish arranges = () -> notifyEvent.accept("ContextClasses.NestedFullFixture::arrange");
-    Cleanup cleans = () -> notifyEvent.accept("ContextClasses.NestedFullFixture::cleans");
-
-    public class innerContext {
-      public innerContext() { notifyEvent.accept("ContextClasses.NestedFullFixture.innerContext::new"); }
-      Because acts = () -> notifyEvent.accept("ContextClasses.NestedFullFixture.innerContext::act");
-      It asserts = () -> notifyEvent.accept("ContextClasses.NestedFullFixture.innerContext::assert");
-    }
-  }
-
-  public static class NestedThreeDeep {
-    public class middle {
-      public class bottom {
-        It asserts = () -> assertEquals(1, 1);
-      }
     }
   }
 
@@ -236,13 +193,6 @@ public class ContextClasses {
     Establish arranges = () -> subject = new Object();
     Because acts = () -> hashcode = subject.hashCode();
     It asserts;
-  }
-
-  public static class StaticFixtureDoppelganger {
-    static Establish arranges = () -> assertThat(1, equalTo(1));
-    static Because acts = () -> assertThat(1, equalTo(1));
-    It asserts = () -> assertThat(1, equalTo(1));
-    static Cleanup cleans = () -> assertThat(1, equalTo(1));
   }
 
   public static class TwoEstablish {
