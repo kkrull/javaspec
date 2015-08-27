@@ -25,7 +25,6 @@ import static info.javaspec.testutil.Matchers.matchesRegex;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.fail;
 import static org.junit.runner.Description.createSuiteDescription;
 import static org.mockito.Mockito.*;
 
@@ -59,7 +58,7 @@ public class SpecTest {
       }
     }
 
-    public class itThrowsUnsupportedConstructorGiven {
+    public class itThrowsUnsupportedConstructor_given {
       @Test
       public void aContextClassWithoutACallableNoArgConstructor() throws Exception {
         UnsupportedConstructor ex = capture(UnsupportedConstructor.class, () ->
@@ -67,25 +66,28 @@ public class SpecTest {
         assertThat(ex.getMessage(), matchesRegex(
           "^Unable to find a no-argument constructor for class .*ConstructorWithArguments$"));
       }
+
+      @Test
+      public void anExplodingConstructor() throws Exception {
+        UnsupportedConstructor ex = capture(UnsupportedConstructor.class, () ->
+          getSpec(ContextClasses.FailingConstructor.class, "will_fail"));
+        assertThat(ex, instanceOf(UnsupportedConstructor.class));
+        assertThat(ex.getCause(), instanceOf(InvocationTargetException.class));
+      }
+
+      @Test @Ignore
+      public void anExplodingClassInitializer() throws Exception {
+        assertTestSetupFailed(ContextClasses.FailingClassInitializer.class, "will_fail", AssertionError.class);
+      }
     }
 
-    public class itNotifiesTestFailureGiven {
+    public class itNotifiesTestFailure_given {
       @Test
       public void aReflectiveOperationException() {
         //Intended to catch ReflectiveOperationException, but causing that with a fake SecurityManager was not reliable
         subject = getSpec(ContextClasses.WrongTypeField.class, "inaccessibleAsIt");
         Failure failure = reportedFailure(subject);
         assertThat(failure.getException(), isThrowableMatching(TestSetupFailed.class, "Failed to create test context .*"));
-      }
-
-      @Test
-      public void anExplodingConstructor() throws Exception {
-        assertTestSetupFailed(ContextClasses.FailingConstructor.class, "will_fail", InvocationTargetException.class);
-      }
-
-      @Test
-      public void anExplodingClassInitializer() throws Exception {
-        assertTestSetupFailed(ContextClasses.FailingClassInitializer.class, "will_fail", AssertionError.class);
       }
 
       @Test
@@ -110,12 +112,10 @@ public class SpecTest {
       }
     }
 
-    public class givenANonPublicContextClass {
-      @Test
-      public void obtainsAccessToItsConstructor() throws Exception {
-        subject = getSpec(ContextClasses.hiddenClass(), "runs");
-        subject.run(notifier);
-      }
+    @Test
+    public void givenANonPublicContextClass_obtainsAccessToItsConstructor() throws Exception {
+      subject = getSpec(ContextClasses.hiddenClass(), "runs");
+      subject.run(notifier);
     }
 
     public class givenFieldsAccessibleFromAContextClass {
@@ -233,7 +233,9 @@ public class SpecTest {
   }
 
   private static void assertTestSetupFailed(Class<?> context, String itFieldName, Class<? extends Throwable> cause) {
-    Spec subject = SpecBuilder.forClass(context).buildForItFieldNamed(itFieldName);
+//    Spec subject = SpecBuilder.forClass(context).buildForItFieldNamed(itFieldName);
+//    Failure value = reportedFailure(runNotifications(subject));
+    Spec subject = getSpec(context, itFieldName);
     Failure value = reportedFailure(runNotifications(subject));
     assertThat(value.getException(), instanceOf(TestSetupFailed.class));
     assertThat(value.getException().getMessage(), matchesRegex("^Failed to create test context .*$"));
@@ -247,7 +249,7 @@ public class SpecTest {
     Mockito.verifyNoMoreInteractions(notifier);
   }
 
-  private Spec getSpec(Class<?> declaringClass, String fieldName) {
+  private static Spec getSpec(Class<?> declaringClass, String fieldName) {
     Context context = FakeContext.withDescription(createSuiteDescription(declaringClass));
     SpecFactory specFactory = new SpecFactory(context);
     return specFactory.create(SpecBuilder.readField(declaringClass, fieldName));

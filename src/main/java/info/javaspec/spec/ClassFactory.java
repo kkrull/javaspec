@@ -15,7 +15,7 @@ abstract class ClassFactory {
     try {
       return makeInstance(constructor);
     } catch(Exception | AssertionError e) {
-      throw TestSetupFailed.forClass(aClass, e);
+      throw UnsupportedConstructor.forClass(aClass, e);
     }
   }
 
