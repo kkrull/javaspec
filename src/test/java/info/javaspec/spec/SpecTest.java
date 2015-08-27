@@ -3,7 +3,6 @@ package info.javaspec.spec;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.context.Context;
 import info.javaspec.context.FakeContext;
-import info.javaspec.testutil.Matchers;
 import info.javaspecproto.ContextClasses;
 import org.junit.After;
 import org.junit.Before;
@@ -114,7 +113,7 @@ public class SpecTest {
     public class givenANonPublicContextClass {
       @Test
       public void obtainsAccessToItsConstructor() throws Exception {
-        subject = getSpec(getHiddenClass(), "runs");
+        subject = getSpec(ContextClasses.hiddenClass(), "runs");
         subject.run(notifier);
       }
     }
@@ -227,23 +226,18 @@ public class SpecTest {
     @Ignore
     @Test //Issue 2: code run at instantiation may have undesired side effects if run a second time
     public void runsWithTheSameInstanceThatWasUsedToCheckIfTheTestIsSkipped() throws Exception {
-      subject = getSpec(ContextClasses.ConstructorWithSideEffects.class,"expects_to_be_run_once");
+      subject = getSpec(ContextClasses.ConstructorWithSideEffects.class, "expects_to_be_run_once");
       subject.run(notifier);
       verify(notifier, never()).fireTestFailure(Mockito.any());
     }
-
-    private void assertTestSetupFailed(Class<?> context, String itFieldName, Class<? extends Throwable> cause) {
-      Failure value = reportedFailure(runNotifications(context, itFieldName));
-      assertThat(value.getException(), instanceOf(TestSetupFailed.class));
-      assertThat(value.getException().getMessage(), matchesRegex("^Failed to create test context .*$"));
-      assertThat(value.getException().getCause(), instanceOf(cause));
-    }
   }
 
-  private Spec getSpec(Class<?> declaringClass, String fieldName) {
-    Context context = FakeContext.withDescription(createSuiteDescription(declaringClass));
-    SpecFactory specFactory = new SpecFactory(context);
-    return specFactory.create(SpecBuilder.readField(declaringClass, fieldName));
+  private static void assertTestSetupFailed(Class<?> context, String itFieldName, Class<? extends Throwable> cause) {
+    Spec subject = SpecBuilder.forClass(context).buildForItFieldNamed(itFieldName);
+    Failure value = reportedFailure(runNotifications(subject));
+    assertThat(value.getException(), instanceOf(TestSetupFailed.class));
+    assertThat(value.getException().getMessage(), matchesRegex("^Failed to create test context .*$"));
+    assertThat(value.getException().getCause(), instanceOf(cause));
   }
 
   private static void shouldBeIgnored(Spec subject) {
@@ -253,19 +247,14 @@ public class SpecTest {
     Mockito.verifyNoMoreInteractions(notifier);
   }
 
+  private Spec getSpec(Class<?> declaringClass, String fieldName) {
+    Context context = FakeContext.withDescription(createSuiteDescription(declaringClass));
+    SpecFactory specFactory = new SpecFactory(context);
+    return specFactory.create(SpecBuilder.readField(declaringClass, fieldName));
+  }
+
   private static Failure reportedFailure(Spec spec) {
     return reportedFailure(runNotifications(spec));
-  }
-
-  private static RunNotifier runNotifications(Class<?> context, String itFieldName) {
-    Spec subject = SpecBuilder.forClass(context).buildForItFieldNamed(itFieldName); //TODO KDK: work here refactor away from this an on to getSpec / SpecFactory
-    return runNotifications(subject);
-  }
-
-  private static RunNotifier runNotifications(Spec subject) {
-    RunNotifier notifier = mock(RunNotifier.class);
-    subject.run(notifier);
-    return notifier;
   }
 
   private static Failure reportedFailure(RunNotifier notifier) {
@@ -274,15 +263,9 @@ public class SpecTest {
     return captor.getValue();
   }
 
-  private static Class<?> getHiddenClass() {
-    Class<?> outer;
-    try {
-      outer = Class.forName("info.javaspecproto.HiddenContext");
-      return outer.getDeclaredClasses()[0];
-    } catch(ClassNotFoundException e) {
-      e.printStackTrace();
-      fail("Unable to set up test");
-      return null;
-    }
+  private static RunNotifier runNotifications(Spec subject) {
+    RunNotifier notifier = mock(RunNotifier.class);
+    subject.run(notifier);
+    return notifier;
   }
 }

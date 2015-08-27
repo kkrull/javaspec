@@ -17,6 +17,16 @@ import static org.junit.Assert.assertThat;
 /** Inner classes are declared static to avoid the gaze of HierarchicalContextRunner when testing JavaSpec. */
 @SuppressWarnings("unused")
 public class ContextClasses {
+  public static Class<?> hiddenClass() {
+    Class<?> outer;
+    try {
+      outer = Class.forName("info.javaspecproto.HiddenContext");
+      return outer.getDeclaredClasses()[0];
+    } catch(ClassNotFoundException e) {
+      throw new AssertionError("Failed to set up test", e);
+    }
+  }
+
   public static class ConstructorWithArguments {
     public ConstructorWithArguments(int _id) { }
     It is_otherwise_valid = () -> assertEquals(1, 1);
