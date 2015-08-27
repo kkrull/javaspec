@@ -14,6 +14,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
@@ -75,9 +76,11 @@ public class SpecTest {
         assertThat(ex.getCause(), instanceOf(InvocationTargetException.class));
       }
 
-      @Test @Ignore
+      @Test
       public void anExplodingClassInitializer() throws Exception {
-        assertTestSetupFailed(ContextClasses.FailingClassInitializer.class, "will_fail", AssertionError.class);
+        UnsupportedConstructor ex = capture(UnsupportedConstructor.class, () ->
+          getSpec(ContextClasses.FailingClassInitializer.class, "will_fail"));
+        assertThat(ex, instanceOf(UnsupportedConstructor.class));
       }
     }
 
@@ -232,16 +235,6 @@ public class SpecTest {
     }
   }
 
-  private static void assertTestSetupFailed(Class<?> context, String itFieldName, Class<? extends Throwable> cause) {
-//    Spec subject = SpecBuilder.forClass(context).buildForItFieldNamed(itFieldName);
-//    Failure value = reportedFailure(runNotifications(subject));
-    Spec subject = getSpec(context, itFieldName);
-    Failure value = reportedFailure(runNotifications(subject));
-    assertThat(value.getException(), instanceOf(TestSetupFailed.class));
-    assertThat(value.getException().getMessage(), matchesRegex("^Failed to create test context .*$"));
-    assertThat(value.getException().getCause(), instanceOf(cause));
-  }
-
   private static void shouldBeIgnored(Spec subject) {
     RunNotifier notifier = mock(RunNotifier.class);
     subject.run(notifier);
@@ -252,7 +245,16 @@ public class SpecTest {
   private static Spec getSpec(Class<?> declaringClass, String fieldName) {
     Context context = FakeContext.withDescription(createSuiteDescription(declaringClass));
     SpecFactory specFactory = new SpecFactory(context);
-    return specFactory.create(SpecBuilder.readField(declaringClass, fieldName));
+    return specFactory.create(readField(declaringClass, fieldName));
+  }
+
+  private static Field readField(Class<?> declaringClass, String name) {
+    try {
+      return declaringClass.getDeclaredField(name);
+    } catch(Exception e) {
+      String message = String.format("Failed to read field %s from %s", name, declaringClass);
+      throw new RuntimeException(message, e);
+    }
   }
 
   private static Failure reportedFailure(Spec spec) {
