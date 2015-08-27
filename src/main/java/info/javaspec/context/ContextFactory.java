@@ -10,11 +10,7 @@ import java.util.stream.Stream;
 
 public class ContextFactory extends ReflectionBasedFactory {
   public static ClassContext createRootContext(Class<?> source) {
-    return new ContextFactory().createRootContextDelegate(source);
-  }
-
-  private ClassContext createRootContextDelegate(Class<?> source) {
-    return create(source, source.getSimpleName());
+    return new ContextFactory().create(source, source.getSimpleName());
   }
 
   private ClassContext createSubContext(Class<?> source) {

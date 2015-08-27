@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ClassContext extends Context {
+class ClassContext extends Context {
   private final Description suiteDescription;
   private final List<Spec> specs;
   private final List<Context> subContexts;
@@ -21,15 +21,12 @@ public class ClassContext extends Context {
     this.subContexts = new LinkedList<>();
   }
 
-  private Stream<Spec> getSpecs() { return specs.stream(); }
-
   @Override
   public void addSpec(Spec spec) {
     specs.add(spec);
     spec.addDescriptionTo(suiteDescription);
   }
 
-  private Stream<Context> getSubContexts() { return subContexts.stream(); }
   public void addSubContext(Context context) {
     subContexts.add(context);
     suiteDescription.addChild(context.getDescription());
@@ -60,4 +57,7 @@ public class ClassContext extends Context {
     getSpecs().forEach(x -> x.run(notifier));
     getSubContexts().forEach(x -> x.run(notifier));
   }
+
+  private Stream<Spec> getSpecs() { return specs.stream(); }
+  private Stream<Context> getSubContexts() { return subContexts.stream(); }
 }
