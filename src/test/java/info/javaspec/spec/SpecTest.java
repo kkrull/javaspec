@@ -5,6 +5,8 @@ import info.javaspec.context.Context;
 import info.javaspec.context.ContextFactory;
 import info.javaspec.context.FakeContext;
 import info.javaspec.dsl.It;
+import info.javaspec.spec.ClassFactory.FaultyClassInitializer;
+import info.javaspec.spec.ClassFactory.UnsupportedConstructor;
 import info.javaspecproto.ContextClasses;
 import org.junit.After;
 import org.junit.Before;
