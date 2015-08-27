@@ -37,20 +37,9 @@ public class SpecFactory extends ReflectionBasedFactory {
   public Spec create(Field it) {
     String id = String.format("%s#%s", context.getId(), it.getName());
     Description description = context.describeSpec(id, identifierToDisplayName(it.getName()));
-
     List<Field> beforeFields = readBeforeSpecFields(it.getDeclaringClass());
     List<Field> afterFields = readAfterSpecFields(it.getDeclaringClass());
-
-    //TODO KDK: Refactor here to make a FieldSpec that internally switches its state from Fields to assigned Before/After/It values -xor- a Pending Spec
-    Stream<Field> allFields = Stream.concat(
-      beforeFields.stream(),
-      Stream.concat(Stream.of(it), afterFields.stream()));
-    Stream<Optional<?>> assignedValues = allFields.map(this::getAssignedValue);
-    if(assignedValues.allMatch(Optional::isPresent)) {
-      return new FieldSpec(id, description, it, beforeFields, afterFields);
-    } else {
-      return new PendingSpec(id, description);
-    }
+    return new FieldSpec(id, description, it, beforeFields, afterFields);
   }
 
   private List<Field> readBeforeSpecFields(Class<?> assertionClass) {
@@ -88,10 +77,5 @@ public class SpecFactory extends ReflectionBasedFactory {
   private static Stream<Field> readDeclaredFields(Class<?> contextClass, Class<?> fieldType) {
     Predicate<Field> isInstanceField = x -> !Modifier.isStatic(x.getModifiers());
     return ReflectionUtil.fieldsOfType(fieldType, contextClass).filter(isInstanceField);
-  }
-
-  private Optional<?> getAssignedValue(Field field) {
-    SpecExecutionContext executionContext = SpecExecutionContext.forDeclaringClass(field.getDeclaringClass());
-    return Optional.ofNullable(executionContext.getAssignedValue(field));
   }
 }

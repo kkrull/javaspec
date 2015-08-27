@@ -153,7 +153,6 @@ public final class JavaSpecRunnerSteps {
   @Then("^the test runner should run the test within the context of the test fixture$")
   public void the_test_runner_should_run_the_test_within_the_context_of_the_test_fixture() throws Exception {
     assertThat(executedLambdas(), equalTo(newArrayList(
-      "ContextClasses.FullFixture::new", //Check if all fields are assigned
       "ContextClasses.FullFixture::new",
       "ContextClasses.FullFixture::arrange",
       "ContextClasses.FullFixture::act",

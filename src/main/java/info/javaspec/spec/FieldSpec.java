@@ -19,7 +19,7 @@ final class FieldSpec extends Spec {
   FieldSpec(String id, Description testDescription, Field it, List<Field> beforeSpecFields, List<Field> afterSpecFields) {
     super(id);
     this.testDescription = testDescription;
-    this.state = new Declared(it, beforeSpecFields, afterSpecFields);
+    this.state = new DeclaredState(it, beforeSpecFields, afterSpecFields);
   }
 
   @Override
@@ -33,7 +33,7 @@ final class FieldSpec extends Spec {
   @Override
   public void run(RunNotifier notifier) {
     try {
-      state = state.toRunnableState();
+      state = state.instantiate();
     } catch(TestSetupFailed ex) {
       notifier.fireTestFailure(new Failure(getDescription(), ex));
       return;
@@ -42,19 +42,19 @@ final class FieldSpec extends Spec {
     state.run(notifier);
   }
 
-  private final class Declared implements SpecState {
+  private final class DeclaredState implements SpecState {
     private final Field assertionField;
     private final List<Field> beforeSpecFields;
     private final List<Field> afterSpecFields;
 
-    public Declared(Field it, List<Field> beforeSpecFields, List<Field> afterSpecFields) {
+    public DeclaredState(Field it, List<Field> beforeSpecFields, List<Field> afterSpecFields) {
       this.assertionField = it;
       this.beforeSpecFields = beforeSpecFields;
       this.afterSpecFields = afterSpecFields;
     }
 
     @Override
-    public SpecState toRunnableState() {
+    public SpecState instantiate() {
       SpecExecutionContext context = SpecExecutionContext.forDeclaringClass(assertionField.getDeclaringClass());
       try {
         List<Before> beforeThunks = beforeSpecFields.stream()
@@ -66,7 +66,12 @@ final class FieldSpec extends Spec {
           .map(Cleanup.class::cast)
           .collect(toList());
         It assertionThunk = (It)context.getAssignedValue(assertionField);
-        return new Instantiated(assertionThunk, beforeThunks, afterThunks);
+        
+        if(beforeThunks.contains(null) || afterThunks.contains(null) || assertionThunk == null) {
+          return new PendingState();
+        } else {
+          return new RunnableState(assertionThunk, beforeThunks, afterThunks);
+        }
       } catch(Throwable t) {
         throw TestSetupFailed.forClass(assertionField.getDeclaringClass(), t);
       }
@@ -78,21 +83,29 @@ final class FieldSpec extends Spec {
     }
   }
 
-  private final class Instantiated implements SpecState {
+  private final class PendingState implements SpecState {
+    @Override
+    public SpecState instantiate() { return this; }
+
+    @Override
+    public void run(RunNotifier notifier) {
+      notifier.fireTestIgnored(getDescription());
+    }
+  }
+
+  private final class RunnableState implements SpecState {
     private final It assertionThunk;
     private final List<Before> beforeThunks;
     private final List<Cleanup> afterThunks;
 
-    public Instantiated(It assertionThunk, List<Before> beforeThunks, List<Cleanup> afterThunks) {
+    public RunnableState(It assertionThunk, List<Before> beforeThunks, List<Cleanup> afterThunks) {
       this.assertionThunk = assertionThunk;
       this.beforeThunks = beforeThunks;
       this.afterThunks = afterThunks;
     }
 
     @Override
-    public SpecState toRunnableState() {
-      return this;
-    }
+    public SpecState instantiate() { return this; }
 
     @Override
     public void run(RunNotifier notifier) {
@@ -127,7 +140,7 @@ final class FieldSpec extends Spec {
   }
 
   private interface SpecState {
-    SpecState toRunnableState();
+    SpecState instantiate();
     void run(RunNotifier notifier);
   }
 }
