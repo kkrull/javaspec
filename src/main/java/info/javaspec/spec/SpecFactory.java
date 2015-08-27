@@ -65,11 +65,11 @@ public class SpecFactory extends ReflectionBasedFactory {
   }
 
   private List<Field> readAfterSpecFields(Class<?> assertionClass) {
-    List<Field> afters = new LinkedList<>();
+    List<Field> fields = new LinkedList<>();
     for(Class<?> c = assertionClass; c != null; c = c.getEnclosingClass())
-      onlyDeclaredField(c, Cleanup.class).ifPresent(afters::add);
+      onlyDeclaredField(c, Cleanup.class).ifPresent(fields::add);
 
-    return afters;
+    return fields;
   }
 
   private static Optional<Field> onlyDeclaredField(Class<?> context, Class<?> fieldType) {

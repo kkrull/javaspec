@@ -14,18 +14,12 @@ import static java.util.stream.Collectors.toList;
 
 final class FieldSpec extends Spec {
   private final Description testDescription;
-  private final Field assertionField;
-  private final List<Field> befores;
-  private final List<Field> afters;
+  private SpecState state;
 
-  private RunnableSpec runnableSpec;
-
-  FieldSpec(String id, Description testDescription, Field it, List<Field> befores, List<Field> afters) {
+  FieldSpec(String id, Description testDescription, Field it, List<Field> beforeSpecFields, List<Field> afterSpecFields) {
     super(id);
     this.testDescription = testDescription;
-    this.assertionField = it;
-    this.befores = befores;
-    this.afters = afters;
+    this.state = new Declared(it, beforeSpecFields, afterSpecFields);
   }
 
   @Override
@@ -38,45 +32,102 @@ final class FieldSpec extends Spec {
 
   @Override
   public void run(RunNotifier notifier) {
-    notifier.fireTestStarted(getDescription());
-    RunnableSpec spec;
     try {
-      spec = theRunnableSpec();
-    } catch(Exception ex) {
+      state = state.toRunnableState();
+    } catch(TestSetupFailed ex) {
       notifier.fireTestFailure(new Failure(getDescription(), ex));
       return;
     }
 
-    try {
-      spec.runBeforeSpec();
-      spec.runSpec();
-    } catch(Exception | AssertionError ex) {
-      notifier.fireTestFailure(new Failure(getDescription(), ex));
-      return;
-    } finally {
-      try {
-        spec.runAfterSpec();
-      } catch(Exception | AssertionError ex) {
-        notifier.fireTestFailure(new Failure(getDescription(), ex));
-      }
-    }
-
-    notifier.fireTestFinished(getDescription());
+    state.run(notifier);
   }
 
-  private RunnableSpec theRunnableSpec() {
-    if(runnableSpec == null) {
+  private final class Declared implements SpecState {
+    private final Field assertionField;
+    private final List<Field> beforeSpecFields;
+    private final List<Field> afterSpecFields;
+
+    public Declared(Field it, List<Field> beforeSpecFields, List<Field> afterSpecFields) {
+      this.assertionField = it;
+      this.beforeSpecFields = beforeSpecFields;
+      this.afterSpecFields = afterSpecFields;
+    }
+
+    @Override
+    public SpecState toRunnableState() {
       SpecExecutionContext context = SpecExecutionContext.forDeclaringClass(assertionField.getDeclaringClass());
       try {
-        List<Before> beforeValues = befores.stream().map(x -> (Before)context.getAssignedValue(x)).collect(toList());
-        List<Cleanup> afterValues = afters.stream().map(x -> (Cleanup)context.getAssignedValue(x)).collect(toList());
-        It assertion = (It)context.getAssignedValue(assertionField);
-        runnableSpec = new RunnableSpec(assertion, beforeValues, afterValues);
+        List<Before> beforeThunks = beforeSpecFields.stream()
+          .map(context::getAssignedValue)
+          .map(Before.class::cast)
+          .collect(toList());
+        List<Cleanup> afterThunks = afterSpecFields.stream()
+          .map(context::getAssignedValue)
+          .map(Cleanup.class::cast)
+          .collect(toList());
+        It assertionThunk = (It)context.getAssignedValue(assertionField);
+        return new Instantiated(assertionThunk, beforeThunks, afterThunks);
       } catch(Throwable t) {
         throw TestSetupFailed.forClass(assertionField.getDeclaringClass(), t);
       }
     }
 
-    return runnableSpec;
+    @Override
+    public void run(RunNotifier notifier) {
+      throw new IllegalStateException("Spec has not been instantiated yet by creating a runnable state");
+    }
+  }
+
+  private final class Instantiated implements SpecState {
+    private final It assertionThunk;
+    private final List<Before> beforeThunks;
+    private final List<Cleanup> afterThunks;
+
+    public Instantiated(It assertionThunk, List<Before> beforeThunks, List<Cleanup> afterThunks) {
+      this.assertionThunk = assertionThunk;
+      this.beforeThunks = beforeThunks;
+      this.afterThunks = afterThunks;
+    }
+
+    @Override
+    public SpecState toRunnableState() {
+      return this;
+    }
+
+    @Override
+    public void run(RunNotifier notifier) {
+      notifier.fireTestStarted(getDescription());
+
+      try {
+        beforeSpec();
+        assertionThunk.run();
+      } catch(Exception | AssertionError ex) {
+        notifier.fireTestFailure(new Failure(getDescription(), ex));
+        return;
+      } finally {
+        try {
+          afterSpec();
+        } catch(Exception | AssertionError ex) {
+          notifier.fireTestFailure(new Failure(getDescription(), ex));
+        }
+      }
+
+      notifier.fireTestFinished(getDescription());
+    }
+
+    private void beforeSpec() throws Exception {
+      for(Before before : beforeThunks)
+        before.run();
+    }
+
+    private void afterSpec() throws Exception {
+      for(Cleanup after : afterThunks)
+        after.run();
+    }
+  }
+
+  private interface SpecState {
+    SpecState toRunnableState();
+    void run(RunNotifier notifier);
   }
 }
