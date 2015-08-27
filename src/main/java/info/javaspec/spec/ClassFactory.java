@@ -8,13 +8,10 @@ abstract class ClassFactory {
     try {
       constructor = getConstructor(aClass);
       constructor.setAccessible(true);
-    } catch(Exception e) {
-      throw UnsupportedConstructor.forClass(aClass, e);
-    }
-
-    try {
       return makeInstance(constructor);
-    } catch(Exception | AssertionError e) {
+    } catch(ExceptionInInitializerError e) {
+      throw FaultyClassInitializer.forClass(aClass, e);
+    } catch(Exception e) {
       throw UnsupportedConstructor.forClass(aClass, e);
     }
   }

@@ -73,11 +73,6 @@ public class ContextClasses {
     It may_run = () -> assertEquals(42, 42);
   }
 
-  public static class FailingClassInitializer {
-    static { assertEquals(1, 2); }
-    It will_fail = () -> assertEquals(1, 1);
-  }
-
   public static class FailingConstructor {
     public FailingConstructor() throws HardToFindThrowable {
       throw new HardToFindThrowable();

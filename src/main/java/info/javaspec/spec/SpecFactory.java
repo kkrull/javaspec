@@ -91,7 +91,7 @@ public class SpecFactory extends ReflectionBasedFactory {
   }
 
   private Optional<?> getAssignedValue(Field field) {
-    SpecExecutionContext executionContext = SpecExecutionContext.forDeclaringClass(field.getDeclaringClass());
+    SpecExecutionContext executionContext = SpecExecutionContext.forDeclaringClass(field.getDeclaringClass()); //TODO KDK: Dies somewhere around here
     return Optional.ofNullable(executionContext.getAssignedValue(field));
   }
 }

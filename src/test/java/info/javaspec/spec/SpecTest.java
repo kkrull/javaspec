@@ -3,6 +3,7 @@ package info.javaspec.spec;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.context.Context;
 import info.javaspec.context.FakeContext;
+import info.javaspec.dsl.It;
 import info.javaspecproto.ContextClasses;
 import org.junit.After;
 import org.junit.Before;
@@ -26,6 +27,7 @@ import static info.javaspec.testutil.Matchers.matchesRegex;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.runner.Description.createSuiteDescription;
 import static org.mockito.Mockito.*;
 
@@ -78,9 +80,15 @@ public class SpecTest {
 
       @Test
       public void anExplodingClassInitializer() throws Exception {
-        UnsupportedConstructor ex = capture(UnsupportedConstructor.class, () ->
-          getSpec(ContextClasses.FailingClassInitializer.class, "will_fail"));
-        assertThat(ex, instanceOf(UnsupportedConstructor.class));
+        Context context = FakeContext.withDescription(createSuiteDescription("FailingClassInitializer"));
+        FaultyClassInitializer ex = capture(FaultyClassInitializer.class, () -> {
+          SpecFactory specFactory = new SpecFactory(context);
+          specFactory.addSpecsFromClass(FailingClassInitializer.class);
+        });
+
+        assertThat(ex.getMessage(),
+          matchesRegex("^Failed to load class .*FailingClassInitializer.* due to a faulty static initializer$"));
+        assertThat(ex.getCause(), instanceOf(ExceptionInInitializerError.class));
       }
     }
 
@@ -271,5 +279,12 @@ public class SpecTest {
     RunNotifier notifier = mock(RunNotifier.class);
     subject.run(notifier);
     return notifier;
+  }
+
+  //Hide the class here to prevent the class loader from running before the test that uses it
+  private static class FailingClassInitializer {
+    static { explode(); }
+    private static void explode() { throw new RuntimeException("Faulty class initializer"); }
+    It will_fail = () -> assertEquals(1, 1);
   }
 }
