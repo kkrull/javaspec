@@ -57,7 +57,7 @@ public class ClassContextTest {
     }
 
     public class givenAContextClassWithSpecs {
-      @Test
+      @Test @SuppressWarnings("unchecked")
       public void hasTestDescriptionsForEachSpecInTheContext() throws Exception {
         subject = ContextFactory.createRootContext(ContextClasses.TwoIts.class);
         returned = subject.getDescription();
@@ -93,7 +93,7 @@ public class ClassContextTest {
     }
 
     public class givenAContextClassWithSubContextClasses {
-      @Test
+      @Test @SuppressWarnings("unchecked")
       public void hasSuiteDescriptionsForEachSubContextClass() throws Exception {
         subject = ContextFactory.createRootContext(ContextClasses.TwoContexts.class);
         returned = subject.getDescription();
