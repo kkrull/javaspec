@@ -148,6 +148,19 @@ Hopefully JavaSpec works like you think it does  For times when it doesn't, star
 [`JavaSpecRunner`](https://github.com/kkrull/javaspec/blob/master/src/test/java/info/javaspec/runner/JavaSpecRunnerTest.java)
 and related classes.
 
+
+# Pro tips
+
+A note on side effects:
+
+Avoid writing test constructors that have side effects, as context class constructors can be run multiple times.
+Note that constructors are also invoked for pending specs, as an instance of the context class is needed to determine
+whether or not the `It` fields in it have assigned values.
+  
+Lambdas (such as those assigned to an `Establish` field) will only be executed once per spec, however, so feel free
+to put side effects in those if you have to.
+
+
 # Future work
 
 - Ability to `@Ignore` a class or an `It`.  Better yet, `@Focus` on one, pesky test.

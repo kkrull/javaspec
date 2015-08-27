@@ -1,13 +1,10 @@
 package info.javaspec.runner;
 
+import info.javaspec.context.ContextFactory;
+import info.javaspec.context.Context;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
-import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * JUnit test runner for specs written in lambdas and organized into context classes.
@@ -41,110 +38,52 @@ import java.util.Optional;
  * details.
  */
 public final class JavaSpecRunner extends Runner {
-  private final SpecGateway<ClassContext> gateway;
-  private final Map<String, Description> specDescriptions = new HashMap<>();
+  private Context rootContext;
 
   public JavaSpecRunner(Class<?> rootContextClass) {
-    this(new ClassSpecGateway(rootContextClass));
+    this(ContextFactory.createRootContext(rootContextClass));
   }
 
-  public JavaSpecRunner(SpecGateway<ClassContext> gateway) {
-    this.gateway = gateway;
-    if(!gateway.hasSpecs())
-      throw new NoSpecs(gateway.rootContextId());
+  public JavaSpecRunner(Context rootContext) {
+    this.rootContext = rootContext;
+
+    if(!rootContext.hasSpecs())
+      throw NoSpecs.forContext(rootContext.getId());
   }
 
   @Override
   public Description getDescription() {
-    return makeSuiteDescription(gateway.rootContext());
-  }
-
-  private Description makeSuiteDescription(ClassContext context) {
-    String contextDisplayName = context.displayName;
-    Description suite = Description.createSuiteDescription(contextDisplayName, context.id);
-
-    gateway.getSpecs(context)
-      .map(x -> makeAndMemoizeTestDescription(contextDisplayName, x))
-      .forEach(suite::addChild);
-
-    gateway.getSubcontexts(context)
-      .map(this::makeSuiteDescription)
-      .forEach(suite::addChild);
-
-    return suite;
-  }
-
-  private Description makeAndMemoizeTestDescription(String contextDisplayName, Spec spec) {
-    Description testDescription = Description.createTestDescription(contextDisplayName, spec.displayName, spec.id);
-    specDescriptions.put(spec.id, testDescription);
-    return testDescription;
+    return rootContext.getDescription();
   }
 
   @Override
   public void run(RunNotifier notifier) {
-    ensureTestDescriptionsMemoized();
-    runContext(gateway.rootContext(), notifier);
-  }
-
-  //No guarantee that getDescription was called earlier to trigger memoization, which is required for notifications.
-  private void ensureTestDescriptionsMemoized() {
-    if(!specDescriptions.isEmpty())
-      return;
-
-    getDescription();
-  }
-
-  private void runContext(ClassContext context, RunNotifier notifier) {
-    gateway.getSpecs(context).forEach(x -> runSpecIfNotIgnored(x, notifier));
-    gateway.getSubcontexts(context).forEach(x -> runContext(x, notifier));
-  }
-
-  private void runSpecIfNotIgnored(Spec spec, RunNotifier notifier) {
-    Description description = specDescriptions.get(spec.id);
-    if(spec.isIgnored()) {
-      notifier.fireTestIgnored(description);
-      return;
-    }
-
-    notifier.fireTestStarted(description);
-    Optional<Failure> failure = runSpec(spec, description);
-    if(failure.isPresent())
-      notifier.fireTestFailure(failure.get());
-    else
-      notifier.fireTestFinished(description);
-  }
-
-  private Optional<Failure> runSpec(Spec spec, Description description) {
-    try {
-      spec.run();
-    } catch(Exception | AssertionError e) {
-      return Optional.of(new Failure(description, e));
-    }
-    return Optional.empty();
+    rootContext.run(notifier);
   }
 
   @Override
   public int testCount() {
-    long numSpecs = gateway.countSpecs();
+    long numSpecs = rootContext.numSpecs();
     if(numSpecs > Integer.MAX_VALUE)
-      throw new TooManySpecs(gateway.rootContextId(), numSpecs);
+      throw TooManySpecs.forContext(rootContext.getId(), numSpecs);
     else
       return (int)numSpecs;
   }
 
   public static final class NoSpecs extends RuntimeException {
-    private static final long serialVersionUID = 1L;
-
-    public NoSpecs(String contextName) {
-      super(String.format("Context %s must contain at least 1 spec", contextName));
+    public static NoSpecs forContext(String id) {
+      return new NoSpecs(String.format("Context %s must contain at least 1 spec", id));
     }
+
+    private NoSpecs(String message) { super(message); }
   }
 
   public static final class TooManySpecs extends RuntimeException {
-    private static final String FORMAT = "Context %s has more specs than JUnit can support: %d";
-
-    public TooManySpecs(String contextName, long numSpecs) {
-      super(String.format(FORMAT, contextName, numSpecs));
+    public static TooManySpecs forContext(String id, long numSpecs) {
+      String message = String.format("Context %s has more specs than JUnit can support: %d", id, numSpecs);
+      return new TooManySpecs(message);
     }
+
+    private TooManySpecs(String message) { super(message); }
   }
 }

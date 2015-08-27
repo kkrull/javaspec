@@ -1,4 +1,4 @@
-package info.javaspec.testutil;
+package info.javaspec.junit;
 
 import org.junit.runner.Description;
 import org.junit.runner.Result;
