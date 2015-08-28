@@ -11,6 +11,17 @@
   <version>0.5.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <skipIfEmpty>true</skipIfEmpty>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <dependencies>
     <dependency>
       <groupId>info.javaspec</groupId>
