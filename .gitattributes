@@ -8,4 +8,4 @@ pom.xml         text
 *.md            text
 *.properties    text
 
-bin/*           text
+bin/*           text eol=lf
