@@ -53,6 +53,11 @@
         <artifactId>javaspec-runner</artifactId>
         <version>0.5.1-SNAPSHOT</version>
       </dependency>
+      <dependency>
+        <groupId>info.javaspec</groupId>
+        <artifactId>javaspec-sandbox</artifactId>
+        <version>0.5.1-SNAPSHOT</version>
+      </dependency>
 
       <dependency>
         <groupId>com.google.guava</groupId>
