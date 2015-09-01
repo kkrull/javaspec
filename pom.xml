@@ -137,6 +137,18 @@
     </developer>
   </developers>
 
+  <distributionManagement>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
   <issueManagement>
     <system>GitHub</system>
     <url>https://github.com/kkrull/javaspec/issues</url>
