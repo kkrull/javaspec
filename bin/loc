@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+function bash::stop_on_first_error() {
+  set -e
+}
+
+function loc::print_production_stats() {
+  echo "# Production code"
+  echo
+
+  git ls-files javaspec-runner/src/main/java | xargs wc -l
+}
+
+function loc::print_test_stats() {
+  echo
+  echo "# Test code"
+  echo
+
+  git ls-files javaspec-runner/src/test/java | grep -v javaspecproto | xargs wc -l
+}
+
+bash::stop_on_first_error
+loc::print_production_stats
+loc::print_test_stats
+
