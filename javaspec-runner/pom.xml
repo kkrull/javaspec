@@ -14,6 +14,25 @@
   <build>
     <plugins>
       <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <systemPropertyVariables>
+            <cucumber.options>--no-monochrome</cucumber.options>
+          </systemPropertyVariables>
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>run-integration-tests</id>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <archive>
@@ -22,15 +41,6 @@
               <mainClass>info.javaspec.JavaSpec</mainClass>
             </manifest>
           </archive>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <systemPropertyVariables>
-            <cucumber.options>--no-monochrome</cucumber.options>
-          </systemPropertyVariables>
         </configuration>
       </plugin>
     </plugins>

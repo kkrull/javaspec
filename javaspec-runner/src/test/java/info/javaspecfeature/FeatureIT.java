@@ -9,4 +9,4 @@ import org.junit.runner.RunWith;
   format = { "pretty", "html:target/cucumber", "rerun:target/rerun.txt" },
   monochrome = true,
   tags = { "~@wip" })
-public final class FeatureTest { }
+public final class FeatureIT { }
