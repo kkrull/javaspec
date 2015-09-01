@@ -4,11 +4,11 @@
   <parent>
     <groupId>info.javaspec</groupId>
     <artifactId>javaspec</artifactId>
-    <version>0.5.1-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>javaspec-runner</artifactId>
-  <version>0.5.1-SNAPSHOT</version>
+  <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <build>

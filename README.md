@@ -26,8 +26,8 @@ JavaSpec is located in the Maven Central Repository, under the following coordin
 ```
 <dependency>
   <groupId>info.javaspec</groupId>
-  <artifactId>javaspec</artifactId>
-  <version>0.5</version>
+  <artifactId>javaspec-runner</artifactId>
+  <version>1.0</version>
 </dependency>
 ```
 
@@ -149,18 +149,6 @@ Hopefully JavaSpec works like you think it does  For times when it doesn't, star
 and related classes.
 
 
-# Pro tips
-
-A note on side effects:
-
-Avoid writing test constructors that have side effects, as context class constructors can be run multiple times.
-Note that constructors are also invoked for pending specs, as an instance of the context class is needed to determine
-whether or not the `It` fields in it have assigned values.
-  
-Lambdas (such as those assigned to an `Establish` field) will only be executed once per spec, however, so feel free
-to put side effects in those if you have to.
-
-
 # Future work
 
 - Ability to `@Ignore` a class or an `It`.  Better yet, `@Focus` on one, pesky test.
@@ -171,6 +159,7 @@ to put side effects in those if you have to.
 
 # Release history
 
+- 1.0: Full release
 - 0.5: Fixed an issue where specs with the same field / context class name were showing up as still running in IntelliJ.
   Also renamed JUnit test display names to human-readable names, replacing snake case underscores with spaces.
 - 0.4.2: Fixed [Issue 2](https://github.com/kkrull/javaspec/issues/2), so that only one instance of a context class is
