@@ -1,8 +1,3 @@
-## Tidy up
-
-- Check for TODOs
-- Clean up design log
-
 ## Update version at the start of a release branch
 
 - Bump the artifact version number in the POM.

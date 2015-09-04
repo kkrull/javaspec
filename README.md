@@ -60,6 +60,10 @@ class GreeterTest {
 
 As with JUnit, you get 1 instance of your test class per test.  Each `It` is its own test.
 
+Finally, note that the `It` field is named `says_hello` instead of the conventional `saysHello`.  This is done so that
+JavaSpec can convert that verb phrase into a human readable form by replacing underscores with spaces.  When you run
+this test, JUnit will report results for `says hello`.
+
 ## It's like Machine.Specifications
 
 Machine.Specifications and JavaSpec represent the different steps of a test the same way:
@@ -88,7 +92,7 @@ class GreeterWithFixtureTest {
 
   Establish that = () -> subject = new Widget(printStreamSpy);
   Because of = () -> returned = subject.foo();
-  Cleanup closeStreams = () -> {
+  Cleanup close_streams = () -> {
     if(subject != null)
       subject.close();
   };
@@ -124,11 +128,11 @@ class WidgetTest {
   }
   
   class bar {
-    class givenAMultipleOf3 {
+    class given_a_multiple_of_3 {
       It prints_fizz = () -> assertEquals("fizz", subject.bar(3));
     }
 
-    class givenAMultipleOf5 {
+    class given_a_multiple_of_5 {
       It prints_buzz = () -> assertEquals("buzz", subject.bar(5));
     }
   }
@@ -140,26 +144,28 @@ In short:
 - Only tag the outer-most class with `@RunWith(JavaSpecRunner.class)`.  Don't tag any inner classes with this.
 - Make as many contexts as you like by making nested, non-static classes.
 - Add up to 1 each of `Establish`, `Because` and `Cleanup` to each context class.
-- Make as many tests as you want in each context class with 0 or more `It` lambdas.
+- Make as many tests as you want in each context class with `It` lambdas.
 
 ## If you have any other questions
 
-Hopefully JavaSpec works like you think it does  For times when it doesn't, start by looking at the tests on
+Hopefully JavaSpec works like you think it does.
+
+For times when it doesn't, start by looking at the tests on
 [`JavaSpecRunner`](https://github.com/kkrull/javaspec/blob/master/src/test/java/info/javaspec/runner/JavaSpecRunnerTest.java)
 and related classes.
 
+If that still doesn't do the trick, feel [post an issue](https://github.com/kkrull/javaspec/issues) or submit a pull
+request with any suggested modifications.
 
 # Future work
 
 - Ability to `@Ignore` a class or an `It`.  Better yet, `@Focus` on one, pesky test.
-- JavaSpec can use strings to allow a more natural language for describing behavior.
+- Use strings instead of identifiers to allow a more natural language for describing behavior.
 - Something similar to RSpec's `shared_examples` and `shared_context` could be useful.
-- Feel free to [add an issue in GitHub](https://github.com/kkrull/javaspec/issues) if if JavaSpec's current behavior is
-  not clear or could be improved.
 
 # Release history
 
-- 1.0: Full release
+- 1.0: Full release.  Renamed artifact to `info.javaspec::javaspec-runner`.
 - 0.5: Fixed an issue where specs with the same field / context class name were showing up as still running in IntelliJ.
   Also renamed JUnit test display names to human-readable names, replacing snake case underscores with spaces.
 - 0.4.2: Fixed [Issue 2](https://github.com/kkrull/javaspec/issues/2), so that only one instance of a context class is
