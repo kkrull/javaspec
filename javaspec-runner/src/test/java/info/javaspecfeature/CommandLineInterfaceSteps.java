@@ -44,7 +44,7 @@ public class CommandLineInterfaceSteps {
 
   @Then("^the command line interface should print its version number to the console$")
   public void the_command_line_interface_should_print_its_version_number_to_the_console() throws Exception {
-    Mockito.verify(console).println("1.0-SNAPSHOT");
+    Mockito.verify(console).println("1.0");
     Mockito.verifyNoMoreInteractions(console);
   }
 
