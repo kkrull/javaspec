@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+function bash::stop_on_first_error() {
+  set -e
+}
+
+function loc::print_production_stats() {
+  echo "# Production code"
+  echo
+
+  git ls-files javaspec-runner/src/main/java | xargs wc -l
+}
+
+function loc::print_small_test_stats() {
+  echo
+  echo "# Small test code"
+  echo
+
+  git ls-files javaspec-runner/src/test/java | grep -v javaspecproto | grep -v javaspecfeature | xargs wc -l
+}
+
+function loc::print_large_test_stats() {
+  echo
+  echo "# Large test code"
+  echo
+
+  git ls-files javaspec-runner/src/test/java | grep javaspecfeature | xargs wc -l
+}
+
+bash::stop_on_first_error
+loc::print_production_stats
+loc::print_small_test_stats
+loc::print_large_test_stats
+
