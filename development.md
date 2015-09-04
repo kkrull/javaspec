@@ -47,9 +47,30 @@ The overall process is described [here](http://central.sonatype.org/pages/ossrh-
   * Install `gnupg` in cygwin.  Make a key and upload it.
   * `gpg --gen-key`
   * `gpg --keyserver keyserver.ubuntu.com --send-keys <key id>`
-- Push to Sonatype: `./bin/mvn-sonatype`.  This will require a GPG key.
-  * Make sure `~/.m2/settings/xml` has a server entry for id `sonatype-nexus-staging`.  This ID has to match the ID in
-    the staging repository in the OSS parent POM.
+  * Set up a [profile with the GPG pass phrase](https://maven.apache.org/plugins/maven-gpg-plugin/usage.html) in `~/.m2/settings.xml`
+
+```
+<profile>
+  <id>gpg</id>
+  <properties>
+    <gpg.passphrase>goes-here</gpg.passphrase>
+  </properties>
+</profile>
+```
+
+- `mvn -Pgpg,release clean install` should now work
+- Set up [credentials for OSSRH](http://central.sonatype.org/pages/apache-maven.html#distribution-management-and-authentication)
+  in `~/.m2/settings.xml`
+
+```
+<server>
+  <id>ossrh</id>
+  <username>goes-here</username>
+  <password>goes-here</password>
+</server>
+```
+
+- Push to Sonatype: `mvn -Pgpg,release deploy`.
 - Log in to [Sonatype](https://oss.sonatype.org/) in a browser, and find the staging repository (search).
 - Check the contents tab to make sure the compiled jar, source, javadocs and GPG keys are all present.
 - [Close](http://central.sonatype.org/pages/releasing-the-deployment.html#close-and-drop-or-release-your-staging-repository) the repository.
