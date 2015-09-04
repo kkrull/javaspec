@@ -8,13 +8,12 @@ import org.junit.runner.notification.RunNotifier;
 
 /**
  * JUnit test runner for specs written in lambdas and organized into context classes.
- * <p>
+ * 
  * For example, the class below contains in two tests.
  * <ul>
  * <li><code>returns_bar</code>: Creates the widget, calls foo(), and verifies that it returned "bar".</li>
  * <li><code>prints_baz</code>: Creates the widget, calls foo(), and verifies that it wrote "baz" to the console.</li>
  * </ul>
- * <p>
  * <pre>
  * {@code
  * {@literal @RunWith(JavaSpecRunner.class)}
