@@ -119,6 +119,9 @@
 
           <plugin>
             <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <quiet>true</quiet>
+            </configuration>
             <executions>
               <execution>
                 <id>attach-javadocs</id>
