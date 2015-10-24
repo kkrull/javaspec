@@ -227,14 +227,14 @@ public class SpecTest {
       @Test
       public void anExplodingEstablishLambda() {
         subject = getSpec(ContextClasses.FailingEstablish.class, "will_never_run");
-        Failure failure = reportedFailure(subject);
+        Failure failure = reportedAssumptionFailure(subject);
         assertThat(failure.getException(), instanceOf(AssertionError.class));
       }
 
       @Test
       public void anExplodingItLambda() {
         subject = getSpec(ContextClasses.FailingIt.class, "fails");
-        Failure failure = reportedFailure(subject);
+        Failure failure = reportedAssumptionFailure(subject);
         assertThat(failure.getException(), instanceOf(AssertionError.class));
       }
 
@@ -276,6 +276,16 @@ public class SpecTest {
   private static Failure reportedFailure(RunNotifier notifier) {
     ArgumentCaptor<Failure> captor = ArgumentCaptor.forClass(Failure.class);
     verify(notifier).fireTestFailure(captor.capture());
+    return captor.getValue();
+  }
+
+  private static Failure reportedAssumptionFailure(Spec spec) {
+    return reportedAssumptionFailure(runNotifications(spec));
+  }
+
+  private static Failure reportedAssumptionFailure(RunNotifier notifier) {
+    ArgumentCaptor<Failure> captor = ArgumentCaptor.forClass(Failure.class);
+    verify(notifier).fireTestAssumptionFailed(captor.capture());
     return captor.getValue();
   }
 

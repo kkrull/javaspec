@@ -114,9 +114,12 @@ final class FieldSpec extends Spec {
       try {
         beforeSpec();
         assertionThunk.run();
-      } catch(Exception | AssertionError ex) {
-        notifier.fireTestFailure(new Failure(getDescription(), ex));
-        return;
+      } 
+      catch (AssertionError ae) {
+            notifier.fireTestAssumptionFailed(new Failure(getDescription(), ae));
+      } 
+      catch (Exception e) {
+            notifier.fireTestFailure(new Failure(getDescription(), e));
       } finally {
         try {
           afterSpec();

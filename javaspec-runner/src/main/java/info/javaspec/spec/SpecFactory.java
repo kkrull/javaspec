@@ -35,7 +35,7 @@ public class SpecFactory extends ReflectionBasedFactory {
   }
 
   public Spec create(Field it) {
-    String id = String.format("%s#%s", context.getId(), it.getName());
+    String id = String.format("%s(%s)", it.getName(), context.getId());
     Description description = context.describeSpec(id, identifierToDisplayName(it.getName()));
     List<Field> beforeFields = readBeforeSpecFields(it.getDeclaringClass());
     List<Field> afterFields = readAfterSpecFields(it.getDeclaringClass());
