@@ -5,9 +5,9 @@ import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import info.javaspec.runner.JavaSpecRunner;
-import info.javaspec.junit.Runners;
 import info.javaspec.junit.RunListenerSpy.Event;
+import info.javaspec.junit.Runners;
+import info.javaspec.runner.JavaSpecRunner;
 import info.javaspecproto.ContextClasses;
 import info.javaspecproto.OuterContext;
 import info.javaspecproto.OuterContextWithSetup;
@@ -95,6 +95,11 @@ public final class JavaSpecRunnerSteps {
   @Given("^I express desired behavior for JavaSpec through the use of Java classes and fields$")
   public void I_express_desired_behavior_for_JavaSpec_through_the_use_of_Java_classes_and_fields() throws Exception {
     this.testClass = ContextClasses.TwoIt.class;
+  }
+
+  @Given("^I have a test class that can not be instantiated$")
+  public void I_have_a_test_class_that_can_not_be_instantiated() throws Exception {
+    this.testClass = ContextClasses.FailingConstructor.class;
   }
 
   /* When */
@@ -222,6 +227,11 @@ public final class JavaSpecRunnerSteps {
       contains("first test", "second test"));
   }
 
+  @Then("^the test runner should report its tests as failed$")
+  public void the_test_runner_should_report_its_tests_as_failed() throws Exception {
+    assertTestFailed(ContextClasses.FailingConstructor.class, "will fail");
+  }
+
   /* Helpers */
 
   private void assertTestPassed(Class<?> context, String itFieldName) {
@@ -232,6 +242,10 @@ public final class JavaSpecRunnerSteps {
   private void assertTestRan(Class<?> context, String itFieldName) {
     assertThat(describeEvents(), notificationsForTest(context, itFieldName, "testStarted"), hasSize(1));
     assertThat(describeEvents(), notificationsForTest(context, itFieldName, "testFinished"), hasSize(1));
+  }
+
+  private void assertTestFailed(Class<?> context, String itFieldName) {
+    assertThat(describeEvents(), notificationsForTest(context, itFieldName, "testFailure"), hasSize(1));
   }
 
   private List<Event> notificationsForTest(Class<?> context, String itFieldName, String eventName) {
