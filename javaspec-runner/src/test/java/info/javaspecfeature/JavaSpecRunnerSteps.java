@@ -18,10 +18,12 @@ import org.junit.runner.Runner;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.synchronizedList;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -100,6 +102,11 @@ public final class JavaSpecRunnerSteps {
   @Given("^I have a test class that can not be instantiated$")
   public void I_have_a_test_class_that_can_not_be_instantiated() throws Exception {
     this.testClass = ContextClasses.FailingConstructor.class;
+  }
+
+  @Given("^I have JavaSpec tests that produce varying results$")
+  public void I_have_JavaSpec_tests_that_produce_varying_results() throws Exception {
+    this.testClass = ContextClasses.VaryingResults.class;
   }
 
   /* When */
@@ -232,6 +239,27 @@ public final class JavaSpecRunnerSteps {
     assertTestFailed(ContextClasses.FailingConstructor.class, "will fail");
   }
 
+  @Then("^it should report a status for each test$")
+  public void it_should_report_a_status_for_each_test() throws Exception {
+    assertThat(describeEvents(), reportedTestMethods(), containsInAnyOrder("passes", "fails", "ignores"));
+    assertThat(describeEvents(), methodsReportedAs("testStarted"), containsInAnyOrder("passes", "fails"));
+  }
+
+  @Then("^it should report which tests pass$")
+  public void it_should_report_which_tests_pass() throws Exception {
+    assertThat(describeEvents(), methodsReportedAs("testFinished"), containsInAnyOrder("passes"));
+  }
+
+  @Then("^it should report which tests fail$")
+  public void it_should_report_which_tests_fail() throws Exception {
+    assertThat(describeEvents(), methodsReportedAs("testFailure"), containsInAnyOrder("fails"));
+  }
+
+  @Then("^it should report which tests are ignored$")
+  public void it_should_report_which_tests_are_ignored() throws Exception {
+    assertThat(describeEvents(), methodsReportedAs("testIgnored"), containsInAnyOrder("ignores"));
+  }
+
   /* Helpers */
 
   private void assertTestPassed(Class<?> context, String itFieldName) {
@@ -246,6 +274,19 @@ public final class JavaSpecRunnerSteps {
 
   private void assertTestFailed(Class<?> context, String itFieldName) {
     assertThat(describeEvents(), notificationsForTest(context, itFieldName, "testFailure"), hasSize(1));
+  }
+
+  private Set<String> reportedTestMethods() {
+    return notificationEvents().stream()
+      .map(Event::describedMethodName)
+      .collect(toSet());
+  }
+
+  private Set<String> methodsReportedAs(String eventType) {
+    return notificationEvents().stream()
+      .filter(x -> x.getName().equals(eventType))
+      .map(Event::describedMethodName)
+      .collect(toSet());
   }
 
   private List<Event> notificationsForTest(Class<?> context, String itFieldName, String eventName) {

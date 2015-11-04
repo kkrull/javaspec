@@ -28,9 +28,8 @@ Feature: Running tests
     When I run the tests
     Then the test runner should report its tests as failed
 
-  @wip
   Scenario: Test reporting
-    Given I have a class with JavaSpec tests in it
+    Given I have JavaSpec tests that produce varying results
     When I run the tests
     Then it should report a status for each test
     And it should report which tests pass
