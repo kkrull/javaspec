@@ -38,7 +38,7 @@ public class SpecTest {
   private Spec subject;
   private final List<String> events = new LinkedList<>();
 
-  public class run {
+  public class run { //TODO KDK: Spec#run should never throw.  Report, it should.
     private final RunNotifier notifier = mock(RunNotifier.class);
 
     @Test
@@ -220,6 +220,13 @@ public class SpecTest {
       public void aReflectiveOperationException() {
         //Intended to catch ReflectiveOperationException, but causing that with a fake SecurityManager was not reliable
         subject = getSpec(ContextClasses.WrongTypeField.class, "inaccessibleAsIt");
+        Failure failure = reportedFailure(subject);
+        assertThat(failure.getException(), isThrowableMatching(TestSetupFailed.class, "Failed to create test context .*"));
+      }
+
+      @Test //Issue 5
+      public void anExplodingConstructor() {
+        subject = getSpec(ContextClasses.FailingConstructor.class, "will_fail");
         Failure failure = reportedFailure(subject);
         assertThat(failure.getException(), isThrowableMatching(TestSetupFailed.class, "Failed to create test context .*"));
       }
