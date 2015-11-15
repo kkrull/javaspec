@@ -1,7 +1,7 @@
 package info.javaspec.runner;
 
-import info.javaspec.context.ContextFactory;
 import info.javaspec.context.Context;
+import info.javaspec.context.ContextFactory;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;

@@ -250,6 +250,12 @@ public class ContextClasses {
     }
   }
 
+  public static class VaryingResults {
+    It passes = () -> {};
+    It fails = () -> assertThat(2, equalTo(1));
+    It ignores;
+  }
+
   public static class WrongTypeField {
     public Object inaccessibleAsIt = new Object();
   }
