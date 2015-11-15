@@ -21,12 +21,13 @@ final class SpecExecutionContext {
 
   private SpecExecutionContext() { }
 
-  public Object getAssignedValue(Field field) {
+  public <T> T getAssignedValue(Field field, Class<T> assignableType) {
     Class<?> declaringClass = field.getDeclaringClass();
     try {
       Object declaredContext = instances.get(declaringClass);
       field.setAccessible(true);
-      return field.get(declaredContext);
+      Object value = field.get(declaredContext);
+      return assignableType.cast(value);
     } catch(Throwable t) {
       throw TestSetupFailed.forClass(declaringClass, t);
     }

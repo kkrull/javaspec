@@ -57,14 +57,12 @@ final class FieldSpec extends Spec {
     public SpecState instantiate() {
       SpecExecutionContext context = SpecExecutionContext.forDeclaringClass(assertionField.getDeclaringClass());
       List<Before> beforeThunks = beforeSpecFields.stream()
-        .map(context::getAssignedValue)
-        .map(Before.class::cast)
+        .map(x -> context.getAssignedValue(x, Before.class))
         .collect(toList());
       List<Cleanup> afterThunks = afterSpecFields.stream()
-        .map(context::getAssignedValue)
-        .map(Cleanup.class::cast)
+        .map(x -> context.getAssignedValue(x, Cleanup.class))
         .collect(toList());
-      It assertionThunk = (It) context.getAssignedValue(assertionField);
+      It assertionThunk = context.getAssignedValue(assertionField, It.class);
 
       if(beforeThunks.contains(null) || afterThunks.contains(null) || assertionThunk == null) {
         return new PendingState();

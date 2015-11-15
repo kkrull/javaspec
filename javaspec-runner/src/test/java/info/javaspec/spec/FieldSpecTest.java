@@ -176,7 +176,8 @@ public class FieldSpecTest {
         //Intended to catch ReflectiveOperationException, but causing that with a fake SecurityManager was not reliable
         subject = getSpec(ContextClasses.WrongTypeField.class, "inaccessibleAsIt");
         Failure failure = reportedFailure(subject);
-        assertThat(failure.getException(), instanceOf(ClassCastException.class));
+        assertThat(failure.getException(), instanceOf(TestSetupFailed.class));
+        assertThat(failure.getException().getCause(), instanceOf(ClassCastException.class));
       }
     }
 
