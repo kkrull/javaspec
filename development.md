@@ -51,7 +51,7 @@ The overall process is described [here](http://central.sonatype.org/pages/ossrh-
 </profile>
 ```
 
-- `mvn -Pgpg,release clean install` should now work
+- `mvn -Pgpg,release clean install` should now work (`./bin/build-for-deployment`).
 - Set up [credentials for OSSRH](http://central.sonatype.org/pages/apache-maven.html#distribution-management-and-authentication)
   in `~/.m2/settings.xml`
 
@@ -63,7 +63,7 @@ The overall process is described [here](http://central.sonatype.org/pages/ossrh-
 </server>
 ```
 
-- Push to Sonatype: `mvn -Pgpg,release deploy`.
+- Push to Sonatype: `mvn -Pgpg,release deploy` (`./bin/deploy`).
 - Log in to [Sonatype](https://oss.sonatype.org/) in a browser, and find the staging repository (search).
 - Check the contents tab to make sure the compiled jar, source, javadocs and GPG keys are all present.
 - [Close](http://central.sonatype.org/pages/releasing-the-deployment.html#close-and-drop-or-release-your-staging-repository) the repository.
@@ -71,3 +71,4 @@ The overall process is described [here](http://central.sonatype.org/pages/ossrh-
 - Go to [Maven Central](http://search.maven.org/#search|ga|1|g%3A%22info.javaspec%22) and make sure it shows up.  It's
   supposed to take about 10 minutes to be in the repository, and up to 2 hours to show up in search results.
 - Delete local artifact and do test installation from Maven Central.
+
