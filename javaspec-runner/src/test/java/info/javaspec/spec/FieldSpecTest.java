@@ -3,10 +3,10 @@ package info.javaspec.spec;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.context.Context;
 import info.javaspec.context.FakeContext;
+import info.javaspec.spec.ClassFactory.UnsupportedConstructor;
 import info.javaspecproto.ContextClasses;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
@@ -21,9 +21,7 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static info.javaspec.junit.Descriptions.isTestDescription;
-import static info.javaspec.testutil.Assertions.capture;
 import static info.javaspec.testutil.Matchers.isThrowableMatching;
-import static info.javaspec.testutil.Matchers.matchesRegex;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -104,13 +102,12 @@ public class FieldSpecTest {
       }
 
       public class withoutACallableNoArgConstructor {
-        @Test //TODO KDK: Spec#run should never throw.  Report, it should.
-        public void throwsUnsupportedConstructor() throws Exception {
-          ClassFactory.UnsupportedConstructor ex = capture(ClassFactory.UnsupportedConstructor.class, () -> {
-            Spec subject = getSpec(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid");
-            subject.run(notifier);
-          });
-          assertThat(ex.getMessage(), matchesRegex(
+        @Test
+        public void reportsFailure() throws Exception {
+          Spec subject = getSpec(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid");
+          Failure failure = reportedFailure(subject);
+          assertThat(failure.getException(), instanceOf(TestSetupFailed.class));
+          assertThat(failure.getException().getCause(), isThrowableMatching(UnsupportedConstructor.class,
             "^Unable to find a no-argument constructor for class .*ConstructorWithArguments$"));
         }
       }
@@ -166,17 +163,18 @@ public class FieldSpecTest {
 
     public class whenAContextClassConstructorThrows {
       @Test //Issue 5
-      @Ignore
       public void reportsFailure() {
         subject = getSpec(ContextClasses.FailingConstructor.class, "will_fail");
         Failure failure = reportedFailure(subject);
         assertThat(failure.getException(), isThrowableMatching(TestSetupFailed.class, "Failed to create test context .*"));
+        assertThat(failure.getException().getCause(), isThrowableMatching(UnsupportedConstructor.class,
+          "^Unable to find a no-argument constructor for class .*FailingConstructor$"));
       }
     }
 
     public class whenThereIsAReflectiveOperationException {
       @Test
-      public void notifiesTestFailure() throws Exception {
+      public void reportsFailure() throws Exception {
         //Intended to catch ReflectiveOperationException, but causing that with a fake SecurityManager was not reliable
         subject = getSpec(ContextClasses.WrongTypeField.class, "inaccessibleAsIt");
         Failure failure = reportedFailure(subject);

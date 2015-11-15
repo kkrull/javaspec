@@ -55,8 +55,8 @@ final class FieldSpec extends Spec {
 
     @Override
     public SpecState instantiate() {
-      SpecExecutionContext context = SpecExecutionContext.forDeclaringClass(assertionField.getDeclaringClass());
       try {
+        SpecExecutionContext context = SpecExecutionContext.forDeclaringClass(assertionField.getDeclaringClass());
         List<Before> beforeThunks = beforeSpecFields.stream()
           .map(context::getAssignedValue)
           .map(Before.class::cast)
