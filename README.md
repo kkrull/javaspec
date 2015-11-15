@@ -3,7 +3,12 @@
 Behavior-Driven Development testing for Java using lambdas.  Inspired by [RSpec](http://rspec.info) and
 [Machine.Specifications](https://github.com/machine/machine.specifications).
 
-[![Build Status](https://travis-ci.org/kkrull/javaspec.svg?branch=master)](https://travis-ci.org/kkrull/javaspec)
+Build status
+
+- `master` [![Build Status](https://travis-ci.org/kkrull/javaspec.svg?branch=master)](https://travis-ci.org/kkrull/javaspec)
+- `develop` [![Build Status](https://travis-ci.org/kkrull/javaspec.svg?branch=develop)](https://travis-ci.org/kkrull/javaspec)
+
+## Why
 
 *Why create another testing framework for Java, and why use lambdas?*
 
