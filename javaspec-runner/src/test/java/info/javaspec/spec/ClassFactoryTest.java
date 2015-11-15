@@ -51,10 +51,6 @@ public class ClassFactoryTest {
     It will_fail = () -> assertEquals(1, 1);
   }
 
-  private static Failure reportedFailure(Spec spec) {
-    return reportedFailure(runNotifications(spec));
-  }
-
   private static Failure reportedFailure(RunNotifier notifier) {
     ArgumentCaptor<Failure> captor = ArgumentCaptor.forClass(Failure.class);
     verify(notifier).fireTestFailure(captor.capture());
