@@ -1,6 +1,5 @@
 package info.javaspec.spec;
 
-import info.javaspec.context.AmbiguousFixture;
 import info.javaspec.context.Context;
 import info.javaspec.dsl.Because;
 import info.javaspec.dsl.Cleanup;
@@ -77,5 +76,17 @@ public class SpecFactory extends ReflectionBasedFactory {
   private static Stream<Field> readDeclaredFields(Class<?> contextClass, Class<?> fieldType) {
     Predicate<Field> isInstanceField = x -> !Modifier.isStatic(x.getModifiers());
     return ReflectionUtil.fieldsOfType(fieldType, contextClass).filter(isInstanceField);
+  }
+
+  static final class AmbiguousFixture extends RuntimeException {
+    public static AmbiguousFixture forFieldOfType(Class<?> fieldClass, Class<?> contextClass) {
+      String message = String.format("Only 1 field of type %s is allowed in context class %s",
+        fieldClass.getSimpleName(), contextClass);
+      return new AmbiguousFixture(message);
+    }
+
+    private AmbiguousFixture(String message) {
+      super(message);
+    }
   }
 }

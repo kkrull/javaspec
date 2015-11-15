@@ -4,6 +4,7 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.context.Context;
 import info.javaspec.context.FakeContext;
 import info.javaspec.spec.ClassFactory.UnsupportedConstructor;
+import info.javaspec.spec.SpecExecutionContext.TestSetupFailed;
 import info.javaspecproto.ContextClasses;
 import org.junit.After;
 import org.junit.Before;
