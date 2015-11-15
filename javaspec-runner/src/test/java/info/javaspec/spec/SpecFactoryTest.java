@@ -1,7 +1,9 @@
 package info.javaspec.spec;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
+import info.javaspec.context.AmbiguousFixture;
 import info.javaspec.context.Context;
+import info.javaspec.context.ContextFactory;
 import info.javaspec.context.FakeContext;
 import info.javaspecproto.ContextClasses;
 import org.junit.After;
@@ -15,6 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static info.javaspec.testutil.Assertions.capture;
+import static info.javaspec.testutil.Matchers.matchesRegex;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.runner.Description.createSuiteDescription;
@@ -76,6 +80,32 @@ public class SpecFactoryTest {
           "ContextClasses.NestedCleanup::cleans"
         )));
       }
+    }
+
+    public class givenAContextClassWithMultipleSetupFieldsOfTheSameType {
+      @Test
+      public void givenAContextClassWithMultipleEstablishFields_throwsAmbiguousSpecFixture() throws Exception {
+        shouldThrowAmbiguousFixture(ContextClasses.TwoBecause.class);
+        AmbiguousFixture ex = shouldThrowAmbiguousFixture(ContextClasses.TwoEstablish.class);
+        assertThat(ex.getMessage(), matchesRegex("^Only 1 field of type Establish is allowed in context class .*TwoEstablish$"));
+      }
+
+      @Test
+      public void givenAContextClassWithMultipleBecauseFields_throwsAmbiguousSpecFixture() throws Exception {
+        capture(AmbiguousFixture.class, () -> ContextFactory.createRootContext(ContextClasses.TwoBecause.class));
+      }
+    }
+
+    public class givenAContextClassWithMultipleTeardownFieldsOfTheSameType {
+      @Test
+      public void throwsAmbiguousSpecFixture() throws Exception {
+        shouldThrowAmbiguousFixture(ContextClasses.TwoCleanup.class);
+      }
+    }
+
+    private AmbiguousFixture shouldThrowAmbiguousFixture(Class<?> source) {
+      SpecFactory factory = new SpecFactory(FakeContext.withDescription(createSuiteDescription("suite")));
+      return capture(AmbiguousFixture.class, () -> factory.addSpecsFromClass(source));
     }
   }
 
