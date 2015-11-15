@@ -1,7 +1,9 @@
 # JavaSpec
 
-Spec-style testing for Java using lambdas.  Inspired by [RSpec](http://rspec.info) and
+Behavior-Driven Development testing for Java using lambdas.  Inspired by [RSpec](http://rspec.info) and
 [Machine.Specifications](https://github.com/machine/machine.specifications).
+
+[![Build Status](https://travis-ci.org/kkrull/javaspec.svg?branch=master)](https://travis-ci.org/kkrull/javaspec)
 
 *Why create another testing framework for Java, and why use lambdas?*
 

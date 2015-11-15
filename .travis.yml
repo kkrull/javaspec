@@ -1,0 +1,11 @@
+language: java
+
+branches:
+  only:
+    - master
+    - develop
+
+jdk:
+  - oraclejdk8
+
+script: mvn verify -B
