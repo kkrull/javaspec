@@ -8,6 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
@@ -19,9 +20,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static info.javaspec.junit.Descriptions.isTestDescription;
 import static info.javaspec.testutil.Assertions.capture;
 import static info.javaspec.testutil.Matchers.isThrowableMatching;
 import static info.javaspec.testutil.Matchers.matchesRegex;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.*;
@@ -32,6 +35,24 @@ import static org.mockito.Mockito.*;
 public class FieldSpecTest {
   private Spec subject;
   private final List<String> events = new LinkedList<>();
+
+  public class addDescriptionTo {
+    public class givenASuite {
+      private Description suite;
+
+      @Before
+      public void setup() throws Exception {
+        subject = getSpec(ContextClasses.OneIt.class, "only_test");
+        suite = Description.createSuiteDescription(getClass());
+        subject.addDescriptionTo(suite);
+      }
+
+      @Test
+      public void addsItselfAsAChildInThatSuite() throws Exception {
+        assertThat(suite.getChildren(), contains(isTestDescription()));
+      }
+    }
+  }
 
   public class run {
     private final RunNotifier notifier = mock(RunNotifier.class);
@@ -57,6 +78,19 @@ public class FieldSpecTest {
           "ContextClasses.FullFixture::act",
           "ContextClasses.FullFixture::assert",
           "ContextClasses.FullFixture::cleans")));
+      }
+
+      @Test
+      public void instantiatesOnceEvenIfRunMultipleTimes() throws Exception {
+        subject.run(notifier);
+        List<String> filteredEvents = events.stream()
+          .filter(x -> x.contains("new") || x.contains("act"))
+          .collect(toList());
+        assertThat(filteredEvents, equalTo(newArrayList(
+          "ContextClasses.FullFixture::new",
+          "ContextClasses.FullFixture::act",
+          "ContextClasses.FullFixture::act"
+        )));
       }
     }
 
@@ -88,6 +122,15 @@ public class FieldSpecTest {
           shouldBeIgnored(getSpec(ContextClasses.PendingBecause.class, "asserts"));
           shouldBeIgnored(getSpec(ContextClasses.PendingIt.class, "asserts"));
           shouldBeIgnored(getSpec(ContextClasses.PendingCleanup.class, "asserts"));
+        }
+
+        @Test
+        public void evenOnRepeatedAttemptsToRun() throws Exception {
+          subject = getSpec(ContextClasses.PendingEstablish.class, "asserts");
+          subject.run(notifier);
+          subject.run(notifier);
+          verify(notifier, times(2)).fireTestIgnored(Mockito.any());
+          Mockito.verifyNoMoreInteractions(notifier);
         }
       }
     }
