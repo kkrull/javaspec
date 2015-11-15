@@ -33,12 +33,9 @@ public class ClassFactoryTest {
 
       @Test
       public void reportsFailureForTheContext() throws Exception {
-        ArgumentCaptor<Failure> captor = ArgumentCaptor.forClass(Failure.class);
-        verify(notifier).fireTestFailure(captor.capture());
-
-        assertThat(captor.getValue().getException(), instanceOf(TestSetupFailed.class));
-        assertThat(captor.getValue().getException().getCause(), instanceOf(FaultyClassInitializer.class));
-        assertThat(captor.getValue().getException().getCause().getMessage(),
+        Failure failure = reportedFailure(notifier);
+        assertThat(failure.getException(), instanceOf(FaultyClassInitializer.class));
+        assertThat(failure.getException().getMessage(),
           matchesRegex("^Failed to load class .*FailingClassInitializer.* due to a faulty static initializer$"));
       }
     }
@@ -55,11 +52,5 @@ public class ClassFactoryTest {
     ArgumentCaptor<Failure> captor = ArgumentCaptor.forClass(Failure.class);
     verify(notifier).fireTestFailure(captor.capture());
     return captor.getValue();
-  }
-
-  private static RunNotifier runNotifications(Spec subject) {
-    RunNotifier notifier = mock(RunNotifier.class);
-    subject.run(notifier);
-    return notifier;
   }
 }

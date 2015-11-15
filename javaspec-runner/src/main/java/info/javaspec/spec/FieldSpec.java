@@ -34,7 +34,7 @@ final class FieldSpec extends Spec {
   public void run(RunNotifier notifier) {
     try {
       state = state.instantiate();
-    } catch(TestSetupFailed ex) {
+    } catch(Exception ex) {
       notifier.fireTestFailure(new Failure(getDescription(), ex));
       return;
     }
@@ -55,25 +55,21 @@ final class FieldSpec extends Spec {
 
     @Override
     public SpecState instantiate() {
-      try {
-        SpecExecutionContext context = SpecExecutionContext.forDeclaringClass(assertionField.getDeclaringClass());
-        List<Before> beforeThunks = beforeSpecFields.stream()
-          .map(context::getAssignedValue)
-          .map(Before.class::cast)
-          .collect(toList());
-        List<Cleanup> afterThunks = afterSpecFields.stream()
-          .map(context::getAssignedValue)
-          .map(Cleanup.class::cast)
-          .collect(toList());
-        It assertionThunk = (It)context.getAssignedValue(assertionField);
-        
-        if(beforeThunks.contains(null) || afterThunks.contains(null) || assertionThunk == null) {
-          return new PendingState();
-        } else {
-          return new RunnableState(assertionThunk, beforeThunks, afterThunks);
-        }
-      } catch(Throwable t) {
-        throw TestSetupFailed.forClass(assertionField.getDeclaringClass(), t);
+      SpecExecutionContext context = SpecExecutionContext.forDeclaringClass(assertionField.getDeclaringClass());
+      List<Before> beforeThunks = beforeSpecFields.stream()
+        .map(context::getAssignedValue)
+        .map(Before.class::cast)
+        .collect(toList());
+      List<Cleanup> afterThunks = afterSpecFields.stream()
+        .map(context::getAssignedValue)
+        .map(Cleanup.class::cast)
+        .collect(toList());
+      It assertionThunk = (It) context.getAssignedValue(assertionField);
+
+      if(beforeThunks.contains(null) || afterThunks.contains(null) || assertionThunk == null) {
+        return new PendingState();
+      } else {
+        return new RunnableState(assertionThunk, beforeThunks, afterThunks);
       }
     }
 
@@ -141,6 +137,7 @@ final class FieldSpec extends Spec {
 
   private interface SpecState {
     SpecState instantiate();
+
     void run(RunNotifier notifier);
   }
 }

@@ -106,8 +106,7 @@ public class FieldSpecTest {
         public void reportsFailure() throws Exception {
           Spec subject = getSpec(ContextClasses.ConstructorWithArguments.class, "is_otherwise_valid");
           Failure failure = reportedFailure(subject);
-          assertThat(failure.getException(), instanceOf(TestSetupFailed.class));
-          assertThat(failure.getException().getCause(), isThrowableMatching(UnsupportedConstructor.class,
+          assertThat(failure.getException(), isThrowableMatching(UnsupportedConstructor.class,
             "^Unable to find a no-argument constructor for class .*ConstructorWithArguments$"));
         }
       }
@@ -166,8 +165,7 @@ public class FieldSpecTest {
       public void reportsFailure() {
         subject = getSpec(ContextClasses.FailingConstructor.class, "will_fail");
         Failure failure = reportedFailure(subject);
-        assertThat(failure.getException(), isThrowableMatching(TestSetupFailed.class, "Failed to create test context .*"));
-        assertThat(failure.getException().getCause(), isThrowableMatching(UnsupportedConstructor.class,
+        assertThat(failure.getException(), isThrowableMatching(UnsupportedConstructor.class,
           "^Unable to find a no-argument constructor for class .*FailingConstructor$"));
       }
     }
@@ -178,7 +176,7 @@ public class FieldSpecTest {
         //Intended to catch ReflectiveOperationException, but causing that with a fake SecurityManager was not reliable
         subject = getSpec(ContextClasses.WrongTypeField.class, "inaccessibleAsIt");
         Failure failure = reportedFailure(subject);
-        assertThat(failure.getException(), isThrowableMatching(TestSetupFailed.class, "Failed to create test context .*"));
+        assertThat(failure.getException(), instanceOf(ClassCastException.class));
       }
     }
 
