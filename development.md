@@ -1,20 +1,13 @@
-## Update version at the start of a release branch
+## Make a release branch
 
-- Bump the artifact version number in the POM.
-- Bump the expected, reportable version number in `CommandLineInterfaceSteps`.
-- Bump the version in the installation instructions in `readme.md`.
-
-## Release start
-
-- Create a release branch off of master.
-- Bump the version to `-SNAPSHOT`.
-- Merge in features and bug fixes: Use develop if all topics are desired; specific topic branches for a subset.
-  **Remember to use `git merge --no-ff`** to make development history more clear.
+- Make a release branch from develop: `git checkout develop && git checkout -b release-v<number>`
+- Bump the artifact version number in the POM: `bin/bump-version`
+- Bump the expected, reportable version number in `CommandLineInterfaceSteps`
+- Bump the version in the installation instructions in `readme.md`
 
 ## Release end
 ### Test
 
-- Drop SNAPSHOT from version
 - Run tests
 - Smoke test w/ a completely separate project
 

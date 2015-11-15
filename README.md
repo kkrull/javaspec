@@ -34,7 +34,7 @@ JavaSpec is located in the Maven Central Repository, under the following coordin
 <dependency>
   <groupId>info.javaspec</groupId>
   <artifactId>javaspec-runner</artifactId>
-  <version>1.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 
@@ -172,6 +172,7 @@ request with any suggested modifications.
 
 # Release history
 
+- 1.0.1: Fixed [Issue 5](https://github.com/kkrull/javaspec/issues/5), catching some errors in initializing test classes.
 - 1.0: Full release.  Renamed artifact to `info.javaspec::javaspec-runner`.
 - 0.5: Fixed an issue where specs with the same field / context class name were showing up as still running in IntelliJ.
   Also renamed JUnit test display names to human-readable names, replacing snake case underscores with spaces.
