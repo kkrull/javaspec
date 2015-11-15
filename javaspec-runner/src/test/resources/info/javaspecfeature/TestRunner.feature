@@ -22,3 +22,16 @@ Feature: Running tests
     Given I have a class with JavaSpec tests in it that is marked to run with a JavaSpec runner
     When I run the tests with a JUnit runner
     Then the test runner should run all the tests in the marked class
+
+  Scenario: Failing tests
+    Given I have a test class that can not be instantiated
+    When I run the tests
+    Then the test runner should report its tests as failed
+
+  Scenario: Test reporting
+    Given I have JavaSpec tests that produce varying results
+    When I run the tests
+    Then it should report a status for each test
+    And it should report which tests pass
+    And it should report which tests fail
+    And it should report which tests are ignored
