@@ -1,3 +1,14 @@
+# Developing for JavaSpec
+
+TODO KDK: Update documentation
+
+- Introduction in general
+- What you need for development: JDK, Ruby
+- Which module does what
+- Refactor to use Rake
+- Add contributor's guide
+
+
 ## Make a release branch
 
 - Make a release branch from develop: `git checkout develop && git checkout -b release-v<number>`
@@ -5,11 +16,13 @@
 - Bump the expected, reportable version number in `CommandLineInterfaceSteps`
 - Bump the version in the installation instructions in `readme.md`
 
+
 ## Release end
 ### Test
 
 - Run tests
 - Smoke test w/ a completely separate project
+
 
 ### Documentation
 
@@ -17,6 +30,7 @@
   - Version number in Maven coordinates
   - Version history for the new version
 - Push README to github page for use on [JavaSpec.info](http://javaspec.info)
+
 
 ### Git
 
@@ -71,4 +85,3 @@ The overall process is described [here](http://central.sonatype.org/pages/ossrh-
 - Go to [Maven Central](http://search.maven.org/#search|ga|1|g%3A%22info.javaspec%22) and make sure it shows up.  It's
   supposed to take about 10 minutes to be in the repository, and up to 2 hours to show up in search results.
 - Delete local artifact and do test installation from Maven Central.
-

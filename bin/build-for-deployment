@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-set -e
-mvn -Pgpg,release clean install
