@@ -170,6 +170,7 @@
   <modules>
     <module>javaspec-runner</module>
     <module>javaspec-sandbox</module>
+    <module>console-runner</module>
   </modules>
 
   <name>JavaSpec</name>

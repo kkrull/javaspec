@@ -97,5 +97,7 @@
     </dependency>
   </dependencies>
 
+  <description>JUnit runner for JavaSpec</description>
+
   <name>JavaSpec: Runner</name>
 </project>
