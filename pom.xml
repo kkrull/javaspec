@@ -82,6 +82,11 @@
       <!-- Modules -->
       <dependency>
         <groupId>info.javaspec</groupId>
+        <artifactId>console-runner</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>info.javaspec</groupId>
         <artifactId>javaspec-runner</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -171,6 +176,7 @@
     <module>javaspec-runner</module>
     <module>javaspec-sandbox</module>
     <module>console-runner</module>
+    <module>console-runner-features</module>
   </modules>
 
   <name>JavaSpec</name>

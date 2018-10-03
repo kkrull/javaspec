@@ -1,4 +1,4 @@
-package info.javaspec;
+package info.javaspec.console;
 
 @FunctionalInterface
 interface ExitHandler {

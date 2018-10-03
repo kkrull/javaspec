@@ -1,10 +1,12 @@
+## Steps focused on ConsoleRunner's behavior _as a process_
+
 Given("I have a Java class that contains 1 or more specs") do
   @runner_class_dir = File.expand_path '../../../console-runner/target/classes', __FILE__
   @spec_class_name = 'info.javaspec.example.PassIt'
 end
 
 When("I run the specs in that class") do
-  runner_class_name = 'info.javaspec.ConsoleRunner'
+  runner_class_name = 'info.javaspec.console.Runner'
   run_simple "java -cp #{@runner_class_dir} #{runner_class_name} #{@spec_class_name}"
 end
 
