@@ -10,7 +10,8 @@ import info.javaspec.console.Fake.MockSpecReporter;
 public class RunnerSteps {
   private Fake.SpecRunner runner;
   private Fake.Suite suite;
-  private MockSpec mockSpec;
+  private MockSpec passingSpec;
+  private MockSpec failingSpec;
   private MockSpecReporter mockReporter;
 
   @Given("^I have a JavaSpec runner for the console$")
@@ -21,8 +22,9 @@ public class RunnerSteps {
 
   @Given("^I have a Java class that defines a suite of lambda specs$")
   public void iHaveAJavaClassWithASuiteOfLambdaSpecs() throws Exception {
-    this.mockSpec = new MockSpec();
-    this.suite = new Fake.Suite(this.mockSpec);
+    this.passingSpec = MockSpec.runPasses();
+    this.failingSpec = MockSpec.runThrows(new AssertionError("bang!"));
+    this.suite = new Fake.Suite(this.passingSpec, this.failingSpec);
   }
 
   @When("^I run the specs in that class$")
@@ -32,12 +34,14 @@ public class RunnerSteps {
 
   @Then("^The runner should run the specs defined in that class$")
   public void thenRunnerShouldRunSpecs() throws Exception {
-    this.mockReporter.specStartingShouldHaveReceived(this.mockSpec);
-    this.mockSpec.runShouldHaveBeenCalled();
+    this.mockReporter.specStartingShouldHaveReceived(this.failingSpec, this.passingSpec);
+    this.failingSpec.runShouldHaveBeenCalled();
+    this.passingSpec.runShouldHaveBeenCalled();
   }
 
   @Then("^The runner should indicate which specs passed and failed$")
   public void theRunnerShouldIndicateWhichSpecsPassedAndFailed() throws Exception {
-    this.mockReporter.specPassedShouldHaveReceived(this.mockSpec);
+    this.mockReporter.specPassedShouldHaveReceived(this.passingSpec);
+    this.mockReporter.specFailedShouldHaveReceived(this.failingSpec);
   }
 }
