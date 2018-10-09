@@ -7,10 +7,10 @@ Feature: Console Runner
   In order to observe side effects such as which specs have been run
   I want to run some acceptance tests from the same JVM process as JavaSpec
 
-  Scenario: A ConsoleRunner should tell you what's happening
+  Scenario: A ConsoleRunner should run specs and tell you what happened
     Given I have a JavaSpec runner for the console
     And I have a Java class that defines a suite of lambda specs
     When I run the specs in that class
     Then The runner should run the specs defined in that class
-#    And The runner should indicate whether each spec passed or failed
+    And The runner should indicate which specs passed and failed
 #    And The runner should indicate whether all specs passed, or any failed
