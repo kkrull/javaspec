@@ -3,7 +3,7 @@ require 'cucumber/rake/task'
 
 
 desc 'Compile and run all tests'
-task default: %w[java:clean java:test cucumber]
+task default: %w[java:test cucumber]
 
 Cucumber::Rake::Task.new
 

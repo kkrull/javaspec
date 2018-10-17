@@ -13,4 +13,5 @@ Feature: Console Runner
     When I run the specs in that class
     Then The runner should run the specs defined in that class
     And The runner should indicate which specs passed and failed
-#    And The runner should indicate whether all specs passed, or any failed
+    And The runner should indicate whether any specs failed
+    

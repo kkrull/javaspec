@@ -12,11 +12,17 @@ class Fake {
   static final class SpecRunner {
     private final MockSpecReporter reporter;
 
-    public SpecRunner(MockSpecReporter reporter) {
+    public static void main(Suite suite, MockSpecReporter reporter, MockExitHandler system) {
+      SpecRunner runner = new SpecRunner(reporter);
+      runner.run(suite);
+      system.exit(1);
+    }
+
+    private SpecRunner(MockSpecReporter reporter) {
       this.reporter = reporter;
     }
 
-    public void run(Suite suite) {
+    private void run(Suite suite) {
       suite.runSpecs(this.reporter);
     }
   }
@@ -110,6 +116,24 @@ class Fake {
     public void specStartingShouldHaveReceived(MockSpec... specs) {
       Set<MockSpec> specsList = Stream.of(specs).collect(Collectors.toSet());
       assertThat(new HashSet<>(this.startingReceived), Matchers.equalTo(specsList));
+    }
+  }
+
+  static class MockExitHandler implements ExitHandler {
+    private List<Integer> exitReceived;
+
+    public MockExitHandler() {
+      this.exitReceived = new LinkedList<>();
+    }
+
+    @Override
+    public void exit(int code) {
+      this.exitReceived.add(code);
+    }
+
+    public void exitShouldHaveReceived(int code) {
+      List<Integer> expectedCodes = Stream.of(code).collect(Collectors.toList());
+      assertThat(this.exitReceived, Matchers.equalTo(expectedCodes));
     }
   }
 }

@@ -8,16 +8,19 @@ import info.javaspec.console.Fake.MockSpecReporter;
 
 /** Steps observing what happens in a Runner, from within the same process */
 public class RunnerSteps {
-  private Fake.SpecRunner runner;
+  private SuiteRunner runner;
+  private MockSpecReporter mockReporter;
+  private Fake.MockExitHandler system;
+
   private Fake.Suite suite;
   private MockSpec passingSpec;
   private MockSpec failingSpec;
-  private MockSpecReporter mockReporter;
 
   @Given("^I have a JavaSpec runner for the console$")
   public void iHaveAConsoleRunner() throws Exception {
+    this.system = new Fake.MockExitHandler();
     this.mockReporter = new MockSpecReporter();
-    this.runner = new Fake.SpecRunner(this.mockReporter);
+    this.runner = (suite) -> Fake.SpecRunner.main(suite, this.mockReporter, this.system);
   }
 
   @Given("^I have a Java class that defines a suite of lambda specs$")
@@ -43,5 +46,15 @@ public class RunnerSteps {
   public void theRunnerShouldIndicateWhichSpecsPassedAndFailed() throws Exception {
     this.mockReporter.specPassedShouldHaveReceived(this.passingSpec);
     this.mockReporter.specFailedShouldHaveReceived(this.failingSpec);
+  }
+
+  @Then("^The runner should indicate whether any specs failed$")
+  public void theRunnerShouldIndicateWhetherAnySpecsFailed() throws Exception {
+    this.system.exitShouldHaveReceived(1);
+  }
+
+  @FunctionalInterface
+  interface SuiteRunner {
+    void run(Fake.Suite suite);
   }
 }
