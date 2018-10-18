@@ -1,5 +1,6 @@
 package info.javaspec.console;
 
+import info.javaspec.LambdaSpec;
 import org.hamcrest.Matchers;
 
 import java.util.HashSet;
@@ -32,7 +33,7 @@ class Mock {
     }
   }
 
-  static final class MockSpec {
+  static final class MockSpec implements LambdaSpec {
     private boolean runCalled;
     private AssertionError runThrows;
 
@@ -49,6 +50,7 @@ class Mock {
       this.runThrows = runThrows;
     }
 
+    @Override
     public void run() {
       this.runCalled = true;
 
@@ -67,9 +69,9 @@ class Mock {
   }
 
   static final class MockSpecReporter {
-    private final List<MockSpec> failReceived;
-    private final List<MockSpec> passReceived;
-    private final List<MockSpec> startingReceived;
+    private final List<LambdaSpec> failReceived;
+    private final List<LambdaSpec> passReceived;
+    private final List<LambdaSpec> startingReceived;
 
     public MockSpecReporter() {
       this.failReceived = new LinkedList<>();
@@ -81,28 +83,28 @@ class Mock {
       return !this.failReceived.isEmpty();
     }
 
-    public void specFailed(MockSpec spec) {
+    public void specFailed(LambdaSpec spec) {
       this.failReceived.add(spec);
     }
 
-    public void specFailedShouldHaveReceived(MockSpec spec) {
+    public void specFailedShouldHaveReceived(LambdaSpec spec) {
       assertThat(this.failReceived, Matchers.hasItem(Matchers.sameInstance(spec)));
     }
 
-    public void specPassed(MockSpec spec) {
+    public void specPassed(LambdaSpec spec) {
       this.passReceived.add(spec);
     }
 
-    public void specPassedShouldHaveReceived(MockSpec spec) {
+    public void specPassedShouldHaveReceived(LambdaSpec spec) {
       assertThat(this.passReceived, Matchers.hasItem(Matchers.sameInstance(spec)));
     }
 
-    public void specStarting(MockSpec spec) {
+    public void specStarting(LambdaSpec spec) {
       this.startingReceived.add(spec);
     }
 
-    public void specStartingShouldHaveReceived(MockSpec... specs) {
-      Set<MockSpec> specsList = Stream.of(specs).collect(Collectors.toSet());
+    public void specStartingShouldHaveReceived(LambdaSpec... specs) {
+      Set<LambdaSpec> specsList = Stream.of(specs).collect(Collectors.toSet());
       assertThat(new HashSet<>(this.startingReceived), Matchers.equalTo(specsList));
     }
   }
