@@ -13,5 +13,17 @@ Feature: Console Runner
     When I run the specs in that class
     Then The runner should run the specs defined in that class
     And The runner should indicate which specs passed and failed
-    And The runner should indicate whether any specs failed
-    
+
+
+  Scenario: A ConsoleRunner should report failing specs with its exit code
+    Given I have a JavaSpec runner for the console
+    And I have a Java class that defines a suite of 1 or more failing lambda specs
+    When I run the specs in that class
+    Then The runner should indicate that 1 or more specs have failed
+
+
+  Scenario: A ConsoleRunner should report all passing specs with its exit code
+    Given I have a JavaSpec runner for the console
+    And I have a Java class that defines a suite of passing lambda specs
+    When I run the specs in that class
+    Then The runner should indicate that all specs passed

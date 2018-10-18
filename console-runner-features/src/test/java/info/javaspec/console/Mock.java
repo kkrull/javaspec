@@ -2,49 +2,33 @@ package info.javaspec.console;
 
 import org.hamcrest.Matchers;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.assertThat;
 
-class Fake {
-  static final class SpecRunner {
-    private final MockSpecReporter reporter;
+class Mock {
+  private Mock() { /* static class */ }
 
-    public static void main(Suite suite, MockSpecReporter reporter, MockExitHandler system) {
-      SpecRunner runner = new SpecRunner(reporter);
-      runner.run(suite);
-      system.exit(1);
+  static final class MockExitHandler implements ExitHandler {
+    private List<Integer> exitReceived;
+
+    public MockExitHandler() {
+      this.exitReceived = new LinkedList<>();
     }
 
-    private SpecRunner(MockSpecReporter reporter) {
-      this.reporter = reporter;
+    @Override
+    public void exit(int code) {
+      this.exitReceived.add(code);
     }
 
-    private void run(Suite suite) {
-      suite.runSpecs(this.reporter);
-    }
-  }
-
-  static final class Suite {
-    private final List<MockSpec> specs;
-
-    public Suite(MockSpec... specs) {
-      this.specs = Stream.of(specs).collect(Collectors.toList());
-    }
-
-    public void runSpecs(MockSpecReporter reporter) {
-      for(MockSpec spec : specs) {
-        reporter.specStarting(spec);
-        try {
-          spec.run();
-        } catch(AssertionError e) {
-          reporter.specFailed(spec);
-        }
-
-        reporter.specPassed(spec);
-      }
+    public void exitShouldHaveReceived(int code) {
+      List<Integer> expectedCodes = Stream.of(code).collect(Collectors.toList());
+      assertThat(this.exitReceived, Matchers.equalTo(expectedCodes));
     }
   }
 
@@ -93,6 +77,10 @@ class Fake {
       this.startingReceived = new LinkedList<>();
     }
 
+    public boolean hasFailingSpecs() {
+      return !this.failReceived.isEmpty();
+    }
+
     public void specFailed(MockSpec spec) {
       this.failReceived.add(spec);
     }
@@ -116,24 +104,6 @@ class Fake {
     public void specStartingShouldHaveReceived(MockSpec... specs) {
       Set<MockSpec> specsList = Stream.of(specs).collect(Collectors.toSet());
       assertThat(new HashSet<>(this.startingReceived), Matchers.equalTo(specsList));
-    }
-  }
-
-  static class MockExitHandler implements ExitHandler {
-    private List<Integer> exitReceived;
-
-    public MockExitHandler() {
-      this.exitReceived = new LinkedList<>();
-    }
-
-    @Override
-    public void exit(int code) {
-      this.exitReceived.add(code);
-    }
-
-    public void exitShouldHaveReceived(int code) {
-      List<Integer> expectedCodes = Stream.of(code).collect(Collectors.toList());
-      assertThat(this.exitReceived, Matchers.equalTo(expectedCodes));
     }
   }
 }
