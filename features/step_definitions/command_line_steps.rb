@@ -1,13 +1,26 @@
 ## Steps focused on ConsoleRunner's behavior _as a process_
 
-Given("I have a Java class that contains 1 or more specs") do
+Given("I have a JavaSpec runner for the console") do
   @runner_class_dir = File.expand_path '../../../console-runner/target/classes', __FILE__
-  @spec_class_name = 'info.javaspec.example.PassIt'
+  @runner_class_name = 'info.javaspec.console.Runner'
+end
+
+Given("I have a Java class that defines a suite of lambda specs") do
+  @spec_class_name = 'info.javaspec.example.OneFails'
+end
+
+Given("I have a Java class that defines a suite of passing lambda specs") do
+  @spec_class_name = 'info.javaspec.example.AllPass'
+end
+
+Given("I have a Java class that defines a suite of 1 or more failing lambda specs") do
+  @spec_class_name = 'info.javaspec.example.OneFails'
 end
 
 When("I run the specs in that class") do
-  runner_class_name = 'info.javaspec.console.Runner'
-  run_simple "java -cp #{@runner_class_dir} #{runner_class_name} #{@spec_class_name}"
+  #TODO KDK: Build the path to the classes and check for their existence
+  expect(File.exists? @runner_class_name).to eq(true)
+  run_simple "java -cp #{@runner_class_dir} #{@runner_class_name} #{@spec_class_name}"
 end
 
 Then("The runner should run the specs defined in that class") do
@@ -23,3 +36,17 @@ Then("The runner should indicate whether all specs passed, or any failed") do
   expect(last_command_stopped.stdout).to include("Passed: 1\tFailed: 0\tTotal: 1")
   expect(last_command_stopped.exit_status).to eq(0)
 end
+
+Then("The runner should indicate which specs passed and failed") do
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Then("The runner should indicate that all specs passed") do
+  expect(last_command_stopped.stdout).to include("Passed: 1\tFailed: 0\tTotal: 1")
+  expect(last_command_stopped.exit_status).to eq(0)
+end
+
+Then("The runner should indicate that 1 or more specs have failed") do
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
