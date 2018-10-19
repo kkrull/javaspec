@@ -1,7 +1,7 @@
 package info.javaspec.console;
 
 import info.javaspec.LambdaSpec;
-import info.javaspec.console.Mock.MockSpecReporter;
+import info.javaspec.SpecReporter;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,9 +11,9 @@ class Prototype {
   private Prototype() { /* static class */ }
 
   static final class SpecRunner {
-    private final MockSpecReporter reporter; //TODO KDK: Start extracting interfaces
+    private final SpecReporter reporter;
 
-    public static void main(Suite suite, MockSpecReporter reporter, ExitHandler system) {
+    static void main(Suite suite, SpecReporter reporter, ExitHandler system) {
       SpecRunner runner = new SpecRunner(reporter);
       runner.run(suite);
 
@@ -21,7 +21,7 @@ class Prototype {
       system.exit(exitCode);
     }
 
-    private SpecRunner(MockSpecReporter reporter) {
+    private SpecRunner(SpecReporter reporter) {
       this.reporter = reporter;
     }
 
@@ -37,7 +37,7 @@ class Prototype {
       this.specs = Stream.of(specs).collect(Collectors.toList());
     }
 
-    public void runSpecs(MockSpecReporter reporter) {
+    public void runSpecs(SpecReporter reporter) {
       for(LambdaSpec spec : specs) {
         reporter.specStarting(spec);
         try {

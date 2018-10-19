@@ -1,6 +1,7 @@
 package info.javaspec.console;
 
 import info.javaspec.LambdaSpec;
+import info.javaspec.SpecReporter;
 import org.hamcrest.Matchers;
 
 import java.util.HashSet;
@@ -68,7 +69,7 @@ class Mock {
     }
   }
 
-  static final class MockSpecReporter {
+  static final class MockSpecReporter implements SpecReporter {
     private final List<LambdaSpec> failReceived;
     private final List<LambdaSpec> passReceived;
     private final List<LambdaSpec> startingReceived;
@@ -79,10 +80,12 @@ class Mock {
       this.startingReceived = new LinkedList<>();
     }
 
+    @Override
     public boolean hasFailingSpecs() {
       return !this.failReceived.isEmpty();
     }
 
+    @Override
     public void specFailed(LambdaSpec spec) {
       this.failReceived.add(spec);
     }
@@ -91,6 +94,7 @@ class Mock {
       assertThat(this.failReceived, Matchers.hasItem(Matchers.sameInstance(spec)));
     }
 
+    @Override
     public void specPassed(LambdaSpec spec) {
       this.passReceived.add(spec);
     }
@@ -99,6 +103,7 @@ class Mock {
       assertThat(this.passReceived, Matchers.hasItem(Matchers.sameInstance(spec)));
     }
 
+    @Override
     public void specStarting(LambdaSpec spec) {
       this.startingReceived.add(spec);
     }
