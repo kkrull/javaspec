@@ -1,3 +1,3 @@
 package info.javaspec.example;
 
-public class OneSpec { }
+public class AllPass { }

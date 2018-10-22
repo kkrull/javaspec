@@ -18,8 +18,8 @@ Given("I have a Java class that defines a suite of 1 or more failing lambda spec
 end
 
 When("I run the specs in that class") do
-  #TODO KDK: Build the path to the classes and check for their existence
-  expect(File.exists? @runner_class_name).to eq(true)
+  expect(path_to_class(@runner_class_name, @runner_class_dir)).to be_an_existing_file
+  expect(path_to_class(@spec_class_name, @runner_class_dir)).to be_an_existing_file
   run_simple "java -cp #{@runner_class_dir} #{@runner_class_name} #{@spec_class_name}"
 end
 
@@ -48,5 +48,10 @@ end
 
 Then("The runner should indicate that 1 or more specs have failed") do
   pending # Write code here that turns the phrase above into concrete actions
+end
+
+def path_to_class(class_name, class_path)
+  relative_path = "#{class_name.gsub '.', '/'}.class"
+  File.expand_path relative_path, class_path
 end
 
