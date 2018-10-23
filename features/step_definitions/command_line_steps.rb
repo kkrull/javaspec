@@ -1,7 +1,6 @@
 ## Steps focused on ConsoleRunner's behavior _as a process_
 
 Given("I have a JavaSpec runner for the console") do
-  @runner_class_dir = File.expand_path '../../../console-runner/target/classes', __FILE__
   @runner_class_name = 'info.javaspec.console.Runner'
 end
 
@@ -18,9 +17,9 @@ Given("I have a Java class that defines a suite of 1 or more failing lambda spec
 end
 
 When("I run the specs in that class") do
-  expect(path_to_class(@runner_class_name, @runner_class_dir)).to be_an_existing_file
-  expect(path_to_class(@spec_class_name, @runner_class_dir)).to be_an_existing_file
-  run_simple "java -cp #{@runner_class_dir} #{@runner_class_name} #{@spec_class_name}"
+  expect(path_to_class(@runner_class_name, runner_class_dir)).to be_an_existing_file
+  expect(path_to_class(@spec_class_name, spec_class_dir)).to be_an_existing_file
+  run_simple "java -cp #{runner_class_dir}:#{spec_class_dir} #{@runner_class_name} #{@spec_class_name}"
 end
 
 Then("The runner should run the specs defined in that class") do
@@ -42,6 +41,7 @@ Then("The runner should indicate which specs passed and failed") do
 end
 
 Then("The runner should indicate that all specs passed") do
+  pending
   expect(last_command_stopped.stdout).to include("Passed: 1\tFailed: 0\tTotal: 1")
   expect(last_command_stopped.exit_status).to eq(0)
 end
@@ -55,3 +55,10 @@ def path_to_class(class_name, class_path)
   File.expand_path relative_path, class_path
 end
 
+def runner_class_dir
+  File.expand_path '../../../console-runner/target/classes', __FILE__
+end
+
+def spec_class_dir
+  File.expand_path '../../../console-runner/target/classes', __FILE__
+end
