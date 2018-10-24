@@ -7,6 +7,7 @@ public class Runner {
   private final SpecReporter reporter;
 
   public static void main(String... args) throws Exception {
+    //TODO KDK: Start making new implementations of Suite, SpecReporter, etc...
   }
 
   static void main(Suite suite, SpecReporter reporter, ExitHandler system) {
@@ -22,6 +23,8 @@ public class Runner {
   }
 
   private void run(Suite suite) {
+    this.reporter.runStarting();
     suite.runSpecs(this.reporter);
+    this.reporter.runFinished();
   }
 }

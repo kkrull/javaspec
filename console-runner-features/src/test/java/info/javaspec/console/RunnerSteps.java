@@ -52,9 +52,11 @@ public class RunnerSteps {
 
   @Then("^The runner should run the specs defined in that class$")
   public void thenRunnerShouldRunSpecs() throws Exception {
+    this.mockReporter.runStartingShouldHaveBeenCalled();
     this.mockReporter.specStartingShouldHaveReceived(this.failingSpec, this.passingSpec);
     this.failingSpec.runShouldHaveBeenCalled();
     this.passingSpec.runShouldHaveBeenCalled();
+    this.mockReporter.runFinishedShouldHaveBeenCalled();
   }
 
   @Then("^The runner should indicate which specs passed and failed$")

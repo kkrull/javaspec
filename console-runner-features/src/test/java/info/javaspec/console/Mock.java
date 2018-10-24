@@ -70,47 +70,71 @@ class Mock {
   }
 
   static final class MockSpecReporter implements SpecReporter {
-    private final List<LambdaSpec> failReceived;
-    private final List<LambdaSpec> passReceived;
-    private final List<LambdaSpec> startingReceived;
+    private int runStartingCalled;
+    private int runFinishedCalled;
+
+    private final List<LambdaSpec> specFailedReceived;
+    private final List<LambdaSpec> specPassedReceived;
+    private final List<LambdaSpec> specStartingReceived;
+
 
     public MockSpecReporter() {
-      this.failReceived = new LinkedList<>();
-      this.passReceived = new LinkedList<>();
-      this.startingReceived = new LinkedList<>();
+      this.runStartingCalled = 0;
+      this.runFinishedCalled = 0;
+      this.specFailedReceived = new LinkedList<>();
+      this.specPassedReceived = new LinkedList<>();
+      this.specStartingReceived = new LinkedList<>();
     }
 
     @Override
     public boolean hasFailingSpecs() {
-      return !this.failReceived.isEmpty();
+      return !this.specFailedReceived.isEmpty();
+    }
+
+    @Override
+    public void runFinished() {
+      this.runFinishedCalled += 1;
+    }
+
+    public void runFinishedShouldHaveBeenCalled() {
+      assertThat(this.runFinishedCalled, Matchers.equalTo(1));
+    }
+
+    @Override
+    public void runStarting() {
+      this.runStartingCalled += 1;
+    }
+
+    public void runStartingShouldHaveBeenCalled() {
+      assertThat(this.runStartingCalled, Matchers.equalTo(1));
     }
 
     @Override
     public void specFailed(LambdaSpec spec) {
-      this.failReceived.add(spec);
+      this.specFailedReceived.add(spec);
     }
 
     public void specFailedShouldHaveReceived(LambdaSpec spec) {
-      assertThat(this.failReceived, Matchers.hasItem(Matchers.sameInstance(spec)));
+      assertThat(this.specFailedReceived, Matchers.hasItem(Matchers.sameInstance(spec)));
     }
 
     @Override
     public void specPassed(LambdaSpec spec) {
-      this.passReceived.add(spec);
+      this.specPassedReceived.add(spec);
     }
 
     public void specPassedShouldHaveReceived(LambdaSpec spec) {
-      assertThat(this.passReceived, Matchers.hasItem(Matchers.sameInstance(spec)));
+      assertThat(this.specPassedReceived, Matchers.hasItem(Matchers.sameInstance(spec)));
     }
 
     @Override
     public void specStarting(LambdaSpec spec) {
-      this.startingReceived.add(spec);
+      this.specStartingReceived.add(spec);
     }
 
     public void specStartingShouldHaveReceived(LambdaSpec... specs) {
       Set<LambdaSpec> specsList = Stream.of(specs).collect(Collectors.toSet());
-      assertThat(new HashSet<>(this.startingReceived), Matchers.equalTo(specsList));
+      assertThat(new HashSet<>(this.specStartingReceived), Matchers.equalTo(specsList));
     }
   }
 }
