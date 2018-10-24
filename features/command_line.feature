@@ -31,4 +31,3 @@ Feature: Command Line
     And I have a Java class that defines a suite of 1 or more failing lambda specs
     When I run the specs in that class
     Then The runner should indicate that 1 or more specs have failed
-

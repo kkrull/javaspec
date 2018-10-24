@@ -7,9 +7,14 @@ public class Runner {
   private final SpecReporter reporter;
 
   public static void main(String... args) throws Exception {
-    Suite suite = new StaticSuite(() -> { /* do nothing */ }); //TODO KDK: Start loading the class
-    SpecReporter reporter = new ConsoleReporter(System.out);
-    main(suite, reporter, System::exit);
+    Class<?> specClass = Class.forName(args[0]);
+    InstanceSpecFinder finder = new InstanceSpecFinder();
+
+    main(
+      finder.findSpecs(specClass),
+      new ConsoleReporter(System.out),
+      System::exit
+    );
   }
 
   static void main(Suite suite, SpecReporter reporter, ExitHandler system) {
@@ -28,5 +33,30 @@ public class Runner {
     this.reporter.runStarting();
     suite.runSpecs(this.reporter);
     this.reporter.runFinished();
+  }
+
+  private static final class InstanceSpecFinder {
+    public Suite findSpecs(Class<?> specClass) {
+      SpecDeclaration.newContext();
+      try {
+        specClass.newInstance();
+      } catch(Exception e) {
+        throw SpecDeclarationFailed.whenInstantiating(specClass, e);
+      }
+
+      return SpecDeclaration.createSuite();
+    }
+  }
+
+  private static final class SpecDeclarationFailed extends RuntimeException {
+    public static SpecDeclarationFailed whenInstantiating(Class<?> specClass, Exception cause) {
+      return new SpecDeclarationFailed(
+        String.format("Failed to instantiate spec %s, to declare specs", specClass.getName()),
+        cause);
+    }
+
+    private SpecDeclarationFailed(String message, Exception cause) {
+      super(message, cause);
+    }
   }
 }

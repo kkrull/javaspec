@@ -15,6 +15,10 @@ final class StaticSuite implements Suite {
     this.specs = Stream.of(specs).collect(Collectors.toList());
   }
 
+  public void addSpec(LambdaSpec spec, String _description) {
+    this.specs.add(spec);
+  }
+
   @Override
   public void runSpecs(SpecReporter reporter) {
     for(LambdaSpec spec : specs) {

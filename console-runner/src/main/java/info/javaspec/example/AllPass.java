@@ -1,3 +1,9 @@
 package info.javaspec.example;
 
-public class AllPass { }
+import static info.javaspec.console.FunctionalDsl.*;
+
+public class AllPass {
+  {
+    it("passes", () -> {});
+  }
+}
