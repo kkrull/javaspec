@@ -3,11 +3,12 @@ package info.javaspec.console;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import info.javaspec.Suite;
 import info.javaspec.console.Mock.MockExitHandler;
 import info.javaspec.console.Mock.MockSpec;
 import info.javaspec.console.Mock.MockSpecReporter;
 import info.javaspec.console.Prototype.SpecRunner;
-import info.javaspec.console.Prototype.Suite;
+import info.javaspec.console.Prototype.StaticSuite;
 
 /** Steps observing what happens in a Runner, from within the same process */
 public class RunnerSteps {
@@ -30,19 +31,19 @@ public class RunnerSteps {
   public void iHaveAJavaClassWithASuiteOfLambdaSpecs() throws Exception {
     this.passingSpec = MockSpec.runPasses();
     this.failingSpec = MockSpec.runThrows(new AssertionError("bang!"));
-    this.suite = new Suite(this.passingSpec, this.failingSpec);
+    this.suite = new StaticSuite(this.passingSpec, this.failingSpec);
   }
 
   @Given("^I have a Java class that defines a suite of passing lambda specs$")
   public void iHaveAJavaClassThatDefinesASuiteOfPassingLambdaSpecs() throws Exception {
     this.passingSpec = MockSpec.runPasses();
-    this.suite = new Suite(this.passingSpec);
+    this.suite = new StaticSuite(this.passingSpec);
   }
 
   @Given("^I have a Java class that defines a suite of 1 or more failing lambda specs$")
   public void iHaveASuiteWithFailingSpecs() throws Exception {
     this.failingSpec = MockSpec.runThrows(new AssertionError("bang!"));
-    this.suite = new Suite(this.failingSpec);
+    this.suite = new StaticSuite(this.failingSpec);
   }
 
   @When("^I run the specs in that class$")

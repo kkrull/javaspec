@@ -2,6 +2,7 @@ package info.javaspec.console;
 
 import info.javaspec.LambdaSpec;
 import info.javaspec.SpecReporter;
+import info.javaspec.Suite;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,13 +31,14 @@ class Prototype {
     }
   }
 
-  static final class Suite {
+  static final class StaticSuite implements Suite {
     private final List<LambdaSpec> specs;
 
-    public Suite(LambdaSpec... specs) {
+    public StaticSuite(LambdaSpec... specs) {
       this.specs = Stream.of(specs).collect(Collectors.toList());
     }
 
+    @Override
     public void runSpecs(SpecReporter reporter) {
       for(LambdaSpec spec : specs) {
         reporter.specStarting(spec);
