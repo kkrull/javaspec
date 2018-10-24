@@ -7,7 +7,6 @@ import info.javaspec.Suite;
 import info.javaspec.console.Mock.MockExitHandler;
 import info.javaspec.console.Mock.MockSpec;
 import info.javaspec.console.Mock.MockSpecReporter;
-import info.javaspec.console.Prototype.StaticSuite;
 
 /** Steps observing what happens in a Runner, from within the same process */
 public class RunnerSteps {

@@ -7,7 +7,9 @@ public class Runner {
   private final SpecReporter reporter;
 
   public static void main(String... args) throws Exception {
-    //TODO KDK: Start making new implementations of Suite, SpecReporter, etc...
+    Suite suite = new StaticSuite(() -> { /* do nothing */ });
+    SpecReporter reporter = new ConsoleReporter(System.out);
+    main(suite, reporter, System::exit);
   }
 
   static void main(Suite suite, SpecReporter reporter, ExitHandler system) {
