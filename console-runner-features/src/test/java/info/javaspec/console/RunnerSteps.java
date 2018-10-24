@@ -7,7 +7,6 @@ import info.javaspec.Suite;
 import info.javaspec.console.Mock.MockExitHandler;
 import info.javaspec.console.Mock.MockSpec;
 import info.javaspec.console.Mock.MockSpecReporter;
-import info.javaspec.console.Prototype.SpecRunner;
 import info.javaspec.console.Prototype.StaticSuite;
 
 /** Steps observing what happens in a Runner, from within the same process */
@@ -24,7 +23,7 @@ public class RunnerSteps {
   public void iHaveAConsoleRunner() throws Exception {
     this.system = new MockExitHandler();
     this.mockReporter = new MockSpecReporter();
-    this.runner = (suite) -> SpecRunner.main(suite, this.mockReporter, this.system);
+    this.runner = (suite) -> Runner.main(suite, this.mockReporter, this.system);
   }
 
   @Given("^I have a Java class that defines a suite of lambda specs$")

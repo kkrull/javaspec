@@ -11,26 +11,6 @@ import java.util.stream.Stream;
 class Prototype {
   private Prototype() { /* static class */ }
 
-  static final class SpecRunner {
-    private final SpecReporter reporter;
-
-    static void main(Suite suite, SpecReporter reporter, ExitHandler system) {
-      SpecRunner runner = new SpecRunner(reporter);
-      runner.run(suite);
-
-      int exitCode = reporter.hasFailingSpecs() ? 1 : 0;
-      system.exit(exitCode);
-    }
-
-    private SpecRunner(SpecReporter reporter) {
-      this.reporter = reporter;
-    }
-
-    private void run(Suite suite) {
-      suite.runSpecs(this.reporter);
-    }
-  }
-
   static final class StaticSuite implements Suite {
     private final List<LambdaSpec> specs;
 

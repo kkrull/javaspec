@@ -41,9 +41,8 @@ Then("The runner should indicate which specs passed and failed") do
 end
 
 Then("The runner should indicate that all specs passed") do
-  pending
-  expect(last_command_stopped.stdout).to include("Passed: 1\tFailed: 0\tTotal: 1")
   expect(last_command_stopped.exit_status).to eq(0)
+  expect(last_command_stopped.stdout).to include("Passed: 1\tFailed: 0\tTotal: 1")
 end
 
 Then("The runner should indicate that 1 or more specs have failed") do
