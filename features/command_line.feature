@@ -17,7 +17,7 @@ Feature: Command Line
     And The runner should indicate which specs passed and failed
 
 
-  #@focus
+  @focus
   Scenario: The CLI should report all passing specs with its exit code
     Given I have a JavaSpec runner for the console
     And I have a Java class that defines a suite of passing lambda specs

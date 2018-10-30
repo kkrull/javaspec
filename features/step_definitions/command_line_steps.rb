@@ -21,7 +21,7 @@ When("I run the specs in that class") do
   expect(path_to_class(@spec_class_name, spec_class_dir)).to be_an_existing_file
   command = "java -cp #{runner_class_dir}:#{spec_class_dir} #{@runner_class_name} #{@spec_class_name}"
 
-  @logger.puts "Running command: #{command}"
+  logger.puts "Running command: #{command}"
   run_simple command, :fail_on_error => false
 end
 
