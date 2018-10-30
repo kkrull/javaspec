@@ -19,7 +19,10 @@ end
 When("I run the specs in that class") do
   expect(path_to_class(@runner_class_name, runner_class_dir)).to be_an_existing_file
   expect(path_to_class(@spec_class_name, spec_class_dir)).to be_an_existing_file
-  run_simple "java -cp #{runner_class_dir}:#{spec_class_dir} #{@runner_class_name} #{@spec_class_name}"
+  command = "java -cp #{runner_class_dir}:#{spec_class_dir} #{@runner_class_name} #{@spec_class_name}"
+
+  @logger.puts "Running command: #{command}"
+  run_simple command, :fail_on_error => false
 end
 
 Then("The runner should run the specs defined in that class") do
@@ -46,7 +49,8 @@ Then("The runner should indicate that all specs passed") do
 end
 
 Then("The runner should indicate that 1 or more specs have failed") do
-  pending # Write code here that turns the phrase above into concrete actions
+  expect(last_command_stopped.exit_status).to eq(1)
+  expect(last_command_stopped.stdout).to include("Passed: 0\tFailed: 1\tTotal: 1")
 end
 
 def path_to_class(class_name, class_path)

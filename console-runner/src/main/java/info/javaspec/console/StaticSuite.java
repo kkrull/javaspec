@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-final class StaticSuite implements Suite {
+final class StaticSuite implements Suite { //TODO KDK: LambdaSuite?
   private final List<LambdaSpec> specs;
 
   public StaticSuite(LambdaSpec... specs) {
@@ -27,6 +27,7 @@ final class StaticSuite implements Suite {
         spec.run();
       } catch(AssertionError e) {
         reporter.specFailed(spec);
+        return;
       }
 
       reporter.specPassed(spec);

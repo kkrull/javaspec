@@ -17,7 +17,7 @@ Feature: Command Line
     And The runner should indicate which specs passed and failed
 
 
-  @focus
+  #@focus
   Scenario: The CLI should report all passing specs with its exit code
     Given I have a JavaSpec runner for the console
     And I have a Java class that defines a suite of passing lambda specs
@@ -25,7 +25,7 @@ Feature: Command Line
     Then The runner should indicate that all specs passed
 
 
-#  @focus
+  @focus @log_commands
   Scenario: The CLI should report failing specs with its exit code
     Given I have a JavaSpec runner for the console
     And I have a Java class that defines a suite of 1 or more failing lambda specs

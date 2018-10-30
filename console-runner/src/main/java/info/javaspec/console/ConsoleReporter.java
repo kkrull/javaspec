@@ -17,7 +17,7 @@ public class ConsoleReporter implements SpecReporter {
 
   @Override
   public boolean hasFailingSpecs() {
-    return false;
+    return numFailed > 0;
   }
 
   @Override
@@ -29,7 +29,9 @@ public class ConsoleReporter implements SpecReporter {
   }
 
   @Override
-  public void specFailed(LambdaSpec spec) { }
+  public void specFailed(LambdaSpec spec) {
+    this.numFailed++;
+  }
 
   @Override
   public void specPassed(LambdaSpec spec) {
