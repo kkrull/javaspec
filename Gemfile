@@ -14,4 +14,3 @@ group :test do
   gem "aruba", "~> 0.14.6"
   gem "cucumber", "~> 3.1"
 end
-

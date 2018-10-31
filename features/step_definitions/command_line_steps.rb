@@ -1,25 +1,25 @@
 ## Steps focused on ConsoleRunner's behavior _as a process_
 
 Given("I have a JavaSpec runner for the console") do
-  @runner_class_name = 'info.javaspec.console.Runner'
+  java_helper.runner_class_name = 'info.javaspec.console.Runner'
 end
 
 Given("I have a Java class that defines a suite of lambda specs") do
-  @spec_class_name = 'info.javaspec.example.OneFails'
+  java_helper.spec_class_name = 'info.javaspec.example.OneFails'
 end
 
 Given("I have a Java class that defines a suite of passing lambda specs") do
-  @spec_class_name = 'info.javaspec.example.AllPass'
+  java_helper.spec_class_name = 'info.javaspec.example.AllPass'
 end
 
 Given("I have a Java class that defines a suite of 1 or more failing lambda specs") do
-  @spec_class_name = 'info.javaspec.example.OneFails'
+  java_helper.spec_class_name = 'info.javaspec.example.OneFails'
 end
 
 When("I run the specs in that class") do
-  expect(path_to_class(@runner_class_name, runner_class_dir)).to be_an_existing_file
-  expect(path_to_class(@spec_class_name, spec_class_dir)).to be_an_existing_file
-  command = "java -cp #{runner_class_dir}:#{spec_class_dir} #{@runner_class_name} #{@spec_class_name}"
+  expect(java_helper.runner_class_file).to be_an_existing_file
+  expect(java_helper.spec_class_file).to be_an_existing_file
+  command = "java -cp #{runner_class_dir}:#{spec_class_dir} #{java_helper.runner_class_name} #{java_helper.spec_class_name}"
 
   logger.puts "Running command: #{command}"
   run_simple command, :fail_on_error => false
@@ -51,11 +51,6 @@ end
 Then("The runner should indicate that 1 or more specs have failed") do
   expect(last_command_stopped.exit_status).to eq(1)
   expect(last_command_stopped.stdout).to include("Passed: 0\tFailed: 1\tTotal: 1")
-end
-
-def path_to_class(class_name, class_path)
-  relative_path = "#{class_name.gsub '.', '/'}.class"
-  File.expand_path relative_path, class_path
 end
 
 def runner_class_dir
