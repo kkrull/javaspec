@@ -22,7 +22,7 @@ class SpecRunnerContext
 
   def run!(logger)
     command = "java -cp #{runner_class_dir}:#{spec_class_dir} #{runner_class} #{spec_class}"
-    logger.puts "Running command: #{command}"
+    logger.command_starting command
     run_simple command, :fail_on_error => false
   end
 

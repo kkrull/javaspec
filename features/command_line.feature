@@ -8,7 +8,7 @@ Feature: Command Line
   I want to run JavaSpec as its own process and observe its behavior from a separate test process
 
 
-#  @focus
+#  @focus @log_commands
   Scenario: The CLI should run specs and tell you what happened
     Given I have a JavaSpec runner for the console
     And I have a Java class that defines a suite of lambda specs
@@ -25,7 +25,7 @@ Feature: Command Line
     Then The runner should indicate that all specs passed
 
 
-  @focus @log_commands
+  @focus
   Scenario: The CLI should report failing specs with its exit code
     Given I have a JavaSpec runner for the console
     And I have a Java class that defines a suite of 1 or more failing lambda specs

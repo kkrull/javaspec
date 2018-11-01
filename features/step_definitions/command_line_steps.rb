@@ -31,8 +31,8 @@ Then("The runner should indicate whether each spec passed or failed") do
 end
 
 Then("The runner should indicate whether all specs passed, or any failed") do
-  expect(spec_runner_helper.runner_output).to include("Passed: 1\tFailed: 0\tTotal: 1")
   expect(spec_runner_helper.exit_status).to eq(0)
+  expect(spec_runner_helper.runner_output).to include("Passed: 1\tFailed: 0\tTotal: 1")
 end
 
 Then("The runner should indicate which specs passed and failed") do
