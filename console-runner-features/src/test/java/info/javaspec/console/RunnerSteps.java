@@ -29,7 +29,11 @@ public class RunnerSteps {
   public void iHaveAJavaClassWithASuiteOfLambdaSpecs() throws Exception {
     this.passingSpec = MockSpec.runPasses();
     this.failingSpec = MockSpec.runThrows(new AssertionError("bang!"));
-    this.suite = new StaticSuite(this.passingSpec, this.failingSpec);
+
+    StaticSuite suite = new StaticSuite();
+    suite.addSpec(this.passingSpec, "passes");
+    suite.addSpec(this.failingSpec, "fails");
+    this.suite = suite;
   }
 
   @Given("^I have a Java class that defines a suite of passing lambda specs$")
@@ -52,7 +56,8 @@ public class RunnerSteps {
   @Then("^The runner should run the specs defined in that class$")
   public void thenRunnerShouldRunSpecs() throws Exception {
     this.mockReporter.runStartingShouldHaveBeenCalled();
-    this.mockReporter.specStartingShouldHaveReceived(this.failingSpec, this.passingSpec);
+    this.mockReporter.specStartingShouldHaveReceived(this.passingSpec, "passes");
+    this.mockReporter.specStartingShouldHaveReceived(this.failingSpec, "fails");
     this.failingSpec.runShouldHaveBeenCalled();
     this.passingSpec.runShouldHaveBeenCalled();
     this.mockReporter.runFinishedShouldHaveBeenCalled();

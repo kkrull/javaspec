@@ -132,9 +132,13 @@ class Mock {
       this.specStartingReceived.add(spec);
     }
 
-    public void specStartingShouldHaveReceived(LambdaSpec... specs) {
-      Set<LambdaSpec> specsList = Stream.of(specs).collect(Collectors.toSet());
-      assertThat(new HashSet<>(this.specStartingReceived), Matchers.equalTo(specsList));
+    public void specStartingShouldHaveReceived(LambdaSpec spec, String description) {
+      assertThat("description", Matchers.equalTo("tracked and reported"));
     }
+
+//    public void specStartingShouldHaveReceived(LambdaSpec... specs) {
+//      Set<LambdaSpec> specsList = Stream.of(specs).collect(Collectors.toSet());
+//      assertThat(new HashSet<>(this.specStartingReceived), Matchers.equalTo(specsList));
+//    }
   }
 }
