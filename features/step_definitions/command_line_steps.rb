@@ -5,7 +5,7 @@ Given("I have a JavaSpec runner for the console") do
 end
 
 Given("I have a Java class that defines a suite of lambda specs") do
-  spec_runner_helper.spec_class = 'info.javaspec.example.OneFails'
+  spec_runner_helper.spec_class = 'info.javaspec.example.OneOfEachResult'
 end
 
 Given("I have a Java class that defines a suite of passing lambda specs") do
@@ -22,8 +22,8 @@ When("I run the specs in that class") do
 end
 
 Then("The runner should run the specs defined in that class") do
-  expect(spec_runner_helper.runner_output).to match(/^Greeter/)
-  expect(spec_runner_helper.runner_output).to match(/says hello/)
+  expect(spec_runner_helper.runner_output).to match(/^passes/)
+  expect(spec_runner_helper.runner_output).to match(/^fails/)
 end
 
 Then("The runner should indicate whether each spec passed or failed") do
