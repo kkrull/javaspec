@@ -4,10 +4,10 @@ import info.javaspec.LambdaSpec;
 import info.javaspec.Suite;
 
 class SpecDeclaration {
-  private static StaticSuite _suite;
+  private static LambdaSuite _suite;
 
   public static void newContext() {
-    _suite = new StaticSuite();
+    _suite = new LambdaSuite();
   }
 
   public static void addSpecToCurrentContext(LambdaSpec spec, String description) {

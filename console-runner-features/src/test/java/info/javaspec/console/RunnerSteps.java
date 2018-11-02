@@ -14,7 +14,7 @@ public class RunnerSteps {
   private MockSpecReporter mockReporter;
   private MockExitHandler system;
 
-  private StaticSuite suite;
+  private LambdaSuite suite;
   private MockSpec passingSpec;
   private MockSpec failingSpec;
 
@@ -30,7 +30,7 @@ public class RunnerSteps {
     this.passingSpec = MockSpec.runPasses();
     this.failingSpec = MockSpec.runThrows(new AssertionError("bang!"));
 
-    this.suite = new StaticSuite();
+    this.suite = new LambdaSuite();
     this.suite.addSpec(this.passingSpec, "passes");
     this.suite.addSpec(this.failingSpec, "fails");
   }
@@ -38,14 +38,14 @@ public class RunnerSteps {
   @Given("^I have a Java class that defines a suite of passing lambda specs$")
   public void iHaveAJavaClassThatDefinesASuiteOfPassingLambdaSpecs() throws Exception {
     this.passingSpec = MockSpec.runPasses();
-    this.suite = new StaticSuite();
+    this.suite = new LambdaSuite();
     this.suite.addSpec(this.passingSpec, "passes");
   }
 
   @Given("^I have a Java class that defines a suite of 1 or more failing lambda specs$")
   public void iHaveASuiteWithFailingSpecs() throws Exception {
     this.failingSpec = MockSpec.runThrows(new AssertionError("bang!"));
-    this.suite = new StaticSuite();
+    this.suite = new LambdaSuite();
     this.suite.addSpec(this.failingSpec, "fails");
   }
 

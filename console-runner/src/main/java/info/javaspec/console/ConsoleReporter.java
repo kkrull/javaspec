@@ -26,16 +26,19 @@ public class ConsoleReporter implements SpecReporter {
   @Override
   public void specStarting(LambdaSpec spec, String description) {
     this.numStarted++;
+    this.output.print(description);
   }
 
   @Override
   public void specFailed(LambdaSpec spec) {
     this.numFailed++;
+    this.output.println(": FAIL");
   }
 
   @Override
   public void specPassed(LambdaSpec spec) {
     this.numPassed++;
+    this.output.println(": PASS");
   }
 
   @Override

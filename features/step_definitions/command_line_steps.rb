@@ -36,7 +36,8 @@ Then("The runner should indicate whether all specs passed, or any failed") do
 end
 
 Then("The runner should indicate which specs passed and failed") do
-  pending # Write code here that turns the phrase above into concrete actions
+  expect(spec_runner_helper.runner_output).to match(/^passes: PASS$/)
+  expect(spec_runner_helper.runner_output).to match(/^fails: FAIL$/)
 end
 
 Then("The runner should indicate that all specs passed") do

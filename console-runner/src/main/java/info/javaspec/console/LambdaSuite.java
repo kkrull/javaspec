@@ -7,15 +7,15 @@ import info.javaspec.Suite;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-final class StaticSuite implements Suite { //TODO KDK: LambdaSuite?
+final class LambdaSuite implements Suite {
   private final Map<LambdaSpec, String> specs;
 
-  public StaticSuite() {
+  public LambdaSuite() {
     this.specs = new LinkedHashMap<>();
   }
 
   public void addSpec(LambdaSpec spec, String description) {
-    this.specs.put(spec, description);
+    this.specs.put(spec, description); //TODO KDK: Try having description as a property of Spec
   }
 
   @Override
