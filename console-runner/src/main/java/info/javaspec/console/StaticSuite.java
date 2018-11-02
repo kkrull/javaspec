@@ -4,25 +4,26 @@ import info.javaspec.LambdaSpec;
 import info.javaspec.SpecReporter;
 import info.javaspec.Suite;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 final class StaticSuite implements Suite { //TODO KDK: LambdaSuite?
-  private final List<LambdaSpec> specs;
+  private final Map<LambdaSpec, String> specs;
 
-  public StaticSuite(LambdaSpec... specs) {
-    this.specs = Stream.of(specs).collect(Collectors.toList());
+  public StaticSuite() {
+    this.specs = new LinkedHashMap<>();
   }
 
-  public void addSpec(LambdaSpec spec, String _description) {
-    this.specs.add(spec);
+  public void addSpec(LambdaSpec spec, String description) {
+    this.specs.put(spec, description);
   }
 
   @Override
   public void runSpecs(SpecReporter reporter) {
-    for(LambdaSpec spec : specs) {
-      reporter.specStarting(spec);
+    for(Map.Entry<LambdaSpec, String> entry : specs.entrySet()) {
+      LambdaSpec spec = entry.getKey();
+      String description = entry.getValue();
+      reporter.specStarting(spec, description);
       try {
         spec.run();
       } catch(AssertionError e) {

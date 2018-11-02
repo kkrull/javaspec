@@ -14,7 +14,7 @@ public class RunnerSteps {
   private MockSpecReporter mockReporter;
   private MockExitHandler system;
 
-  private Suite suite;
+  private StaticSuite suite;
   private MockSpec passingSpec;
   private MockSpec failingSpec;
 
@@ -30,22 +30,23 @@ public class RunnerSteps {
     this.passingSpec = MockSpec.runPasses();
     this.failingSpec = MockSpec.runThrows(new AssertionError("bang!"));
 
-    StaticSuite suite = new StaticSuite();
-    suite.addSpec(this.passingSpec, "passes");
-    suite.addSpec(this.failingSpec, "fails");
-    this.suite = suite;
+    this.suite = new StaticSuite();
+    this.suite.addSpec(this.passingSpec, "passes");
+    this.suite.addSpec(this.failingSpec, "fails");
   }
 
   @Given("^I have a Java class that defines a suite of passing lambda specs$")
   public void iHaveAJavaClassThatDefinesASuiteOfPassingLambdaSpecs() throws Exception {
     this.passingSpec = MockSpec.runPasses();
-    this.suite = new StaticSuite(this.passingSpec);
+    this.suite = new StaticSuite();
+    this.suite.addSpec(this.passingSpec, "passes");
   }
 
   @Given("^I have a Java class that defines a suite of 1 or more failing lambda specs$")
   public void iHaveASuiteWithFailingSpecs() throws Exception {
     this.failingSpec = MockSpec.runThrows(new AssertionError("bang!"));
-    this.suite = new StaticSuite(this.failingSpec);
+    this.suite = new StaticSuite();
+    this.suite.addSpec(this.failingSpec, "fails");
   }
 
   @When("^I run the specs in that class$")
@@ -56,10 +57,12 @@ public class RunnerSteps {
   @Then("^The runner should run the specs defined in that class$")
   public void thenRunnerShouldRunSpecs() throws Exception {
     this.mockReporter.runStartingShouldHaveBeenCalled();
+
     this.mockReporter.specStartingShouldHaveReceived(this.passingSpec, "passes");
+    this.passingSpec.runShouldHaveBeenCalled();
     this.mockReporter.specStartingShouldHaveReceived(this.failingSpec, "fails");
     this.failingSpec.runShouldHaveBeenCalled();
-    this.passingSpec.runShouldHaveBeenCalled();
+
     this.mockReporter.runFinishedShouldHaveBeenCalled();
   }
 

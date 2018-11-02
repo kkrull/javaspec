@@ -5,7 +5,7 @@ public interface SpecReporter {
 
   void runStarting();
 
-  void specStarting(LambdaSpec spec);
+  void specStarting(LambdaSpec spec, String description);
 
   void specFailed(LambdaSpec spec);
 

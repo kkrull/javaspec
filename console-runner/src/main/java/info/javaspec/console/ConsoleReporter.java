@@ -24,7 +24,7 @@ public class ConsoleReporter implements SpecReporter {
   public void runStarting() { }
 
   @Override
-  public void specStarting(LambdaSpec spec) {
+  public void specStarting(LambdaSpec spec, String description) {
     this.numStarted++;
   }
 

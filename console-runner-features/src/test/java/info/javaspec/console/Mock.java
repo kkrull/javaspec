@@ -4,10 +4,7 @@ import info.javaspec.LambdaSpec;
 import info.javaspec.SpecReporter;
 import org.hamcrest.Matchers;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -73,17 +70,17 @@ class Mock {
     private int runStartingCalled;
     private int runFinishedCalled;
 
+    private final Map<LambdaSpec, String> specStartingReceived;
     private final List<LambdaSpec> specFailedReceived;
     private final List<LambdaSpec> specPassedReceived;
-    private final List<LambdaSpec> specStartingReceived;
 
 
     public MockSpecReporter() {
       this.runStartingCalled = 0;
       this.runFinishedCalled = 0;
+      this.specStartingReceived = new LinkedHashMap<>();
       this.specFailedReceived = new LinkedList<>();
       this.specPassedReceived = new LinkedList<>();
-      this.specStartingReceived = new LinkedList<>();
     }
 
     @Override
@@ -128,17 +125,13 @@ class Mock {
     }
 
     @Override
-    public void specStarting(LambdaSpec spec) {
-      this.specStartingReceived.add(spec);
+    public void specStarting(LambdaSpec spec, String description) {
+      this.specStartingReceived.put(spec, description);
     }
 
     public void specStartingShouldHaveReceived(LambdaSpec spec, String description) {
-      assertThat("description", Matchers.equalTo("tracked and reported"));
+      assertThat(this.specStartingReceived, Matchers.hasKey(spec));
+      assertThat(this.specStartingReceived.get(spec), Matchers.equalTo(description));
     }
-
-//    public void specStartingShouldHaveReceived(LambdaSpec... specs) {
-//      Set<LambdaSpec> specsList = Stream.of(specs).collect(Collectors.toSet());
-//      assertThat(new HashSet<>(this.specStartingReceived), Matchers.equalTo(specsList));
-//    }
   }
 }
