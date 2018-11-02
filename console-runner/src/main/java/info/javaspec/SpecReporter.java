@@ -5,11 +5,11 @@ public interface SpecReporter {
 
   void runStarting();
 
-  void specStarting(LambdaSpec spec, String description);
+  void specStarting(Spec spec, String description);
 
-  void specFailed(LambdaSpec spec);
+  void specFailed(Spec spec); //TODO KDK: Remove Spec parameter from each of these
 
-  void specPassed(LambdaSpec spec);
+  void specPassed(Spec spec);
 
   void runFinished();
 }

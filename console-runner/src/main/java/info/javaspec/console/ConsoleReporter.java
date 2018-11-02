@@ -1,11 +1,11 @@
 package info.javaspec.console;
 
-import info.javaspec.LambdaSpec;
+import info.javaspec.Spec;
 import info.javaspec.SpecReporter;
 
 import java.io.PrintStream;
 
-public class ConsoleReporter implements SpecReporter {
+class ConsoleReporter implements SpecReporter {
   private final PrintStream output;
   private int numStarted;
   private int numFailed;
@@ -24,19 +24,19 @@ public class ConsoleReporter implements SpecReporter {
   public void runStarting() { }
 
   @Override
-  public void specStarting(LambdaSpec spec, String description) {
+  public void specStarting(Spec spec, String description) {
     this.numStarted++;
     this.output.print(description);
   }
 
   @Override
-  public void specFailed(LambdaSpec spec) {
+  public void specFailed(Spec spec) {
     this.numFailed++;
     this.output.println(": FAIL");
   }
 
   @Override
-  public void specPassed(LambdaSpec spec) {
+  public void specPassed(Spec spec) {
     this.numPassed++;
     this.output.println(": PASS");
   }

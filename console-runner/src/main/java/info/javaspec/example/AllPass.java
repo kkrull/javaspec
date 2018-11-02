@@ -1,6 +1,6 @@
 package info.javaspec.example;
 
-import static info.javaspec.console.FunctionalDsl.*;
+import static info.javaspec.lang.lambda.FunctionalDsl.*;
 
 public class AllPass {
   {

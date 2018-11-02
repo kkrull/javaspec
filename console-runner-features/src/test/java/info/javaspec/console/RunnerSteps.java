@@ -3,10 +3,10 @@ package info.javaspec.console;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import info.javaspec.SequentialSuite;
 import info.javaspec.Suite;
-import info.javaspec.console.Mock.MockExitHandler;
-import info.javaspec.console.Mock.MockSpec;
-import info.javaspec.console.Mock.MockSpecReporter;
+import info.javaspec.MockSpec;
+import info.javaspec.MockSpecReporter;
 
 /** Steps observing what happens in a Runner, from within the same process */
 public class RunnerSteps {
@@ -14,7 +14,7 @@ public class RunnerSteps {
   private MockSpecReporter mockReporter;
   private MockExitHandler system;
 
-  private LambdaSuite suite;
+  private SequentialSuite suite;
   private MockSpec passingSpec;
   private MockSpec failingSpec;
 
@@ -30,7 +30,7 @@ public class RunnerSteps {
     this.passingSpec = MockSpec.runPasses();
     this.failingSpec = MockSpec.runThrows(new AssertionError("bang!"));
 
-    this.suite = new LambdaSuite();
+    this.suite = new SequentialSuite();
     this.suite.addSpec(this.passingSpec, "passes");
     this.suite.addSpec(this.failingSpec, "fails");
   }
@@ -38,14 +38,14 @@ public class RunnerSteps {
   @Given("^I have a Java class that defines a suite of passing lambda specs$")
   public void iHaveAJavaClassThatDefinesASuiteOfPassingLambdaSpecs() throws Exception {
     this.passingSpec = MockSpec.runPasses();
-    this.suite = new LambdaSuite();
+    this.suite = new SequentialSuite();
     this.suite.addSpec(this.passingSpec, "passes");
   }
 
   @Given("^I have a Java class that defines a suite of 1 or more failing lambda specs$")
   public void iHaveASuiteWithFailingSpecs() throws Exception {
     this.failingSpec = MockSpec.runThrows(new AssertionError("bang!"));
-    this.suite = new LambdaSuite();
+    this.suite = new SequentialSuite();
     this.suite.addSpec(this.failingSpec, "fails");
   }
 

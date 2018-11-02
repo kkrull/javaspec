@@ -3,7 +3,7 @@ package info.javaspec.console;
 import info.javaspec.SpecReporter;
 import info.javaspec.Suite;
 
-public class Runner {
+public final class Runner {
   private final SpecReporter reporter;
 
   public static void main(String... args) throws Exception {
@@ -35,28 +35,8 @@ public class Runner {
     this.reporter.runFinished();
   }
 
-  private static final class InstanceSpecFinder {
-    public Suite findSpecs(Class<?> specClass) {
-      SpecDeclaration.newContext();
-      try {
-        specClass.newInstance();
-      } catch(Exception e) {
-        throw SpecDeclarationFailed.whenInstantiating(specClass, e);
-      }
-
-      return SpecDeclaration.createSuite();
-    }
-  }
-
-  private static final class SpecDeclarationFailed extends RuntimeException {
-    public static SpecDeclarationFailed whenInstantiating(Class<?> specClass, Exception cause) {
-      return new SpecDeclarationFailed(
-        String.format("Failed to instantiate spec %s, to declare specs", specClass.getName()),
-        cause);
-    }
-
-    private SpecDeclarationFailed(String message, Exception cause) {
-      super(message, cause);
-    }
+  @FunctionalInterface
+  interface ExitHandler {
+    void exit(int code);
   }
 }
