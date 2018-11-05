@@ -27,8 +27,15 @@ public class RunnerSteps {
 
   @Given("^I have a Java class that defines a suite of lambda specs$")
   public void iHaveAJavaClassWithASuiteOfLambdaSpecs() throws Exception {
-    this.passingSpec = MockSpec.runPasses("passes");
-    this.failingSpec = MockSpec.runThrows("fails", new AssertionError("bang!"));
+    this.passingSpec = new MockSpec.Builder()
+      .describedAs("passes")
+      .reportsSpecPassing()
+      .build();
+
+    this.failingSpec = new MockSpec.Builder()
+      .describedAs("fails")
+      .reportsSpecFailure(new AssertionError("bang!"))
+      .build();
 
     this.suite = new SequentialSuite();
     this.suite.addSpec(this.passingSpec);
@@ -37,14 +44,22 @@ public class RunnerSteps {
 
   @Given("^I have a Java class that defines a suite of passing lambda specs$")
   public void iHaveAJavaClassThatDefinesASuiteOfPassingLambdaSpecs() throws Exception {
-    this.passingSpec = MockSpec.runPasses("passes");
+    this.passingSpec = new MockSpec.Builder()
+      .describedAs("passes")
+      .reportsSpecPassing()
+      .build();
+
     this.suite = new SequentialSuite();
     this.suite.addSpec(this.passingSpec);
   }
 
   @Given("^I have a Java class that defines a suite of 1 or more failing lambda specs$")
   public void iHaveASuiteWithFailingSpecs() throws Exception {
-    this.failingSpec = MockSpec.runThrows("fails", new AssertionError("bang!"));
+    this.failingSpec = new MockSpec.Builder()
+      .describedAs("fails")
+      .reportsSpecFailure(new AssertionError("bang!"))
+      .build();
+
     this.suite = new SequentialSuite();
     this.suite.addSpec(this.failingSpec);
   }
@@ -58,9 +73,9 @@ public class RunnerSteps {
   public void thenRunnerShouldRunSpecs() throws Exception {
     this.mockReporter.runStartingShouldHaveBeenCalled();
 
-    this.mockReporter.specStartingShouldHaveReceived(this.passingSpec, "passes");
+    this.mockReporter.specShouldHaveBeenStarted(this.passingSpec, "passes");
     this.passingSpec.runShouldHaveBeenCalled();
-    this.mockReporter.specStartingShouldHaveReceived(this.failingSpec, "fails");
+    this.mockReporter.specShouldHaveBeenStarted(this.failingSpec, "fails");
     this.failingSpec.runShouldHaveBeenCalled();
 
     this.mockReporter.runFinishedShouldHaveBeenCalled();
@@ -68,8 +83,8 @@ public class RunnerSteps {
 
   @Then("^The runner should indicate which specs passed and failed$")
   public void theRunnerShouldIndicateWhichSpecsPassedAndFailed() throws Exception {
-    this.mockReporter.specPassedShouldHaveReceived(this.passingSpec);
-    this.mockReporter.specFailedShouldHaveReceived(this.failingSpec);
+    this.mockReporter.specShouldHavePassed(this.passingSpec);
+    this.mockReporter.specShouldHaveFailed(this.failingSpec);
   }
 
   @Then("^The runner should indicate that 1 or more specs have failed$")

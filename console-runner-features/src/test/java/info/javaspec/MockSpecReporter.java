@@ -54,7 +54,7 @@ public final class MockSpecReporter implements SpecReporter {
     this.specFailedReceived.add(spec);
   }
 
-  public void specFailedShouldHaveReceived(Spec spec) { //TODO KDK: Refactor to specShouldHaveFailed(String)
+  public void specShouldHaveFailed(Spec spec) {
     assertThat(this.specFailedReceived, Matchers.hasItem(Matchers.sameInstance(spec)));
   }
 
@@ -63,7 +63,7 @@ public final class MockSpecReporter implements SpecReporter {
     this.specPassedReceived.add(spec);
   }
 
-  public void specPassedShouldHaveReceived(Spec spec) {
+  public void specShouldHavePassed(Spec spec) {
     assertThat(this.specPassedReceived, Matchers.hasItem(Matchers.sameInstance(spec)));
   }
 
@@ -72,7 +72,7 @@ public final class MockSpecReporter implements SpecReporter {
     this.specStartingReceived.put(spec, description);
   }
 
-  public void specStartingShouldHaveReceived(Spec spec, String description) {
+  public void specShouldHaveBeenStarted(Spec spec, String description) {
     assertThat(this.specStartingReceived, Matchers.hasKey(spec));
     assertThat(this.specStartingReceived.get(spec), Matchers.equalTo(description));
   }

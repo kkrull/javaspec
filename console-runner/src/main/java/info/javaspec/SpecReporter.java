@@ -7,7 +7,7 @@ public interface SpecReporter {
 
   void specStarting(Spec spec, String description);
 
-  void specFailed(Spec spec); //TODO KDK: Remove Spec parameter from each of these
+  void specFailed(Spec spec);
 
   void specPassed(Spec spec);
 
