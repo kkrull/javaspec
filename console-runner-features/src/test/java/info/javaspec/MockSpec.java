@@ -5,28 +5,33 @@ import org.hamcrest.Matchers;
 import static org.junit.Assert.assertThat;
 
 public final class MockSpec implements Spec {
+  private final String specStartingDescription;
+
   private boolean runCalled;
   private AssertionError runThrows;
 
-  public static MockSpec runPasses() {
-    return new MockSpec(null);
+  public static MockSpec runPasses(String description) {
+    return new MockSpec(description, null);
   }
 
-  public static MockSpec runThrows(AssertionError e) {
-    return new MockSpec(e);
+  public static MockSpec runThrows(String description, AssertionError e) {
+    return new MockSpec(description, e);
   }
 
-  private MockSpec(AssertionError runThrows) {
+  private MockSpec(String specStartingDescription, AssertionError runThrows) {
+    this.specStartingDescription = specStartingDescription;
     this.runCalled = false;
     this.runThrows = runThrows;
   }
 
   @Override
-  public void run() {
+  public void run(SpecReporter reporter) {
     this.runCalled = true;
-
+    reporter.specStarting(this, this.specStartingDescription);
     if(this.runThrows != null)
-      throw this.runThrows;
+      reporter.specFailed(this);
+    else
+      reporter.specPassed(this);
   }
 
   public void runShouldHaveBeenCalled() {

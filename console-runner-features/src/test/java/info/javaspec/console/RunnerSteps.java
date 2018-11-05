@@ -27,26 +27,26 @@ public class RunnerSteps {
 
   @Given("^I have a Java class that defines a suite of lambda specs$")
   public void iHaveAJavaClassWithASuiteOfLambdaSpecs() throws Exception {
-    this.passingSpec = MockSpec.runPasses();
-    this.failingSpec = MockSpec.runThrows(new AssertionError("bang!"));
+    this.passingSpec = MockSpec.runPasses("passes");
+    this.failingSpec = MockSpec.runThrows("fails", new AssertionError("bang!"));
 
     this.suite = new SequentialSuite();
-    this.suite.addSpec(this.passingSpec, "passes");
-    this.suite.addSpec(this.failingSpec, "fails");
+    this.suite.addSpec(this.passingSpec);
+    this.suite.addSpec(this.failingSpec);
   }
 
   @Given("^I have a Java class that defines a suite of passing lambda specs$")
   public void iHaveAJavaClassThatDefinesASuiteOfPassingLambdaSpecs() throws Exception {
-    this.passingSpec = MockSpec.runPasses();
+    this.passingSpec = MockSpec.runPasses("passes");
     this.suite = new SequentialSuite();
-    this.suite.addSpec(this.passingSpec, "passes");
+    this.suite.addSpec(this.passingSpec);
   }
 
   @Given("^I have a Java class that defines a suite of 1 or more failing lambda specs$")
   public void iHaveASuiteWithFailingSpecs() throws Exception {
-    this.failingSpec = MockSpec.runThrows(new AssertionError("bang!"));
+    this.failingSpec = MockSpec.runThrows("fails", new AssertionError("bang!"));
     this.suite = new SequentialSuite();
-    this.suite.addSpec(this.failingSpec, "fails");
+    this.suite.addSpec(this.failingSpec);
   }
 
   @When("^I run the specs in that class$")
