@@ -1,4 +1,4 @@
-## Steps focused on ConsoleRunner's behavior _as a process_
+## Steps focused on ConsoleRunner's behavior _as an external process_
 
 Given("I have a JavaSpec runner for the console") do
   spec_runner_helper.runner_class = 'info.javaspec.console.Runner'

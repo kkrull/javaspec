@@ -5,7 +5,7 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import info.javaspec.SequentialSuite;
 import info.javaspec.Suite;
-import info.javaspec.MockSpec;
+import info.javaspec.lang.lambda.MockSpec;
 import info.javaspec.MockSpecReporter;
 
 /** Steps observing what happens in a Runner, from within the same process */
@@ -29,12 +29,12 @@ public class RunnerSteps {
   public void iHaveAJavaClassWithASuiteOfLambdaSpecs() throws Exception {
     this.passingSpec = new MockSpec.Builder()
       .describedAs("passes")
-      .reportsSpecPassing()
+      .thatPasses()
       .build();
 
     this.failingSpec = new MockSpec.Builder()
       .describedAs("fails")
-      .reportsSpecFailure(new AssertionError("bang!"))
+      .thatFailsWith(new AssertionError("bang!"))
       .build();
 
     this.suite = new SequentialSuite();
@@ -46,7 +46,7 @@ public class RunnerSteps {
   public void iHaveAJavaClassThatDefinesASuiteOfPassingLambdaSpecs() throws Exception {
     this.passingSpec = new MockSpec.Builder()
       .describedAs("passes")
-      .reportsSpecPassing()
+      .thatPasses()
       .build();
 
     this.suite = new SequentialSuite();
@@ -57,7 +57,7 @@ public class RunnerSteps {
   public void iHaveASuiteWithFailingSpecs() throws Exception {
     this.failingSpec = new MockSpec.Builder()
       .describedAs("fails")
-      .reportsSpecFailure(new AssertionError("bang!"))
+      .thatFailsWith(new AssertionError("bang!"))
       .build();
 
     this.suite = new SequentialSuite();

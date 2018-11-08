@@ -1,9 +1,9 @@
-package info.javaspec.console;
+package info.javaspec.lang.lambda;
 
 import info.javaspec.Suite;
-import info.javaspec.lang.lambda.SpecDeclaration;
 
-final class InstanceSpecFinder {
+/** Creates specs by instantiating a class that declares them during instance initialization */
+public final class InstanceSpecFinder {
   public Suite findSpecs(Class<?> specClass) {
     SpecDeclaration.newContext();
     try {

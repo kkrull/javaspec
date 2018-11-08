@@ -4,7 +4,8 @@ import info.javaspec.Spec;
 import info.javaspec.SequentialSuite;
 import info.javaspec.Suite;
 
-public final class SpecDeclaration {
+/** Groups recently-declared specs into a suite of specs that can be run together */
+final class SpecDeclaration {
   private static SequentialSuite _suite;
 
   public static void newContext() {
@@ -12,7 +13,7 @@ public final class SpecDeclaration {
   }
 
   public static void addSpecToCurrentContext(SpecRunnable thunk, String description) {
-    Spec spec = new DescriptiveSpec(thunk, description);
+    Spec spec = new DescriptiveSpec(description, thunk);
     _suite.addSpec(spec);
   }
 

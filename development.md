@@ -7,6 +7,7 @@ TODO KDK: Update documentation
 - Which module does what
 - Refactor to use Rake
 - Add contributor's guide
+- CI
 
 
 ## Make a release branch

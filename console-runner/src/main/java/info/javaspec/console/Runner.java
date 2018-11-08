@@ -2,6 +2,7 @@ package info.javaspec.console;
 
 import info.javaspec.SpecReporter;
 import info.javaspec.Suite;
+import info.javaspec.lang.lambda.InstanceSpecFinder;
 
 public final class Runner {
   private final SpecReporter reporter;

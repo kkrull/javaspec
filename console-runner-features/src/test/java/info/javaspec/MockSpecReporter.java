@@ -17,7 +17,6 @@ public final class MockSpecReporter implements SpecReporter {
   private final List<Spec> specFailedReceived;
   private final List<Spec> specPassedReceived;
 
-
   public MockSpecReporter() {
     this.runStartingCalled = 0;
     this.runFinishedCalled = 0;

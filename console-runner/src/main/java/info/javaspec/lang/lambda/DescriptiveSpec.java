@@ -3,11 +3,11 @@ package info.javaspec.lang.lambda;
 import info.javaspec.Spec;
 import info.javaspec.SpecReporter;
 
-final class DescriptiveSpec implements Spec {
-  private final SpecRunnable thunk;
+class DescriptiveSpec implements Spec {
   private final String description;
+  private final SpecRunnable thunk;
 
-  public DescriptiveSpec(SpecRunnable thunk, String description) {
+  public DescriptiveSpec(String description, SpecRunnable thunk) {
     this.thunk = thunk;
     this.description = description;
   }
