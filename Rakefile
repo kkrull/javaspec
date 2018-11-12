@@ -60,4 +60,3 @@ namespace :release do
     sh *%w[mvn -Pgpg,release deploy]
   end
 end
-

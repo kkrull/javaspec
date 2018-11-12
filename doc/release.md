@@ -1,24 +1,12 @@
-# Developing for JavaSpec
-
-TODO KDK: Update documentation
-
-- Introduction in general
-- What you need for development: JDK, Ruby
-- Which module does what
-- Refactor to use Rake
-- Add contributor's guide
-- CI
-
-
 ## Make a release branch
 
-- Make a release branch from develop: `git checkout develop && git checkout -b release-v<number>`
-- Bump the artifact version number in the POM: `bin/bump-version`
+- Make a release branch: `git checkout master && git checkout -b release-v<number>`
+- Bump the artifact version number in the POM: `rake java:bump-version`
 - Bump the expected, reportable version number in `CommandLineInterfaceSteps`
-- Bump the version in the installation instructions in `readme.md`
+- Bump the version in the installation instructions in `README.md`
 
 
-## Release end
+## Release
 ### Test
 
 - Run tests
@@ -27,27 +15,25 @@ TODO KDK: Update documentation
 
 ### Documentation
 
-- Update README
+- Update `README.md`
   - Version number in Maven coordinates
   - Version history for the new version
-- Push README to github page for use on [JavaSpec.info](http://javaspec.info)
+- Push `README.md` to github page for use on [JavaSpec.info](http://javaspec.info)
 
 
 ### Git
 
-- Merge release branch into master **`no-ff`**.
-- Tag master with new version number.
-- Merge release branch into develop, with fast-forward.
+- Merge release branch into `master` **`no-ff`**.
+- Tag `master` with new version number.
 - Push tags and branches.
 - Delete release branch.
 
-```
-git checkout master && git merge --no-ff <release_branch>
-git tag <version_number>
-git checkout develop && git merge <release_branch>
-```
 
-### Deployment
+    git checkout master && git merge --no-ff <release_branch>
+    git tag <version_number>
+
+
+### Deploy to Sonatype Staging repository
 
 The overall process is described [here](http://central.sonatype.org/pages/ossrh-guide.html#releasing-to-central).
 
@@ -57,7 +43,7 @@ The overall process is described [here](http://central.sonatype.org/pages/ossrh-
   * `gpg --keyserver keyserver.ubuntu.com --send-keys <key id>`
   * Set up a [profile with the GPG pass phrase](https://maven.apache.org/plugins/maven-gpg-plugin/usage.html) in `~/.m2/settings.xml`
 
-```
+```xml
 <profile>
   <id>gpg</id>
   <properties>
@@ -66,11 +52,11 @@ The overall process is described [here](http://central.sonatype.org/pages/ossrh-
 </profile>
 ```
 
-- `mvn -Pgpg,release clean install` should now work (`./bin/build-for-deployment`).
+- `rake release:build`
 - Set up [credentials for OSSRH](http://central.sonatype.org/pages/apache-maven.html#distribution-management-and-authentication)
   in `~/.m2/settings.xml`
 
-```
+```xml
 <server>
   <id>ossrh</id>
   <username>goes-here</username>
@@ -78,7 +64,11 @@ The overall process is described [here](http://central.sonatype.org/pages/ossrh-
 </server>
 ```
 
-- Push to Sonatype: `mvn -Pgpg,release deploy` (`./bin/deploy`).
+Finally, push to Sonatype with `rake release:deploy`.
+
+
+### Promote from staging to release
+
 - Log in to [Sonatype](https://oss.sonatype.org/) in a browser, and find the staging repository (search).
 - Check the contents tab to make sure the compiled jar, source, javadocs and GPG keys are all present.
 - [Close](http://central.sonatype.org/pages/releasing-the-deployment.html#close-and-drop-or-release-your-staging-repository) the repository.

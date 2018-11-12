@@ -3,10 +3,8 @@
 Behavior-Driven Development testing for Java using lambdas.  Inspired by [RSpec](http://rspec.info) and
 [Machine.Specifications](https://github.com/machine/machine.specifications).
 
-Build status
+[![Build Status](https://travis-ci.org/kkrull/javaspec.svg?branch=master)](https://travis-ci.org/kkrull/javaspec)
 
-- `master` [![Build Status](https://travis-ci.org/kkrull/javaspec.svg?branch=master)](https://travis-ci.org/kkrull/javaspec)
-- `develop` [![Build Status](https://travis-ci.org/kkrull/javaspec.svg?branch=develop)](https://travis-ci.org/kkrull/javaspec)
 
 ## Why
 
@@ -26,11 +24,12 @@ losing out on searchability.
 Lambdas are the weapon of choice for turning simple expressions into one-liners.  A test with one assertion can be 1
 line instead of several for tagging and creating whole, new test method.
 
+
 ## Installation
 
 JavaSpec is located in the Maven Central Repository, under the following coordinates:
 
-```
+```xml
 <dependency>
   <groupId>info.javaspec</groupId>
   <artifactId>javaspec-runner</artifactId>
@@ -38,13 +37,14 @@ JavaSpec is located in the Maven Central Repository, under the following coordin
 </dependency>
 ```
 
-It depends upon JUnit and Java 8+.
+It depends upon JUnit 4 and Java 8+.
 
 
 # Getting started
 
 There's no magic in how JavaSpec works.  This guide describes JavaSpec in terms of its similarities to popular libraries
 instead of pretending like these are radical, never-before-seen ideas.
+
 
 ## It runs on JUnit
 
@@ -70,6 +70,7 @@ As with JUnit, you get 1 instance of your test class per test.  Each `It` is its
 Finally, note that the `It` field is named `says_hello` instead of the conventional `saysHello`.  This is done so that
 JavaSpec can convert that verb phrase into a human readable form by replacing underscores with spaces.  When you run
 this test, JUnit will report results for `says hello`.
+
 
 ## It's like Machine.Specifications
 
@@ -108,6 +109,7 @@ class GreeterWithFixtureTest {
   It prints_baz = () -> assertEquals("baz", printStreamSpy.getWhatWasPrinted());
 }
 ```
+
 
 ## It's like RSpec
 
@@ -153,6 +155,7 @@ In short:
 - Add up to 1 each of `Establish`, `Because` and `Cleanup` to each context class.
 - Make as many tests as you want in each context class with `It` lambdas.
 
+
 ## If you have any other questions
 
 Hopefully JavaSpec works like you think it does.
@@ -164,11 +167,13 @@ and related classes.
 If that still doesn't do the trick, feel [post an issue](https://github.com/kkrull/javaspec/issues) or submit a pull
 request with any suggested modifications.
 
+
 # Future work
 
 - Ability to `@Ignore` a class or an `It`.  Better yet, `@Focus` on one, pesky test.
 - Use strings instead of identifiers to allow a more natural language for describing behavior.
 - Something similar to RSpec's `shared_examples` and `shared_context` could be useful.
+
 
 # Release history
 
