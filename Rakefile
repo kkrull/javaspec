@@ -12,6 +12,11 @@ namespace :cucumber do
   task 'doc-server' do
     sh *%w[yard server --gems]
   end
+
+  desc 'Run Cucumber scenarios tagged with @focus'
+  task :focus do
+    sh *%w[bundle exec cucumber -t @focus]
+  end
 end
 
 namespace :java do
@@ -55,4 +60,3 @@ namespace :release do
     sh *%w[mvn -Pgpg,release deploy]
   end
 end
-

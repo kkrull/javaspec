@@ -3,9 +3,9 @@ language: java
 branches:
   only:
     - master
-    - develop
 
 jdk:
   - oraclejdk8
 
+# TODO KDK: Update to run Cucumber Ruby tests, too
 script: mvn verify -B

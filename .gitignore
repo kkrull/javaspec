@@ -1,6 +1,5 @@
 *.iml
 *.swp
 .idea/
-doc/
 target/
 .yardoc/
