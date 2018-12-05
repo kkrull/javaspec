@@ -8,4 +8,12 @@ jdk:
   - oraclejdk8
 
 # TODO KDK: Update to run Cucumber Ruby tests, too
+# - Build matrix runs in parellel, so not likely an option:
+#   https://stackoverflow.com/questions/27644586/how-to-set-up-travis-ci-with-multiple-languages
+# - Maybe start with the Ruby image and add the JDK in a pre-build stage:
+#   https://docs.travis-ci.com/user/build-stages/
+# - Either install the JDK (or ruby) explicitly, or use a Docker image
+#
+# Next action: See if there's a good Ruby image to use for the Cucumber tests, locally, and it might work out for the CI
+# build too
 script: mvn verify -B
