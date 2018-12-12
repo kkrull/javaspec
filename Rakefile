@@ -19,6 +19,38 @@ namespace :cucumber do
   end
 end
 
+
+namespace 'cucumber-docker' do
+  desc 'Build the image used to run Cucumber tests'
+  task :build do
+    sh *%w[docker build -t javaspec/cucumber-tests .]
+  end
+
+  desc 'Run an interactive session in the Cucumber container'
+  task :interactive do
+    sh *%w[
+      docker run 
+      --rm 
+      -it 
+      javaspec/cucumber-tests 
+      bash
+    ]
+  end
+
+  desc 'Run Cucumber scenarios in a Docker container'
+  task :run do
+    sh *%w[
+      docker run 
+      --rm 
+      -v "$PWD":/home/rubyuser/project
+      -w /home/rubyuser/project
+      ruby:2.5.1
+      "bundle install && bundle exec cucumber"
+    ]
+  end
+end
+
+
 namespace :java do
   desc 'Set a new version for all artifacts'
   task 'bump-version' do
@@ -48,6 +80,7 @@ namespace :java do
     sh *%w[mvn verify]
   end
 end
+
 
 namespace :release do
   desc 'Build artifacts for release'
