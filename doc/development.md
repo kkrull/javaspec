@@ -57,10 +57,10 @@ There are a number of different testing tools that are used for testing, and tes
   for things like runtime dependencies and class-loading.
 - Run `rake cucumber` or `rake cucumber:focus` to run (focused) Cucumber Ruby tests.
   These tests focus on JavaSpec's behavior when run as an external process, so it covers things like exit codes and
-  console output.  
+  console output. 
 
 Note that - while it is possible to write the last category of tests in Java - the author's experiences have been:
-  
+ 
 - it's rather laborious to launch, monitor, and scrape output from external processes in Java, when it's so easy in Ruby.
 - managing two independent scopes of testing in Maven is also rather laborious and unintuitive, by using separate
   plugins (Failsafe and Surefire), plugin configurations, and Maven profiles to say what you want to test, when.
@@ -77,6 +77,10 @@ the author encountered along the way, using whatever tools seemed practical at t
 
 Continuous Integration thus far has been performed on [Travis][travis-javaspec].
 However this needs to be updated to use a currently-available service and to run all the tests.
+
+The Cucumber Ruby tests run in a Docker container that contains Ruby and Java.  See the Rake tasks in the
+`cucumber-docker` namespace to build the image and run the tests in a container.
+
 
 [travis-javaspec]: https://travis-ci.org/kkrull/javaspec
 

@@ -22,3 +22,6 @@ COPY Gemfile Gemfile.lock Rakefile ./
 COPY features features/
 #COPY console-runner/target/*.jar console-runner/target/
 COPY console-runner/target/classes console-runner/target/classes/
+
+ENTRYPOINT ["rake"]
+CMD ["cucumber"]

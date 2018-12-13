@@ -42,10 +42,7 @@ namespace 'cucumber-docker' do
     sh *%w[
       docker run 
       --rm 
-      -v "$PWD":/home/rubyuser/project
-      -w /home/rubyuser/project
-      ruby:2.5.1
-      "bundle install && bundle exec cucumber"
+      javaspec/cucumber-tests 
     ]
   end
 end
