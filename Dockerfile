@@ -14,9 +14,9 @@ FROM ruby:2.5
 
 # Install gems needed to run Cucumber tests
 WORKDIR /usr/src/app
-#RUN bundle config --global frozen 1
-#COPY Gemfile Gemfile.lock ./
-#RUN bundle install
+RUN bundle config --global frozen 1
+COPY Gemfile Gemfile.lock ./
+RUN bundle install
 
 # Copy JavaSpec artifacts to the image, to be tested
 COPY Gemfile Gemfile.lock Rakefile ./
