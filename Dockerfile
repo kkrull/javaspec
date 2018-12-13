@@ -3,8 +3,6 @@ FROM ruby:2.5
 # Next steps:
 # - Mount the directory containing artifacts into the container, instead of copying to the image, so that the same image
 #   can be used for multiple test runs.
-# - Try .dockerignore.
-# - Install a JRE instead of the JDK. Maybe it's easier to install?
 
 #Install Java JDK
 RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" >> /etc/apt/sources.list.d/webupd8team-java.list
@@ -22,5 +20,5 @@ RUN bundle install
 # Copy JavaSpec artifacts to the image, to be tested
 COPY Gemfile Gemfile.lock Rakefile ./
 COPY features features/
-COPY console-runner/target/*.jar console-runner/target/
+#COPY console-runner/target/*.jar console-runner/target/
 COPY console-runner/target/classes console-runner/target/classes/
