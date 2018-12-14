@@ -1,6 +1,7 @@
 require 'cucumber'
 require 'cucumber/rake/task'
 
+console_runner_class_dir = File.join File.dirname(__FILE__), 'console-runner/target/classes'
 features_dir = File.join File.dirname(__FILE__), 'features'
 
 desc 'Compile and run all tests'
@@ -33,6 +34,7 @@ namespace 'cucumber-docker' do
       '--entrypoint bash',
       '--rm',
       '-it',
+      "-v #{console_runner_class_dir}:/usr/src/app/console-runner/target/classes",
       "-v #{features_dir}:/usr/src/app/features",
       'javaspec/cucumber-tests'
     ].join(' ')
@@ -44,6 +46,7 @@ namespace 'cucumber-docker' do
     cmd = [
       'docker run',
       '--rm',
+      "-v #{console_runner_class_dir}:/usr/src/app/console-runner/target/classes",
       "-v #{features_dir}:/usr/src/app/features",
       'javaspec/cucumber-tests'
     ].join(' ')
