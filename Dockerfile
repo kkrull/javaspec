@@ -11,16 +11,14 @@ RUN apt-key adv --no-tty --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys E
 RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
 RUN apt-get update && apt-get install -y oracle-java8-installer oracle-java8-set-default
 
-# Install gems needed to run Cucumber tests
+# Set up Ruby environment to run Cucumber
 WORKDIR /usr/src/app
 RUN bundle config --global frozen 1
-COPY Gemfile Gemfile.lock ./
+COPY Gemfile Gemfile.lock Rakefile ./
 RUN bundle install
 
 # Copy JavaSpec artifacts to the image, to be tested
-COPY Gemfile Gemfile.lock Rakefile ./
-COPY features features/
-#COPY console-runner/target/*.jar console-runner/target/
+#COPY features features/
 COPY console-runner/target/classes console-runner/target/classes/
 
 ENTRYPOINT ["rake"]

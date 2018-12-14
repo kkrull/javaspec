@@ -1,12 +1,12 @@
 require 'cucumber'
 require 'cucumber/rake/task'
 
+features_dir = File.join File.dirname(__FILE__), 'features'
 
 desc 'Compile and run all tests'
 task default: %w[java:test cucumber]
 
 Cucumber::Rake::Task.new
-
 namespace :cucumber do
   desc 'Run Yard server that auto-generates documentation for all gems'
   task 'doc-server' do
@@ -28,22 +28,26 @@ namespace 'cucumber-docker' do
 
   desc 'Run an interactive session in the Cucumber container'
   task :interactive do
-    sh *%w[
-      docker run 
-      --rm 
-      -it 
-      javaspec/cucumber-tests 
-      bash
-    ]
+    cmd = [
+      'docker run',
+      '--entrypoint bash',
+      '--rm',
+      '-it',
+      "-v #{features_dir}:/usr/src/app/features",
+      'javaspec/cucumber-tests'
+    ].join(' ')
+    sh cmd
   end
 
   desc 'Run Cucumber scenarios in a Docker container'
   task :run do
-    sh *%w[
-      docker run 
-      --rm 
-      javaspec/cucumber-tests 
-    ]
+    cmd = [
+      'docker run',
+      '--rm',
+      "-v #{features_dir}:/usr/src/app/features",
+      'javaspec/cucumber-tests'
+    ].join(' ')
+    sh cmd
   end
 end
 
