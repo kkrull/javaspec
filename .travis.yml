@@ -2,11 +2,14 @@ dist: trusty
 language: generic
 
 install:
-- which java && java -version
-- which mvn && mvn --version
-- which ruby && ruby --version
-- which bundle && bundle --version
-- which rake && rake --version
+- echo "## Java Environment ##"
+- java -version
+- mvn --version
+- echo "## Ruby Environment ##"
+- ruby --version
+- bundle --version
+- rake --version
+- bundle install
 
 script: rake
 
