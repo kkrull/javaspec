@@ -2,14 +2,10 @@ dist: trusty
 language: generic
 
 install:
-- echo Java Environment
-- java -version
-- mvn --version
-- echo Ruby Environment
-- ruby --version
 - bundle --version
 - rake --version
 - bundle install
+- mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 
 script: rake
 
