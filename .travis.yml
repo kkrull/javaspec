@@ -2,10 +2,10 @@ dist: trusty
 language: generic
 
 install:
-- echo "## Java Environment ##"
+- echo '## Java Environment ##'
 - java -version
 - mvn --version
-- echo "## Ruby Environment ##"
+- echo '## Ruby Environment ##'
 - ruby --version
 - bundle --version
 - rake --version
