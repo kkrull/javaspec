@@ -97,3 +97,12 @@ namespace :release do
     sh *%w[mvn -Pgpg,release deploy]
   end
 end
+
+
+namespace :travis do
+  desc 'Run the linter on the Travis configuration'
+  task :lint do
+    sh *%w[travis lint]
+  end
+end
+

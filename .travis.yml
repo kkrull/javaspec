@@ -1,11 +1,12 @@
-language: java
+dist: trusty
+language: generic
 
-branches:
-  only:
-    - master
+install:
+- which java && java -version
+- which mvn && mvn --version
+- which ruby && ruby --version
+- which bundle && bundle --version
+- which rake && rake --version
 
-jdk:
-  - oraclejdk8
+script: rake
 
-script: mvn verify -B
-script: docker run javaspec/cucumber-tests
