@@ -20,17 +20,23 @@ These can be installed on Homebrew systems as follows:
     brew cask install java8
     brew install maven
 
+Rake tasks and Cucumber Ruby code target the Ruby version listed in `.ruby-version`.  Something like [`rvm`][rvm] or
+[`rbenv`][rbenv] is recommended to install a compatible version of Ruby.
+
+[maven]: https://maven.apache.org/
+[rbenv]: https://github.com/rbenv/rbenv
+[rvm]: https://rvm.io/
+
+
+### High Level Build Automation via Rake
+
 Some things are just plain hard to automate in Maven, especially considering that there are Cucumber tests in Ruby that
 test JavaSpec externally.
 
 This is where [Rake][rake] comes in.  It offers a single place to organize and run tasks for building, testing, and
 releasing sources without having to resort to less-than-intuitive Maven configurations or one-off scripts.
-Rake tasks (which can be listed with `rake -T`) simply delegate to Maven, where Java sources are concerned.
-
-Rake tasks and Cucumber Ruby code target the Ruby version listed in `.ruby-version`.  Something like [`rvm`][rvm] or
-[`rbenv`][rbenv] is recommended to install a compatible version of Ruby.
-
-One final note about the Rake tasks - they attempt to be as orthogonal as possible, meaning: 
+Rake tasks (which can be listed with `rake -T`) simply delegate to Maven, where Java sources are concerned.  The Rake
+tasks attempt to be as orthogonal as possible, meaning: 
 
 - Each task does one, logical thing.
 - Tasks can be run in any combination or sequence.
@@ -38,10 +44,7 @@ One final note about the Rake tasks - they attempt to be as orthogonal as possib
 So if you want to run Cucumber Ruby tests against freshly-compiled Java code, you run `rake java:compile cucumber`.
 If your Java code is already compiled and you just want to run the Cucumber Ruby tests again, it's `rake cucumber`.
 
-[maven]: https://maven.apache.org/
 [rake]: https://github.com/ruby/rake
-[rbenv]: https://github.com/rbenv/rbenv
-[rvm]: https://rvm.io/
 
 
 ## Testing
@@ -63,7 +66,7 @@ Note that - while it is possible to write the last category of tests in Java - t
  
 - it's rather laborious to launch, monitor, and scrape output from external processes in Java, when it's so easy in Ruby.
 - managing two independent scopes of testing in Maven is also rather laborious and unintuitive, by using separate
-  plugins (Failsafe and Surefire), plugin configurations, and Maven profiles to say what you want to test, when.
+  plugins (Failsafe and Surefire), plugin configurations, and Maven profiles to say what you want to test, and when.
 
 One final note about the way tests are organized: it's not an explicit goal to have three separate sets of tests
 that roughly correspond to the levels of the Testing Pyramid.  It just sort of turned out that way, by covering gaps
@@ -75,13 +78,13 @@ the author encountered along the way, using whatever tools seemed practical at t
 
 ## Continuous Integration (CI)
 
-Continuous Integration thus far has been performed on [Travis][travis-javaspec].
-However this needs to be updated to use a currently-available service and to run all the tests.
-
-The Cucumber Ruby tests run in a Docker container that contains Ruby and Java.  See the Rake tasks in the
-`cucumber-docker` namespace to build the image and run the tests in a container.
+Continuous Integration happens on [Travis][travis-javaspec], using the [generic image][travis-generic] that has a JDK,
+Maven, and Ruby installed.  Maven dependencies are installed before the main `script` stage, just like in the
+[Java image][travis-java].
 
 
+[travis-generic]: https://docs.travis-ci.com/user/languages/minimal-and-generic/#generic
+[travis-java]: https://docs.travis-ci.com/user/languages/java/#maven-dependency-management
 [travis-javaspec]: https://travis-ci.org/kkrull/javaspec
 
 
