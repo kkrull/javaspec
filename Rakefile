@@ -1,12 +1,13 @@
 require 'cucumber'
 require 'cucumber/rake/task'
 
+console_runner_class_dir = File.join File.dirname(__FILE__), 'console-runner/target/classes'
+features_dir = File.join File.dirname(__FILE__), 'features'
 
 desc 'Compile and run all tests'
 task default: %w[java:test cucumber]
 
 Cucumber::Rake::Task.new
-
 namespace :cucumber do
   desc 'Run Yard server that auto-generates documentation for all gems'
   task 'doc-server' do
@@ -18,6 +19,41 @@ namespace :cucumber do
     sh *%w[bundle exec cucumber -t @focus]
   end
 end
+
+
+namespace 'cucumber-docker' do
+  desc 'Build the image used to run Cucumber tests'
+  task :build do
+    sh *%w[docker build -t javaspec/cucumber-tests .]
+  end
+
+  desc 'Run an interactive session in the Cucumber container'
+  task :interactive do
+    cmd = [
+      'docker run',
+      '--entrypoint bash',
+      '--rm',
+      '-it',
+      "-v #{console_runner_class_dir}:/usr/src/app/console-runner/target/classes",
+      "-v #{features_dir}:/usr/src/app/features",
+      'javaspec/cucumber-tests'
+    ].join(' ')
+    sh cmd
+  end
+
+  desc 'Run Cucumber scenarios in a Docker container'
+  task :run do
+    cmd = [
+      'docker run',
+      '--rm',
+      "-v #{console_runner_class_dir}:/usr/src/app/console-runner/target/classes",
+      "-v #{features_dir}:/usr/src/app/features",
+      'javaspec/cucumber-tests'
+    ].join(' ')
+    sh cmd
+  end
+end
+
 
 namespace :java do
   desc 'Set a new version for all artifacts'
@@ -49,6 +85,7 @@ namespace :java do
   end
 end
 
+
 namespace :release do
   desc 'Build artifacts for release'
   task :build do
@@ -60,3 +97,12 @@ namespace :release do
     sh *%w[mvn -Pgpg,release deploy]
   end
 end
+
+
+namespace :travis do
+  desc 'Run the linter on the Travis configuration'
+  task :lint do
+    sh *%w[travis lint]
+  end
+end
+

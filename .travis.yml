@@ -1,11 +1,10 @@
-language: java
+dist: trusty
+language: generic
 
-branches:
-  only:
-    - master
+install:
+- bundle --version
+- rake --version
+- bundle install
+- mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 
-jdk:
-  - oraclejdk8
-
-# TODO KDK: Update to run Cucumber Ruby tests, too
-script: mvn verify -B
+script: rake
