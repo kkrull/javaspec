@@ -13,6 +13,11 @@ class DescriptiveSpec implements Spec {
   }
 
   @Override
+  public String description() {
+    return this.description;
+  }
+
+  @Override
   public void run(SpecReporter reporter) {
     reporter.specStarting(this, this.description);
     try {

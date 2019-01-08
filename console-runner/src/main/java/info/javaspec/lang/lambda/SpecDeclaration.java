@@ -12,7 +12,7 @@ final class SpecDeclaration {
     _suite = new SequentialSuite();
   }
 
-  public static void addSpecToCurrentContext(SpecRunnable thunk, String description) {
+  public static void createSpecInCurrentContext(SpecRunnable thunk, String description) {
     Spec spec = new DescriptiveSpec(description, thunk);
     _suite.addSpec(spec);
   }

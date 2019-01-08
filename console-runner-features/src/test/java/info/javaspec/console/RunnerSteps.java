@@ -70,7 +70,7 @@ public class RunnerSteps {
   }
 
   @Then("^The runner should run the specs defined in that class$")
-  public void thenRunnerShouldRunSpecs() throws Exception {
+  public void theRunnerShouldRunSpecs() throws Exception {
     this.mockReporter.runStartingShouldHaveBeenCalled();
 
     this.mockReporter.specShouldHaveBeenStarted(this.passingSpec, "passes");
