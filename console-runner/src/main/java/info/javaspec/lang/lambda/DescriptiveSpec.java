@@ -4,24 +4,24 @@ import info.javaspec.Spec;
 import info.javaspec.SpecReporter;
 
 class DescriptiveSpec implements Spec {
-  private final String description;
-  private final SpecRunnable thunk;
+  private final String intendedBehavior;
+  private final BehaviorVerification verification;
 
-  public DescriptiveSpec(String description, SpecRunnable thunk) {
-    this.thunk = thunk;
-    this.description = description;
+  public DescriptiveSpec(String intendedBehavior, BehaviorVerification verification) {
+    this.intendedBehavior = intendedBehavior;
+    this.verification = verification;
   }
 
   @Override
-  public String description() {
-    return this.description;
+  public String intendedBehavior() {
+    return this.intendedBehavior;
   }
 
   @Override
   public void run(SpecReporter reporter) {
-    reporter.specStarting(this, this.description);
+    reporter.specStarting(this, this.intendedBehavior);
     try {
-      this.thunk.run();
+      this.verification.run();
     } catch(AssertionError e) {
       reporter.specFailed(this);
       return;

@@ -5,7 +5,7 @@ public interface SpecReporter {
 
   void runStarting();
 
-  void specStarting(Spec spec, String description);
+  void specStarting(Spec spec, String description); //TODO KDK: Remove description since it's already on Spec
 
   void specFailed(Spec spec);
 

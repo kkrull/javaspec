@@ -6,12 +6,12 @@ import org.hamcrest.Matchers;
 import static org.junit.Assert.assertThat;
 
 public final class MockSpec extends DescriptiveSpec {
-  private final String description;
+  private final String intendedBehavior;
   private boolean runCalled;
 
-  private MockSpec(String description, SpecRunnable thunk) {
-    super(description, thunk);
-    this.description = description;
+  private MockSpec(String intendedBehavior, BehaviorVerification verification) {
+    super(intendedBehavior, verification);
+    this.intendedBehavior = intendedBehavior;
     this.runCalled = false;
   }
 
@@ -27,38 +27,38 @@ public final class MockSpec extends DescriptiveSpec {
 
   @Override
   public String toString() {
-    return String.format("MockSpec{description='%s', runCalled=%s}",
-      description,
+    return String.format("MockSpec{intendedBehavior='%s', runCalled=%s}",
+      intendedBehavior,
       runCalled
     );
   }
 
   public static final class Builder {
-    private String description;
-    private SpecRunnable thunk;
+    private String intendedBehavior;
+    private BehaviorVerification verification;
 
     public Builder() {
-      this.description = "<default description>";
-      this.thunk = () -> { };
+      this.intendedBehavior = "<default intendedBehavior>";
+      this.verification = () -> { };
     }
 
-    public Builder describedAs(String description) {
-      this.description = description;
+    public Builder withIntendedBehavior(String intendedBehavior) {
+      this.intendedBehavior = intendedBehavior;
       return this;
     }
 
     public Builder thatFailsWith(AssertionError error) {
-      this.thunk = () -> { throw error; };
+      this.verification = () -> { throw error; };
       return this;
     }
 
     public Builder thatPasses() {
-      this.thunk = () -> { };
+      this.verification = () -> { };
       return this;
     }
 
     public MockSpec build() {
-      return new MockSpec(this.description, this.thunk);
+      return new MockSpec(this.intendedBehavior, this.verification);
     }
   }
 }

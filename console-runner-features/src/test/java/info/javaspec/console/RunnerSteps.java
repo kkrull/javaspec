@@ -28,12 +28,12 @@ public class RunnerSteps {
   @Given("^I have a Java class that defines a suite of lambda specs$")
   public void iHaveAJavaClassWithASuiteOfLambdaSpecs() throws Exception {
     this.passingSpec = new MockSpec.Builder()
-      .describedAs("passes")
+      .withIntendedBehavior("passes")
       .thatPasses()
       .build();
 
     this.failingSpec = new MockSpec.Builder()
-      .describedAs("fails")
+      .withIntendedBehavior("fails")
       .thatFailsWith(new AssertionError("bang!"))
       .build();
 
@@ -45,7 +45,7 @@ public class RunnerSteps {
   @Given("^I have a Java class that defines a suite of passing lambda specs$")
   public void iHaveAJavaClassThatDefinesASuiteOfPassingLambdaSpecs() throws Exception {
     this.passingSpec = new MockSpec.Builder()
-      .describedAs("passes")
+      .withIntendedBehavior("passes")
       .thatPasses()
       .build();
 
@@ -56,7 +56,7 @@ public class RunnerSteps {
   @Given("^I have a Java class that defines a suite of 1 or more failing lambda specs$")
   public void iHaveASuiteWithFailingSpecs() throws Exception {
     this.failingSpec = new MockSpec.Builder()
-      .describedAs("fails")
+      .withIntendedBehavior("fails")
       .thatFailsWith(new AssertionError("bang!"))
       .build();
 

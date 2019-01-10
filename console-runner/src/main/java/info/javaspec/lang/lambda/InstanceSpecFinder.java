@@ -18,7 +18,7 @@ public final class InstanceSpecFinder {
   static final class SpecDeclarationFailed extends RuntimeException {
     public static SpecDeclarationFailed whenInstantiating(Class<?> specClass, Exception cause) {
       return new SpecDeclarationFailed(
-        String.format("Failed to instantiate spec %s, to declare specs", specClass.getName()),
+        String.format("Failed to instantiate class %s, to declare specs", specClass.getName()),
         cause);
     }
 

@@ -12,8 +12,8 @@ final class SpecDeclaration {
     _suite = new SequentialSuite();
   }
 
-  public static void createSpecInCurrentContext(SpecRunnable thunk, String description) {
-    Spec spec = new DescriptiveSpec(description, thunk);
+  public static void createSpec(String intendedBehavior, BehaviorVerification verification) {
+    Spec spec = new DescriptiveSpec(intendedBehavior, verification);
     _suite.addSpec(spec);
   }
 
