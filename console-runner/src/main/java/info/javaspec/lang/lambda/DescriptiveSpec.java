@@ -19,7 +19,7 @@ class DescriptiveSpec implements Spec {
 
   @Override
   public void run(SpecReporter reporter) {
-    reporter.specStarting(this, this.intendedBehavior);
+    reporter.specStarting(this);
     try {
       this.verification.run();
     } catch(AssertionError e) {

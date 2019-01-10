@@ -67,12 +67,12 @@ public final class MockSpecReporter implements SpecReporter {
   }
 
   @Override
-  public void specStarting(Spec spec, String description) {
-    this.specStartingReceived.put(spec, description);
+  public void specStarting(Spec spec) {
+    this.specStartingReceived.put(spec, spec.intendedBehavior());
   }
 
-  public void specShouldHaveBeenStarted(Spec spec, String description) {
+  public void specShouldHaveBeenStarted(Spec spec, String intendedBehavior) {
     assertThat(this.specStartingReceived, Matchers.hasKey(spec));
-    assertThat(this.specStartingReceived.get(spec), Matchers.equalTo(description));
+    assertThat(this.specStartingReceived.get(spec), Matchers.equalTo(intendedBehavior));
   }
 }

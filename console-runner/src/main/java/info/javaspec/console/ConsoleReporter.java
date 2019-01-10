@@ -24,9 +24,9 @@ class ConsoleReporter implements SpecReporter {
   public void runStarting() { }
 
   @Override
-  public void specStarting(Spec spec, String description) {
+  public void specStarting(Spec spec) {
     this.numStarted++;
-    this.output.print(description);
+    this.output.print(spec.intendedBehavior());
   }
 
   @Override
