@@ -23,7 +23,7 @@ public final class SequentialSuite implements Suite {
   }
 
   @Override
-  public List<String> specDescriptions() {
+  public List<String> intendedBehaviors() {
     return this.specs.stream()
       .map(Spec::intendedBehavior)
       .collect(toList());

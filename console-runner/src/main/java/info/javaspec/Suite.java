@@ -6,5 +6,5 @@ import java.util.List;
 public interface Suite {
   void runSpecs(SpecReporter reporter);
 
-  List<String> specDescriptions();
+  List<String> intendedBehaviors();
 }
