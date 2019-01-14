@@ -1,5 +1,6 @@
 package info.javaspec.console;
 
+import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -26,15 +27,15 @@ public class SpecSyntaxSteps {
     specLambdasRan = () -> OneSpies.assertRanNumTimes(1);
   }
 
+  @Given("^I have a spec declaration that calls `describe` with a class and a lambda containing 1 or more `it` statements$")
+  public void iHaveASpecDeclarationCallingDescribe() throws Exception {
+    throw new PendingException();
+  }
+
   @When("^I load the specs from that declaration$")
   public void iLoadTheSpecsFromThatDeclaration() throws Exception {
     InstanceSpecFinder finder = new InstanceSpecFinder();
     suite = finder.findSpecs(specDeclarationClass);
-  }
-
-  @Then("^a spec should exist with the given description$")
-  public void aSpecShouldExistWithThatDescription() throws Exception {
-    assertThat(suite.intendedBehaviors(), containsInAnyOrder(thatIntendedBehavior));
   }
 
   @When("^I run that spec$")
@@ -42,9 +43,24 @@ public class SpecSyntaxSteps {
     suite.runSpecs(new MockSpecReporter());
   }
 
+  @Then("^a spec should exist with the given description$")
+  public void aSpecShouldExistWithThatDescription() throws Exception {
+    assertThat(suite.intendedBehaviors(), containsInAnyOrder(thatIntendedBehavior));
+  }
+
   @Then("^that lambda should be run$")
   public void thatLambdaShouldBeRun() throws Exception {
     specLambdasRan.verify();
+  }
+
+  @Then("^there should be a suite with that description$")
+  public void thereShouldBeASuiteWithThatDescription() throws Exception {
+    throw new PendingException();
+  }
+
+  @Then("^that suite should contain a spec for each `it` statement within it$")
+  public void thatSuiteHaveSpecs() throws Exception {
+    throw new PendingException();
   }
 
   public static final class OneSpies {

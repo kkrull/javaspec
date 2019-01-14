@@ -11,7 +11,9 @@ Feature: Spec Syntax
     When I run that spec
     Then that lambda should be run
 
-#  Scenario: `describe` should group 1 or more specifications that describe the same Java class
-#    Given I have a spec declaration that calls `describe` with a class and a lambda containing 1 or more `it` statements
-#    When I load the specs from the described class
-#    Then the set of specs for the described class should be the specs declared within the `describe` block
+  @wip
+  Scenario: `describe` should group 1 or more specifications that describe the same Java class
+    Given I have a spec declaration that calls `describe` with a class and a lambda containing 1 or more `it` statements
+    When I load the specs from that declaration
+    Then there should be a suite with that description
+    And that suite should contain a spec for each `it` statement within it
