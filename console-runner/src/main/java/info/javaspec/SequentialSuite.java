@@ -19,8 +19,8 @@ public final class SequentialSuite implements Suite {
 
   @Override
   public String description() {
-//    return "Illudium Q-36 Explosive Space Modulator";
-    throw new UnsupportedOperationException("work here");
+    return "Illudium Q-36 Explosive Space Modulator";
+//    throw new UnsupportedOperationException("work here");
   }
 
   @Override

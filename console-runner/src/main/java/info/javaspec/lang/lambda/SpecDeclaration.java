@@ -8,7 +8,7 @@ import info.javaspec.Suite;
 final class SpecDeclaration {
   private static SequentialSuite _suite;
 
-  public static void newContext() {
+  public static void beginDeclaration() {
     _suite = new SequentialSuite();
   }
 
@@ -17,7 +17,7 @@ final class SpecDeclaration {
     _suite.addSpec(spec);
   }
 
-  public static Suite createSuite() {
+  public static Suite endDeclaration() {
     Suite suite = _suite;
     _suite = null;
     return suite;

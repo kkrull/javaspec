@@ -1,18 +1,17 @@
 package info.javaspec.console;
 
-import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import info.javaspec.MockSpecReporter;
 import info.javaspec.Suite;
-import info.javaspec.lang.lambda.FunctionalDsl;
 import info.javaspec.lang.lambda.InstanceSpecFinder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static info.javaspec.lang.lambda.FunctionalDsl.describe;
 import static info.javaspec.lang.lambda.FunctionalDsl.it;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -73,7 +72,7 @@ public class SpecSyntaxSteps {
   }
 
   public static final class DescribeTwo {{
-    FunctionalDsl.describe("Illudium Q-36 Explosive Space Modulator", () -> {
+    describe("Illudium Q-36 Explosive Space Modulator", () -> {
       it("discombobulates", () -> {});
       it("explodes", () -> {});
     });
