@@ -6,7 +6,12 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import info.javaspec.MockSpecReporter;
 import info.javaspec.Suite;
+import info.javaspec.lang.lambda.FunctionalDsl;
 import info.javaspec.lang.lambda.InstanceSpecFinder;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static info.javaspec.lang.lambda.FunctionalDsl.it;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -16,7 +21,9 @@ import static org.hamcrest.Matchers.equalTo;
 /** Steps about spec declaration forms */
 public class SpecSyntaxSteps {
   private Class<?> specDeclarationClass;
+  private String thatDescription;
   private String thatIntendedBehavior;
+  private List<String> thoseIntendedBehaviors;
   private RunAssertion specLambdasRan;
   private Suite suite;
 
@@ -29,7 +36,9 @@ public class SpecSyntaxSteps {
 
   @Given("^I have a spec declaration that calls `describe` with a class and a lambda containing 1 or more `it` statements$")
   public void iHaveASpecDeclarationCallingDescribe() throws Exception {
-    throw new PendingException();
+    specDeclarationClass = DescribeTwo.class;
+    thatDescription = "Illudium Q-36 Explosive Space Modulator";
+    thoseIntendedBehaviors = new ArrayList<>(Arrays.asList("discombobulates", "explodes"));
   }
 
   @When("^I load the specs from that declaration$")
@@ -55,13 +64,20 @@ public class SpecSyntaxSteps {
 
   @Then("^there should be a suite with that description$")
   public void thereShouldBeASuiteWithThatDescription() throws Exception {
-    throw new PendingException();
+    assertThat(suite.description(), equalTo(thatDescription));
   }
 
   @Then("^that suite should contain a spec for each `it` statement within it$")
-  public void thatSuiteHaveSpecs() throws Exception {
-    throw new PendingException();
+  public void thatSuiteShouldHaveSpecs() throws Exception {
+    assertThat(suite.intendedBehaviors(), equalTo(thoseIntendedBehaviors));
   }
+
+  public static final class DescribeTwo {{
+    FunctionalDsl.describe("Illudium Q-36 Explosive Space Modulator", () -> {
+      it("discombobulates", () -> {});
+      it("explodes", () -> {});
+    });
+  }}
 
   public static final class OneSpies {
     private static int numTimesRan = 0;

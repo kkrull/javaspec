@@ -4,7 +4,9 @@ import java.util.List;
 
 /** An ordered collection of Specs */
 public interface Suite {
-  void runSpecs(SpecReporter reporter);
+  String description();
 
   List<String> intendedBehaviors();
+
+  void runSpecs(SpecReporter reporter);
 }

@@ -18,8 +18,9 @@ public final class SequentialSuite implements Suite {
   }
 
   @Override
-  public void runSpecs(SpecReporter reporter) {
-    this.specs.forEach(x -> x.run(reporter));
+  public String description() {
+//    return "Illudium Q-36 Explosive Space Modulator";
+    throw new UnsupportedOperationException("work here");
   }
 
   @Override
@@ -27,5 +28,10 @@ public final class SequentialSuite implements Suite {
     return this.specs.stream()
       .map(Spec::intendedBehavior)
       .collect(toList());
+  }
+
+  @Override
+  public void runSpecs(SpecReporter reporter) {
+    this.specs.forEach(x -> x.run(reporter));
   }
 }
