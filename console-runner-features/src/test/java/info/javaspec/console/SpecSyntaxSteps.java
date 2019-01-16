@@ -24,7 +24,8 @@ public class SpecSyntaxSteps {
   private String thatIntendedBehavior;
   private List<String> thoseIntendedBehaviors;
   private RunAssertion specLambdasRan;
-  private Suite suite;
+  private Suite rootSuite;
+  private Suite thatSuite;
 
   @Given("^I have a spec declaration that calls `it` with a lambda and a description of intended behavior$")
   public void iHaveASpecDeclarationCallingIt() throws Exception {
@@ -43,17 +44,18 @@ public class SpecSyntaxSteps {
   @When("^I load the specs from that declaration$")
   public void iLoadTheSpecsFromThatDeclaration() throws Exception {
     InstanceSpecFinder finder = new InstanceSpecFinder();
-    suite = finder.findSpecs(specDeclarationClass);
+    rootSuite = finder.findSpecs(specDeclarationClass);
+    thatSuite = rootSuite;
   }
 
   @When("^I run that spec$")
   public void iRunThatSpec() throws Exception {
-    suite.runSpecs(new MockSpecReporter());
+    rootSuite.runSpecs(new MockSpecReporter());
   }
 
   @Then("^a spec should exist with the given description$")
   public void aSpecShouldExistWithThatDescription() throws Exception {
-    assertThat(suite.intendedBehaviors(), containsInAnyOrder(thatIntendedBehavior));
+    assertThat(thatSuite.intendedBehaviors(), containsInAnyOrder(thatIntendedBehavior));
   }
 
   @Then("^that lambda should be run$")
@@ -63,12 +65,17 @@ public class SpecSyntaxSteps {
 
   @Then("^there should be a suite with that description$")
   public void thereShouldBeASuiteWithThatDescription() throws Exception {
-    assertThat(suite.description(), equalTo(thatDescription));
+    thatSuite = rootSuite.childSuites().stream()
+      .filter(suite -> thatDescription.equals(suite.description()))
+      .findFirst()
+      .orElseThrow(() -> new RuntimeException(String.format("Suite not found: %s", thatDescription)));
+
+    assertThat(thatSuite.description(), equalTo(thatDescription));
   }
 
   @Then("^that suite should contain a spec for each `it` statement within it$")
   public void thatSuiteShouldHaveSpecs() throws Exception {
-    assertThat(suite.intendedBehaviors(), equalTo(thoseIntendedBehaviors));
+    assertThat(thatSuite.intendedBehaviors(), equalTo(thoseIntendedBehaviors));
   }
 
   public static final class DescribeTwo {{

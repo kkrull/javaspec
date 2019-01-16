@@ -11,7 +11,6 @@ Feature: Spec Syntax
     When I run that spec
     Then that lambda should be run
 
-  @wip
   Scenario: `describe` should group 1 or more specifications that describe the same Java class
     Given I have a spec declaration that calls `describe` with a class and a lambda containing 1 or more `it` statements
     When I load the specs from that declaration

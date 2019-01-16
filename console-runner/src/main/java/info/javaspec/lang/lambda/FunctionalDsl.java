@@ -10,7 +10,7 @@ public final class FunctionalDsl {
   private FunctionalDsl() { /* static class */ }
 
   public static void describe(String subject, BehaviorDeclaration describeBehavior) {
-    throw new UnsupportedOperationException("work here -- declare a new suite, that pushes onto a stack");
+    SpecDeclaration.declareSpecsFor(subject, describeBehavior);
   }
 
   public static void it(String shouldDoWhat, BehaviorVerification verifyBehavior) {
