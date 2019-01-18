@@ -5,18 +5,24 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import info.javaspec.SequentialSuite;
 import info.javaspec.Suite;
+import info.javaspec.console.helpers.SuiteHelper;
 import info.javaspec.lang.lambda.MockSpec;
 import info.javaspec.MockSpecReporter;
 
 /** Steps observing what happens in a Runner, from within the same process */
 public class RunnerSteps {
+  private final SuiteHelper suiteHelper;
+
   private SuiteRunner runner;
   private MockSpecReporter mockReporter;
   private MockExitHandler system;
 
-  private SequentialSuite suite;
   private MockSpec passingSpec;
   private MockSpec failingSpec;
+
+  public RunnerSteps(SuiteHelper suiteHelper) {
+    this.suiteHelper = suiteHelper;
+  }
 
   @Given("^I have a JavaSpec runner for the console$")
   public void iHaveAConsoleRunner() throws Exception {
@@ -37,9 +43,10 @@ public class RunnerSteps {
       .thatFailsWith(new AssertionError("bang!"))
       .build();
 
-    this.suite = new SequentialSuite();
-    this.suite.addSpec(this.passingSpec);
-    this.suite.addSpec(this.failingSpec);
+    SequentialSuite suite = new SequentialSuite();
+    suite.addSpec(this.passingSpec);
+    suite.addSpec(this.failingSpec);
+    suiteHelper.setRootSuite(suite);
   }
 
   @Given("^I have a Java class that defines a suite of passing lambda specs$")
@@ -49,8 +56,9 @@ public class RunnerSteps {
       .thatPasses()
       .build();
 
-    this.suite = new SequentialSuite();
-    this.suite.addSpec(this.passingSpec);
+    SequentialSuite suite = new SequentialSuite();
+    suite.addSpec(this.passingSpec);
+    suiteHelper.setRootSuite(suite);
   }
 
   @Given("^I have a Java class that defines a suite of 1 or more failing lambda specs$")
@@ -60,13 +68,14 @@ public class RunnerSteps {
       .thatFailsWith(new AssertionError("bang!"))
       .build();
 
-    this.suite = new SequentialSuite();
-    this.suite.addSpec(this.failingSpec);
+    SequentialSuite suite = new SequentialSuite();
+    suite.addSpec(this.failingSpec);
+    suiteHelper.setRootSuite(suite);
   }
 
   @When("^I run the specs in that class$")
   public void whenRunningSpecs() throws Exception {
-    this.runner.run(this.suite);
+    this.runner.run(suiteHelper.thatSuite());
   }
 
   @Then("^The runner should run the specs defined in that class$")

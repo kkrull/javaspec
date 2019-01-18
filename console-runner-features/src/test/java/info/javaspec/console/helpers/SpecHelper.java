@@ -1,9 +1,9 @@
-package info.javaspec.console;
+package info.javaspec.console.helpers;
 
 public class SpecHelper {
   private Class<?> declaringClass;
 
-  public Class<?> declaringClass() {
+  Class<?> declaringClass() {
     return declaringClass;
   }
 

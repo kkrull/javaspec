@@ -5,7 +5,8 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import info.javaspec.MockSpecReporter;
 import info.javaspec.Suite;
-import info.javaspec.lang.lambda.InstanceSpecFinder;
+import info.javaspec.console.helpers.SpecHelper;
+import info.javaspec.console.helpers.SuiteHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,47 +21,45 @@ import static org.hamcrest.Matchers.equalTo;
 /** Steps about spec declaration forms */
 public class SpecSyntaxSteps {
   private final SpecHelper specHelper;
+  private final SuiteHelper suiteHelper;
 
   private String thatDescription;
   private String thatIntendedBehavior;
   private List<String> thoseIntendedBehaviors;
   private RunAssertion specLambdasRan;
-  private Suite rootSuite;
-  private Suite thatSuite;
 
-  public SpecSyntaxSteps(SpecHelper specHelper) {
+  public SpecSyntaxSteps(SpecHelper specHelper, SuiteHelper suiteHelper) {
     this.specHelper = specHelper;
+    this.suiteHelper = suiteHelper;
   }
 
   @Given("^I have a spec declaration that calls `it` with a lambda and a description of intended behavior$")
   public void iHaveASpecDeclarationCallingIt() throws Exception {
-    this.specHelper.setDeclaringClass(OneSpies.class);
+    specHelper.setDeclaringClass(OneSpies.class);
     thatIntendedBehavior = "does a thing";
     specLambdasRan = () -> OneSpies.assertRanNumTimes(1);
   }
 
   @Given("^I have a spec declaration that calls `describe` with a class and a lambda containing 1 or more `it` statements$")
   public void iHaveASpecDeclarationCallingDescribe() throws Exception {
-    this.specHelper.setDeclaringClass(DescribeTwo.class);
+    specHelper.setDeclaringClass(DescribeTwo.class);
     thatDescription = "Illudium Q-36 Explosive Space Modulator";
     thoseIntendedBehaviors = new ArrayList<>(Arrays.asList("discombobulates", "explodes"));
   }
 
   @When("^I load the specs from that declaration$")
   public void iLoadTheSpecsFromThatDeclaration() throws Exception {
-    InstanceSpecFinder finder = new InstanceSpecFinder();
-    rootSuite = finder.findSpecs(this.specHelper.declaringClass());
-    thatSuite = rootSuite;
+    suiteHelper.loadSpecsFromClass();
   }
 
   @When("^I run that spec$")
   public void iRunThatSpec() throws Exception {
-    rootSuite.runSpecs(new MockSpecReporter());
+    suiteHelper.thatSuite().runSpecs(new MockSpecReporter());
   }
 
   @Then("^a spec should exist with the given description$")
   public void aSpecShouldExistWithThatDescription() throws Exception {
-    assertThat(thatSuite.intendedBehaviors(), containsInAnyOrder(thatIntendedBehavior));
+    assertThat(suiteHelper.thatSuite().intendedBehaviors(), containsInAnyOrder(thatIntendedBehavior));
   }
 
   @Then("^that lambda should be run$")
@@ -70,17 +69,13 @@ public class SpecSyntaxSteps {
 
   @Then("^there should be a suite with that description$")
   public void thereShouldBeASuiteWithThatDescription() throws Exception {
-    thatSuite = rootSuite.childSuites().stream()
-      .filter(suite -> thatDescription.equals(suite.description()))
-      .findFirst()
-      .orElseThrow(() -> new RuntimeException(String.format("Suite not found: %s", thatDescription)));
-
+    Suite thatSuite = suiteHelper.findChildSuiteWithDescription(thatDescription);
     assertThat(thatSuite.description(), equalTo(thatDescription));
   }
 
   @Then("^that suite should contain a spec for each `it` statement within it$")
   public void thatSuiteShouldHaveSpecs() throws Exception {
-    assertThat(thatSuite.intendedBehaviors(), equalTo(thoseIntendedBehaviors));
+    assertThat(suiteHelper.thatSuite().intendedBehaviors(), equalTo(thoseIntendedBehaviors));
   }
 
   public static final class DescribeTwo {{
