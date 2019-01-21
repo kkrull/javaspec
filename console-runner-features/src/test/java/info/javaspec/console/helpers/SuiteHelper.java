@@ -1,10 +1,15 @@
 package info.javaspec.console.helpers;
 
+import info.javaspec.MockSpecReporter;
 import info.javaspec.Suite;
 import info.javaspec.lang.lambda.InstanceSpecFinder;
 
+import java.util.Optional;
+
 public class SuiteHelper {
   private final SpecHelper specHelper;
+
+  private SuiteRunner _runner;
   private Suite rootSuite;
   private Suite thatSuite;
 
@@ -35,11 +40,29 @@ public class SuiteHelper {
       throw new RuntimeException("No suite of specs has been defined");
   }
 
-  Suite rootSuite() {
+  private Suite rootSuite() {
     return rootSuite;
+  }
+
+  public void runThatSuite() {
+    runner().run(thatSuite());
   }
 
   public void setRootSuite(Suite suite) {
     this.rootSuite = suite;
+  }
+
+  private SuiteRunner runner() {
+    return Optional.ofNullable(_runner)
+      .orElse(suite -> suite.runSpecs(new MockSpecReporter()));
+  }
+
+  public void setRunner(SuiteRunner runner) {
+    this._runner = runner;
+  }
+
+  @FunctionalInterface
+  public interface SuiteRunner {
+    void run(Suite suite);
   }
 }

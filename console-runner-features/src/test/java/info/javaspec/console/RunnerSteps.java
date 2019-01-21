@@ -3,17 +3,15 @@ package info.javaspec.console;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import info.javaspec.MockSpecReporter;
 import info.javaspec.SequentialSuite;
-import info.javaspec.Suite;
 import info.javaspec.console.helpers.SuiteHelper;
 import info.javaspec.lang.lambda.MockSpec;
-import info.javaspec.MockSpecReporter;
 
 /** Steps observing what happens in a Runner, from within the same process */
 public class RunnerSteps {
   private final SuiteHelper suiteHelper;
 
-  private SuiteRunner runner;
   private MockSpecReporter mockReporter;
   private MockExitHandler system;
 
@@ -28,7 +26,7 @@ public class RunnerSteps {
   public void iHaveAConsoleRunner() throws Exception {
     this.system = new MockExitHandler();
     this.mockReporter = new MockSpecReporter();
-    this.runner = (suite) -> Runner.main(suite, this.mockReporter, this.system);
+    this.suiteHelper.setRunner(suite -> Runner.main(suite, this.mockReporter, this.system));
   }
 
   @Given("^I have a Java class that defines a suite of lambda specs$")
@@ -75,7 +73,7 @@ public class RunnerSteps {
 
   @When("^I run the specs in that class$")
   public void whenRunningSpecs() throws Exception {
-    this.runner.run(suiteHelper.thatSuite());
+    this.suiteHelper.runThatSuite();
   }
 
   @Then("^The runner should run the specs defined in that class$")
@@ -104,10 +102,5 @@ public class RunnerSteps {
   @Then("^The runner should indicate that all specs passed$")
   public void theRunnerShouldIndicateThatAllSpecsPassed() throws Exception {
     this.system.exitShouldHaveReceived(0);
-  }
-
-  @FunctionalInterface
-  interface SuiteRunner {
-    void run(Suite suite);
   }
 }

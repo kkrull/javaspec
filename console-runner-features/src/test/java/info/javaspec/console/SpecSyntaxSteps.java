@@ -3,7 +3,6 @@ package info.javaspec.console;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import info.javaspec.MockSpecReporter;
 import info.javaspec.Suite;
 import info.javaspec.console.helpers.SpecHelper;
 import info.javaspec.console.helpers.SuiteHelper;
@@ -54,7 +53,7 @@ public class SpecSyntaxSteps {
 
   @When("^I run that spec$")
   public void iRunThatSpec() throws Exception {
-    suiteHelper.thatSuite().runSpecs(new MockSpecReporter());
+    suiteHelper.runThatSuite();
   }
 
   @Then("^a spec should exist with the given description$")
