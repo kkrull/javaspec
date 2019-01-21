@@ -58,7 +58,7 @@ public class SpecSyntaxSteps {
 
   @Then("^a spec should exist with the given description$")
   public void aSpecShouldExistWithThatDescription() throws Exception {
-    assertThat(suiteHelper.thatSuite().intendedBehaviors(), containsInAnyOrder(thatIntendedBehavior));
+    assertThat(suiteHelper.getSelectedSuite().intendedBehaviors(), containsInAnyOrder(thatIntendedBehavior));
   }
 
   @Then("^that lambda should be run$")
@@ -74,7 +74,7 @@ public class SpecSyntaxSteps {
 
   @Then("^that suite should contain a spec for each `it` statement within it$")
   public void thatSuiteShouldHaveSpecs() throws Exception {
-    assertThat(suiteHelper.thatSuite().intendedBehaviors(), equalTo(thoseIntendedBehaviors));
+    assertThat(suiteHelper.getSelectedSuite().intendedBehaviors(), equalTo(thoseIntendedBehaviors));
   }
 
   public static final class DescribeTwo {{

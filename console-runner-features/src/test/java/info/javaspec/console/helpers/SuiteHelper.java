@@ -9,43 +9,45 @@ import java.util.Optional;
 public class SuiteHelper {
   private final SpecHelper specHelper;
 
-  private SuiteRunner _runner;
+  private SuiteRunner runner;
   private Suite rootSuite;
-  private Suite thatSuite;
+  private Suite selectedSuite;
 
   public SuiteHelper(SpecHelper specHelper) {
     this.specHelper = specHelper;
   }
 
   public Suite findChildSuiteWithDescription(String description) {
-    thatSuite = rootSuite().childSuites().stream()
+    this.selectedSuite = getRootSuite().childSuites().stream()
       .filter(x -> description.equals(x.description()))
       .findFirst()
       .orElseThrow(() -> new RuntimeException(String.format("Suite not found: %s", description)));
 
-    return thatSuite;
+    return this.selectedSuite;
   }
 
   public void loadSpecsFromClass() {
     InstanceSpecFinder finder = new InstanceSpecFinder();
-    rootSuite = finder.findSpecs(this.specHelper.declaringClass());
-  }
-
-  public Suite thatSuite() {
-    if(thatSuite != null)
-      return thatSuite;
-    else if(rootSuite() != null)
-      return rootSuite();
-    else
-      throw new RuntimeException("No suite of specs has been defined");
-  }
-
-  private Suite rootSuite() {
-    return rootSuite;
+    this.rootSuite = finder.findSpecs(this.specHelper.getDeclaringClass());
   }
 
   public void runThatSuite() {
-    runner().run(thatSuite());
+    runner().run(getSelectedSuite());
+  }
+
+  public Suite getSelectedSuite() {
+    if(this.selectedSuite != null)
+      return this.selectedSuite;
+
+    Suite rootSuite = getRootSuite();
+    if(rootSuite != null)
+      return rootSuite;
+
+    throw new RuntimeException("No suite of specs has been defined");
+  }
+
+  private Suite getRootSuite() {
+    return this.rootSuite;
   }
 
   public void setRootSuite(Suite suite) {
@@ -53,12 +55,12 @@ public class SuiteHelper {
   }
 
   private SuiteRunner runner() {
-    return Optional.ofNullable(_runner)
+    return Optional.ofNullable(this.runner)
       .orElse(suite -> suite.runSpecs(new MockSpecReporter()));
   }
 
   public void setRunner(SuiteRunner runner) {
-    this._runner = runner;
+    this.runner = runner;
   }
 
   @FunctionalInterface
