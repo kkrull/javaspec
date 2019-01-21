@@ -44,7 +44,7 @@ public class RunnerSteps {
     SequentialSuite suite = new SequentialSuite();
     suite.addSpec(this.passingSpec);
     suite.addSpec(this.failingSpec);
-    suiteHelper.setRootSuite(suite);
+    this.suiteHelper.setRootSuite(suite);
   }
 
   @Given("^I have a Java class that defines a suite of passing lambda specs$")
@@ -56,7 +56,7 @@ public class RunnerSteps {
 
     SequentialSuite suite = new SequentialSuite();
     suite.addSpec(this.passingSpec);
-    suiteHelper.setRootSuite(suite);
+    this.suiteHelper.setRootSuite(suite);
   }
 
   @Given("^I have a Java class that defines a suite of 1 or more failing lambda specs$")
@@ -68,7 +68,12 @@ public class RunnerSteps {
 
     SequentialSuite suite = new SequentialSuite();
     suite.addSpec(this.failingSpec);
-    suiteHelper.setRootSuite(suite);
+    this.suiteHelper.setRootSuite(suite);
+  }
+
+  @When("^I run that spec$")
+  public void iRunThatSpec() throws Exception {
+    this.suiteHelper.runThatSuite();
   }
 
   @When("^I run the specs in that class$")

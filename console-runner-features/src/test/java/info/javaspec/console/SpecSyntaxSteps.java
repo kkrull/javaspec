@@ -51,11 +51,6 @@ public class SpecSyntaxSteps {
     suiteHelper.loadSpecsFromClass();
   }
 
-  @When("^I run that spec$")
-  public void iRunThatSpec() throws Exception {
-    suiteHelper.runThatSuite();
-  }
-
   @Then("^a spec should exist with the given description$")
   public void aSpecShouldExistWithThatDescription() throws Exception {
     assertThat(suiteHelper.getSelectedSuite().intendedBehaviors(), containsInAnyOrder(thatIntendedBehavior));
