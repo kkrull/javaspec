@@ -76,6 +76,11 @@ public class RunnerSteps {
     this.suiteHelper.runThatSuite();
   }
 
+  @When("^I run that suite$")
+  public void iRunThatSuite() throws Exception {
+    this.suiteHelper.runThatSuite();
+  }
+
   @When("^I run the specs in that class$")
   public void whenRunningSpecs() throws Exception {
     this.suiteHelper.runThatSuite();

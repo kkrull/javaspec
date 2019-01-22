@@ -16,3 +16,6 @@ Feature: Spec Syntax
     When I load the specs from that declaration
     Then there should be a suite with that description
     And that suite should contain a spec for each `it` statement within it
+
+    When I run that suite
+    Then those lambdas should be run

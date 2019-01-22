@@ -1,5 +1,6 @@
 package info.javaspec.console;
 
+import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -44,6 +45,7 @@ public class SpecSyntaxSteps {
     specHelper.setDeclaringClass(DescribeTwo.class);
     thatDescription = "Illudium Q-36 Explosive Space Modulator";
     thoseIntendedBehaviors = new ArrayList<>(Arrays.asList("discombobulates", "explodes"));
+    specLambdasRan = () -> assertThat(DescribeTwo.descriptionsRan, equalTo(thoseIntendedBehaviors));
   }
 
   @When("^I load the specs from that declaration$")
@@ -58,6 +60,11 @@ public class SpecSyntaxSteps {
 
   @Then("^that lambda should be run$")
   public void thatLambdaShouldBeRun() throws Exception {
+    specLambdasRan.verify();
+  }
+
+  @Then("^those lambdas should be run$")
+  public void thoseLambdasShouldBeRun() throws Exception {
     specLambdasRan.verify();
   }
 
