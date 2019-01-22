@@ -6,13 +6,13 @@ import cucumber.api.java.en.When;
 import info.javaspec.Suite;
 import info.javaspec.console.helpers.SpecHelper;
 import info.javaspec.console.helpers.SuiteHelper;
+import info.javaspec.example.DescribeTwo;
+import info.javaspec.example.OneSpies;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static info.javaspec.lang.lambda.FunctionalDsl.describe;
-import static info.javaspec.lang.lambda.FunctionalDsl.it;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
@@ -36,7 +36,7 @@ public class SpecSyntaxSteps {
   public void iHaveASpecDeclarationCallingIt() throws Exception {
     specHelper.setDeclaringClass(OneSpies.class);
     thatIntendedBehavior = "does a thing";
-    specLambdasRan = () -> OneSpies.assertRanNumTimes(1);
+    specLambdasRan = () -> assertThat(OneSpies.numTimesRan, equalTo(1));
   }
 
   @Given("^I have a spec declaration that calls `describe` with a class and a lambda containing 1 or more `it` statements$")
@@ -70,25 +70,6 @@ public class SpecSyntaxSteps {
   @Then("^that suite should contain a spec for each `it` statement within it$")
   public void thatSuiteShouldHaveSpecs() throws Exception {
     assertThat(suiteHelper.getSelectedSuite().intendedBehaviors(), equalTo(thoseIntendedBehaviors));
-  }
-
-  public static final class DescribeTwo {{
-    describe("Illudium Q-36 Explosive Space Modulator", () -> {
-      it("discombobulates", () -> {});
-      it("explodes", () -> {});
-    });
-  }}
-
-  public static final class OneSpies {
-    private static int numTimesRan = 0;
-
-    public static void assertRanNumTimes(int expected) {
-      assertThat(numTimesRan, equalTo(expected));
-    }
-
-    public OneSpies() {
-      it("does a thing", () -> numTimesRan++);
-    }
   }
 
   @FunctionalInterface
