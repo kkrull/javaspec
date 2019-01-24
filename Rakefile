@@ -7,7 +7,10 @@ features_dir = File.join File.dirname(__FILE__), 'features'
 desc 'Compile and run all tests'
 task default: %w[java:test cucumber]
 
-Cucumber::Rake::Task.new
+Cucumber::Rake::Task.new do |task|
+  task.cucumber_opts = %w[-t ~@wip]
+end
+
 namespace :cucumber do
   desc 'Run Yard server that auto-generates documentation for all gems'
   task 'doc-server' do

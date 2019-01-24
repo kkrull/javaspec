@@ -16,6 +16,7 @@ Feature: Command Line
     And The runner should indicate which specs passed and failed
 
 
+  @wip
   Scenario: The CLI should describe what is being tested
     Given I have a JavaSpec runner for the console
     And I have a Java class that defines a suite of lambda specs describing a subject
