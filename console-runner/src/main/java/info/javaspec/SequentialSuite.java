@@ -13,7 +13,7 @@ public final class SequentialSuite implements Suite {
   private final List<Suite> children;
 
   public SequentialSuite() {
-    this.description = "<root suite>";
+    this.description = "<root suite>"; //TODO KDK: Distinguish RootSuite without a description or specs from a regular ClassSuite that describes a class.
     this.specs = new LinkedList<>();
     this.children = new LinkedList<>();
   }

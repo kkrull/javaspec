@@ -7,6 +7,7 @@ end
 Given(/^I have a Java class that defines a suite of lambda specs$/) do
   spec_runner_helper.spec_class = 'info.javaspec.example.OneOfEachResult'
 
+  # TODO KDK: Consider moving this to spec_helper
   @assert_specs_ran = lambda do
     expect(spec_runner_helper.runner_output).to match(/^passes/)
     expect(spec_runner_helper.runner_output).to match(/^fails/)

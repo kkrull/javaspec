@@ -7,6 +7,7 @@ features_dir = File.join File.dirname(__FILE__), 'features'
 desc 'Compile and run all tests'
 task default: %w[java:test cucumber]
 
+# TODO KDK: Use non-deprecated syntax
 Cucumber::Rake::Task.new do |task|
   task.cucumber_opts = %w[-t ~@wip]
 end

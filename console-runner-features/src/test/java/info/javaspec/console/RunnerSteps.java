@@ -90,7 +90,7 @@ public class RunnerSteps {
   public void theRunnerShouldRunSpecs() throws Exception {
     this.mockReporter.runStartingShouldHaveBeenCalled();
 
-    this.mockReporter.specShouldHaveBeenStarted(this.passingSpec);
+    this.mockReporter.specShouldHaveBeenStarted(this.passingSpec); //TODO KDK: Consider moving this syntax up to where the spec class is selected
     this.passingSpec.runShouldHaveBeenCalled();
     this.mockReporter.specShouldHaveBeenStarted(this.failingSpec);
     this.failingSpec.runShouldHaveBeenCalled();
