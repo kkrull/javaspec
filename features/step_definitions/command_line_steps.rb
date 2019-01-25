@@ -7,29 +7,28 @@ end
 Given(/^I have a Java class that defines a suite of lambda specs$/) do
   spec_runner_helper.spec_class = 'info.javaspec.example.OneOfEachResult'
 
-  # TODO KDK: Consider moving this to spec_helper
-  @assert_specs_ran = lambda do
-    expect(spec_runner_helper.runner_output).to match(/^passes/)
-    expect(spec_runner_helper.runner_output).to match(/^fails/)
+  spec_runner_helper.spec_run_verification do |output|
+    expect(output).to match(/^passes/)
+    expect(output).to match(/^fails/)
   end
 
-  @assert_spec_results = lambda do
-    expect(spec_runner_helper.runner_output).to match(/^passes: PASS$/)
-    expect(spec_runner_helper.runner_output).to match(/^fails: FAIL$/)
+  spec_runner_helper.spec_result_verification do |output|
+    expect(output).to match(/^passes: PASS$/)
+    expect(output).to match(/^fails: FAIL$/)
   end
 end
 
 Given(/^I have a Java class that defines a suite of lambda specs describing a subject$/) do
   spec_runner_helper.spec_class = 'info.javaspec.example.DescribeTwo'
 
-  @assert_specs_ran = lambda do
-    expect(spec_runner_helper.runner_output).to match(/^discombobulates/)
-    expect(spec_runner_helper.runner_output).to match(/^explodes/)
+  spec_runner_helper.spec_run_verification do |output|
+    expect(output).to match(/^discombobulates/)
+    expect(output).to match(/^explodes/)
   end
 
-  @assert_spec_results = lambda do
-    expect(spec_runner_helper.runner_output).to match(/^discombobulates: PASS$/)
-    expect(spec_runner_helper.runner_output).to match(/^explodes: PASS$/)
+  spec_runner_helper.spec_result_verification do |output|
+    expect(output).to match(/^discombobulates: PASS$/)
+    expect(output).to match(/^explodes: PASS$/)
   end
 end
 
@@ -42,7 +41,7 @@ Given(/^I have a Java class that defines a suite of 1 or more failing lambda spe
 end
 
 When(/^I run the specs in that class$/) do
-  spec_runner_helper.class_files_should_exist
+  spec_runner_helper.verify_class_files_exist
   spec_runner_helper.run! logger
 end
 
@@ -51,7 +50,7 @@ Then(/^The runner should describe what is being tested$/) do
 end
 
 Then(/^The runner should run the specs defined in that class$/) do
-  @assert_specs_ran.call
+  spec_runner_helper.verify_specs_ran
 end
 
 Then(/^The runner should indicate whether each spec passed or failed$/) do
@@ -64,7 +63,7 @@ Then(/^The runner should indicate whether all specs passed, or any failed$/) do
 end
 
 Then(/^The runner should indicate which specs passed and failed$/) do
-  @assert_spec_results.call
+  spec_runner_helper.verify_spec_results
 end
 
 Then(/^The runner should indicate that all specs passed$/) do

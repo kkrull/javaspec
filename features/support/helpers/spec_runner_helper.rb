@@ -15,9 +15,8 @@ class SpecRunnerContext
     setup_aruba
   end
 
-  def class_files_should_exist
-    expect(runner_class_file).to be_an_existing_file
-    expect(spec_class_file).to be_an_existing_file
+  def exit_status
+    last_command_stopped.exit_status
   end
 
   def run!(logger)
@@ -26,12 +25,29 @@ class SpecRunnerContext
     run_simple command, :fail_on_error => false
   end
 
-  def exit_status
-    last_command_stopped.exit_status
-  end
-
   def runner_output
     last_command_stopped.stdout
+  end
+
+  def spec_result_verification(&block)
+    @result_assertion = block
+  end
+
+  def spec_run_verification(&block)
+    @run_assertion = block
+  end
+
+  def verify_class_files_exist
+    expect(runner_class_file).to be_an_existing_file
+    expect(spec_class_file).to be_an_existing_file
+  end
+
+  def verify_specs_ran
+    @run_assertion.call runner_output
+  end
+
+  def verify_spec_results
+    @result_assertion.call runner_output
   end
 
   private
