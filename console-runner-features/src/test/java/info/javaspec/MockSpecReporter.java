@@ -16,6 +16,7 @@ public final class MockSpecReporter implements SpecReporter {
   private final Map<Spec, String> specStartingReceived;
   private final List<Spec> specFailedReceived;
   private final List<Spec> specPassedReceived;
+  private final List<Suite> suiteStartingReceived;
 
   public MockSpecReporter() {
     this.runStartingCalled = 0;
@@ -23,6 +24,7 @@ public final class MockSpecReporter implements SpecReporter {
     this.specStartingReceived = new LinkedHashMap<>();
     this.specFailedReceived = new LinkedList<>();
     this.specPassedReceived = new LinkedList<>();
+    this.suiteStartingReceived = new LinkedList<>();
   }
 
   @Override
@@ -74,5 +76,14 @@ public final class MockSpecReporter implements SpecReporter {
   public void specShouldHaveBeenStarted(Spec spec, String intendedBehavior) {
     assertThat(this.specStartingReceived, Matchers.hasKey(spec));
     assertThat(this.specStartingReceived.get(spec), Matchers.equalTo(intendedBehavior));
+  }
+
+  @Override
+  public void suiteStarting(Suite suite) {
+    this.suiteStartingReceived.add(suite);
+  }
+
+  public void suiteStartingShouldHaveBeenCalled(Suite expectedSuite) {
+    assertThat(this.suiteStartingReceived, Matchers.contains(Matchers.sameInstance(expectedSuite)));
   }
 }

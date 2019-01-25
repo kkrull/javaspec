@@ -51,6 +51,13 @@ public final class SequentialSuite implements Suite {
 
   @Override
   public void runSpecs(SpecReporter reporter) {
+    reporter.suiteStarting(this);
     this.specs.forEach(x -> x.run(reporter));
+    this.children.forEach(x -> x.runSpecs(reporter));
+  }
+
+  @Override
+  public String toString() {
+    return String.format("SequentialSuite{description='%s'}", description);
   }
 }

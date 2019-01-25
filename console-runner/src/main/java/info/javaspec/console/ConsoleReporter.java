@@ -2,6 +2,7 @@ package info.javaspec.console;
 
 import info.javaspec.Spec;
 import info.javaspec.SpecReporter;
+import info.javaspec.Suite;
 
 import java.io.PrintStream;
 
@@ -39,6 +40,11 @@ class ConsoleReporter implements SpecReporter {
   public void specPassed(Spec spec) {
     this.numPassed++;
     this.output.println(": PASS");
+  }
+
+  @Override
+  public void suiteStarting(Suite suite) {
+    this.output.println(suite.description());
   }
 
   @Override

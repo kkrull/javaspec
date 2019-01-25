@@ -11,5 +11,7 @@ public interface SpecReporter {
 
   void specPassed(Spec spec);
 
+  void suiteStarting(Suite suite);
+
   void runFinished();
 }

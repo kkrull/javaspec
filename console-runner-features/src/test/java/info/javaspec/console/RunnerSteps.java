@@ -98,6 +98,11 @@ public class RunnerSteps {
     this.mockReporter.runFinishedShouldHaveBeenCalled();
   }
 
+  @Then("^The runner should run each suite of specs that are defined in that class$")
+  public void theRunnerShouldRunSuites() throws Exception {
+    this.mockReporter.suiteStartingShouldHaveBeenCalled(this.suiteHelper.getSelectedSuite());
+  }
+
   @Then("^The runner should indicate which specs passed and failed$")
   public void theRunnerShouldIndicateWhichSpecsPassedAndFailed() throws Exception {
     this.mockReporter.specShouldHavePassed(this.passingSpec);
