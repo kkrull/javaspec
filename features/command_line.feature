@@ -16,6 +16,14 @@ Feature: Command Line
     And The runner should indicate which specs passed and failed
 
 
+  Scenario: The CLI should describe what is being tested
+    Given I have a JavaSpec runner for the console
+    And I have a Java class that defines a suite of lambda specs describing a subject
+    When I run the specs in that class
+    Then The runner should run the specs defined in that class
+    And The runner should describe what is being tested
+
+
   Scenario: The CLI should report all passing specs with its exit code
     Given I have a JavaSpec runner for the console
     And I have a Java class that defines a suite of passing lambda specs

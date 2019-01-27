@@ -23,6 +23,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>info.cukes</groupId>
+      <artifactId>cucumber-picocontainer</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>info.javaspec</groupId>
       <artifactId>console-runner</artifactId>
       <scope>test</scope>

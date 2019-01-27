@@ -12,6 +12,7 @@ Feature: Console Runner
     And I have a Java class that defines a suite of lambda specs
     When I run the specs in that class
     Then The runner should run the specs defined in that class
+    And The runner should run each suite of specs that are defined in that class
     And The runner should indicate which specs passed and failed
 
 

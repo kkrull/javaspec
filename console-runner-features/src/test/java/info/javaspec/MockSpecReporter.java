@@ -1,28 +1,27 @@
 package info.javaspec;
 
-import org.hamcrest.Matchers;
-
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 public final class MockSpecReporter implements SpecReporter {
   private int runStartingCalled;
   private int runFinishedCalled;
 
-  private final Map<Spec, String> specStartingReceived;
+  private final List<Spec> specStartingReceived;
   private final List<Spec> specFailedReceived;
   private final List<Spec> specPassedReceived;
+  private final List<Suite> suiteStartingReceived;
 
   public MockSpecReporter() {
     this.runStartingCalled = 0;
     this.runFinishedCalled = 0;
-    this.specStartingReceived = new LinkedHashMap<>();
+    this.specStartingReceived = new LinkedList<>();
     this.specFailedReceived = new LinkedList<>();
     this.specPassedReceived = new LinkedList<>();
+    this.suiteStartingReceived = new LinkedList<>();
   }
 
   @Override
@@ -36,7 +35,7 @@ public final class MockSpecReporter implements SpecReporter {
   }
 
   public void runFinishedShouldHaveBeenCalled() {
-    assertThat(this.runFinishedCalled, Matchers.equalTo(1));
+    assertThat(this.runFinishedCalled, equalTo(1));
   }
 
   @Override
@@ -45,7 +44,7 @@ public final class MockSpecReporter implements SpecReporter {
   }
 
   public void runStartingShouldHaveBeenCalled() {
-    assertThat(this.runStartingCalled, Matchers.equalTo(1));
+    assertThat(this.runStartingCalled, equalTo(1));
   }
 
   @Override
@@ -54,7 +53,7 @@ public final class MockSpecReporter implements SpecReporter {
   }
 
   public void specShouldHaveFailed(Spec spec) {
-    assertThat(this.specFailedReceived, Matchers.hasItem(Matchers.sameInstance(spec)));
+    assertThat(this.specFailedReceived, hasItem(sameInstance(spec)));
   }
 
   @Override
@@ -63,16 +62,24 @@ public final class MockSpecReporter implements SpecReporter {
   }
 
   public void specShouldHavePassed(Spec spec) {
-    assertThat(this.specPassedReceived, Matchers.hasItem(Matchers.sameInstance(spec)));
+    assertThat(this.specPassedReceived, hasItem(sameInstance(spec)));
   }
 
   @Override
-  public void specStarting(Spec spec, String description) {
-    this.specStartingReceived.put(spec, description);
+  public void specStarting(Spec spec) {
+    this.specStartingReceived.add(spec);
   }
 
-  public void specShouldHaveBeenStarted(Spec spec, String description) {
-    assertThat(this.specStartingReceived, Matchers.hasKey(spec));
-    assertThat(this.specStartingReceived.get(spec), Matchers.equalTo(description));
+  public void specShouldHaveBeenStarted(Spec spec) {
+    assertThat(this.specStartingReceived, hasItem(sameInstance(spec)));
+  }
+
+  @Override
+  public void suiteStarting(Suite suite) {
+    this.suiteStartingReceived.add(suite);
+  }
+
+  public void suiteShouldHaveBeenStarted(Suite suite) {
+    assertThat(this.suiteStartingReceived, contains(sameInstance(suite)));
   }
 }
