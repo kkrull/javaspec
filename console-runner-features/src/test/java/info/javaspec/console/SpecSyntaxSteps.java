@@ -1,6 +1,5 @@
 package info.javaspec.console;
 
-import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -26,7 +25,7 @@ public class SpecSyntaxSteps {
   private String thatDescription;
   private String thatIntendedBehavior;
   private List<String> thoseIntendedBehaviors;
-  private RunAssertion specLambdasRan;
+  private Verification specLambdasRan;
 
   public SpecSyntaxSteps(SpecHelper specHelper, SuiteHelper suiteHelper) {
     this.specHelper = specHelper;
@@ -77,10 +76,5 @@ public class SpecSyntaxSteps {
   @Then("^that suite should contain a spec for each `it` statement within it$")
   public void thatSuiteShouldHaveSpecs() throws Exception {
     assertThat(suiteHelper.getSelectedSuite().intendedBehaviors(), equalTo(thoseIntendedBehaviors));
-  }
-
-  @FunctionalInterface
-  interface RunAssertion {
-    void verify();
   }
 }

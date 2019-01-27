@@ -15,11 +15,13 @@ public class RunnerSteps {
   private MockSpecReporter mockReporter;
   private MockExitHandler system;
 
-  private MockSpec passingSpec;
-  private MockSpec failingSpec;
+  private Verification declaredSpecsRan;
+  private Verification expectedResultsReported;
 
   public RunnerSteps(SuiteHelper suiteHelper) {
     this.suiteHelper = suiteHelper;
+    this.declaredSpecsRan = () -> { throw new UnsupportedOperationException("Verification not defined"); };
+    this.expectedResultsReported = () -> { throw new UnsupportedOperationException("Verification not defined"); };
   }
 
   @Given("^I have a JavaSpec runner for the console$")
@@ -31,43 +33,55 @@ public class RunnerSteps {
 
   @Given("^I have a Java class that defines a suite of lambda specs$")
   public void iHaveAJavaClassWithASuiteOfLambdaSpecs() throws Exception {
-    this.passingSpec = new MockSpec.Builder()
+    MockSpec passingSpec = new MockSpec.Builder()
       .withIntendedBehavior("passes")
       .thatPasses()
       .build();
 
-    this.failingSpec = new MockSpec.Builder()
+    MockSpec failingSpec = new MockSpec.Builder()
       .withIntendedBehavior("fails")
       .thatFailsWith(new AssertionError("bang!"))
       .build();
 
     SequentialSuite suite = new SequentialSuite();
-    suite.addSpec(this.passingSpec);
-    suite.addSpec(this.failingSpec);
+    suite.addSpec(passingSpec);
+    suite.addSpec(failingSpec);
     this.suiteHelper.setRootSuite(suite);
+
+    this.declaredSpecsRan = () -> {
+      this.mockReporter.specShouldHaveBeenStarted(passingSpec);
+      passingSpec.runShouldHaveBeenCalled();
+      this.mockReporter.specShouldHaveBeenStarted(failingSpec);
+      failingSpec.runShouldHaveBeenCalled();
+    };
+
+    this.expectedResultsReported = () -> {
+      this.mockReporter.specShouldHavePassed(passingSpec);
+      this.mockReporter.specShouldHaveFailed(failingSpec);
+    };
   }
 
   @Given("^I have a Java class that defines a suite of passing lambda specs$")
   public void iHaveAJavaClassThatDefinesASuiteOfPassingLambdaSpecs() throws Exception {
-    this.passingSpec = new MockSpec.Builder()
+    MockSpec passingSpec = new MockSpec.Builder()
       .withIntendedBehavior("passes")
       .thatPasses()
       .build();
 
     SequentialSuite suite = new SequentialSuite();
-    suite.addSpec(this.passingSpec);
+    suite.addSpec(passingSpec);
     this.suiteHelper.setRootSuite(suite);
   }
 
   @Given("^I have a Java class that defines a suite of 1 or more failing lambda specs$")
   public void iHaveASuiteWithFailingSpecs() throws Exception {
-    this.failingSpec = new MockSpec.Builder()
+    MockSpec failingSpec = new MockSpec.Builder()
       .withIntendedBehavior("fails")
       .thatFailsWith(new AssertionError("bang!"))
       .build();
 
     SequentialSuite suite = new SequentialSuite();
-    suite.addSpec(this.failingSpec);
+    suite.addSpec(failingSpec);
     this.suiteHelper.setRootSuite(suite);
   }
 
@@ -89,12 +103,7 @@ public class RunnerSteps {
   @Then("^The runner should run the specs defined in that class$")
   public void theRunnerShouldRunSpecs() throws Exception {
     this.mockReporter.runStartingShouldHaveBeenCalled();
-
-    this.mockReporter.specShouldHaveBeenStarted(this.passingSpec); //TODO KDK: Consider moving this syntax up to where the spec class is selected
-    this.passingSpec.runShouldHaveBeenCalled();
-    this.mockReporter.specShouldHaveBeenStarted(this.failingSpec);
-    this.failingSpec.runShouldHaveBeenCalled();
-
+    this.declaredSpecsRan.verify();
     this.mockReporter.runFinishedShouldHaveBeenCalled();
   }
 
@@ -105,8 +114,7 @@ public class RunnerSteps {
 
   @Then("^The runner should indicate which specs passed and failed$")
   public void theRunnerShouldIndicateWhichSpecsPassedAndFailed() throws Exception {
-    this.mockReporter.specShouldHavePassed(this.passingSpec);
-    this.mockReporter.specShouldHaveFailed(this.failingSpec);
+    this.expectedResultsReported.verify();
   }
 
   @Then("^The runner should indicate that 1 or more specs have failed$")
