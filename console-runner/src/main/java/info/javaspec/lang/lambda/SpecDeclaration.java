@@ -4,6 +4,7 @@ import info.javaspec.Spec;
 import info.javaspec.SequentialSuite;
 import info.javaspec.Suite;
 
+import java.util.Optional;
 import java.util.Stack;
 
 /** Groups recently-declared specs into a suite of specs that can be run together */
@@ -19,7 +20,9 @@ final class SpecDeclaration {
     if(_instance != null)
       throw new IllegalStateException("Specs are already being declared");
 
-    _instance = new SpecDeclaration(initRootSuite());
+    _instance = new SpecDeclaration();
+    SequentialSuite rootSuite = new SequentialSuite();
+    _instance.currentSuite.push(rootSuite); //TODO KDK: Stop pushing a root suite onto the stack?  Need a way to tell when the root suite is the only one left.  Maybe look at the type of the suite, or have RootSuite#addSpec throw NoSubjectDefinedError instead of doing it in here.
   }
 
   public static Suite endDeclaration() {
@@ -31,8 +34,8 @@ final class SpecDeclaration {
     return suite;
   }
 
-  private SpecDeclaration(Stack<SequentialSuite> currentSuite) {
-    this.currentSuite = currentSuite;
+  public SpecDeclaration() {
+    this.currentSuite = new Stack<>();
   }
 
   public void declareSpecsFor(String subject, BehaviorDeclaration describeBehavior) {
@@ -45,16 +48,29 @@ final class SpecDeclaration {
 
   public void createSpec(String intendedBehavior, BehaviorVerification verification) {
     Spec spec = new DescriptiveSpec(intendedBehavior, verification);
-    currentSuite().addSpec(spec);
+    maybeCurrentSuite()
+      .orElseThrow(() -> NoSubjectDefinedException.forSpec(intendedBehavior))
+      .addSpec(spec);
   }
 
-  private static Stack<SequentialSuite> initRootSuite() {
-    Stack<SequentialSuite> currentSuite = new Stack<>();
-    currentSuite.push(new SequentialSuite());
-    return currentSuite;
+  private Optional<SequentialSuite> maybeCurrentSuite() {
+    return this.currentSuite.empty()
+      ? Optional.empty()
+      : Optional.of(this.currentSuite.peek());
   }
 
   private SequentialSuite currentSuite() {
     return this.currentSuite.peek();
+  }
+
+  static class NoSubjectDefinedException extends RuntimeException {
+    static NoSubjectDefinedException forSpec(String intendedBehavior) {
+      String message = String.format("No subject defined for spec: %s", intendedBehavior);
+      return new NoSubjectDefinedException(message);
+    }
+
+    private NoSubjectDefinedException(String message) {
+      super(message);
+    }
   }
 }
