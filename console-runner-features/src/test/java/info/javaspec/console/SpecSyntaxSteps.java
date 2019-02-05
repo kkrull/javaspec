@@ -35,6 +35,7 @@ public class SpecSyntaxSteps {
   @Given("^I have a spec declaration that calls `it` with a lambda and a description of intended behavior$")
   public void iHaveASpecDeclarationCallingIt() throws Exception {
     specHelper.setDeclaringClass(OneSpies.class);
+    thatDescription = "OneSpies";
     thatIntendedBehavior = "does a thing";
     specLambdasRan = () -> assertThat(OneSpies.numTimesRan, equalTo(1));
   }
@@ -54,7 +55,8 @@ public class SpecSyntaxSteps {
 
   @Then("^a spec should exist with the given description$")
   public void aSpecShouldExistWithThatDescription() throws Exception {
-    assertThat(suiteHelper.getSelectedSuite().intendedBehaviors(), containsInAnyOrder(thatIntendedBehavior));
+    Suite thatSuite = suiteHelper.findChildSuiteWithDescription(thatDescription);
+    assertThat(thatSuite.intendedBehaviors(), containsInAnyOrder(thatIntendedBehavior));
   }
 
   @Then("^that lambda should be run$")
