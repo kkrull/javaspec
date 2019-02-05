@@ -7,13 +7,13 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 /** Runs specs in the order they are added */
-public final class SequentialSuite implements Suite {
+public class SequentialSuite implements Suite {
   private final String description;
   private final List<Spec> specs;
   private final List<Suite> children;
 
   public SequentialSuite() {
-    this.description = "<root suite>"; //TODO KDK: Distinguish RootSuite without a description or specs from a regular ClassSuite that describes a class.
+    this.description = "<root suite>";
     this.specs = new LinkedList<>();
     this.children = new LinkedList<>();
   }
