@@ -12,13 +12,11 @@ final class SpecDeclaration {
   private static SpecDeclaration _instance;
   private final Stack<SequentialSuite> declarationSuites;
 
-  public static SpecDeclaration getInstance() {
-    return _instance;
-  }
+  /* Singleton */
 
   public static void beginDeclaration() {
     if(_instance != null)
-      throw new IllegalStateException("Specs are already being declared");
+      throw new DeclarationAlreadyStartedException();
 
     _instance = new SpecDeclaration();
   }
@@ -31,6 +29,17 @@ final class SpecDeclaration {
     _instance = null;
     return suite;
   }
+
+  public static SpecDeclaration getInstance() {
+    return Optional.ofNullable(_instance)
+      .orElseThrow(DeclarationNotStartedException::new);
+  }
+
+  static void reset() {
+    _instance = null;
+  }
+
+  /* Instance */
 
   public SpecDeclaration() {
     this.declarationSuites = new Stack<>();
@@ -61,6 +70,18 @@ final class SpecDeclaration {
     return this.declarationSuites.empty()
       ? Optional.empty()
       : Optional.of(this.declarationSuites.peek());
+  }
+
+  static class DeclarationNotStartedException extends RuntimeException {
+    DeclarationNotStartedException() {
+      super("No declaration has been started.  Has SpecDeclaration::beginDeclaration been called?");
+    }
+  }
+
+  static class DeclarationAlreadyStartedException extends RuntimeException {
+    DeclarationAlreadyStartedException() {
+      super("Declaration has already been started.  Please call SpecDeclaration::endDeclaration on the prior declaration, if a brand new root suite is desired.");
+    }
   }
 
   static class NoSubjectDefinedException extends RuntimeException {
