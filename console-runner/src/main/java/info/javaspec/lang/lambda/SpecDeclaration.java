@@ -72,19 +72,19 @@ final class SpecDeclaration {
       : Optional.of(this.declarationSuites.peek());
   }
 
-  static class DeclarationNotStartedException extends RuntimeException {
+  static class DeclarationNotStartedException extends IllegalStateException {
     DeclarationNotStartedException() {
       super("No declaration has been started.  Has SpecDeclaration::beginDeclaration been called?");
     }
   }
 
-  static class DeclarationAlreadyStartedException extends RuntimeException {
+  static class DeclarationAlreadyStartedException extends IllegalStateException {
     DeclarationAlreadyStartedException() {
       super("Declaration has already been started.  Please call SpecDeclaration::endDeclaration on the prior declaration, if a brand new root suite is desired.");
     }
   }
 
-  static class NoSubjectDefinedException extends RuntimeException {
+  static class NoSubjectDefinedException extends IllegalStateException {
     static NoSubjectDefinedException forSpec(String intendedBehavior) {
       String message = String.format("No subject defined for spec: %s", intendedBehavior);
       return new NoSubjectDefinedException(message);
