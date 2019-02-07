@@ -7,6 +7,8 @@ import info.javaspec.Suite;
 import java.util.Optional;
 import java.util.Stack;
 
+import static info.javaspec.lang.lambda.Exceptions.*;
+
 /** Groups recently-declared specs into a suite of specs that can be run together */
 final class SpecDeclaration {
   private static SpecDeclaration _instance;
@@ -16,7 +18,7 @@ final class SpecDeclaration {
 
   public static void beginDeclaration() {
     if(_instance != null)
-      throw new DeclarationAlreadyStartedException();
+      throw new DeclarationAlreadyStarted();
 
     _instance = new SpecDeclaration();
   }
@@ -32,7 +34,7 @@ final class SpecDeclaration {
 
   public static SpecDeclaration getInstance() {
     return Optional.ofNullable(_instance)
-      .orElseThrow(DeclarationNotStartedException::new);
+      .orElseThrow(DeclarationNotStarted::new);
   }
 
   static void reset() {
@@ -57,7 +59,7 @@ final class SpecDeclaration {
   public void createSpec(String intendedBehavior, BehaviorVerification verification) {
     Spec spec = new DescriptiveSpec(intendedBehavior, verification);
     currentSubjectSuite()
-      .orElseThrow(() -> NoSubjectDefinedException.forSpec(intendedBehavior))
+      .orElseThrow(() -> NoSubjectDefined.forSpec(intendedBehavior))
       .addSpec(spec);
   }
 
@@ -70,28 +72,5 @@ final class SpecDeclaration {
     return this.declarationSuites.empty()
       ? Optional.empty()
       : Optional.of(this.declarationSuites.peek());
-  }
-
-  static class DeclarationNotStartedException extends IllegalStateException {
-    DeclarationNotStartedException() {
-      super("No declaration has been started.  Has SpecDeclaration::beginDeclaration been called?");
-    }
-  }
-
-  static class DeclarationAlreadyStartedException extends IllegalStateException {
-    DeclarationAlreadyStartedException() {
-      super("Declaration has already been started.  Please call SpecDeclaration::endDeclaration on the prior declaration, if a brand new root suite is desired.");
-    }
-  }
-
-  static class NoSubjectDefinedException extends IllegalStateException {
-    static NoSubjectDefinedException forSpec(String intendedBehavior) {
-      String message = String.format("No subject defined for spec: %s", intendedBehavior);
-      return new NoSubjectDefinedException(message);
-    }
-
-    private NoSubjectDefinedException(String message) {
-      super(message);
-    }
   }
 }

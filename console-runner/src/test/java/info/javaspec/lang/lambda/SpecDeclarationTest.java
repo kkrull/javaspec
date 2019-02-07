@@ -1,8 +1,9 @@
 package info.javaspec.lang.lambda;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.lang.lambda.SpecDeclaration.DeclarationNotStartedException;
-import info.javaspec.lang.lambda.SpecDeclaration.NoSubjectDefinedException;
+import info.javaspec.lang.lambda.Exceptions.DeclarationAlreadyStarted;
+import info.javaspec.lang.lambda.Exceptions.DeclarationNotStarted;
+import info.javaspec.lang.lambda.Exceptions.NoSubjectDefined;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,14 +21,14 @@ public class SpecDeclarationTest {
   }
 
   public class whenDeclarationHasNotBegun { //TODO KDK: Add more tests for other, invalid state transitions
-    @Test(expected = DeclarationNotStartedException.class)
+    @Test(expected = DeclarationNotStarted.class)
     public void getInstance_throwsWhenDeclarationHasNotBegun() throws Exception {
       SpecDeclaration.getInstance();
     }
   }
 
   public class whenDeclarationHasBegun {
-    @Test(expected = SpecDeclaration.DeclarationAlreadyStartedException.class)
+    @Test(expected = DeclarationAlreadyStarted.class)
     public void beginDeclaration_throwsDeclarationAlreadyStarted() throws Exception {
       SpecDeclaration.beginDeclaration();
       SpecDeclaration.beginDeclaration();
@@ -44,7 +45,7 @@ public class SpecDeclarationTest {
     @Test
     public void throwsWhenNoSubjectHasBeenDefined() throws Exception {
       SpecDeclaration declaration = new SpecDeclaration();
-      Exception exception = capture(NoSubjectDefinedException.class,
+      Exception exception = capture(NoSubjectDefined.class,
         () -> declaration.createSpec("goes boom", () -> {}));
       assertThat(exception.getMessage(), equalTo("No subject defined for spec: goes boom"));
     }
