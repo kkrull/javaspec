@@ -4,18 +4,32 @@ import info.javaspec.SpecReporter;
 import info.javaspec.Suite;
 import info.javaspec.lang.lambda.InstanceSpecFinder;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public final class Runner {
   private final SpecReporter reporter;
 
-  public static void main(String... args) throws Exception {
-    Class<?> specClass = Class.forName(args[0]);
-    InstanceSpecFinder finder = new InstanceSpecFinder();
+  public static void main(String... args) {
+    List<Class<?>> specClasses = Stream.of(args)
+      .map(Runner::loadClass)
+      .collect(Collectors.toList());
 
+    InstanceSpecFinder finder = new InstanceSpecFinder();
     main(
-      finder.findSpecs(specClass),
+      finder.findSpecs(specClasses),
       new ConsoleReporter(System.out),
       System::exit
     );
+  }
+
+  private static Class<?> loadClass(String className) {
+    try {
+      return Class.forName(className);
+    } catch(ClassNotFoundException e) {
+      throw new RuntimeException("Failed to load class", e);
+    }
   }
 
   static void main(Suite suite, SpecReporter reporter, ExitHandler system) {

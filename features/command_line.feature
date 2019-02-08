@@ -1,4 +1,3 @@
-@log_commands
 Feature: Command Line
   As a developer who is working on some code that is covered by specs
   In order to know which specs are running, passing, and failing as well as how they are failing
@@ -39,8 +38,6 @@ Feature: Command Line
     Then The runner should indicate that 1 or more specs have failed
 
 
-  @wip
-  @focus
   Scenario: The CLI should run multiple Java classes
     Given I have a JavaSpec runner for the console
     And I have 1 or more Java classes that defines lambda specs
