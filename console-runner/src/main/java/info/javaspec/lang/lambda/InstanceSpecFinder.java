@@ -1,6 +1,7 @@
 package info.javaspec.lang.lambda;
 
 import info.javaspec.Suite;
+import info.javaspec.lang.lambda.Exceptions.SpecDeclarationFailed;
 
 /** Creates specs by instantiating a class that declares them during instance initialization */
 public final class InstanceSpecFinder {
@@ -13,17 +14,5 @@ public final class InstanceSpecFinder {
     }
 
     return SpecDeclaration.endDeclaration();
-  }
-
-  static final class SpecDeclarationFailed extends RuntimeException {
-    public static SpecDeclarationFailed whenInstantiating(Class<?> specClass, Exception cause) {
-      return new SpecDeclarationFailed(
-        String.format("Failed to instantiate class %s, to declare specs", specClass.getName()),
-        cause);
-    }
-
-    private SpecDeclarationFailed(String message, Exception cause) {
-      super(message, cause);
-    }
   }
 }
