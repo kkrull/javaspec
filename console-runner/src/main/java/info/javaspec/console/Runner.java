@@ -35,9 +35,9 @@ public final class Runner {
   static void main(Suite suite, SpecReporter reporter, ExitHandler system) {
     Runner runner = new Runner(reporter);
     runner.run(suite);
-
-    int exitCode = reporter.hasFailingSpecs() ? 1 : 0;
-    system.exit(exitCode);
+//
+//    int exitCode = reporter.hasFailingSpecs() ? 1 : 0;
+//    system.exit(exitCode);
   }
 
   private Runner(SpecReporter reporter) {
