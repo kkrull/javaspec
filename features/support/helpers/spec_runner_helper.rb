@@ -8,7 +8,7 @@ end
 
 class SpecRunnerContext
   include Aruba::Api
-  attr_accessor :runner_class, :spec_class
+  attr_accessor :runner_class, :spec_classes
 
   def initialize
     #https://relishapp.com/cucumber/aruba/v/0-11-0/docs/rspec/getting-started-with-rspec-and-aruba#simple-custom-integration
@@ -20,7 +20,7 @@ class SpecRunnerContext
   end
 
   def run!(logger)
-    command = "java -cp #{runner_class_dir}:#{spec_class_dir} #{runner_class} #{spec_class}"
+    command = "java -cp #{runner_class_dir}:#{spec_class_dir} #{runner_class} #{spec_classes.join(' ')}"
     logger.command_starting command
     run_simple command, :fail_on_error => false
   end
@@ -39,7 +39,9 @@ class SpecRunnerContext
 
   def verify_class_files_exist
     expect(runner_class_file).to be_an_existing_file
-    expect(spec_class_file).to be_an_existing_file
+    spec_classes.each do |class_name|
+      expect(spec_class_file(class_name)).to be_an_existing_file
+    end
   end
 
   def verify_specs_ran
@@ -64,8 +66,8 @@ class SpecRunnerContext
     File.expand_path '../../../../console-runner/target/classes', __FILE__
   end
 
-  def spec_class_file
-    path_to_class spec_class, spec_class_dir
+  def spec_class_file(class_file)
+    path_to_class class_file, spec_class_dir
   end
 
   def path_to_class(class_name, class_path)
