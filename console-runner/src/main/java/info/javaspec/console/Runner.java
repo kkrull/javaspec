@@ -8,10 +8,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+//CommandLine#parseArgs(String... args) -> Runner [load stuff]
+//Runner#run -> exitCode [run stuff]
+//ExitHandler#exit(exitCode) [exit]
 public final class Runner {
-  private final SpecReporter reporter;
-
-  public static void main(String... args) {
+  public static void main(String... args) { //TODO KDK: Test
     List<Class<?>> specClasses = Stream.of(args)
       .map(Runner::loadClass)
       .collect(Collectors.toList());
@@ -24,7 +25,7 @@ public final class Runner {
     );
   }
 
-  private static Class<?> loadClass(String className) {
+  private static Class<?> loadClass(String className) { //TODO KDK: Test
     try {
       return Class.forName(className);
     } catch(ClassNotFoundException e) {
@@ -33,21 +34,16 @@ public final class Runner {
   }
 
   static void main(Suite suite, SpecReporter reporter, ExitHandler system) {
-    Runner runner = new Runner(reporter);
-    runner.run(suite);
-//
-//    int exitCode = reporter.hasFailingSpecs() ? 1 : 0;
-//    system.exit(exitCode);
+    Runner.run(suite, reporter);
+
+    int exitCode = reporter.hasFailingSpecs() ? 1 : 0;
+    system.exit(exitCode);
   }
 
-  private Runner(SpecReporter reporter) {
-    this.reporter = reporter;
-  }
-
-  private void run(Suite suite) {
-    this.reporter.runStarting();
-    suite.runSpecs(this.reporter);
-    this.reporter.runFinished();
+  private static void run(Suite suite, SpecReporter reporter) {
+    reporter.runStarting();
+    suite.runSpecs(reporter);
+    reporter.runFinished();
   }
 
   @FunctionalInterface

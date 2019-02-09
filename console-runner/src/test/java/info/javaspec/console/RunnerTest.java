@@ -1,36 +1,53 @@
 package info.javaspec.console;
 
-import info.javaspec.Spec;
+import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.SpecReporter;
 import info.javaspec.Suite;
 import org.junit.Test;
-import org.mockito.Mock;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
+@RunWith(HierarchicalContextRunner.class)
 public class RunnerTest {
+  public class main {
+    private final Suite suite = Mockito.mock(Suite.class);
+    private final SpecReporter reporter = Mockito.mock(SpecReporter.class);
+    private final Runner.ExitHandler system = Mockito.mock(Runner.ExitHandler.class);
 
-  @Test
-  public void runsTheSuiteWithTheGivenReporter() throws Exception {
-    Suite suite = Mockito.mock(Suite.class);
-    SpecReporter reporter = Mockito.mock(SpecReporter.class);
-    Runner.main(suite, reporter, null);
-    Mockito.verify(suite).runSpecs(reporter);
+    @Test
+    public void runsTheSuiteWithTheGivenReporter() throws Exception {
+      Runner.main(suite, reporter, system);
+      Mockito.verify(suite).runSpecs(reporter);
+    }
+
+    @Test
+    public void callsRunStartingOnReporter() throws Exception {
+      Runner.main(suite, reporter, system);
+      Mockito.verify(reporter).runStarting();
+    }
+
+    @Test
+    public void callsRunFinishedOnReporter() throws Exception {
+      Runner.main(suite, reporter, system);
+      Mockito.verify(reporter).runFinished();
+    }
+
+    public class whenAllSpecsPass {
+      @Test
+      public void exitsWithCode0ToIndicateSuccess() throws Exception {
+        Mockito.stub(reporter.hasFailingSpecs()).toReturn(false);
+        Runner.main(suite, reporter, system);
+        Mockito.verify(system).exit(0);
+      }
+    }
+
+    public class whenOneOrMoreSpecsFail {
+      @Test
+      public void exitsWithCode1ToIndicateFailure() throws Exception {
+        Mockito.stub(reporter.hasFailingSpecs()).toReturn(true);
+        Runner.main(suite, reporter, system);
+        Mockito.verify(system).exit(1);
+      }
+    }
   }
-
-  @Test
-  public void shouldCallRunStartingOnReporter() throws Exception {
-    Suite suite = Mockito.mock(Suite.class);
-    SpecReporter reporter = Mockito.mock(SpecReporter.class);
-    Runner.main(suite, reporter, null);
-    Mockito.verify(reporter).runStarting();
-  }
-
-  @Test
-  public void shouldCallRunFinishedOnReporter() throws Exception {
-    Suite suite = Mockito.mock(Suite.class);
-    SpecReporter reporter = Mockito.mock(SpecReporter.class);
-    Runner.main(suite, reporter, null);
-    Mockito.verify(reporter).runFinished();
-  }
-
 }
