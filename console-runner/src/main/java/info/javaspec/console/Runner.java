@@ -8,11 +8,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//CommandLine#parseArgs(String... args) -> Runner [load stuff]
-//Runner#run -> exitCode [run stuff]
-//ExitHandler#exit(exitCode) [exit]
-public final class Runner {
-  public static void main(String... args) { //TODO KDK: Test
+public final class Runner { //TODO KDK: Migrate to Main
+  public static void main(String... args) {
     List<Class<?>> specClasses = Stream.of(args)
       .map(Runner::loadClass)
       .collect(Collectors.toList());
@@ -25,7 +22,7 @@ public final class Runner {
     );
   }
 
-  private static Class<?> loadClass(String className) { //TODO KDK: Test
+  private static Class<?> loadClass(String className) {
     try {
       return Class.forName(className);
     } catch(ClassNotFoundException e) {

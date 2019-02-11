@@ -13,6 +13,7 @@ class SpecRunnerContext
   def initialize
     #https://relishapp.com/cucumber/aruba/v/0-11-0/docs/rspec/getting-started-with-rspec-and-aruba#simple-custom-integration
     setup_aruba
+    self.spec_classes = []
   end
 
   def exit_status

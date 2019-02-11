@@ -1,7 +1,7 @@
 ## Steps focused on ConsoleRunner's behavior _as an external process_
 
 Given(/^I have a JavaSpec runner for the console$/) do
-  spec_runner_helper.runner_class = 'info.javaspec.console.Runner'
+  spec_runner_helper.runner_class = 'info.javaspec.console.Main'
 end
 
 Given(/^I have a Java class that defines a suite of lambda specs$/) do
@@ -54,6 +54,11 @@ Given(/^I have 1 or more Java classes that defines lambda specs$/) do
   end
 end
 
+When(/^I run the runner without any arguments$/) do
+  spec_runner_helper.verify_class_files_exist
+  spec_runner_helper.run! logger
+end
+
 When(/^I run the specs in that class$/) do
   spec_runner_helper.verify_class_files_exist
   spec_runner_helper.run! logger
@@ -62,6 +67,10 @@ end
 When(/^I run the specs in those classes$/) do
   spec_runner_helper.verify_class_files_exist
   spec_runner_helper.run! logger
+end
+
+Then(/^the runner's exit status should be 0$/) do
+  expect(spec_runner_helper.exit_status).to eq(0)
 end
 
 Then(/^The runner should describe what is being tested$/) do
