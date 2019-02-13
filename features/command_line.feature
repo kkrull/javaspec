@@ -8,7 +8,7 @@ Feature: Command Line
   In order to have confidence that the whole system is wired up correctly
   I want to run JavaSpec as its own process and observe its behavior from a separate test process
 
-  
+
   Scenario: The CLI should offer to help when it's run without any arguments
     Given I have a JavaSpec runner for the console
     When I run the runner without any arguments

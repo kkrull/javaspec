@@ -1,22 +1,21 @@
 package info.javaspec.console;
 
 public class Main {
-  private final CommandParser parser;
   private final ExitHandler system;
 
   public static void main(String... args) {
     CommandParser parser = new ArgumentParser();
-    Main cli = new Main(parser, System::exit);
-    cli.parseAndRunCommand(args);
+    Command command = parser.parseCommand(args);
+
+    Main cli = new Main(System::exit);
+    cli.runCommand(command);
   }
 
-  Main(CommandParser parser, ExitHandler system) {
-    this.parser = parser;
+  Main(ExitHandler system) {
     this.system = system;
   }
 
-  void parseAndRunCommand(String... args) {
-    Command command = this.parser.parseCommand(args);
+  void runCommand(Command command) {
     int code = command.run();
     system.exit(code);
   }
