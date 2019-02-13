@@ -24,14 +24,4 @@ public class Main {
   interface CommandParser {
     Command parseCommand(String[] args);
   }
-
-  @FunctionalInterface
-  interface Command {
-    int run();
-  }
-
-  @FunctionalInterface
-  interface ExitHandler {
-    void exit(int statusCode);
-  }
 }

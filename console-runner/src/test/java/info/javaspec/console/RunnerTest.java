@@ -12,7 +12,7 @@ public class RunnerTest {
   public class main {
     private final Suite suite = Mockito.mock(Suite.class);
     private final SpecReporter reporter = Mockito.mock(SpecReporter.class);
-    private final Runner.ExitHandler system = Mockito.mock(Runner.ExitHandler.class);
+    private final ExitHandler system = Mockito.mock(ExitHandler.class);
 
     @Test
     public void runsTheSuiteWithTheGivenReporter() throws Exception {

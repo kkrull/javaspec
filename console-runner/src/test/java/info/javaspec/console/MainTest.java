@@ -1,8 +1,6 @@
 package info.javaspec.console;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.console.Main.Command;
-import info.javaspec.console.Main.ExitHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -42,9 +42,4 @@ public final class Runner { //TODO KDK: Migrate to Main
     suite.runSpecs(reporter);
     reporter.runFinished();
   }
-
-  @FunctionalInterface
-  interface ExitHandler {
-    void exit(int code);
-  }
 }

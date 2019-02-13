@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 import static org.junit.Assert.assertThat;
 
-final class MockExitHandler implements Runner.ExitHandler {
+final class MockExitHandler implements ExitHandler {
   private List<Integer> exitReceived;
 
   public MockExitHandler() {

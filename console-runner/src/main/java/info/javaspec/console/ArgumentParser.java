@@ -10,11 +10,11 @@ import java.util.stream.Stream;
 
 public class ArgumentParser implements Main.CommandParser {
   @Override
-  public Main.Command parseCommand(String[] args) {
+  public Command parseCommand(String[] args) {
     return new RunSpecsCommand(args);
   }
 
-  private static final class RunSpecsCommand implements Main.Command {
+  private static final class RunSpecsCommand implements Command {
     private final String[] args;
 
     public RunSpecsCommand(String... args) {
