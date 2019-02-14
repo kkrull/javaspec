@@ -28,7 +28,11 @@ public class RunnerSteps {
   public void iHaveAConsoleRunner() throws Exception {
     this.system = new MockExitHandler();
     this.mockReporter = new MockSpecReporter();
-    this.suiteHelper.setRunner(suite -> Runner.main(suite, this.mockReporter, this.system));
+    this.suiteHelper.setRunner(suite -> {
+      Main app = new Main(this.system); //TODO KDK: Inject reporter into the Command, or into Main#runCommand
+//      app.runCommand();
+      Runner.main(suite, this.mockReporter, this.system);
+    });
   }
 
   @Given("^I have a Java class that defines a suite of lambda specs$")
