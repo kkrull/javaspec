@@ -8,7 +8,7 @@ import info.javaspec.SequentialSuite;
 import info.javaspec.console.helpers.SuiteHelper;
 import info.javaspec.lang.lambda.MockSpec;
 
-/** Steps observing what happens in a Runner, from within the same process */
+/** Steps observing what happens in the overall process of running specs, from *within* the same process */
 public class RunnerSteps {
   private final SuiteHelper suiteHelper;
 
@@ -29,9 +29,15 @@ public class RunnerSteps {
     this.system = new MockExitHandler();
     this.mockReporter = new MockSpecReporter();
     this.suiteHelper.setRunner(suite -> {
-      Main app = new Main(this.system); //TODO KDK: Inject reporter into the Command, or into Main#runCommand
-//      app.runCommand();
-      Runner.main(suite, this.mockReporter, this.system);
+      //TODO KDK: Move the abstraction out a bit more -- there's a lot of reporting and decision making about exit codes that should be tested, or excluded from this test.
+      Command runCommand = () -> {
+        this.mockReporter.runStarting();
+        suite.runSpecs(this.mockReporter);
+        this.mockReporter.runFinished();
+        return this.mockReporter.hasFailingSpecs() ? 1: 0;
+      };
+      Main main = new Main(this.system);
+      main.runCommand(runCommand);
     });
   }
 

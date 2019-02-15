@@ -8,8 +8,10 @@ Feature: Spec Syntax
     Given I have a spec declaration that calls `it` with a lambda and a description of intended behavior
     When I load the specs from that declaration
     Then a spec should exist with the given description
+
     When I run that spec
     Then that lambda should be run
+
 
   Scenario: `describe` should group 1 or more specifications that describe the same Java class
     Given I have a spec declaration that calls `describe` with a class and a lambda containing 1 or more `it` statements
