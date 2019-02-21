@@ -10,20 +10,18 @@ import java.util.stream.Stream;
 
 final class RunSpecsCommand implements Command {
   private final InstanceSpecFinder finder;
-  private final SpecReporter reporter;
   private final String[] specClassNames;
 
-  public RunSpecsCommand(InstanceSpecFinder specFinder, SpecReporter reporter, String... specClassNames) {
+  public RunSpecsCommand(InstanceSpecFinder specFinder, String... specClassNames) {
     this.finder = specFinder;
     this.specClassNames = specClassNames;
-    this.reporter = reporter;
   }
 
   @Override
-  public int run() {
+  public int run(SpecReporter reporter) {
     Suite suite = loadSpecs();
-    runSpecs(suite);
-    return this.reporter.hasFailingSpecs() ? 1 : 0;
+    runSpecs(suite, reporter);
+    return reporter.hasFailingSpecs() ? 1 : 0;
   }
 
   private Suite loadSpecs() {
@@ -42,9 +40,9 @@ final class RunSpecsCommand implements Command {
     }
   }
 
-  private void runSpecs(Suite suite) {
-    this.reporter.runStarting();
-    suite.runSpecs(this.reporter);
-    this.reporter.runFinished();
+  private void runSpecs(Suite suite, SpecReporter reporter) {
+    reporter.runStarting();
+    suite.runSpecs(reporter);
+    reporter.runFinished();
   }
 }

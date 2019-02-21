@@ -5,16 +5,18 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import info.javaspec.MockSpecReporter;
 import info.javaspec.SequentialSuite;
+import info.javaspec.SpecReporter;
 import info.javaspec.console.helpers.SuiteHelper;
 import info.javaspec.lang.lambda.MockSpec;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 /** Steps observing what happens in the overall process of running specs, from *within* the same process */
 public class RunnerSteps {
   private final SuiteHelper suiteHelper;
 
   private MockSpecReporter mockReporter;
-  private MockExitHandler system;
-
   private Verification declaredSpecsRan;
   private Verification expectedResultsReported;
 
@@ -26,23 +28,24 @@ public class RunnerSteps {
 
   @Given("^I have a JavaSpec runner for the console$")
   public void iHaveAConsoleRunner() throws Exception {
-    this.system = new MockExitHandler();
     this.mockReporter = new MockSpecReporter();
     this.suiteHelper.setRunner(suite -> {
-      //TODO KDK: Move the abstraction out a bit more -- there's a lot of reporting and decision making about exit codes that should be tested, or excluded from this test.
-      Command runCommand = () -> {
+      Command runCommand = (SpecReporter reporter) -> {
         this.mockReporter.runStarting();
         suite.runSpecs(this.mockReporter);
         this.mockReporter.runFinished();
-        return this.mockReporter.hasFailingSpecs() ? 1: 0;
+        return 42;
       };
-      Main main = new Main(this.system);
+
+      Main main = new Main(this.mockReporter, new MockExitHandler());
       main.runCommand(runCommand);
     });
   }
 
   @Given("^I have a Java class that defines a suite of lambda specs$")
   public void iHaveAJavaClassWithASuiteOfLambdaSpecs() throws Exception {
+    //TODO KDK: Refactor to load real classes, instead of building mock instances.
+    //Then change the runner to call Main#main(SpecReporter, ExitHandler, String... args)
     MockSpec passingSpec = new MockSpec.Builder()
       .withIntendedBehavior("passes")
       .thatPasses()
@@ -128,12 +131,12 @@ public class RunnerSteps {
   }
 
   @Then("^The runner should indicate that 1 or more specs have failed$")
-  public void theRunnerShouldIndicateFailingStatus() throws Exception {
-    this.system.exitShouldHaveReceived(1);
+  public void theReporterShouldIndicateFailingStatus() throws Exception {
+    assertThat(this.mockReporter.hasFailingSpecs(), equalTo(true));
   }
 
   @Then("^The runner should indicate that all specs passed$")
-  public void theRunnerShouldIndicateThatAllSpecsPassed() throws Exception {
-    this.system.exitShouldHaveReceived(0);
+  public void theReporterShouldIndicateThatAllSpecsPassed() throws Exception {
+    assertThat(this.mockReporter.hasFailingSpecs(), equalTo(false));
   }
 }
