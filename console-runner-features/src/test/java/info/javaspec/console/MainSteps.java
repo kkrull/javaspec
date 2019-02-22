@@ -98,11 +98,6 @@ public class MainSteps {
     this.suiteHelper.setRootSuite(suite);
   }
 
-  @When("^I run that spec$")
-  public void iRunThatSpec() throws Exception {
-    this.suiteHelper.runThatSuite();
-  }
-
   @When("^I run the specs in that class$")
   public void whenRunningSpecs() throws Exception {
     this.suiteHelper.runThatSuite();
