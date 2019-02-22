@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 
 /** Steps about spec declaration forms */
-public class SpecSyntaxSteps {
+public class SpecDeclarationSteps {
   private final SpecHelper specHelper;
   private final SuiteHelper suiteHelper;
 
@@ -27,7 +27,7 @@ public class SpecSyntaxSteps {
   private List<String> thoseIntendedBehaviors;
   private Verification specLambdasRan;
 
-  public SpecSyntaxSteps(SpecHelper specHelper, SuiteHelper suiteHelper) {
+  public SpecDeclarationSteps(SpecHelper specHelper, SuiteHelper suiteHelper) {
     this.specHelper = specHelper;
     this.suiteHelper = suiteHelper;
   }
@@ -51,6 +51,16 @@ public class SpecSyntaxSteps {
   @When("^I load the specs from that declaration$")
   public void iLoadTheSpecsFromThatDeclaration() throws Exception {
     suiteHelper.loadSpecsFromClass();
+  }
+
+  @When("^I run that spec declaration$")
+  public void iRunThatSpec() throws Exception {
+    this.suiteHelper.runThatSuite();
+  }
+
+  @When("^I run that suite$")
+  public void iRunThatSuite() throws Exception {
+    this.suiteHelper.runThatSuite();
   }
 
   @Then("^a spec should exist with the given description$")

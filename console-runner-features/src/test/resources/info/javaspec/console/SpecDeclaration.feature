@@ -9,7 +9,7 @@ Feature: Spec Syntax
     When I load the specs from that declaration
     Then a spec should exist with the given description
 
-    When I run that spec
+    When I run that spec declaration
     Then that lambda should be run
 
 
