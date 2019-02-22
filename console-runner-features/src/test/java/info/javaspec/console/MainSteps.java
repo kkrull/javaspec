@@ -13,14 +13,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 /** Steps observing what happens in the overall process of running specs, from *within* the same process */
-public class RunnerSteps {
+public class MainSteps {
   private final SuiteHelper suiteHelper;
 
   private MockSpecReporter mockReporter;
   private Verification declaredSpecsRan;
   private Verification expectedResultsReported;
 
-  public RunnerSteps(SuiteHelper suiteHelper) {
+  public MainSteps(SuiteHelper suiteHelper) {
     this.suiteHelper = suiteHelper;
     this.declaredSpecsRan = () -> { throw new UnsupportedOperationException("Verification not defined"); };
     this.expectedResultsReported = () -> { throw new UnsupportedOperationException("Verification not defined"); };
