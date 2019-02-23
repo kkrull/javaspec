@@ -1,4 +1,4 @@
-Feature: JavaSpec (in-process)
+Feature: Main
   As a developer who is working on some code that is covered by specs
   In order to know which specs are running, passing, and failing as well as how they are failing
   I want to run specs on the command line and see a text report of specs and their results

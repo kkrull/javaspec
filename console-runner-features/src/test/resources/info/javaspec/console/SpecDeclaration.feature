@@ -1,4 +1,4 @@
-Feature: Spec Syntax
+Feature: Spec Declaration
   As a developer who is reading and writing specifications for 1 or more logical units of subject code
   In order to define and understand the intended behavior of the subject code
   I want to declare specifications that describe intended behavior, that provide necessary context for this
