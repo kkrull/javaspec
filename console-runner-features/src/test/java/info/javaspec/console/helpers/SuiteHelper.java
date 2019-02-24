@@ -4,12 +4,9 @@ import info.javaspec.MockSpecReporter;
 import info.javaspec.Suite;
 import info.javaspec.lang.lambda.InstanceSpecFinder;
 
-import java.util.Optional;
-
 public class SuiteHelper {
   private final SpecHelper specHelper;
 
-  private SuiteRunner runner;
   private Suite rootSuite;
   private Suite selectedSuite;
 
@@ -50,17 +47,8 @@ public class SuiteHelper {
     return this.rootSuite;
   }
 
-  public void setRootSuite(Suite suite) {
-    this.rootSuite = suite;
-  }
-
   private SuiteRunner runner() {
-    return Optional.ofNullable(this.runner)
-      .orElse(suite -> suite.runSpecs(new MockSpecReporter()));
-  }
-
-  public void setRunner(SuiteRunner runner) {
-    this.runner = runner;
+    return suite -> suite.runSpecs(new MockSpecReporter());
   }
 
   @FunctionalInterface
