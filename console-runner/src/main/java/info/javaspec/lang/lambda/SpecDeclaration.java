@@ -1,7 +1,7 @@
 package info.javaspec.lang.lambda;
 
-import info.javaspec.Spec;
 import info.javaspec.SequentialSuite;
+import info.javaspec.Spec;
 import info.javaspec.Suite;
 
 import java.util.Optional;
