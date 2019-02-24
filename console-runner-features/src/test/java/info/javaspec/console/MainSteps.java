@@ -4,30 +4,24 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import info.javaspec.MockSpecReporter;
-import info.javaspec.console.helpers.SuiteHelper;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 
 /** Steps observing what happens in the overall process of running specs, from *within* the same process */
 public class MainSteps {
-  private final SuiteHelper suiteHelper;
-
-  private RunsSpecsInClasses runMain;
+  private RunsMain runMain;
   private MockSpecReporter mockReporter;
   private MockExitHandler system;
+
   private Verification declaredSpecsRan;
   private Verification expectedResultsReported;
 
-  public MainSteps(SuiteHelper suiteHelper) {
-    this.suiteHelper = suiteHelper;
+  public MainSteps() {
     this.runMain = () -> { throw new UnsupportedOperationException("runMain not defined"); };
     this.declaredSpecsRan = () -> { throw new UnsupportedOperationException("Verification not defined"); };
     this.expectedResultsReported = () -> { throw new UnsupportedOperationException("Verification not defined"); };
   }
 
-  @Given("^I have a JavaSpec runner for the console$")
-  public void iHaveAConsoleRunner() throws Exception {
+  @Given("^I have a JavaSpec class runner$")
+  public void iHaveAClassRunner() throws Exception {
     this.mockReporter = new MockSpecReporter();
     this.system = new MockExitHandler();
   }
@@ -61,15 +55,9 @@ public class MainSteps {
     this.runMain.run();
   }
 
-  interface RunsSpecsInClasses {
-    void run();
-  }
-
   @Then("^The runner should run the specs defined in that class$")
   public void theRunnerShouldRunSpecs() throws Exception {
-    this.mockReporter.runStartingShouldHaveBeenCalled();
     this.declaredSpecsRan.verify();
-    this.mockReporter.runFinishedShouldHaveBeenCalled();
   }
 
   @Then("^The runner should indicate which specs passed and failed$")
@@ -85,5 +73,9 @@ public class MainSteps {
   @Then("^The runner should indicate that all specs passed$")
   public void theReporterShouldIndicateThatAllSpecsPassed() throws Exception {
     this.system.exitShouldHaveReceived(0);
+  }
+
+  interface RunsMain {
+    void run();
   }
 }

@@ -4,6 +4,7 @@ Feature: Spec Declaration
   I want to declare specifications that describe intended behavior, that provide necessary context for this
   behavior, and that distinguish one logical unit of code's behavior from that of all other units.
 
+
   Scenario: `it` should associate a behavior-verifying procedure with a description of the intended behavior
     Given I have a spec declaration that calls `it` with a lambda and a description of intended behavior
     When I load the specs from that declaration

@@ -8,24 +8,23 @@ Feature: Main
   I want to run some acceptance tests from the same JVM process as JavaSpec
 
 
-#  @wip
   Scenario: JavaSpec should run specs and tell you what happened
-    Given I have a JavaSpec runner for the console
+    Given I have a JavaSpec class runner
     And I have a Java class that defines a suite of lambda specs
     When I run the specs in that class
     Then The runner should run the specs defined in that class
     And The runner should indicate which specs passed and failed
 
-#  @wip
+
   Scenario: JavaSpec should report failing specs with its exit code
-    Given I have a JavaSpec runner for the console
+    Given I have a JavaSpec class runner
     And I have a Java class that defines a suite of 1 or more failing lambda specs
     When I run the specs in that class
     Then The runner should indicate that 1 or more specs have failed
 
-#  @wip
+
   Scenario: JavaSpec should report all passing specs with its exit code
-    Given I have a JavaSpec runner for the console
+    Given I have a JavaSpec class runner
     And I have a Java class that defines a suite of passing lambda specs
     When I run the specs in that class
     Then The runner should indicate that all specs passed

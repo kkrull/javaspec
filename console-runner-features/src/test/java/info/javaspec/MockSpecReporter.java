@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 public final class MockSpecReporter implements SpecReporter {
   private int runStartingCalled;

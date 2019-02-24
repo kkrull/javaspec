@@ -17,7 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 
-/** Steps about spec declaration forms */
+/** Steps about spec declaration syntax forms */
 public class SpecDeclarationSteps {
   private final SpecHelper specHelper;
   private final SuiteHelper suiteHelper;
