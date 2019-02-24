@@ -8,10 +8,17 @@ public class Main {
   private final ExitHandler system;
 
   public static void main(String... args) {
+    main(
+      new ConsoleReporter(System.out),
+      System::exit,
+      args
+    );
+  }
+
+  static void main(SpecReporter reporter, ExitHandler system, String... args) {
+    Main cli = new Main(reporter, system);
     CommandParser parser = new ArgumentParser(new InstanceSpecFinder());
     Command command = parser.parseCommand(args);
-
-    Main cli = new Main(new ConsoleReporter(System.out), System::exit);
     cli.runCommand(command);
   }
 

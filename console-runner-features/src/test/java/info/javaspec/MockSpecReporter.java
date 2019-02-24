@@ -2,9 +2,11 @@ package info.javaspec;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public final class MockSpecReporter implements SpecReporter {
   private int runStartingCalled;
@@ -56,6 +58,13 @@ public final class MockSpecReporter implements SpecReporter {
     assertThat(this.specFailedReceived, hasItem(sameInstance(spec)));
   }
 
+  public void specShouldHaveFailed(String behavior) {
+    List<String> failingSpecBehaviors = this.specFailedReceived.stream()
+      .map(Spec::intendedBehavior)
+      .collect(Collectors.toList());
+    assertThat(failingSpecBehaviors, hasItem(equalTo(behavior)));
+  }
+
   @Override
   public void specPassed(Spec spec) {
     this.specPassedReceived.add(spec);
@@ -63,6 +72,13 @@ public final class MockSpecReporter implements SpecReporter {
 
   public void specShouldHavePassed(Spec spec) {
     assertThat(this.specPassedReceived, hasItem(sameInstance(spec)));
+  }
+
+  public void specShouldHavePassed(String behavior) {
+    List<String> passingSpecBehaviors = this.specPassedReceived.stream()
+      .map(Spec::intendedBehavior)
+      .collect(Collectors.toList());
+    assertThat(passingSpecBehaviors, hasItem(equalTo(behavior)));
   }
 
   @Override
