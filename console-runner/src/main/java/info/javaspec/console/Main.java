@@ -34,6 +34,6 @@ public class Main {
 
   @FunctionalInterface
   interface CommandParser {
-    Command parseCommand(String[] args);
+    Command parseCommand(String... args);
   }
 }

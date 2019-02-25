@@ -10,7 +10,7 @@ public class ArgumentParser implements Main.CommandParser {
   }
 
   @Override
-  public Command parseCommand(String[] args) {
+  public Command parseCommand(String... args) {
     return new RunSpecsCommand(this.specFinder, args);
   }
 }
