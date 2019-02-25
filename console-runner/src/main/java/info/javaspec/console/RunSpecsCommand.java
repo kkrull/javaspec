@@ -10,9 +10,9 @@ import java.util.stream.Stream;
 
 final class RunSpecsCommand implements Command {
   private final InstanceSpecFinder finder;
-  private final String[] specClassNames;
+  private final List<String> specClassNames;
 
-  public RunSpecsCommand(InstanceSpecFinder specFinder, String... specClassNames) {
+  public RunSpecsCommand(InstanceSpecFinder specFinder, List<String> specClassNames) {
     this.finder = specFinder;
     this.specClassNames = specClassNames;
   }
@@ -25,7 +25,7 @@ final class RunSpecsCommand implements Command {
   }
 
   private Suite loadSpecs() {
-    List<Class<?>> specClasses = Stream.of(this.specClassNames)
+    List<Class<?>> specClasses = this.specClassNames.stream()
       .map(RunSpecsCommand::loadClass)
       .collect(Collectors.toList());
 

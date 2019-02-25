@@ -9,6 +9,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.*;
 
@@ -30,10 +33,10 @@ public class ArgumentParserTest {
       Mockito.doReturn(fromFactory).when(newRunSpecsCommand)
         .make(
           notNull(InstanceSpecFinder.class),
-          org.mockito.Matchers.anyVararg()
+          org.mockito.Matchers.eq(Collections.singletonList("one"))
         );
 
-      Command returned = subject.parseCommand("one");
+      Command returned = subject.parseCommand(Collections.singletonList("one"));
       assertThat(returned, Matchers.sameInstance(fromFactory));
     }
   }

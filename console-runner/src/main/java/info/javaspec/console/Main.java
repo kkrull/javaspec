@@ -2,6 +2,9 @@ package info.javaspec.console;
 
 import info.javaspec.SpecReporter;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Main {
   private final SpecReporter reporter;
   private final ExitHandler system;
@@ -17,7 +20,7 @@ public class Main {
   static void main(SpecReporter reporter, ExitHandler system, String... args) {
     CommandParser parser = new ArgumentParser(RunSpecsCommand::new);
     Main cli = new Main(reporter, system);
-    cli.runCommand(parser.parseCommand(args));
+    cli.runCommand(parser.parseCommand(Arrays.asList(args)));
   }
 
   Main(SpecReporter reporter, ExitHandler system) {
@@ -32,6 +35,6 @@ public class Main {
 
   @FunctionalInterface
   interface CommandParser {
-    Command parseCommand(String... args);
+    Command parseCommand(List<String> args);
   }
 }

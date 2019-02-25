@@ -2,6 +2,8 @@ package info.javaspec.console;
 
 import info.javaspec.lang.lambda.InstanceSpecFinder;
 
+import java.util.List;
+
 class ArgumentParser implements Main.CommandParser {
   private final RunSpecsCommandFactory newRunSpecsCommand;
 
@@ -10,12 +12,12 @@ class ArgumentParser implements Main.CommandParser {
   }
 
   @Override
-  public Command parseCommand(String... args) {
+  public Command parseCommand(List<String> args) {
     return this.newRunSpecsCommand.make(new InstanceSpecFinder(), args);
   }
 
   @FunctionalInterface
   interface RunSpecsCommandFactory {
-    Command make(InstanceSpecFinder finder, String... classNames);
+    Command make(InstanceSpecFinder finder, List<String> classNames);
   }
 }
