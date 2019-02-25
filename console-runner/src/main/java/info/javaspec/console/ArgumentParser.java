@@ -13,7 +13,10 @@ class ArgumentParser implements Main.CommandParser {
 
   @Override
   public Command parseCommand(List<String> args) {
-    return this.newRunSpecsCommand.make(new InstanceSpecFinder(), args);
+    return this.newRunSpecsCommand.make(
+      new InstanceSpecFinder(),
+      args
+    );
   }
 
   @FunctionalInterface
