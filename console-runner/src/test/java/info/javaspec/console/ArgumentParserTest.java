@@ -1,22 +1,40 @@
 package info.javaspec.console;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
+import info.javaspec.console.ArgumentParser.RunSpecsCommandFactory;
+import info.javaspec.lang.lambda.InstanceSpecFinder;
+import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
+import static org.mockito.Matchers.*;
 
 @RunWith(HierarchicalContextRunner.class)
 public class ArgumentParserTest {
   private Main.CommandParser subject;
+  private RunSpecsCommandFactory newRunSpecsCommand;
 
   public class parseCommand {
+    @Before
+    public void setup() throws Exception {
+      newRunSpecsCommand = Mockito.mock(RunSpecsCommandFactory.class);
+      subject = new ArgumentParser(newRunSpecsCommand);
+    }
+
     @Test
     public void createsRunSpecsCommandWithAllArgsAsClassNames() throws Exception {
-      subject = new ArgumentParser(null);
-      Command command = subject.parseCommand("");
-      assertThat(command, instanceOf(RunSpecsCommand.class));
+      Command fromFactory = Mockito.mock(Command.class);
+      Mockito.doReturn(fromFactory).when(newRunSpecsCommand)
+        .make(
+          notNull(InstanceSpecFinder.class),
+          org.mockito.Matchers.anyVararg()
+        );
+
+      Command returned = subject.parseCommand("one");
+      assertThat(returned, Matchers.sameInstance(fromFactory));
     }
   }
 }

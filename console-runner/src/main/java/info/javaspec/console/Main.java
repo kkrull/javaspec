@@ -1,7 +1,6 @@
 package info.javaspec.console;
 
 import info.javaspec.SpecReporter;
-import info.javaspec.lang.lambda.InstanceSpecFinder;
 
 public class Main {
   private final SpecReporter reporter;
@@ -16,10 +15,9 @@ public class Main {
   }
 
   static void main(SpecReporter reporter, ExitHandler system, String... args) {
+    CommandParser parser = new ArgumentParser(RunSpecsCommand::new);
     Main cli = new Main(reporter, system);
-    CommandParser parser = new ArgumentParser(new InstanceSpecFinder());
-    Command command = parser.parseCommand(args);
-    cli.runCommand(command);
+    cli.runCommand(parser.parseCommand(args));
   }
 
   Main(SpecReporter reporter, ExitHandler system) {

@@ -2,15 +2,20 @@ package info.javaspec.console;
 
 import info.javaspec.lang.lambda.InstanceSpecFinder;
 
-public class ArgumentParser implements Main.CommandParser {
-  private final InstanceSpecFinder specFinder;
+class ArgumentParser implements Main.CommandParser {
+  private final RunSpecsCommandFactory newRunSpecsCommand;
 
-  public ArgumentParser(InstanceSpecFinder specFinder) {
-    this.specFinder = specFinder;
+  public ArgumentParser(RunSpecsCommandFactory newRunSpecsCommand) {
+    this.newRunSpecsCommand = newRunSpecsCommand;
   }
 
   @Override
   public Command parseCommand(String... args) {
-    return new RunSpecsCommand(this.specFinder, args);
+    return this.newRunSpecsCommand.make(new InstanceSpecFinder(), args);
+  }
+
+  @FunctionalInterface
+  interface RunSpecsCommandFactory {
+    Command make(InstanceSpecFinder finder, String... classNames);
   }
 }
