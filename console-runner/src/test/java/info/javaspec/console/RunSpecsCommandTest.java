@@ -91,10 +91,6 @@ public class RunSpecsCommandTest {
         int statusCode = subject.run(reporter);
         assertThat(statusCode, equalTo(2));
       }
-
-      @Test @Ignore
-      public void returnsAValueTypeThatCanDescribeTheErrorToTheUser() throws Exception {
-      }
     }
   }
 }
