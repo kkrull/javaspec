@@ -1,7 +1,7 @@
 package info.javaspec.console;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.console.ArgumentParser.RunSpecsCommandFactory;
+import info.javaspec.console.ArgumentParser.CommandFactory;
 import info.javaspec.lang.lambda.InstanceSpecFinder;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -17,26 +17,25 @@ import static org.mockito.Matchers.notNull;
 @RunWith(HierarchicalContextRunner.class)
 public class ArgumentParserTest {
   private Main.CommandParser subject;
-  private RunSpecsCommandFactory newRunSpecsCommand;
+  private CommandFactory commandFactory;
 
   public class parseCommand {
     @Before
     public void setup() throws Exception {
-      newRunSpecsCommand = Mockito.mock(RunSpecsCommandFactory.class);
-      subject = new ArgumentParser(newRunSpecsCommand);
+      commandFactory = Mockito.mock(CommandFactory.class);
+      subject = new ArgumentParser(commandFactory);
     }
 
     @Test
     public void createsRunSpecsCommandWithAllArgsAsClassNames() throws Exception {
-      Command fromFactory = Mockito.mock(Command.class);
-      Mockito.doReturn(fromFactory).when(newRunSpecsCommand)
-        .make(
-          notNull(InstanceSpecFinder.class),
-          org.mockito.Matchers.eq(Collections.singletonList("one"))
-        );
+      Command command = Mockito.mock(Command.class);
+      Mockito.when(commandFactory.runSpecsCommand(
+        notNull(InstanceSpecFinder.class),
+        org.mockito.Matchers.eq(Collections.singletonList("one")))
+      ).thenReturn(command);
 
       Command returned = subject.parseCommand(Collections.singletonList("one"));
-      assertThat(returned, Matchers.sameInstance(fromFactory));
+      assertThat(returned, Matchers.sameInstance(command));
     }
   }
 }
