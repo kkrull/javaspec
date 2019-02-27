@@ -4,8 +4,8 @@ import info.javaspec.SpecReporter;
 import info.javaspec.Suite;
 import info.javaspec.lang.lambda.InstanceSpecFinder;
 
+import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 final class RunSpecsCommand implements Command {
   private final InstanceSpecFinder finder;
@@ -18,30 +18,20 @@ final class RunSpecsCommand implements Command {
 
   @Override
   public int run(SpecReporter reporter) {
-    Suite suite = loadSpecs();
-    runSpecs(suite, reporter);
-    return reporter.hasFailingSpecs() ? 1 : 0;
-  }
-
-  private Suite loadSpecs() {
-    List<Class<?>> specClasses = this.specClassNames.stream()
-      .map(RunSpecsCommand::loadClass)
-      .collect(Collectors.toList());
-
-    return this.finder.findSpecs(specClasses);
-  }
-
-  private static Class<?> loadClass(String className) {
-    try {
-      return Class.forName(className);
-    } catch(ClassNotFoundException e) {
-      throw new RuntimeException("Failed to load class", e);
+    //TODO KDK: Refactor -- this can either produce Right<List<Class<?>>> or Left<CommandResult { badClassName: string }>
+    List<Class<?>> specClasses = new LinkedList<>();
+    for(String className : this.specClassNames) {
+      try {
+        specClasses.add(Class.forName(className));
+      } catch(ClassNotFoundException e) {
+        return 2;
+      }
     }
-  }
 
-  private void runSpecs(Suite suite, SpecReporter reporter) {
+    Suite suite = this.finder.findSpecs(specClasses);
     reporter.runStarting();
     suite.runSpecs(reporter);
     reporter.runFinished();
+    return reporter.hasFailingSpecs() ? 1 : 0;
   }
 }

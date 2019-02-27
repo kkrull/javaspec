@@ -10,33 +10,91 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
-import java.util.Collections;
+import java.util.Arrays;
+
+import static java.util.Collections.singletonList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 @RunWith(HierarchicalContextRunner.class)
 public class RunSpecsCommandTest {
   private RunSpecsCommand subject;
   private InstanceSpecFinder specFinder;
   private SpecReporter reporter;
+  private Suite suite;
 
   public class run {
     @Before
     public void setup() throws Exception {
-      reporter = Mockito.mock(SpecReporter.class);
       specFinder = Mockito.mock(InstanceSpecFinder.class);
+      suite = Mockito.mock(Suite.class);
       Mockito.when(specFinder.findSpecs(Mockito.any()))
-        .thenReturn(Mockito.mock(Suite.class));
+        .thenReturn(suite);
+
+      reporter = Mockito.mock(SpecReporter.class);
+      Mockito.when(reporter.hasFailingSpecs()).thenReturn(false);
     }
 
     @Test
-    public void loadsTheSpecifiedSpecClasses() throws Exception {
-      subject = new RunSpecsCommand(specFinder, Collections.singletonList("info.javaspec.console.OneSpec"));
+    public void findsSpecsInTheSpecifiedClassesInTheSpecifiedOrder() throws Exception {
+      subject = new RunSpecsCommand(specFinder, Arrays.asList(
+        "info.javaspec.console.OneSpec",
+        "info.javaspec.console.OtherSpec"
+      ));
+
       subject.run(reporter);
-      Mockito.verify(specFinder).findSpecs(Collections.singletonList(OneSpec.class));
+      Mockito.verify(specFinder).findSpecs(Arrays.asList(
+        OneSpec.class,
+        OtherSpec.class
+      ));
     }
 
-    @Test @Ignore
-    public void doesTheNextThing() throws Exception {
+    @Test
+    public void runsTheReturnedSuite() throws Exception {
+      subject = new RunSpecsCommand(specFinder, singletonList("info.javaspec.console.OneSpec"));
+      subject.run(reporter);
+      Mockito.verify(suite).runSpecs(reporter);
     }
 
+    @Test
+    public void reportsTheRunStartingAndFinishing() throws Exception {
+      subject = new RunSpecsCommand(specFinder, singletonList("info.javaspec.console.OneSpec"));
+      subject.run(reporter);
+      Mockito.verify(reporter).runStarting();
+      Mockito.verify(reporter).runFinished();
+    }
+
+    public class whenAllSpecsAreReportedAsPassing {
+      @Test
+      public void returns0() throws Exception {
+        Mockito.when(reporter.hasFailingSpecs()).thenReturn(false);
+        subject = new RunSpecsCommand(specFinder, singletonList("info.javaspec.console.OneSpec"));
+        int statusCode = subject.run(reporter);
+        assertThat(statusCode, equalTo(0));
+      }
+    }
+
+    public class whenAnySpecsAreReportedAsFailing {
+      @Test
+      public void returns1() throws Exception {
+        Mockito.when(reporter.hasFailingSpecs()).thenReturn(true);
+        subject = new RunSpecsCommand(specFinder, singletonList("info.javaspec.console.OneSpec"));
+        int statusCode = subject.run(reporter);
+        assertThat(statusCode, equalTo(1));
+      }
+    }
+
+    public class whenAnySpecClassesCanNotBeLoaded {
+      @Test
+      public void returns2() throws Exception {
+        subject = new RunSpecsCommand(specFinder, singletonList("does.not.Exist"));
+        int statusCode = subject.run(reporter);
+        assertThat(statusCode, equalTo(2));
+      }
+
+      @Test @Ignore
+      public void returnsAValueTypeThatCanDescribeTheErrorToTheUser() throws Exception {
+      }
+    }
   }
 }

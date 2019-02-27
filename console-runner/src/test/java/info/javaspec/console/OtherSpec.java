@@ -1,3 +1,3 @@
 package info.javaspec.console;
 
-public class OneSpec { }
+public class OtherSpec { }
