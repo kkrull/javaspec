@@ -1,4 +1,4 @@
 package info.javaspec.console;
 
-public class OneSpecs {
+public class OneSpec {
 }

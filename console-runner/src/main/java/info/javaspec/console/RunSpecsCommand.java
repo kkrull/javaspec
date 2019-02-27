@@ -6,7 +6,6 @@ import info.javaspec.lang.lambda.InstanceSpecFinder;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 final class RunSpecsCommand implements Command {
   private final InstanceSpecFinder finder;

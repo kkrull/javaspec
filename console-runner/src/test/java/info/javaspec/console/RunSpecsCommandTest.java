@@ -2,6 +2,7 @@ package info.javaspec.console;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.SpecReporter;
+import info.javaspec.Suite;
 import info.javaspec.lang.lambda.InstanceSpecFinder;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -13,18 +14,29 @@ import java.util.Collections;
 
 @RunWith(HierarchicalContextRunner.class)
 public class RunSpecsCommandTest {
+  private RunSpecsCommand subject;
+  private InstanceSpecFinder specFinder;
+  private SpecReporter reporter;
+
   public class run {
     @Before
     public void setup() throws Exception {
+      reporter = Mockito.mock(SpecReporter.class);
+      specFinder = Mockito.mock(InstanceSpecFinder.class);
+      Mockito.when(specFinder.findSpecs(Mockito.any()))
+        .thenReturn(Mockito.mock(Suite.class));
     }
 
-    @Test @Ignore //TODO KDK: Work here
+    @Test
     public void loadsTheSpecifiedSpecClasses() throws Exception {
-      InstanceSpecFinder specFinder = Mockito.mock(InstanceSpecFinder.class);
-      SpecReporter reporter = Mockito.mock(SpecReporter.class);
-      Command subject = new RunSpecsCommand(specFinder, Collections.singletonList("info.javaspec.console.OneSpecs"));
+      subject = new RunSpecsCommand(specFinder, Collections.singletonList("info.javaspec.console.OneSpec"));
       subject.run(reporter);
-      Mockito.verify(specFinder).findSpecs(Collections.singletonList(OneSpecs.class));
+      Mockito.verify(specFinder).findSpecs(Collections.singletonList(OneSpec.class));
     }
+
+    @Test @Ignore
+    public void doesTheNextThing() throws Exception {
+    }
+
   }
 }

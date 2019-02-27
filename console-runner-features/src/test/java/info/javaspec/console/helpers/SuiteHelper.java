@@ -4,6 +4,9 @@ import info.javaspec.MockSpecReporter;
 import info.javaspec.Suite;
 import info.javaspec.lang.lambda.InstanceSpecFinder;
 
+import java.util.Collections;
+import java.util.List;
+
 public class SuiteHelper {
   private final SpecHelper specHelper;
 
@@ -25,7 +28,8 @@ public class SuiteHelper {
 
   public void loadSpecsFromClass() {
     InstanceSpecFinder finder = new InstanceSpecFinder();
-    this.rootSuite = finder.findSpecs(this.specHelper.getDeclaringClass());
+    List<Class<?>> specClasses = Collections.singletonList(this.specHelper.getDeclaringClass());
+    this.rootSuite = finder.findSpecs(specClasses);
   }
 
   public void runThatSuite() {
