@@ -10,7 +10,7 @@ import java.util.Stack;
 import static info.javaspec.lang.lambda.Exceptions.*;
 
 /** Groups recently-declared specs into a suite of specs that can be run together */
-final class SpecDeclaration {
+class SpecDeclaration {
   private static SpecDeclaration _instance;
   private final Stack<SequentialSuite> declarationSuites;
 
