@@ -7,23 +7,22 @@ import java.util.List;
 
 /** Creates specs by instantiating a class that declares them during instance initialization */
 public class InstanceSpecFinder {
-  private final SpecContextFactory contextFactory;
+  private final DeclarationScopeFactory scopeFactory;
 
-  public InstanceSpecFinder() { //TODO KDK: Take in SpecContextFactory as a parameter
-    contextFactory = declarer -> {
+  public InstanceSpecFinder() { //TODO KDK: Take in DeclarationScopeFactory as a parameter
+    scopeFactory = strategy -> {
       SpecDeclaration.beginDeclaration();
-      SpecDeclaration context = SpecDeclaration.getInstance();
-      declarer.declareSpecs(context);
+      strategy.declareSpecs();
       return SpecDeclaration.endDeclaration();
     };
   }
 
-  public InstanceSpecFinder(SpecContextFactory contextFactory) {
-    this.contextFactory = contextFactory;
+  public InstanceSpecFinder(DeclarationScopeFactory scopeFactory) {
+    this.scopeFactory = scopeFactory;
   }
 
   public Suite findSpecs(List<Class<?>> specClasses) {
-    return this.contextFactory.withContext(_context -> {
+    SpecDeclarationStrategy instantiationStrategy = () -> {
       for(Class<?> specClass : specClasses) {
         try {
           specClass.newInstance();
@@ -31,16 +30,18 @@ public class InstanceSpecFinder {
           throw SpecDeclarationFailed.whenInstantiating(specClass, e);
         }
       }
-    });
+    };
+
+    return this.scopeFactory.declareInOwnScope(instantiationStrategy);
   }
 
   @FunctionalInterface
-  interface SpecContextFactory {
-    Suite withContext(DeclarerOfSpecs mod);
+  interface DeclarationScopeFactory {
+    Suite declareInOwnScope(SpecDeclarationStrategy strategy);
   }
 
   @FunctionalInterface
-  interface DeclarerOfSpecs {
-    void declareSpecs(SpecDeclaration context);
+  interface SpecDeclarationStrategy {
+    void declareSpecs();
   }
 }
