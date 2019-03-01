@@ -9,14 +9,6 @@ import java.util.List;
 public class InstanceSpecFinder {
   private final DeclarationScopeFactory scopeFactory;
 
-  public InstanceSpecFinder() { //TODO KDK: Take in DeclarationScopeFactory as a parameter
-    scopeFactory = strategy -> {
-      SpecDeclaration.beginDeclaration();
-      strategy.declareSpecs();
-      return SpecDeclaration.endDeclaration();
-    };
-  }
-
   public InstanceSpecFinder(DeclarationScopeFactory scopeFactory) {
     this.scopeFactory = scopeFactory;
   }
@@ -36,12 +28,12 @@ public class InstanceSpecFinder {
   }
 
   @FunctionalInterface
-  interface DeclarationScopeFactory {
+  public interface DeclarationScopeFactory {
     Suite declareInOwnScope(SpecDeclarationStrategy strategy);
   }
 
   @FunctionalInterface
-  interface SpecDeclarationStrategy {
+  public interface SpecDeclarationStrategy {
     void declareSpecs();
   }
 }

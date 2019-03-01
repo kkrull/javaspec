@@ -1,6 +1,7 @@
 package info.javaspec.console;
 
 import info.javaspec.lang.lambda.InstanceSpecFinder;
+import info.javaspec.lang.lambda.SpecDeclaration;
 
 import java.util.List;
 
@@ -13,10 +14,13 @@ class ArgumentParser implements Main.CommandParser {
 
   @Override
   public Command parseCommand(List<String> args) {
-    return this.commandFactory.runSpecsCommand(
-      new InstanceSpecFinder(),
-      args
-    );
+    InstanceSpecFinder specFinder = new InstanceSpecFinder(strategy -> {
+      SpecDeclaration.beginDeclaration();
+      strategy.declareSpecs();
+      return SpecDeclaration.endDeclaration();
+    });
+
+    return this.commandFactory.runSpecsCommand(specFinder, args);
   }
 
   @FunctionalInterface
