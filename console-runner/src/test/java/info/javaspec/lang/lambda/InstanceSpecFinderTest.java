@@ -2,8 +2,8 @@ package info.javaspec.lang.lambda;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.Suite;
-import info.javaspec.lang.lambda.InstanceSpecFinder.SpecDeclarationStrategy;
 import info.javaspec.lang.lambda.InstanceSpecFinder.DeclarationScopeFactory;
+import info.javaspec.lang.lambda.InstanceSpecFinder.SpecDeclarationStrategy;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

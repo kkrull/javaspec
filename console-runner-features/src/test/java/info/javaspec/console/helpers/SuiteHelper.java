@@ -2,8 +2,8 @@ package info.javaspec.console.helpers;
 
 import info.javaspec.MockSpecReporter;
 import info.javaspec.Suite;
+import info.javaspec.lang.lambda.FunctionalDslDeclaration;
 import info.javaspec.lang.lambda.InstanceSpecFinder;
-import info.javaspec.lang.lambda.SpecDeclaration;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,9 +29,9 @@ public class SuiteHelper {
 
   public void loadSpecsFromClass() {
     InstanceSpecFinder finder = new InstanceSpecFinder(strategy -> {
-      SpecDeclaration.beginDeclaration();
+      FunctionalDslDeclaration.beginDeclaration();
       strategy.declareSpecs();
-      return SpecDeclaration.endDeclaration();
+      return FunctionalDslDeclaration.endDeclaration();
     });
     List<Class<?>> specClasses = Collections.singletonList(this.specHelper.getDeclaringClass());
     this.rootSuite = finder.findSpecs(specClasses);

@@ -10,10 +10,10 @@ public final class FunctionalDsl {
   private FunctionalDsl() { /* static class */ }
 
   public static void describe(String subject, BehaviorDeclaration describeBehavior) {
-    SpecDeclaration.getInstance().declareSpecsFor(subject, describeBehavior);
+    FunctionalDslDeclaration.getInstance().declareSpecsFor(subject, describeBehavior);
   }
 
   public static void it(String shouldDoWhat, BehaviorVerification verifyBehavior) {
-    SpecDeclaration.getInstance().createSpec(shouldDoWhat, verifyBehavior);
+    FunctionalDslDeclaration.getInstance().createSpec(shouldDoWhat, verifyBehavior);
   }
 }

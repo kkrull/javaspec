@@ -20,7 +20,7 @@ public class ExceptionsTest {
       Exception subject = new DeclarationAlreadyStarted();
       assertThat(
         subject.getMessage(),
-        equalTo("Declaration has already been started.  Please call SpecDeclaration::endDeclaration on the prior declaration, if a brand new root suite is desired.")
+        equalTo("Declaration has already been started.  Please call FunctionalDslDeclaration::endDeclaration on the prior declaration, if a brand new root suite is desired.")
       );
     }
   }
@@ -31,7 +31,7 @@ public class ExceptionsTest {
       Exception subject = new DeclarationNotStarted();
       assertThat(
         subject.getMessage(),
-        equalTo("No declaration has been started.  Has SpecDeclaration::beginDeclaration been called?")
+        equalTo("No declaration has been started.  Has FunctionalDslDeclaration::beginDeclaration been called?")
       );
     }
   }

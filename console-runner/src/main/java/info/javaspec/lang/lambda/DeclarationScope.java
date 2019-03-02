@@ -7,45 +7,21 @@ import info.javaspec.Suite;
 import java.util.Optional;
 import java.util.Stack;
 
-import static info.javaspec.lang.lambda.Exceptions.*;
-
 /** Groups recently-declared specs into a suite of specs that can be run together */
-public class SpecDeclaration {
-  private static SpecDeclaration _instance;
+public class DeclarationScope {
   private final Stack<SequentialSuite> declarationSuites;
 
-  /* Singleton */
-
-  public static void beginDeclaration() {
-    if(_instance != null)
-      throw new DeclarationAlreadyStarted();
-
-    _instance = new SpecDeclaration();
-  }
-
-  public static Suite endDeclaration() {
-    Suite suite = _instance.declarationSuites.pop();
-    if(!_instance.declarationSuites.isEmpty())
-      throw new IllegalStateException("Spec declaration ended prematurely");
-
-    _instance = null;
-    return suite;
-  }
-
-  public static SpecDeclaration getInstance() {
-    return Optional.ofNullable(_instance)
-      .orElseThrow(DeclarationNotStarted::new);
-  }
-
-  static void reset() {
-    _instance = null;
-  }
-
-  /* Instance */
-
-  public SpecDeclaration() {
+  public DeclarationScope() {
     this.declarationSuites = new Stack<>();
     this.declarationSuites.push(new RootSuite());
+  }
+
+  public Suite completeSuite() {
+    Suite suite = this.declarationSuites.pop();
+    if(!this.declarationSuites.isEmpty())
+      throw new IllegalStateException("Spec declaration ended prematurely");
+
+    return suite;
   }
 
   public void declareSpecsFor(String subject, BehaviorDeclaration describeBehavior) {
@@ -59,7 +35,7 @@ public class SpecDeclaration {
   public void createSpec(String intendedBehavior, BehaviorVerification verification) {
     Spec spec = new DescriptiveSpec(intendedBehavior, verification);
     currentSubjectSuite()
-      .orElseThrow(() -> NoSubjectDefined.forSpec(intendedBehavior))
+      .orElseThrow(() -> Exceptions.NoSubjectDefined.forSpec(intendedBehavior))
       .addSpec(spec);
   }
 
