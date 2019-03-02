@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.Stack;
 
 /** Groups recently-declared specs into a suite of specs that can be run together */
-public class DeclarationScope {
+final class DeclarationScope {
   private final Stack<SequentialSuite> declarationSuites;
 
   public DeclarationScope() {

@@ -3,7 +3,7 @@ package info.javaspec.lang.lambda;
 import info.javaspec.Spec;
 import info.javaspec.SpecReporter;
 
-class DescriptiveSpec implements Spec {
+final class DescriptiveSpec implements Spec {
   private final String intendedBehavior;
   private final BehaviorVerification verification;
 
