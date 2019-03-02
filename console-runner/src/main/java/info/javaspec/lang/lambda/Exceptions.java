@@ -3,13 +3,13 @@ package info.javaspec.lang.lambda;
 class Exceptions {
   public static final class DeclarationAlreadyStarted extends IllegalStateException {
     DeclarationAlreadyStarted() {
-      super("Declaration has already been started.  Please call FunctionalDslDeclaration::endDeclaration on the prior declaration, if a brand new root suite is desired.");
+      super("Declaration has already been started.  Please call FunctionalDsl::closeScope on the prior declaration, if a brand new root suite is desired.");
     }
   }
 
   public static final class DeclarationNotStarted extends IllegalStateException {
     DeclarationNotStarted() {
-      super("No declaration has been started.  Has FunctionalDslDeclaration::beginDeclaration been called?");
+      super("No declaration has been started.  Has FunctionalDsl::openScope been called?");
     }
   }
 

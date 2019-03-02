@@ -3,7 +3,7 @@ package info.javaspec.lang.lambda;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.Suite;
 import info.javaspec.lang.lambda.InstanceSpecFinder.DeclarationScopeFactory;
-import info.javaspec.lang.lambda.InstanceSpecFinder.SpecDeclarationStrategy;
+import info.javaspec.lang.lambda.InstanceSpecFinder.DeclarationStrategy;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -86,7 +86,7 @@ public class InstanceSpecFinderTest {
     }
 
     @Override
-    public Suite declareInOwnScope(SpecDeclarationStrategy strategy) {
+    public Suite declareInOwnScope(DeclarationStrategy strategy) {
       strategy.declareSpecs();
       return this.suite;
     }

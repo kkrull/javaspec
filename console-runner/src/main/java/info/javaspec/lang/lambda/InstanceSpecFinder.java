@@ -14,7 +14,7 @@ public class InstanceSpecFinder {
   }
 
   public Suite findSpecs(List<Class<?>> specClasses) {
-    SpecDeclarationStrategy instantiationStrategy = () -> {
+    DeclarationStrategy instantiationStrategy = () -> {
       for(Class<?> specClass : specClasses) {
         try {
           specClass.newInstance();
@@ -29,11 +29,11 @@ public class InstanceSpecFinder {
 
   @FunctionalInterface
   public interface DeclarationScopeFactory {
-    Suite declareInOwnScope(SpecDeclarationStrategy strategy);
+    Suite declareInOwnScope(DeclarationStrategy strategy);
   }
 
   @FunctionalInterface
-  public interface SpecDeclarationStrategy {
+  public interface DeclarationStrategy {
     void declareSpecs();
   }
 }

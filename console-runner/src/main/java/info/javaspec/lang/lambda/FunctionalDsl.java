@@ -1,5 +1,11 @@
 package info.javaspec.lang.lambda;
 
+import info.javaspec.Suite;
+
+import java.util.Optional;
+
+import static info.javaspec.lang.lambda.Exceptions.*;
+
 /**
  * The functional- or Mocha-style syntax for JavaSpec that lets you declare specs with strings and lambdas.
  *
@@ -7,13 +13,33 @@ package info.javaspec.lang.lambda;
  * Anti-pattern: Calling these methods from a static initializer.
  */
 public final class FunctionalDsl {
+  private static DeclarationScope _instance;
+
   private FunctionalDsl() { /* static class */ }
 
+  public static void openScope() {
+    if(_instance != null)
+      throw new DeclarationAlreadyStarted();
+
+    _instance = new DeclarationScope();
+  }
+
+  public static Suite closeScope() {
+    Suite suite = _instance.completeSuite();
+    _instance = null;
+    return suite;
+  }
+
   public static void describe(String subject, BehaviorDeclaration describeBehavior) {
-    FunctionalDslDeclaration.getInstance().declareSpecsFor(subject, describeBehavior);
+    declarationScope().declareSpecsFor(subject, describeBehavior);
   }
 
   public static void it(String shouldDoWhat, BehaviorVerification verifyBehavior) {
-    FunctionalDslDeclaration.getInstance().createSpec(shouldDoWhat, verifyBehavior);
+    declarationScope().createSpec(shouldDoWhat, verifyBehavior);
+  }
+
+  private static DeclarationScope declarationScope() {
+    return Optional.ofNullable(_instance)
+      .orElseThrow(DeclarationNotStarted::new);
   }
 }

@@ -1,6 +1,6 @@
 package info.javaspec.console;
 
-import info.javaspec.lang.lambda.FunctionalDslDeclaration;
+import info.javaspec.lang.lambda.FunctionalDsl;
 import info.javaspec.lang.lambda.InstanceSpecFinder;
 
 import java.util.List;
@@ -15,9 +15,9 @@ final class ArgumentParser implements Main.CommandParser {
   @Override
   public Command parseCommand(List<String> args) {
     InstanceSpecFinder specFinder = new InstanceSpecFinder(strategy -> {
-      FunctionalDslDeclaration.beginDeclaration();
+      FunctionalDsl.openScope();
       strategy.declareSpecs();
-      return FunctionalDslDeclaration.endDeclaration();
+      return FunctionalDsl.closeScope();
     });
 
     return this.commandFactory.runSpecsCommand(specFinder, args);
