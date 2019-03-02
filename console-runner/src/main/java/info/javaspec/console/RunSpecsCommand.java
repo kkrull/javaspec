@@ -18,7 +18,6 @@ final class RunSpecsCommand implements Command {
 
   @Override
   public int run(SpecReporter reporter) {
-    //TODO KDK: Refactor -- this can either produce Right<List<Class<?>>> or Left<CommandResult { badClassName: string }>
     List<Class<?>> specClasses = new LinkedList<>();
     for(String className : this.specClassNames) {
       try {

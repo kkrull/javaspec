@@ -5,7 +5,7 @@ import info.javaspec.SpecReporter;
 import java.util.Arrays;
 import java.util.List;
 
-public class Main {
+public final class Main {
   private final SpecReporter reporter;
   private final ExitHandler system;
 
@@ -36,5 +36,10 @@ public class Main {
   @FunctionalInterface
   interface CommandParser {
     Command parseCommand(List<String> args);
+  }
+
+  @FunctionalInterface
+  interface ExitHandler {
+    void exit(int statusCode);
   }
 }

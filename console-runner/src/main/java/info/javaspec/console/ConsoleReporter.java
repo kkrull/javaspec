@@ -6,7 +6,7 @@ import info.javaspec.Suite;
 
 import java.io.PrintStream;
 
-class ConsoleReporter implements SpecReporter {
+final class ConsoleReporter implements SpecReporter {
   private final PrintStream output;
   private int numStarted;
   private int numFailed;

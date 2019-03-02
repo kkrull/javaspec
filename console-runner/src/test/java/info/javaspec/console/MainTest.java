@@ -12,13 +12,13 @@ public class MainTest {
   public class runCommand {
     private Main subject;
     private SpecReporter reporter;
-    private ExitHandler system;
+    private Main.ExitHandler system;
     private Command command;
 
     @Before
     public void setup() {
       this.reporter = Mockito.mock(SpecReporter.class);
-      this.system = Mockito.mock(ExitHandler.class);
+      this.system = Mockito.mock(Main.ExitHandler.class);
       this.subject = new Main(this.reporter, this.system);
       this.command = Mockito.mock(Command.class);
     }

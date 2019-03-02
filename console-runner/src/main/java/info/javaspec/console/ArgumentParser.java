@@ -5,7 +5,7 @@ import info.javaspec.lang.lambda.InstanceSpecFinder;
 
 import java.util.List;
 
-class ArgumentParser implements Main.CommandParser {
+final class ArgumentParser implements Main.CommandParser {
   private final CommandFactory commandFactory;
 
   public ArgumentParser(CommandFactory commandFactory) {
