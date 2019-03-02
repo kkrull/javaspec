@@ -12,7 +12,7 @@ import static info.javaspec.lang.lambda.Exceptions.*;
  * Intended use: Static import these methods and call them in a test class's constructor (or instance initializer).
  * Anti-pattern: Calling these methods from a static initializer.
  */
-public final class FunctionalDsl {
+public final class FunctionalDsl { //TODO KDK: Test
   private static DeclarationScope _instance;
 
   private FunctionalDsl() { /* static class */ }

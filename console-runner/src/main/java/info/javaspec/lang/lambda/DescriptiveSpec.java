@@ -3,7 +3,7 @@ package info.javaspec.lang.lambda;
 import info.javaspec.Spec;
 import info.javaspec.SpecReporter;
 
-final class DescriptiveSpec implements Spec {
+final class DescriptiveSpec implements Spec { //TODO KDK: Test
   private final String intendedBehavior;
   private final BehaviorVerification verification;
 

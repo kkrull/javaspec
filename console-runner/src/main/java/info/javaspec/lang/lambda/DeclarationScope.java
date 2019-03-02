@@ -16,14 +16,6 @@ final class DeclarationScope {
     this.declarationSuites.push(new RootSuite());
   }
 
-  public Suite completeSuite() {
-    Suite suite = this.declarationSuites.pop();
-    if(!this.declarationSuites.isEmpty())
-      throw new IllegalStateException("Spec declaration ended prematurely");
-
-    return suite;
-  }
-
   public void declareSpecsFor(String subject, BehaviorDeclaration describeBehavior) {
     SequentialSuite subjectSuite = new SequentialSuite(subject);
     currentSuite().get().addChildSuite(subjectSuite); //Add the child suite in line with any other declared specs
@@ -37,6 +29,14 @@ final class DeclarationScope {
     currentSubjectSuite()
       .orElseThrow(() -> Exceptions.NoSubjectDefined.forSpec(intendedBehavior))
       .addSpec(spec);
+  }
+
+  public Suite completeSuite() {
+    Suite suite = this.declarationSuites.pop();
+    if(!this.declarationSuites.isEmpty())
+      throw new IllegalStateException("Spec declaration ended prematurely");
+
+    return suite;
   }
 
   private Optional<SequentialSuite> currentSubjectSuite() {
