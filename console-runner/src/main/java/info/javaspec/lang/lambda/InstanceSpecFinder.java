@@ -1,6 +1,6 @@
 package info.javaspec.lang.lambda;
 
-import info.javaspec.Suite;
+import info.javaspec.SpecCollection;
 import info.javaspec.lang.lambda.Exceptions.SpecDeclarationFailed;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public class InstanceSpecFinder {
     this.scopeFactory = scopeFactory;
   }
 
-  public Suite findSpecs(List<Class<?>> specClasses) {
+  public SpecCollection findSpecs(List<Class<?>> specClasses) {
     DeclarationStrategy instantiationStrategy = () -> {
       for(Class<?> specClass : specClasses) {
         try {
@@ -29,7 +29,7 @@ public class InstanceSpecFinder {
 
   @FunctionalInterface
   public interface DeclarationScopeFactory {
-    Suite declareInOwnScope(DeclarationStrategy strategy);
+    SpecCollection declareInOwnScope(DeclarationStrategy strategy);
   }
 
   @FunctionalInterface

@@ -3,7 +3,7 @@ package info.javaspec.lang.lambda;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.Spec;
 import info.javaspec.SpecReporter;
-import info.javaspec.Suite;
+import info.javaspec.SpecCollection;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,12 +29,12 @@ public class RootCollectionTest {
     }
 
     public class whenOneOrMoreSubCollectionsHaveBeenAdded {
-      private Suite firstChild, secondChild;
+      private SpecCollection firstChild, secondChild;
 
       @Before
       public void setup() throws Exception {
-        firstChild = Mockito.mock(Suite.class, "AddedFirst");
-        secondChild = Mockito.mock(Suite.class, "AddedSecond");
+        firstChild = Mockito.mock(SpecCollection.class, "AddedFirst");
+        secondChild = Mockito.mock(SpecCollection.class, "AddedSecond");
         subject = new RootCollection();
         subject.addSubCollection(firstChild);
         subject.addSubCollection(secondChild);
@@ -47,7 +47,7 @@ public class RootCollectionTest {
 
       @Test
       public void mutationOfTheReturnedListDoesNotAffectTheSuite() throws Exception {
-        List<Suite> listToMutate = subject.subCollections();
+        List<SpecCollection> listToMutate = subject.subCollections();
         listToMutate.clear();
         assertThat(subject.subCollections(), not(empty()));
       }
@@ -126,8 +126,8 @@ public class RootCollectionTest {
 
     @Test
     public void runsSubCollectionsInTheOrderTheyWereAdded() throws Exception {
-      Suite firstChild = Mockito.mock(Suite.class, "FirstSubCollection");
-      Suite secondChild = Mockito.mock(Suite.class, "SecondSubCollection");
+      SpecCollection firstChild = Mockito.mock(SpecCollection.class, "FirstSubCollection");
+      SpecCollection secondChild = Mockito.mock(SpecCollection.class, "SecondSubCollection");
 
       subject = new RootCollection();
       subject.addSubCollection(firstChild);
@@ -142,7 +142,7 @@ public class RootCollectionTest {
 
     @Test
     public void runsSpecsInThisSuiteBeforeRunningSubCollections() throws Exception {
-      Suite subCollection = Mockito.mock(Suite.class, "SubCollection");
+      SpecCollection subCollection = Mockito.mock(SpecCollection.class, "SubCollection");
       Spec spec = Mockito.mock(Spec.class, "Spec");
 
       subject = new RootCollection();

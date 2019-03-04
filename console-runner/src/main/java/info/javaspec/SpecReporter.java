@@ -1,7 +1,7 @@
 package info.javaspec;
 
 public interface SpecReporter {
-  void collectionStarting(Suite collection);
+  void collectionStarting(SpecCollection collection);
 
   boolean hasFailingSpecs();
 

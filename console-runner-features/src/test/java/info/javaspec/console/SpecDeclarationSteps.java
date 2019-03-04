@@ -3,7 +3,7 @@ package info.javaspec.console;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import info.javaspec.Suite;
+import info.javaspec.SpecCollection;
 import info.javaspec.console.helpers.SpecHelper;
 import info.javaspec.console.helpers.SuiteHelper;
 import info.javaspec.example.DescribeTwo;
@@ -65,7 +65,7 @@ public class SpecDeclarationSteps {
 
   @Then("^a spec should exist with the given description$")
   public void aSpecShouldExistWithThatDescription() throws Exception {
-    Suite thatCollection = suiteHelper.findCollectionWithDescription(thatDescription);
+    SpecCollection thatCollection = suiteHelper.findCollectionWithDescription(thatDescription);
     assertThat(thatCollection.intendedBehaviors(), containsInAnyOrder(thatIntendedBehavior));
   }
 
@@ -81,7 +81,7 @@ public class SpecDeclarationSteps {
 
   @Then("^there should be a suite with that description$")
   public void thereShouldBeASuiteWithThatDescription() throws Exception {
-    Suite thatCollection = suiteHelper.findCollectionWithDescription(thatDescription);
+    SpecCollection thatCollection = suiteHelper.findCollectionWithDescription(thatDescription);
     assertThat(thatCollection.description(), equalTo(thatDescription));
   }
 

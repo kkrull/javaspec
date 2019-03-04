@@ -2,7 +2,7 @@ package info.javaspec.console;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.SpecReporter;
-import info.javaspec.Suite;
+import info.javaspec.SpecCollection;
 import info.javaspec.lang.lambda.InstanceSpecFinder;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,15 +20,15 @@ public class RunSpecsCommandTest {
   private RunSpecsCommand subject;
   private InstanceSpecFinder specFinder;
   private SpecReporter reporter;
-  private Suite suite;
+  private SpecCollection collection;
 
   public class run {
     @Before
     public void setup() throws Exception {
       specFinder = Mockito.mock(InstanceSpecFinder.class);
-      suite = Mockito.mock(Suite.class);
+      collection = Mockito.mock(SpecCollection.class);
       Mockito.when(specFinder.findSpecs(Mockito.any()))
-        .thenReturn(suite);
+        .thenReturn(collection);
 
       reporter = Mockito.mock(SpecReporter.class);
       Mockito.when(reporter.hasFailingSpecs()).thenReturn(false);
@@ -52,7 +52,7 @@ public class RunSpecsCommandTest {
     public void runsTheReturnedSuite() throws Exception {
       subject = new RunSpecsCommand(specFinder, singletonList("info.javaspec.console.OneSpec"));
       subject.run(reporter);
-      Mockito.verify(suite).runSpecs(reporter);
+      Mockito.verify(collection).runSpecs(reporter);
     }
 
     @Test

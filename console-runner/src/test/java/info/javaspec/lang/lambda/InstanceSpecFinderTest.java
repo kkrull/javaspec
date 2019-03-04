@@ -1,7 +1,7 @@
 package info.javaspec.lang.lambda;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.Suite;
+import info.javaspec.SpecCollection;
 import info.javaspec.lang.lambda.InstanceSpecFinder.DeclarationScopeFactory;
 import info.javaspec.lang.lambda.InstanceSpecFinder.DeclarationStrategy;
 import org.junit.Before;
@@ -37,11 +37,11 @@ public class InstanceSpecFinderTest {
 
       @Test
       public void returnsTheSuiteFromTheContext() throws Exception {
-        Suite contextReturns = Mockito.mock(Suite.class);
+        SpecCollection contextReturns = Mockito.mock(SpecCollection.class);
         Mockito.when(scopeFactory.declareInOwnScope(Mockito.any()))
           .thenReturn(contextReturns);
 
-        Suite returned = subject.findSpecs(anySpecClasses());
+        SpecCollection returned = subject.findSpecs(anySpecClasses());
         assertThat(returned, sameInstance(contextReturns));
       }
     }
@@ -49,7 +49,7 @@ public class InstanceSpecFinderTest {
     public class given1OrMoreSpecClasses {
       @Before
       public void setup() throws Exception {
-        scopeFactory = new DeclarationScopeFactoryDouble(Mockito.mock(Suite.class));
+        scopeFactory = new DeclarationScopeFactoryDouble(Mockito.mock(SpecCollection.class));
         subject = new InstanceSpecFinder(scopeFactory);
       }
 
@@ -63,7 +63,7 @@ public class InstanceSpecFinderTest {
     public class whenInstantiatingASpecClassThrows {
       @Before
       public void setup() throws Exception {
-        scopeFactory = new DeclarationScopeFactoryDouble(Mockito.mock(Suite.class));
+        scopeFactory = new DeclarationScopeFactoryDouble(Mockito.mock(SpecCollection.class));
         subject = new InstanceSpecFinder(scopeFactory);
       }
 
@@ -79,14 +79,14 @@ public class InstanceSpecFinderTest {
   }
 
   public static final class DeclarationScopeFactoryDouble implements InstanceSpecFinder.DeclarationScopeFactory {
-    private final Suite suite;
+    private final SpecCollection suite;
 
-    public DeclarationScopeFactoryDouble(Suite suite) {
+    public DeclarationScopeFactoryDouble(SpecCollection suite) {
       this.suite = suite;
     }
 
     @Override
-    public Suite declareInOwnScope(DeclarationStrategy strategy) {
+    public SpecCollection declareInOwnScope(DeclarationStrategy strategy) {
       strategy.declareSpecs();
       return this.suite;
     }

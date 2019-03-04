@@ -1,7 +1,7 @@
 package info.javaspec.lang.lambda;
 
 import info.javaspec.Spec;
-import info.javaspec.Suite;
+import info.javaspec.SpecCollection;
 
 import java.util.Optional;
 import java.util.Stack;
@@ -30,8 +30,8 @@ final class DeclarationScope {
       .addSpec(spec);
   }
 
-  public Suite createRootCollection() {
-    Suite rootCollection = this.collections.pop();
+  public SpecCollection createRootCollection() {
+    SpecCollection rootCollection = this.collections.pop();
     if(!this.collections.isEmpty())
       throw new IllegalStateException("Spec declaration ended prematurely");
 

@@ -1,10 +1,10 @@
 package info.javaspec.lang.lambda;
 
 import info.javaspec.Spec;
-import info.javaspec.Suite;
+import info.javaspec.SpecCollection;
 
-public interface WritableSuite extends Suite {
+public interface WritableSuite extends SpecCollection {
   void addSpec(Spec spec);
 
-  void addSubCollection(Suite collection);
+  void addSubCollection(SpecCollection collection);
 }

@@ -1,7 +1,7 @@
 package info.javaspec.console;
 
 import info.javaspec.SpecReporter;
-import info.javaspec.Suite;
+import info.javaspec.SpecCollection;
 import info.javaspec.lang.lambda.InstanceSpecFinder;
 
 import java.util.LinkedList;
@@ -27,7 +27,7 @@ final class RunSpecsCommand implements Command {
       }
     }
 
-    Suite rootCollection = this.finder.findSpecs(specClasses);
+    SpecCollection rootCollection = this.finder.findSpecs(specClasses);
     reporter.runStarting();
     rootCollection.runSpecs(reporter);
     reporter.runFinished();

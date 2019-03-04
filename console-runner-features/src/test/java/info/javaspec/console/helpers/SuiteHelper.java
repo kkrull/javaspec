@@ -1,7 +1,7 @@
 package info.javaspec.console.helpers;
 
 import info.javaspec.MockSpecReporter;
-import info.javaspec.Suite;
+import info.javaspec.SpecCollection;
 import info.javaspec.lang.lambda.FunctionalDsl;
 import info.javaspec.lang.lambda.InstanceSpecFinder;
 
@@ -11,14 +11,14 @@ import java.util.List;
 public class SuiteHelper {
   private final SpecHelper specHelper;
 
-  private Suite rootCollection;
-  private Suite selectedCollection;
+  private SpecCollection rootCollection;
+  private SpecCollection selectedCollection;
 
   public SuiteHelper(SpecHelper specHelper) {
     this.specHelper = specHelper;
   }
 
-  public Suite findCollectionWithDescription(String description) {
+  public SpecCollection findCollectionWithDescription(String description) {
     this.selectedCollection = getRootCollection().subCollections().stream()
       .filter(x -> description.equals(x.description()))
       .findFirst()
@@ -41,18 +41,18 @@ public class SuiteHelper {
     runner().run(getSelectedSuite());
   }
 
-  public Suite getSelectedSuite() {
+  public SpecCollection getSelectedSuite() {
     if(this.selectedCollection != null)
       return this.selectedCollection;
 
-    Suite rootCollection = getRootCollection();
+    SpecCollection rootCollection = getRootCollection();
     if(rootCollection != null)
       return rootCollection;
 
     throw new RuntimeException("No collection has been defined");
   }
 
-  private Suite getRootCollection() {
+  private SpecCollection getRootCollection() {
     return this.rootCollection;
   }
 
@@ -62,6 +62,6 @@ public class SuiteHelper {
 
   @FunctionalInterface
   interface SpecCollectionRunner {
-    void run(Suite collection);
+    void run(SpecCollection collection);
   }
 }

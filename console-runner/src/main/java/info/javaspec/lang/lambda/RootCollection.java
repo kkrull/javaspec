@@ -2,7 +2,7 @@ package info.javaspec.lang.lambda;
 
 import info.javaspec.Spec;
 import info.javaspec.SpecReporter;
-import info.javaspec.Suite;
+import info.javaspec.SpecCollection;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 final class RootCollection implements WritableSuite {
-  private final List<Suite> children;
+  private final List<SpecCollection> children;
   private final List<Spec> specs;
 
   public RootCollection() {
@@ -19,7 +19,7 @@ final class RootCollection implements WritableSuite {
   }
 
   @Override
-  public void addSubCollection(Suite collection) {
+  public void addSubCollection(SpecCollection collection) {
     this.children.add(collection);
   }
 
@@ -29,7 +29,7 @@ final class RootCollection implements WritableSuite {
   }
 
   @Override
-  public List<Suite> subCollections() {
+  public List<SpecCollection> subCollections() {
     return new ArrayList<>(this.children);
   }
 

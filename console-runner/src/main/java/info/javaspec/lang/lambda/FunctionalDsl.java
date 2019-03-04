@@ -1,6 +1,6 @@
 package info.javaspec.lang.lambda;
 
-import info.javaspec.Suite;
+import info.javaspec.SpecCollection;
 
 import java.util.Optional;
 
@@ -24,8 +24,8 @@ public final class FunctionalDsl { //TODO KDK: Test
     _instance = new DeclarationScope();
   }
 
-  public static Suite closeScope() {
-    Suite rootCollection = _instance.createRootCollection();
+  public static SpecCollection closeScope() {
+    SpecCollection rootCollection = _instance.createRootCollection();
     _instance = null;
     return rootCollection;
   }

@@ -2,7 +2,7 @@ package info.javaspec.console;
 
 import info.javaspec.Spec;
 import info.javaspec.SpecReporter;
-import info.javaspec.Suite;
+import info.javaspec.SpecCollection;
 
 import java.io.PrintStream;
 
@@ -43,7 +43,7 @@ final class ConsoleReporter implements SpecReporter {
   }
 
   @Override
-  public void collectionStarting(Suite collection) {
+  public void collectionStarting(SpecCollection collection) {
     this.output.println(collection.description());
   }
 
