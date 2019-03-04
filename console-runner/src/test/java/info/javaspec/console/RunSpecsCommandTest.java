@@ -49,7 +49,7 @@ public class RunSpecsCommandTest {
     }
 
     @Test
-    public void runsTheReturnedSuite() throws Exception {
+    public void runsTheReturnedCollection() throws Exception {
       subject = new RunSpecsCommand(specFinder, singletonList("info.javaspec.console.OneSpec"));
       subject.run(reporter);
       Mockito.verify(collection).runSpecs(reporter);

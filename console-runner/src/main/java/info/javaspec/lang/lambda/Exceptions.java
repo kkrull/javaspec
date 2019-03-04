@@ -3,7 +3,7 @@ package info.javaspec.lang.lambda;
 class Exceptions {
   public static final class DeclarationAlreadyStarted extends IllegalStateException {
     DeclarationAlreadyStarted() {
-      super("Declaration has already been started.  Please call FunctionalDsl::closeScope on the prior declaration, if a brand new root suite is desired.");
+      super("Declaration has already been started.  Please call FunctionalDsl::closeScope on the prior declaration, if a brand new root collection is desired.");
     }
   }
 

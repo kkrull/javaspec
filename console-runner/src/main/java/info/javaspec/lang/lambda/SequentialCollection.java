@@ -11,7 +11,7 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 /** Runs specs in the order they are added */
-final class SequentialCollection implements WritableSuite {
+final class SequentialCollection implements WritableSpecCollection {
   private final String description;
   private final List<Spec> specs;
   private final List<SpecCollection> children;

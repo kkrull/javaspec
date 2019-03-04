@@ -46,7 +46,7 @@ public class RootCollectionTest {
       }
 
       @Test
-      public void mutationOfTheReturnedListDoesNotAffectTheSuite() throws Exception {
+      public void mutationOfTheReturnedListDoesNotAffectTheCollection() throws Exception {
         List<SpecCollection> listToMutate = subject.subCollections();
         listToMutate.clear();
         assertThat(subject.subCollections(), not(empty()));
@@ -91,7 +91,7 @@ public class RootCollectionTest {
     }
 
     @Test
-    public void reportsThatTheSuiteIsBeingRun() throws Exception {
+    public void reportsThatTheCollectionIsBeingRun() throws Exception {
       subject = new RootCollection();
       subject.runSpecs(reporter);
       Mockito.verify(reporter).collectionStarting(subject);
@@ -141,7 +141,7 @@ public class RootCollectionTest {
     }
 
     @Test
-    public void runsSpecsInThisSuiteBeforeRunningSubCollections() throws Exception {
+    public void runsSpecsInThisCollectionBeforeRunningSubCollections() throws Exception {
       SpecCollection subCollection = Mockito.mock(SpecCollection.class, "SubCollection");
       Spec spec = Mockito.mock(Spec.class, "Spec");
 

@@ -6,9 +6,9 @@ import info.javaspec.SpecCollection;
 import java.util.Optional;
 import java.util.Stack;
 
-/** Groups recently-declared specs into a suite of specs that can be run together */
+/** Groups recently-declared specs into a collection of specs that can be run together */
 final class DeclarationScope {
-  private final Stack<WritableSuite> collections;
+  private final Stack<WritableSpecCollection> collections;
 
   public DeclarationScope() {
     this.collections = new Stack<>();
@@ -38,12 +38,12 @@ final class DeclarationScope {
     return rootCollection;
   }
 
-  private Optional<WritableSuite> subjectCollection() {
+  private Optional<WritableSpecCollection> subjectCollection() {
     return this.leafCollection()
       .filter(x -> !RootCollection.class.equals(x.getClass()));
   }
 
-  private Optional<WritableSuite> leafCollection() {
+  private Optional<WritableSpecCollection> leafCollection() {
     return this.collections.empty()
       ? Optional.empty()
       : Optional.of(this.collections.peek());

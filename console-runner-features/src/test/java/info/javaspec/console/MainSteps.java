@@ -27,7 +27,7 @@ public class MainSteps {
   }
 
   @Given("^I have a Java class that defines a suite of lambda specs$")
-  public void iHaveAJavaClassWithASuiteOfLambdaSpecs() throws Exception {
+  public void iHaveAJavaClassWithLambdaSpecs() throws Exception {
     this.runMain = () -> {
       MainStepsOneOfEach.reset();
       Main.main(this.mockReporter, this.system, MainStepsOneOfEach.class.getCanonicalName());
@@ -41,12 +41,12 @@ public class MainSteps {
   }
 
   @Given("^I have a Java class that defines a suite of passing lambda specs$")
-  public void iHaveAJavaClassThatDefinesASuiteOfPassingLambdaSpecs() throws Exception {
+  public void iHaveAJavaClassThatDefinesPassingLambdaSpecs() throws Exception {
     this.runMain = () -> Main.main(this.mockReporter, this.system, MainStepsOnePasses.class.getCanonicalName());
   }
 
   @Given("^I have a Java class that defines a suite of 1 or more failing lambda specs$")
-  public void iHaveASuiteWithFailingSpecs() throws Exception {
+  public void iHaveAClassWithFailingSpecs() throws Exception {
     this.runMain = () -> Main.main(this.mockReporter, this.system, MainStepsOneFails.class.getCanonicalName());
   }
 

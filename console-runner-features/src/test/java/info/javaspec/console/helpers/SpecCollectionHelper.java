@@ -37,11 +37,11 @@ public class SpecCollectionHelper {
     this.rootCollection = finder.findSpecs(specClasses);
   }
 
-  public void runThatSuite() {
-    runner().run(getSelectedSuite());
+  public void runThatCollection() {
+    runner().run(getSelectedCollection());
   }
 
-  public SpecCollection getSelectedSuite() {
+  public SpecCollection getSelectedCollection() {
     if(this.selectedCollection != null)
       return this.selectedCollection;
 

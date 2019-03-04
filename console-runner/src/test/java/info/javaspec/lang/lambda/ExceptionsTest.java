@@ -20,7 +20,7 @@ public class ExceptionsTest {
       Exception subject = new DeclarationAlreadyStarted();
       assertThat(
         subject.getMessage(),
-        equalTo("Declaration has already been started.  Please call FunctionalDsl::closeScope on the prior declaration, if a brand new root suite is desired.")
+        equalTo("Declaration has already been started.  Please call FunctionalDsl::closeScope on the prior declaration, if a brand new root collection is desired.")
       );
     }
   }

@@ -36,7 +36,7 @@ public class InstanceSpecFinderTest {
       }
 
       @Test
-      public void returnsTheSuiteFromTheContext() throws Exception {
+      public void returnsTheCollectionFromTheContext() throws Exception {
         SpecCollection contextReturns = Mockito.mock(SpecCollection.class);
         Mockito.when(scopeFactory.declareInOwnScope(Mockito.any()))
           .thenReturn(contextReturns);
@@ -79,16 +79,16 @@ public class InstanceSpecFinderTest {
   }
 
   public static final class DeclarationScopeFactoryDouble implements InstanceSpecFinder.DeclarationScopeFactory {
-    private final SpecCollection suite;
+    private final SpecCollection collection;
 
-    public DeclarationScopeFactoryDouble(SpecCollection suite) {
-      this.suite = suite;
+    public DeclarationScopeFactoryDouble(SpecCollection collection) {
+      this.collection = collection;
     }
 
     @Override
     public SpecCollection declareInOwnScope(DeclarationStrategy strategy) {
       strategy.declareSpecs();
-      return this.suite;
+      return this.collection;
     }
   }
 

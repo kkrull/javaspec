@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-final class RootCollection implements WritableSuite {
+final class RootCollection implements WritableSpecCollection {
   private final List<SpecCollection> children;
   private final List<Spec> specs;
 

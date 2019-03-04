@@ -55,12 +55,12 @@ public class SpecDeclarationSteps {
 
   @When("^I run that spec declaration$")
   public void iRunThatSpec() throws Exception {
-    this.specCollectionHelper.runThatSuite();
+    this.specCollectionHelper.runThatCollection();
   }
 
   @When("^I run that suite$")
-  public void iRunThatSuite() throws Exception {
-    this.specCollectionHelper.runThatSuite();
+  public void iRunThatCollection() throws Exception {
+    this.specCollectionHelper.runThatCollection();
   }
 
   @Then("^a spec should exist with the given description$")
@@ -80,13 +80,13 @@ public class SpecDeclarationSteps {
   }
 
   @Then("^there should be a suite with that description$")
-  public void thereShouldBeASuiteWithThatDescription() throws Exception {
+  public void thereShouldBeACollectionWithThatDescription() throws Exception {
     SpecCollection thatCollection = specCollectionHelper.findCollectionWithDescription(thatDescription);
     assertThat(thatCollection.description(), equalTo(thatDescription));
   }
 
   @Then("^that suite should contain a spec for each `it` statement within it$")
-  public void thatSuiteShouldHaveSpecs() throws Exception {
-    assertThat(specCollectionHelper.getSelectedSuite().intendedBehaviors(), equalTo(thoseIntendedBehaviors));
+  public void thatCollectionShouldHaveSpecs() throws Exception {
+    assertThat(specCollectionHelper.getSelectedCollection().intendedBehaviors(), equalTo(thoseIntendedBehaviors));
   }
 }
