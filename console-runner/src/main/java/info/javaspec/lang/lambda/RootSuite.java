@@ -1,6 +1,5 @@
 package info.javaspec.lang.lambda;
 
-import info.javaspec.SequentialSuite;
 import info.javaspec.Spec;
 import info.javaspec.SpecReporter;
 import info.javaspec.Suite;
@@ -10,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-final class RootSuite extends SequentialSuite { //TODO KDK: Make some kind of WritableSuite interface that can accept new specs and suites
+final class RootSuite implements WritableSuite {
   private final List<Suite> children;
   private final List<Spec> specs;
 

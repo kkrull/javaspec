@@ -1,6 +1,5 @@
 package info.javaspec.lang.lambda;
 
-import info.javaspec.SequentialSuite;
 import info.javaspec.Spec;
 import info.javaspec.Suite;
 
@@ -9,7 +8,7 @@ import java.util.Stack;
 
 /** Groups recently-declared specs into a suite of specs that can be run together */
 final class DeclarationScope {
-  private final Stack<SequentialSuite> declarationSuites;
+  private final Stack<WritableSuite> declarationSuites;
 
   public DeclarationScope() {
     this.declarationSuites = new Stack<>();
@@ -39,12 +38,12 @@ final class DeclarationScope {
     return suite;
   }
 
-  private Optional<SequentialSuite> currentSubjectSuite() {
+  private Optional<WritableSuite> currentSubjectSuite() {
     return this.currentSuite()
       .filter(x -> !RootSuite.class.equals(x.getClass()));
   }
 
-  private Optional<SequentialSuite> currentSuite() {
+  private Optional<WritableSuite> currentSuite() {
     return this.declarationSuites.empty()
       ? Optional.empty()
       : Optional.of(this.declarationSuites.peek());

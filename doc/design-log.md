@@ -2,13 +2,12 @@
 
 ## Coming up
 
-- Separate the mostly-hidden root level context (suite) from ones that are from a describe block.
+- Rename Suite to SpecCollection.  Suite pertains to JUnit's view of the world and doesn't really fit so well here.
+- Add a linter.
+- Break up the Ruby feature tests now that there are a few more of them.
 - Handle a run command that can't load a class.
   It may be helpful to return a value type for the exit status, instead of a just the number, so the offending class can
   be reported.
-- Rename Suite to SpecCollection.  Suite pertains to JUnit's view of the world and doesn't really fit so well here.
-- Break up the Ruby feature tests now that there are a few more of them.
-- Add a linter.
 
 
 ## Clarifying the terminology

@@ -1,4 +1,8 @@
-package info.javaspec;
+package info.javaspec.lang.lambda;
+
+import info.javaspec.Spec;
+import info.javaspec.SpecReporter;
+import info.javaspec.Suite;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -7,16 +11,10 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 /** Runs specs in the order they are added */
-public class SequentialSuite implements Suite {
+final class SequentialSuite implements WritableSuite {
   private final String description;
   private final List<Spec> specs;
   private final List<Suite> children;
-
-  public SequentialSuite() {
-    this.description = "<root suite>";
-    this.specs = new LinkedList<>();
-    this.children = new LinkedList<>();
-  }
 
   public SequentialSuite(String description) {
     this.description = description;
@@ -24,10 +22,12 @@ public class SequentialSuite implements Suite {
     this.children = new LinkedList<>();
   }
 
+  @Override
   public void addChildSuite(Suite suite) {
     this.children.add(suite);
   }
 
+  @Override
   public void addSpec(Spec spec) {
     this.specs.add(spec);
   }
