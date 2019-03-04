@@ -8,13 +8,13 @@ import info.javaspec.lang.lambda.InstanceSpecFinder;
 import java.util.Collections;
 import java.util.List;
 
-public class SuiteHelper {
+public class SpecCollectionHelper {
   private final SpecHelper specHelper;
 
   private SpecCollection rootCollection;
   private SpecCollection selectedCollection;
 
-  public SuiteHelper(SpecHelper specHelper) {
+  public SpecCollectionHelper(SpecHelper specHelper) {
     this.specHelper = specHelper;
   }
 

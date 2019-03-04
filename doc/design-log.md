@@ -2,7 +2,6 @@
 
 ## Coming up
 
-- Rename Suite to SpecCollection.  Suite pertains to JUnit's view of the world and doesn't really fit so well here.
 - Add a linter.
 - Break up the Ruby feature tests now that there are a few more of them.
 - Handle a run command that can't load a class.
