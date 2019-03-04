@@ -25,9 +25,9 @@ public final class FunctionalDsl { //TODO KDK: Test
   }
 
   public static Suite closeScope() {
-    Suite suite = _instance.completeSuite();
+    Suite rootCollection = _instance.createRootCollection();
     _instance = null;
-    return suite;
+    return rootCollection;
   }
 
   public static void describe(String subject, BehaviorDeclaration describeBehavior) {

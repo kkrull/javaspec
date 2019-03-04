@@ -27,9 +27,9 @@ final class RunSpecsCommand implements Command {
       }
     }
 
-    Suite suite = this.finder.findSpecs(specClasses);
+    Suite rootCollection = this.finder.findSpecs(specClasses);
     reporter.runStarting();
-    suite.runSpecs(reporter);
+    rootCollection.runSpecs(reporter);
     reporter.runFinished();
     return reporter.hasFailingSpecs() ? 1 : 0;
   }

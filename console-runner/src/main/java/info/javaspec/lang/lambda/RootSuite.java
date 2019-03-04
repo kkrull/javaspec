@@ -19,8 +19,8 @@ final class RootSuite implements WritableSuite {
   }
 
   @Override
-  public void addChildSuite(Suite suite) {
-    this.children.add(suite);
+  public void addSubCollection(Suite collection) {
+    this.children.add(collection);
   }
 
   @Override
@@ -29,7 +29,7 @@ final class RootSuite implements WritableSuite {
   }
 
   @Override
-  public List<Suite> childSuites() {
+  public List<Suite> subCollections() {
     return new ArrayList<>(this.children);
   }
 
@@ -47,8 +47,8 @@ final class RootSuite implements WritableSuite {
 
   @Override
   public void runSpecs(SpecReporter reporter) {
-    reporter.suiteStarting(this);
+    reporter.collectionStarting(this);
     this.specs.forEach(x -> x.run(reporter));
-    this.childSuites().forEach(x -> x.runSpecs(reporter));
+    this.subCollections().forEach(x -> x.runSpecs(reporter));
   }
 }

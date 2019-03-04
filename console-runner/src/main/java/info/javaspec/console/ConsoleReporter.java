@@ -43,8 +43,8 @@ final class ConsoleReporter implements SpecReporter {
   }
 
   @Override
-  public void suiteStarting(Suite suite) {
-    this.output.println(suite.description());
+  public void collectionStarting(Suite collection) {
+    this.output.println(collection.description());
   }
 
   @Override

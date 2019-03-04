@@ -56,5 +56,5 @@ public final class MockSpecReporter implements SpecReporter {
   public void specStarting(Spec spec) { }
 
   @Override
-  public void suiteStarting(Suite suite) { }
+  public void collectionStarting(Suite collection) { }
 }

@@ -65,8 +65,8 @@ public class SpecDeclarationSteps {
 
   @Then("^a spec should exist with the given description$")
   public void aSpecShouldExistWithThatDescription() throws Exception {
-    Suite thatSuite = suiteHelper.findChildSuiteWithDescription(thatDescription);
-    assertThat(thatSuite.intendedBehaviors(), containsInAnyOrder(thatIntendedBehavior));
+    Suite thatCollection = suiteHelper.findCollectionWithDescription(thatDescription);
+    assertThat(thatCollection.intendedBehaviors(), containsInAnyOrder(thatIntendedBehavior));
   }
 
   @Then("^that lambda should be run$")
@@ -81,8 +81,8 @@ public class SpecDeclarationSteps {
 
   @Then("^there should be a suite with that description$")
   public void thereShouldBeASuiteWithThatDescription() throws Exception {
-    Suite thatSuite = suiteHelper.findChildSuiteWithDescription(thatDescription);
-    assertThat(thatSuite.description(), equalTo(thatDescription));
+    Suite thatCollection = suiteHelper.findCollectionWithDescription(thatDescription);
+    assertThat(thatCollection.description(), equalTo(thatDescription));
   }
 
   @Then("^that suite should contain a spec for each `it` statement within it$")

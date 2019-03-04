@@ -8,44 +8,44 @@ import java.util.Stack;
 
 /** Groups recently-declared specs into a suite of specs that can be run together */
 final class DeclarationScope {
-  private final Stack<WritableSuite> declarationSuites;
+  private final Stack<WritableSuite> collections;
 
   public DeclarationScope() {
-    this.declarationSuites = new Stack<>();
-    this.declarationSuites.push(new RootSuite());
+    this.collections = new Stack<>();
+    this.collections.push(new RootSuite());
   }
 
   public void declareSpecsFor(String subject, BehaviorDeclaration describeBehavior) {
-    SequentialSuite subjectSuite = new SequentialSuite(subject);
-    currentSuite().get().addChildSuite(subjectSuite); //Add the child suite in line with any other declared specs
-    this.declarationSuites.push(subjectSuite); //Push on to the stack in case there are nested describes
+    SequentialSuite newSubjectCollection = new SequentialSuite(subject);
+    leafCollection().get().addSubCollection(newSubjectCollection); //Add the child collection in line with any other declared specs
+    this.collections.push(newSubjectCollection); //Push on to the stack in case there are nested describes
     describeBehavior.declareSpecs();
-    this.declarationSuites.pop();
+    this.collections.pop();
   }
 
   public void createSpec(String intendedBehavior, BehaviorVerification verification) {
     Spec spec = new DescriptiveSpec(intendedBehavior, verification);
-    currentSubjectSuite()
+    subjectCollection()
       .orElseThrow(() -> Exceptions.NoSubjectDefined.forSpec(intendedBehavior))
       .addSpec(spec);
   }
 
-  public Suite completeSuite() {
-    Suite suite = this.declarationSuites.pop();
-    if(!this.declarationSuites.isEmpty())
+  public Suite createRootCollection() {
+    Suite rootCollection = this.collections.pop();
+    if(!this.collections.isEmpty())
       throw new IllegalStateException("Spec declaration ended prematurely");
 
-    return suite;
+    return rootCollection;
   }
 
-  private Optional<WritableSuite> currentSubjectSuite() {
-    return this.currentSuite()
+  private Optional<WritableSuite> subjectCollection() {
+    return this.leafCollection()
       .filter(x -> !RootSuite.class.equals(x.getClass()));
   }
 
-  private Optional<WritableSuite> currentSuite() {
-    return this.declarationSuites.empty()
+  private Optional<WritableSuite> leafCollection() {
+    return this.collections.empty()
       ? Optional.empty()
-      : Optional.of(this.declarationSuites.peek());
+      : Optional.of(this.collections.peek());
   }
 }

@@ -19,16 +19,16 @@ import static org.hamcrest.Matchers.*;
 public class RootSuiteTest {
   private RootSuite subject;
 
-  public class childSuites {
-    public class whenNoChildSuitesHaveBeenAdded {
+  public class subCollections {
+    public class whenNoSubCollectionsHaveBeenAdded {
       @Test
       public void returnsAnEmptyCollection() throws Exception {
         subject = new RootSuite();
-        assertThat(subject.childSuites(), empty());
+        assertThat(subject.subCollections(), empty());
       }
     }
 
-    public class whenOneOrMoreChildSuitesHaveBeenAdded {
+    public class whenOneOrMoreSubCollectionsHaveBeenAdded {
       private Suite firstChild, secondChild;
 
       @Before
@@ -36,20 +36,20 @@ public class RootSuiteTest {
         firstChild = Mockito.mock(Suite.class, "AddedFirst");
         secondChild = Mockito.mock(Suite.class, "AddedSecond");
         subject = new RootSuite();
-        subject.addChildSuite(firstChild);
-        subject.addChildSuite(secondChild);
+        subject.addSubCollection(firstChild);
+        subject.addSubCollection(secondChild);
       }
 
       @Test
-      public void returnsThoseChildSuitesInTheOrderTheyWereAdded() throws Exception {
-        assertThat(subject.childSuites(), contains(firstChild, secondChild));
+      public void returnsThoseSubCollectionsInTheOrderTheyWereAdded() throws Exception {
+        assertThat(subject.subCollections(), contains(firstChild, secondChild));
       }
 
       @Test
       public void mutationOfTheReturnedListDoesNotAffectTheSuite() throws Exception {
-        List<Suite> listToMutate = subject.childSuites();
+        List<Suite> listToMutate = subject.subCollections();
         listToMutate.clear();
-        assertThat(subject.childSuites(), not(empty()));
+        assertThat(subject.subCollections(), not(empty()));
       }
     }
   }
@@ -63,7 +63,7 @@ public class RootSuiteTest {
   }
 
   public class intendedBehaviors {
-    public class whenNoChildSpecsHaveBeenAdded {
+    public class whenNoSpecsHaveBeenAdded {
       @Test
       public void returnsAnEmptyCollection() throws Exception {
         subject = new RootSuite();
@@ -71,7 +71,7 @@ public class RootSuiteTest {
       }
     }
 
-    public class whenChildSpecsHaveBeenAdded {
+    public class whenSpecsHaveBeenAdded {
       @Test
       public void returnsAListOfEachSpecsBehaviorInTheOrderTheyWereAdded() throws Exception {
         subject = new RootSuite();
@@ -94,7 +94,7 @@ public class RootSuiteTest {
     public void reportsThatTheSuiteIsBeingRun() throws Exception {
       subject = new RootSuite();
       subject.runSpecs(reporter);
-      Mockito.verify(reporter).suiteStarting(subject);
+      Mockito.verify(reporter).collectionStarting(subject);
     }
 
     @Test
@@ -125,13 +125,13 @@ public class RootSuiteTest {
     }
 
     @Test
-    public void runsChildSuitesInTheOrderTheyWereAdded() throws Exception {
-      Suite firstChild = Mockito.mock(Suite.class, "FirstSuite");
-      Suite secondChild = Mockito.mock(Suite.class, "SecondSuite");
+    public void runsSubCollectionsInTheOrderTheyWereAdded() throws Exception {
+      Suite firstChild = Mockito.mock(Suite.class, "FirstSubCollection");
+      Suite secondChild = Mockito.mock(Suite.class, "SecondSubCollection");
 
       subject = new RootSuite();
-      subject.addChildSuite(firstChild);
-      subject.addChildSuite(secondChild);
+      subject.addSubCollection(firstChild);
+      subject.addSubCollection(secondChild);
       subject.runSpecs(reporter);
 
       InOrder order = Mockito.inOrder(firstChild, secondChild);
@@ -141,18 +141,18 @@ public class RootSuiteTest {
     }
 
     @Test
-    public void runsSpecsInThisSuiteBeforeRunningChildSuites() throws Exception {
-      Suite childSuite = Mockito.mock(Suite.class, "ChildSuite");
+    public void runsSpecsInThisSuiteBeforeRunningSubCollections() throws Exception {
+      Suite subCollection = Mockito.mock(Suite.class, "SubCollection");
       Spec spec = Mockito.mock(Spec.class, "Spec");
 
       subject = new RootSuite();
       subject.addSpec(spec);
-      subject.addChildSuite(childSuite);
+      subject.addSubCollection(subCollection);
       subject.runSpecs(reporter);
 
-      InOrder order = Mockito.inOrder(childSuite, spec);
+      InOrder order = Mockito.inOrder(subCollection, spec);
       order.verify(spec).run(reporter);
-      order.verify(childSuite).runSpecs(reporter);
+      order.verify(subCollection).runSpecs(reporter);
       order.verifyNoMoreInteractions();
     }
 

@@ -11,20 +11,20 @@ import java.util.List;
 public class SuiteHelper {
   private final SpecHelper specHelper;
 
-  private Suite rootSuite;
-  private Suite selectedSuite;
+  private Suite rootCollection;
+  private Suite selectedCollection;
 
   public SuiteHelper(SpecHelper specHelper) {
     this.specHelper = specHelper;
   }
 
-  public Suite findChildSuiteWithDescription(String description) {
-    this.selectedSuite = getRootSuite().childSuites().stream()
+  public Suite findCollectionWithDescription(String description) {
+    this.selectedCollection = getRootCollection().subCollections().stream()
       .filter(x -> description.equals(x.description()))
       .findFirst()
-      .orElseThrow(() -> new RuntimeException(String.format("Suite not found: %s", description)));
+      .orElseThrow(() -> new RuntimeException(String.format("Collection not found: %s", description)));
 
-    return this.selectedSuite;
+    return this.selectedCollection;
   }
 
   public void loadSpecsFromClass() {
@@ -34,7 +34,7 @@ public class SuiteHelper {
       return FunctionalDsl.closeScope();
     });
     List<Class<?>> specClasses = Collections.singletonList(this.specHelper.getDeclaringClass());
-    this.rootSuite = finder.findSpecs(specClasses);
+    this.rootCollection = finder.findSpecs(specClasses);
   }
 
   public void runThatSuite() {
@@ -42,26 +42,26 @@ public class SuiteHelper {
   }
 
   public Suite getSelectedSuite() {
-    if(this.selectedSuite != null)
-      return this.selectedSuite;
+    if(this.selectedCollection != null)
+      return this.selectedCollection;
 
-    Suite rootSuite = getRootSuite();
-    if(rootSuite != null)
-      return rootSuite;
+    Suite rootCollection = getRootCollection();
+    if(rootCollection != null)
+      return rootCollection;
 
-    throw new RuntimeException("No suite of specs has been defined");
+    throw new RuntimeException("No collection has been defined");
   }
 
-  private Suite getRootSuite() {
-    return this.rootSuite;
+  private Suite getRootCollection() {
+    return this.rootCollection;
   }
 
-  private SuiteRunner runner() {
-    return suite -> suite.runSpecs(new MockSpecReporter());
+  private SpecCollectionRunner runner() {
+    return collection -> collection.runSpecs(new MockSpecReporter());
   }
 
   @FunctionalInterface
-  public interface SuiteRunner {
-    void run(Suite suite);
+  interface SpecCollectionRunner {
+    void run(Suite collection);
   }
 }
