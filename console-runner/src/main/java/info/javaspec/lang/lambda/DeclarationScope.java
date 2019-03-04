@@ -12,11 +12,11 @@ final class DeclarationScope {
 
   public DeclarationScope() {
     this.collections = new Stack<>();
-    this.collections.push(new RootSuite());
+    this.collections.push(new RootCollection());
   }
 
   public void declareSpecsFor(String subject, BehaviorDeclaration describeBehavior) {
-    SequentialSuite newSubjectCollection = new SequentialSuite(subject);
+    SequentialCollection newSubjectCollection = new SequentialCollection(subject);
     leafCollection().get().addSubCollection(newSubjectCollection); //Add the child collection in line with any other declared specs
     this.collections.push(newSubjectCollection); //Push on to the stack in case there are nested describes
     describeBehavior.declareSpecs();
@@ -40,7 +40,7 @@ final class DeclarationScope {
 
   private Optional<WritableSuite> subjectCollection() {
     return this.leafCollection()
-      .filter(x -> !RootSuite.class.equals(x.getClass()));
+      .filter(x -> !RootCollection.class.equals(x.getClass()));
   }
 
   private Optional<WritableSuite> leafCollection() {

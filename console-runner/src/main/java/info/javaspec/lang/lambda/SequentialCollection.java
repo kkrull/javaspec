@@ -11,12 +11,12 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 /** Runs specs in the order they are added */
-final class SequentialSuite implements WritableSuite { //TODO KDK: Rename to SubjectCollection
+final class SequentialCollection implements WritableSuite {
   private final String description;
   private final List<Spec> specs;
   private final List<Suite> children;
 
-  public SequentialSuite(String description) {
+  public SequentialCollection(String description) {
     this.description = description;
     this.specs = new LinkedList<>();
     this.children = new LinkedList<>();
@@ -58,6 +58,6 @@ final class SequentialSuite implements WritableSuite { //TODO KDK: Rename to Sub
 
   @Override
   public String toString() {
-    return String.format("SequentialSuite{description='%s'}", description);
+    return String.format("SequentialCollection{description='%s'}", description);
   }
 }

@@ -9,11 +9,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-final class RootSuite implements WritableSuite {
+final class RootCollection implements WritableSuite {
   private final List<Suite> children;
   private final List<Spec> specs;
 
-  public RootSuite() {
+  public RootCollection() {
     this.children = new LinkedList<>();
     this.specs = new LinkedList<>();
   }

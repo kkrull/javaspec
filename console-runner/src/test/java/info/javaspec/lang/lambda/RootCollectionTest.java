@@ -16,14 +16,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @RunWith(HierarchicalContextRunner.class)
-public class RootSuiteTest {
-  private RootSuite subject;
+public class RootCollectionTest {
+  private RootCollection subject;
 
   public class subCollections {
     public class whenNoSubCollectionsHaveBeenAdded {
       @Test
       public void returnsAnEmptyCollection() throws Exception {
-        subject = new RootSuite();
+        subject = new RootCollection();
         assertThat(subject.subCollections(), empty());
       }
     }
@@ -35,7 +35,7 @@ public class RootSuiteTest {
       public void setup() throws Exception {
         firstChild = Mockito.mock(Suite.class, "AddedFirst");
         secondChild = Mockito.mock(Suite.class, "AddedSecond");
-        subject = new RootSuite();
+        subject = new RootCollection();
         subject.addSubCollection(firstChild);
         subject.addSubCollection(secondChild);
       }
@@ -57,7 +57,7 @@ public class RootSuiteTest {
   public class description {
     @Test
     public void returnsAnEmptyString() throws Exception {
-      subject = new RootSuite();
+      subject = new RootCollection();
       assertThat(subject.description(), isEmptyString());
     }
   }
@@ -66,7 +66,7 @@ public class RootSuiteTest {
     public class whenNoSpecsHaveBeenAdded {
       @Test
       public void returnsAnEmptyCollection() throws Exception {
-        subject = new RootSuite();
+        subject = new RootCollection();
         assertThat(subject.intendedBehaviors(), empty());
       }
     }
@@ -74,7 +74,7 @@ public class RootSuiteTest {
     public class whenSpecsHaveBeenAdded {
       @Test
       public void returnsAListOfEachSpecsBehaviorInTheOrderTheyWereAdded() throws Exception {
-        subject = new RootSuite();
+        subject = new RootCollection();
         subject.addSpec(specWithBehavior("FirstBehavior"));
         subject.addSpec(specWithBehavior("SecondBehavior"));
         assertThat(subject.intendedBehaviors(), contains("FirstBehavior", "SecondBehavior"));
@@ -92,7 +92,7 @@ public class RootSuiteTest {
 
     @Test
     public void reportsThatTheSuiteIsBeingRun() throws Exception {
-      subject = new RootSuite();
+      subject = new RootCollection();
       subject.runSpecs(reporter);
       Mockito.verify(reporter).collectionStarting(subject);
     }
@@ -101,7 +101,7 @@ public class RootSuiteTest {
     public void runsSpecsWithTheGivenReporter() throws Exception {
       Spec spec = Mockito.mock(Spec.class);
 
-      subject = new RootSuite();
+      subject = new RootCollection();
       subject.addSpec(spec);
       subject.runSpecs(reporter);
 
@@ -113,7 +113,7 @@ public class RootSuiteTest {
       Spec addedFirst = Mockito.mock(Spec.class);
       Spec addedSecond = Mockito.mock(Spec.class);
 
-      subject = new RootSuite();
+      subject = new RootCollection();
       subject.addSpec(addedFirst);
       subject.addSpec(addedSecond);
       subject.runSpecs(reporter);
@@ -129,7 +129,7 @@ public class RootSuiteTest {
       Suite firstChild = Mockito.mock(Suite.class, "FirstSubCollection");
       Suite secondChild = Mockito.mock(Suite.class, "SecondSubCollection");
 
-      subject = new RootSuite();
+      subject = new RootCollection();
       subject.addSubCollection(firstChild);
       subject.addSubCollection(secondChild);
       subject.runSpecs(reporter);
@@ -145,7 +145,7 @@ public class RootSuiteTest {
       Suite subCollection = Mockito.mock(Suite.class, "SubCollection");
       Spec spec = Mockito.mock(Spec.class, "Spec");
 
-      subject = new RootSuite();
+      subject = new RootCollection();
       subject.addSpec(spec);
       subject.addSubCollection(subCollection);
       subject.runSpecs(reporter);
