@@ -3,7 +3,7 @@ package info.javaspec.lang.lambda;
 import info.javaspec.Spec;
 import info.javaspec.SpecReporter;
 
-final class DescriptiveSpec implements Spec { //TODO KDK: Test
+final class DescriptiveSpec implements Spec {
   private final String intendedBehavior;
   private final BehaviorVerification verification;
 
@@ -22,7 +22,7 @@ final class DescriptiveSpec implements Spec { //TODO KDK: Test
     reporter.specStarting(this);
     try {
       this.verification.run();
-    } catch(AssertionError e) {
+    } catch(AssertionError | Exception e) {
       reporter.specFailed(this);
       return;
     }
