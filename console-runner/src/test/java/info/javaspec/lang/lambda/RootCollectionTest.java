@@ -2,8 +2,8 @@ package info.javaspec.lang.lambda;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.Spec;
-import info.javaspec.SpecReporter;
 import info.javaspec.SpecCollection;
+import info.javaspec.SpecReporter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

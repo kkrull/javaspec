@@ -1,8 +1,8 @@
 package info.javaspec.console;
 
 import info.javaspec.Spec;
-import info.javaspec.SpecReporter;
 import info.javaspec.SpecCollection;
+import info.javaspec.SpecReporter;
 
 import java.io.PrintStream;
 

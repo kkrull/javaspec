@@ -1,7 +1,7 @@
 package info.javaspec.console;
 
-import info.javaspec.SpecReporter;
 import info.javaspec.SpecCollection;
+import info.javaspec.SpecReporter;
 import info.javaspec.lang.lambda.InstanceSpecFinder;
 
 import java.util.LinkedList;

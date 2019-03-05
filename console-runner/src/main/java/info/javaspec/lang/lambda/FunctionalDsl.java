@@ -4,7 +4,8 @@ import info.javaspec.SpecCollection;
 
 import java.util.Optional;
 
-import static info.javaspec.lang.lambda.Exceptions.*;
+import static info.javaspec.lang.lambda.Exceptions.DeclarationAlreadyStarted;
+import static info.javaspec.lang.lambda.Exceptions.DeclarationNotStarted;
 
 /**
  * The functional- or Mocha-style syntax for JavaSpec that lets you declare specs with strings and lambdas.

@@ -4,8 +4,8 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import info.javaspec.SpecCollection;
-import info.javaspec.console.helpers.SpecHelper;
 import info.javaspec.console.helpers.SpecCollectionHelper;
+import info.javaspec.console.helpers.SpecHelper;
 import info.javaspec.example.DescribeTwo;
 import info.javaspec.example.OneSpies;
 
