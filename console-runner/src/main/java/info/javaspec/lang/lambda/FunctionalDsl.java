@@ -13,7 +13,7 @@ import static info.javaspec.lang.lambda.Exceptions.DeclarationNotStarted;
  * Intended use: Static import these methods and call them in a test class's constructor (or instance initializer).
  * Anti-pattern: Calling these methods from a static initializer.
  */
-public final class FunctionalDsl { //TODO KDK: Test
+public final class FunctionalDsl {
   private static DeclarationScope _instance;
 
   private FunctionalDsl() { /* static class */ }
@@ -26,9 +26,16 @@ public final class FunctionalDsl { //TODO KDK: Test
   }
 
   public static SpecCollection closeScope() {
+    if(_instance == null)
+      throw new DeclarationNotStarted();
+
     SpecCollection rootCollection = _instance.createRootCollection();
     _instance = null;
     return rootCollection;
+  }
+
+  static void reset() {
+    _instance = null;
   }
 
   public static void describe(String subject, BehaviorDeclaration describeBehavior) {
