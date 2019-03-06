@@ -16,17 +16,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @RunWith(HierarchicalContextRunner.class)
-public class RootCollectionTest {
+public class SequentialCollectionTest {
   private WritableSpecCollection subject;
 
   public class subCollections {
     public class whenNoSubCollectionsHaveBeenAdded {
       @Test
       public void returnsAnEmptyCollection() throws Exception {
-        subject = new RootCollection();
+        subject = new SequentialCollection(anyDescription());
         assertThat(subject.subCollections(), empty());
       }
     }
+
 
     public class whenOneOrMoreSubCollectionsHaveBeenAdded {
       private SpecCollection firstChild, secondChild;
@@ -35,7 +36,7 @@ public class RootCollectionTest {
       public void setup() throws Exception {
         firstChild = Mockito.mock(SpecCollection.class, "AddedFirst");
         secondChild = Mockito.mock(SpecCollection.class, "AddedSecond");
-        subject = new RootCollection();
+        subject = new SequentialCollection(anyDescription());
         subject.addSubCollection(firstChild);
         subject.addSubCollection(secondChild);
       }
@@ -56,9 +57,9 @@ public class RootCollectionTest {
 
   public class description {
     @Test
-    public void returnsAnEmptyString() throws Exception {
-      subject = new RootCollection();
-      assertThat(subject.description(), isEmptyString());
+    public void returnsTheGivenDescription() throws Exception {
+      subject = new SequentialCollection("a widget");
+      assertThat(subject.description(), equalTo("a widget"));
     }
   }
 
@@ -66,7 +67,7 @@ public class RootCollectionTest {
     public class whenNoSpecsHaveBeenAdded {
       @Test
       public void returnsAnEmptyCollection() throws Exception {
-        subject = new RootCollection();
+        subject = new SequentialCollection(anyDescription());
         assertThat(subject.intendedBehaviors(), empty());
       }
     }
@@ -74,7 +75,7 @@ public class RootCollectionTest {
     public class whenSpecsHaveBeenAdded {
       @Test
       public void returnsAListOfEachSpecsBehaviorInTheOrderTheyWereAdded() throws Exception {
-        subject = new RootCollection();
+        subject = new SequentialCollection(anyDescription());
         subject.addSpec(specWithBehavior("FirstBehavior"));
         subject.addSpec(specWithBehavior("SecondBehavior"));
         assertThat(subject.intendedBehaviors(), contains("FirstBehavior", "SecondBehavior"));
@@ -92,7 +93,7 @@ public class RootCollectionTest {
 
     @Test
     public void reportsThatTheCollectionIsBeingRun() throws Exception {
-      subject = new RootCollection();
+      subject = new SequentialCollection(anyDescription());
       subject.runSpecs(reporter);
       Mockito.verify(reporter).collectionStarting(subject);
     }
@@ -101,7 +102,7 @@ public class RootCollectionTest {
     public void runsSpecsWithTheGivenReporter() throws Exception {
       Spec spec = Mockito.mock(Spec.class);
 
-      subject = new RootCollection();
+      subject = new SequentialCollection(anyDescription());
       subject.addSpec(spec);
       subject.runSpecs(reporter);
 
@@ -113,7 +114,7 @@ public class RootCollectionTest {
       Spec addedFirst = Mockito.mock(Spec.class);
       Spec addedSecond = Mockito.mock(Spec.class);
 
-      subject = new RootCollection();
+      subject = new SequentialCollection(anyDescription());
       subject.addSpec(addedFirst);
       subject.addSpec(addedSecond);
       subject.runSpecs(reporter);
@@ -129,7 +130,7 @@ public class RootCollectionTest {
       SpecCollection firstChild = Mockito.mock(SpecCollection.class, "FirstSubCollection");
       SpecCollection secondChild = Mockito.mock(SpecCollection.class, "SecondSubCollection");
 
-      subject = new RootCollection();
+      subject = new SequentialCollection(anyDescription());
       subject.addSubCollection(firstChild);
       subject.addSubCollection(secondChild);
       subject.runSpecs(reporter);
@@ -145,7 +146,7 @@ public class RootCollectionTest {
       SpecCollection subCollection = Mockito.mock(SpecCollection.class, "SubCollection");
       Spec spec = Mockito.mock(Spec.class, "Spec");
 
-      subject = new RootCollection();
+      subject = new SequentialCollection(anyDescription());
       subject.addSpec(spec);
       subject.addSubCollection(subCollection);
       subject.runSpecs(reporter);
@@ -156,6 +157,10 @@ public class RootCollectionTest {
       order.verifyNoMoreInteractions();
     }
 
+  }
+
+  private String anyDescription() {
+    return "";
   }
 
   private Spec specWithBehavior(String behavior) {
