@@ -1,6 +1,8 @@
 package info.javaspec;
 
 public interface SpecReporter {
+  void collectionStarting(SpecCollection collection);
+
   boolean hasFailingSpecs();
 
   void runStarting();
@@ -10,8 +12,6 @@ public interface SpecReporter {
   void specFailed(Spec spec);
 
   void specPassed(Spec spec);
-
-  void suiteStarting(Suite suite);
 
   void runFinished();
 }

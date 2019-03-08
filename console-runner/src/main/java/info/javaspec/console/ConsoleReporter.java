@@ -1,12 +1,12 @@
 package info.javaspec.console;
 
 import info.javaspec.Spec;
+import info.javaspec.SpecCollection;
 import info.javaspec.SpecReporter;
-import info.javaspec.Suite;
 
 import java.io.PrintStream;
 
-class ConsoleReporter implements SpecReporter {
+final class ConsoleReporter implements SpecReporter {
   private final PrintStream output;
   private int numStarted;
   private int numFailed;
@@ -43,8 +43,8 @@ class ConsoleReporter implements SpecReporter {
   }
 
   @Override
-  public void suiteStarting(Suite suite) {
-    this.output.println(suite.description());
+  public void collectionStarting(SpecCollection collection) {
+    this.output.println(collection.description());
   }
 
   @Override

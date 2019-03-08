@@ -3,9 +3,9 @@ package info.javaspec.console;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import info.javaspec.Suite;
+import info.javaspec.SpecCollection;
+import info.javaspec.console.helpers.SpecCollectionHelper;
 import info.javaspec.console.helpers.SpecHelper;
-import info.javaspec.console.helpers.SuiteHelper;
 import info.javaspec.example.DescribeTwo;
 import info.javaspec.example.OneSpies;
 
@@ -17,19 +17,19 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 
-/** Steps about spec declaration forms */
-public class SpecSyntaxSteps {
+/** Steps about spec declaration syntax forms */
+public class SpecDeclarationSteps {
   private final SpecHelper specHelper;
-  private final SuiteHelper suiteHelper;
+  private final SpecCollectionHelper specCollectionHelper;
 
   private String thatDescription;
   private String thatIntendedBehavior;
   private List<String> thoseIntendedBehaviors;
   private Verification specLambdasRan;
 
-  public SpecSyntaxSteps(SpecHelper specHelper, SuiteHelper suiteHelper) {
+  public SpecDeclarationSteps(SpecHelper specHelper, SpecCollectionHelper specCollectionHelper) {
     this.specHelper = specHelper;
-    this.suiteHelper = suiteHelper;
+    this.specCollectionHelper = specCollectionHelper;
   }
 
   @Given("^I have a spec declaration that calls `it` with a lambda and a description of intended behavior$")
@@ -50,13 +50,23 @@ public class SpecSyntaxSteps {
 
   @When("^I load the specs from that declaration$")
   public void iLoadTheSpecsFromThatDeclaration() throws Exception {
-    suiteHelper.loadSpecsFromClass();
+    specCollectionHelper.loadSpecsFromClass();
+  }
+
+  @When("^I run that spec declaration$")
+  public void iRunThatSpec() throws Exception {
+    this.specCollectionHelper.runThatCollection();
+  }
+
+  @When("^I run that suite$")
+  public void iRunThatCollection() throws Exception {
+    this.specCollectionHelper.runThatCollection();
   }
 
   @Then("^a spec should exist with the given description$")
   public void aSpecShouldExistWithThatDescription() throws Exception {
-    Suite thatSuite = suiteHelper.findChildSuiteWithDescription(thatDescription);
-    assertThat(thatSuite.intendedBehaviors(), containsInAnyOrder(thatIntendedBehavior));
+    SpecCollection thatCollection = specCollectionHelper.findCollectionWithDescription(thatDescription);
+    assertThat(thatCollection.intendedBehaviors(), containsInAnyOrder(thatIntendedBehavior));
   }
 
   @Then("^that lambda should be run$")
@@ -70,13 +80,13 @@ public class SpecSyntaxSteps {
   }
 
   @Then("^there should be a suite with that description$")
-  public void thereShouldBeASuiteWithThatDescription() throws Exception {
-    Suite thatSuite = suiteHelper.findChildSuiteWithDescription(thatDescription);
-    assertThat(thatSuite.description(), equalTo(thatDescription));
+  public void thereShouldBeACollectionWithThatDescription() throws Exception {
+    SpecCollection thatCollection = specCollectionHelper.findCollectionWithDescription(thatDescription);
+    assertThat(thatCollection.description(), equalTo(thatDescription));
   }
 
   @Then("^that suite should contain a spec for each `it` statement within it$")
-  public void thatSuiteShouldHaveSpecs() throws Exception {
-    assertThat(suiteHelper.getSelectedSuite().intendedBehaviors(), equalTo(thoseIntendedBehaviors));
+  public void thatCollectionShouldHaveSpecs() throws Exception {
+    assertThat(specCollectionHelper.getSelectedCollection().intendedBehaviors(), equalTo(thoseIntendedBehaviors));
   }
 }

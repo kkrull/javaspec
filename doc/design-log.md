@@ -1,5 +1,22 @@
 # Design Log
 
+## Coming up
+
+Technical debt:
+
+- Add a linter.
+- Break up and organize the Ruby feature tests now that there are a few more of them.
+
+
+Features:
+
+- Handle a run command that can't load a class.
+  It may be helpful to return a value type for the exit status, instead of a just the number, so the offending class can
+  be reported.
+- Report spec failures to the console reporter.
+  - This will cause `Spec#run` to pass the error to `SpecReporter#specFailed`.
+
+
 ## Clarifying the terminology
 
 - A **root context class** is the top-level class passed to `JavaSpecRunner`.  It's the outer-most level of detail

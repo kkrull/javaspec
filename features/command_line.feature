@@ -1,4 +1,5 @@
-Feature: Command Line
+#@log_commands
+Feature: JavaSpec CLI (external process)
   As a developer who is working on some code that is covered by specs
   In order to know which specs are running, passing, and failing as well as how they are failing
   I want to run specs on the command line and see a text report of specs and their results
@@ -6,6 +7,12 @@ Feature: Command Line
   As a developer who is working on JavaSpec
   In order to have confidence that the whole system is wired up correctly
   I want to run JavaSpec as its own process and observe its behavior from a separate test process
+
+
+  Scenario: The CLI should offer to help when it's run without any arguments
+    Given I have a JavaSpec runner for the console
+    When I run the runner without any arguments
+    Then the runner's exit status should be 0
 
 
   Scenario: The CLI should run specs and tell you what happened
@@ -36,3 +43,10 @@ Feature: Command Line
     And I have a Java class that defines a suite of 1 or more failing lambda specs
     When I run the specs in that class
     Then The runner should indicate that 1 or more specs have failed
+
+
+  Scenario: The CLI should run multiple Java classes
+    Given I have a JavaSpec runner for the console
+    And I have 1 or more Java classes that defines lambda specs
+    When I run the specs in those classes
+    Then The runner should run the specs in each of those classes

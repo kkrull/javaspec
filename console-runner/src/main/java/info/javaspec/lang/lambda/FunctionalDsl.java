@@ -1,5 +1,12 @@
 package info.javaspec.lang.lambda;
 
+import info.javaspec.SpecCollection;
+
+import java.util.Optional;
+
+import static info.javaspec.lang.lambda.Exceptions.DeclarationAlreadyStarted;
+import static info.javaspec.lang.lambda.Exceptions.DeclarationNotStarted;
+
 /**
  * The functional- or Mocha-style syntax for JavaSpec that lets you declare specs with strings and lambdas.
  *
@@ -7,13 +14,40 @@ package info.javaspec.lang.lambda;
  * Anti-pattern: Calling these methods from a static initializer.
  */
 public final class FunctionalDsl {
+  private static DeclarationScope _instance;
+
   private FunctionalDsl() { /* static class */ }
 
+  public static void openScope() {
+    if(_instance != null)
+      throw new DeclarationAlreadyStarted();
+
+    _instance = new DeclarationScope();
+  }
+
+  public static SpecCollection closeScope() {
+    if(_instance == null)
+      throw new DeclarationNotStarted();
+
+    SpecCollection rootCollection = _instance.createRootCollection();
+    _instance = null;
+    return rootCollection;
+  }
+
+  static void reset() {
+    _instance = null;
+  }
+
   public static void describe(String subject, BehaviorDeclaration describeBehavior) {
-    SpecDeclaration.getInstance().declareSpecsFor(subject, describeBehavior);
+    declarationScope().declareSpecsFor(subject, describeBehavior);
   }
 
   public static void it(String shouldDoWhat, BehaviorVerification verifyBehavior) {
-    SpecDeclaration.getInstance().createSpec(shouldDoWhat, verifyBehavior);
+    declarationScope().createSpec(shouldDoWhat, verifyBehavior);
+  }
+
+  private static DeclarationScope declarationScope() {
+    return Optional.ofNullable(_instance)
+      .orElseThrow(DeclarationNotStarted::new);
   }
 }

@@ -1,19 +1,19 @@
 package info.javaspec.lang.lambda;
 
 class Exceptions {
-  static final class DeclarationAlreadyStarted extends IllegalStateException {
+  public static final class DeclarationAlreadyStarted extends IllegalStateException {
     DeclarationAlreadyStarted() {
-      super("Declaration has already been started.  Please call SpecDeclaration::endDeclaration on the prior declaration, if a brand new root suite is desired.");
+      super("Declaration has already been started.  Please call FunctionalDsl::closeScope on the prior declaration, if a brand new root collection is desired.");
     }
   }
 
-  static final class DeclarationNotStarted extends IllegalStateException {
+  public static final class DeclarationNotStarted extends IllegalStateException {
     DeclarationNotStarted() {
-      super("No declaration has been started.  Has SpecDeclaration::beginDeclaration been called?");
+      super("No declaration has been started.  Has FunctionalDsl::openScope been called?");
     }
   }
 
-  static final class NoSubjectDefined extends IllegalStateException {
+  public static final class NoSubjectDefined extends IllegalStateException {
     static NoSubjectDefined forSpec(String intendedBehavior) {
       String message = String.format("No subject defined for spec: %s", intendedBehavior);
       return new NoSubjectDefined(message);
@@ -24,7 +24,7 @@ class Exceptions {
     }
   }
 
-  static final class SpecDeclarationFailed extends RuntimeException {
+  public static final class SpecDeclarationFailed extends RuntimeException {
     static SpecDeclarationFailed whenInstantiating(Class<?> specClass, Exception cause) {
       return new SpecDeclarationFailed(
         String.format("Failed to instantiate class %s, to declare specs", specClass.getName()),
