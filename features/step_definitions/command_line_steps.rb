@@ -56,17 +56,17 @@ end
 
 When(/^I run the runner without any arguments$/) do
   spec_runner_helper.verify_class_files_exist
-  spec_runner_helper.run! logger
+  spec_runner_helper.exec_with_no_command! logger
 end
 
 When(/^I run the specs in that class$/) do
   spec_runner_helper.verify_class_files_exist
-  spec_runner_helper.run! logger
+  spec_runner_helper.exec_run! logger
 end
 
 When(/^I run the specs in those classes$/) do
   spec_runner_helper.verify_class_files_exist
-  spec_runner_helper.run! logger
+  spec_runner_helper.exec_run! logger
 end
 
 Then(/^the runner's exit status should be 0$/) do

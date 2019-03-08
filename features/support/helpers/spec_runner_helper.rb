@@ -20,8 +20,14 @@ class SpecRunnerContext
     last_command_stopped.exit_status
   end
 
-  def run!(logger)
-    command = "java -cp #{runner_class_dir}:#{spec_class_dir} #{runner_class} #{spec_classes.join(' ')}"
+  def exec_run!(logger)
+    command = "java -cp #{runner_class_dir}:#{spec_class_dir} #{runner_class} run #{spec_classes.join(' ')}"
+    logger.command_starting command
+    run_simple command, :fail_on_error => false
+  end
+
+  def exec_with_no_command!(logger)
+    command = "java -cp #{runner_class_dir}:#{spec_class_dir} #{runner_class}"
     logger.command_starting command
     run_simple command, :fail_on_error => false
   end

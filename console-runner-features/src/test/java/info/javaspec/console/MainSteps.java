@@ -7,7 +7,7 @@ import info.javaspec.MockSpecReporter;
 
 /** Steps observing what happens in the overall process of running specs, from *within* the same process */
 public class MainSteps {
-  private RunsMain runMain;
+  private RunsMain execRunCommand;
   private MockSpecReporter mockReporter;
   private MockExitHandler system;
 
@@ -15,7 +15,7 @@ public class MainSteps {
   private Verification expectedResultsReported;
 
   public MainSteps() {
-    this.runMain = () -> { throw new UnsupportedOperationException("runMain not defined"); };
+    this.execRunCommand = () -> { throw new UnsupportedOperationException("execRunCommand not defined"); };
     this.declaredSpecsRan = () -> { throw new UnsupportedOperationException("Verification not defined"); };
     this.expectedResultsReported = () -> { throw new UnsupportedOperationException("Verification not defined"); };
   }
@@ -28,9 +28,9 @@ public class MainSteps {
 
   @Given("^I have a Java class that defines a suite of lambda specs$")
   public void iHaveAJavaClassWithLambdaSpecs() throws Exception {
-    this.runMain = () -> {
+    this.execRunCommand = () -> {
       MainStepsOneOfEach.reset();
-      Main.main(this.mockReporter, this.system, MainStepsOneOfEach.class.getCanonicalName());
+      Main.main(this.mockReporter, this.system, "run", MainStepsOneOfEach.class.getCanonicalName());
     };
 
     this.declaredSpecsRan = MainStepsOneOfEach::specsShouldHaveRun;
@@ -42,17 +42,17 @@ public class MainSteps {
 
   @Given("^I have a Java class that defines a suite of passing lambda specs$")
   public void iHaveAJavaClassThatDefinesPassingLambdaSpecs() throws Exception {
-    this.runMain = () -> Main.main(this.mockReporter, this.system, MainStepsOnePasses.class.getCanonicalName());
+    this.execRunCommand = () -> Main.main(this.mockReporter, this.system, "run", MainStepsOnePasses.class.getCanonicalName());
   }
 
   @Given("^I have a Java class that defines a suite of 1 or more failing lambda specs$")
   public void iHaveAClassWithFailingSpecs() throws Exception {
-    this.runMain = () -> Main.main(this.mockReporter, this.system, MainStepsOneFails.class.getCanonicalName());
+    this.execRunCommand = () -> Main.main(this.mockReporter, this.system, "run", MainStepsOneFails.class.getCanonicalName());
   }
 
   @When("^I run the specs in that class$")
   public void whenRunningSpecs() throws Exception {
-    this.runMain.run();
+    this.execRunCommand.run();
   }
 
   @Then("^The runner should run the specs defined in that class$")

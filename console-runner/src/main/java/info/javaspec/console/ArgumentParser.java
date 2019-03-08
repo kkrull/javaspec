@@ -20,7 +20,8 @@ final class ArgumentParser implements Main.CommandParser {
       return FunctionalDsl.closeScope();
     });
 
-    return this.commandFactory.runSpecsCommand(specFinder, args);
+    List<String> classNames = args.isEmpty() ? args : args.subList(1, args.size());
+    return this.commandFactory.runSpecsCommand(specFinder, classNames);
   }
 
   @FunctionalInterface

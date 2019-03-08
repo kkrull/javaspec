@@ -6,15 +6,19 @@ Technical debt:
 
 - Add a linter.
 - Break up and organize the Ruby feature tests now that there are a few more of them.
+- Put the Java artifacts on independent version numbers.  There really isn't any 2.x development on the artifacts that
+  have already been released.
 
 
 Features:
 
+- Help command.
 - Handle a run command that can't load a class.
   It may be helpful to return a value type for the exit status, instead of a just the number, so the offending class can
   be reported.
 - Report spec failures to the console reporter.
   - This will cause `Spec#run` to pass the error to `SpecReporter#specFailed`.
+  - Format the console output.
 
 
 ## Clarifying the terminology
