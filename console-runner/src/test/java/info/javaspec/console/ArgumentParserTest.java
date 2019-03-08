@@ -2,7 +2,6 @@ package info.javaspec.console;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.console.ArgumentParser.CommandFactory;
-import info.javaspec.lang.lambda.InstanceSpecFinder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,7 +13,6 @@ import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.mockito.Matchers.notNull;
 
 @RunWith(HierarchicalContextRunner.class)
 public class ArgumentParserTest {
@@ -30,10 +28,9 @@ public class ArgumentParserTest {
       }
 
       @Test
-      public void createsRunSpecsCommandWithAllArgsAsClassNames() throws Exception {
+      public void createsRunSpecsCommandWithTheRestOfTheArgsAsClassNames() throws Exception {
         Command command = Mockito.mock(Command.class);
         Mockito.when(commandFactory.runSpecsCommand(
-          notNull(InstanceSpecFinder.class),
           Matchers.eq(Collections.singletonList("one")))
         ).thenReturn(command);
 

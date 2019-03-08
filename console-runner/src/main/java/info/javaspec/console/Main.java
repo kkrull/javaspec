@@ -18,7 +18,7 @@ public final class Main {
   }
 
   static void main(SpecReporter reporter, ExitHandler system, String... args) {
-    CommandParser parser = new ArgumentParser(RunSpecsCommand::new);
+    CommandParser parser = new ArgumentParser(new StaticCommandFactory());
     Main cli = new Main(reporter, system);
     cli.runCommand(parser.parseCommand(Arrays.asList(args)));
   }

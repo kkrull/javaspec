@@ -28,7 +28,7 @@ final class RunSpecsCommand implements Command {
     }
 
     SpecCollection rootCollection = this.finder.findSpecs(specClasses);
-    reporter.runStarting();
+    reporter.runStarting(); //TODO KDK: Move this to RootSpecCollection#run?
     rootCollection.runSpecs(reporter);
     reporter.runFinished();
     return reporter.hasFailingSpecs() ? 1 : 0;
