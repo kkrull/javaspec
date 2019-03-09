@@ -20,6 +20,14 @@ public class StaticCommandFactoryTest {
     subject = new StaticCommandFactory();
   }
 
+  public class helpCommand {
+    @Test
+    public void returnsHelpCommand() throws Exception {
+      Command command = subject.helpCommand();
+      assertThat(command, instanceOf(HelpCommand.class));
+    }
+  }
+
   public class runSpecsCommand {
     @Test
     public void returnsRunSpecsCommandWithTheGivenClasses() throws Exception {

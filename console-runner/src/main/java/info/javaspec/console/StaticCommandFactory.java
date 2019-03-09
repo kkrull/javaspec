@@ -7,6 +7,11 @@ import java.util.List;
 
 public class StaticCommandFactory implements ArgumentParser.CommandFactory {
   @Override
+  public Command helpCommand() {
+    return new HelpCommand();
+  }
+
+  @Override
   public Command runSpecsCommand(List<String> classNames) {
     InstanceSpecFinder specFinder = new InstanceSpecFinder(strategy -> {
       FunctionalDsl.openScope();
