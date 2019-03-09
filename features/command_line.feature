@@ -8,11 +8,19 @@ Feature: JavaSpec CLI (external process)
   In order to have confidence that the whole system is wired up correctly
   I want to run JavaSpec as its own process and observe its behavior from a separate test process
 
-
+  
   Scenario: The CLI should offer to help when it's run without any arguments
     Given I have a JavaSpec runner for the console
     When I run the runner without any arguments
     Then the runner's exit status should be 0
+    And the runner's output should be
+    """
+    Usage: javaspec <command> [<args>]
+
+    Commands:
+      help    show this help
+      run     run specs in Java classes
+    """
 
 
   Scenario: The CLI should run specs and tell you what happened

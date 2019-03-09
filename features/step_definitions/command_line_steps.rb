@@ -73,6 +73,10 @@ Then(/^the runner's exit status should be 0$/) do
   expect(spec_runner_helper.exit_status).to eq(0)
 end
 
+Then(/^the runner's output should be$/) do |text|
+  expect(spec_runner_helper.runner_output).to eq(text)
+end
+
 Then(/^The runner should describe what is being tested$/) do
   expect(spec_runner_helper.runner_output).to include('Illudium Q-36 Explosive Space Modulator')
 end
