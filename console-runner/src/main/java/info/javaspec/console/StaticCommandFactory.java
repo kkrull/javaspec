@@ -19,6 +19,10 @@ public class StaticCommandFactory implements ArgumentParser.CommandFactory {
       return FunctionalDsl.closeScope();
     });
 
-    return new RunSpecsCommand(specFinder, classNames);
+    return new RunSpecsCommand(
+      specFinder,
+      () -> { throw new UnsupportedOperationException(); },
+      classNames
+    );
   }
 }
