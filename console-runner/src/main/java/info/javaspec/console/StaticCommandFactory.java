@@ -1,8 +1,6 @@
 package info.javaspec.console;
 
-import info.javaspec.lang.lambda.FunctionalDsl;
 import info.javaspec.lang.lambda.FunctionalDslStrategy;
-import info.javaspec.lang.lambda.InstanceSpecFinder;
 
 import java.util.List;
 
@@ -14,16 +12,6 @@ public class StaticCommandFactory implements ArgumentParser.CommandFactory {
 
   @Override
   public Command runSpecsCommand(List<String> classNames) {
-    InstanceSpecFinder specFinder = new InstanceSpecFinder(strategy -> {
-      FunctionalDsl.openScope();
-      strategy.declareSpecs();
-      return FunctionalDsl.closeScope();
-    });
-
-    return new RunSpecsCommand(
-      specFinder,
-      new FunctionalDslStrategy(classNames),
-      classNames
-    );
+    return new RunSpecsCommand(new FunctionalDslStrategy(classNames));
   }
 }

@@ -6,7 +6,7 @@ import info.javaspec.lang.lambda.Exceptions.SpecDeclarationFailed;
 import java.util.List;
 
 /** Creates specs by instantiating a class that declares them during instance initialization */
-public class InstanceSpecFinder {
+public class InstanceSpecFinder { //TODO KDK: Used anymore?
   private final DeclarationScopeFactory scopeFactory;
 
   public InstanceSpecFinder(DeclarationScopeFactory scopeFactory) {
