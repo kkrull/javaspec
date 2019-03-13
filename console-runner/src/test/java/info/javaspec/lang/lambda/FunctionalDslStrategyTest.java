@@ -3,13 +3,17 @@ package info.javaspec.lang.lambda;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.SpecCollection;
 import info.javaspec.lang.lambda.Exceptions.SpecDeclarationFailed;
+import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -20,6 +24,11 @@ public class FunctionalDslStrategyTest {
   private SpecCollectionFactory subject;
 
   public class declareSpecs {
+    @Before
+    public void setup() throws Exception {
+      FunctionalDsl.reset();
+    }
+
     @Test
     public void instantiatesEachSpecClass() throws Exception {
       subject = new FunctionalDslStrategy(Arrays.asList(
@@ -33,14 +42,15 @@ public class FunctionalDslStrategyTest {
     }
 
     @Test
-    public void returnsARootSpecCollection() throws Exception {
-      subject = new FunctionalDslStrategy(anySpecClasses());
+    public void returnsASubCollectionForEachSubjectDescribedWithTheDsl() throws Exception {
+      subject = new FunctionalDslStrategy(Collections.singletonList(DescribeSpy.class.getName()));
       SpecCollection returned = subject.declareSpecs();
-      assertThat(returned, instanceOf(RootCollection.class));
-    }
+      DescribeSpy.declarationShouldHaveBeenInvoked();
 
-    @Test @Ignore
-    public void returnsTheSpecCollectionFromFunctionalDsl() throws Exception {
+      List<String> subjectsDescribed = returned.subCollections().stream()
+        .map(SpecCollection::description)
+        .collect(Collectors.toList());
+      assertThat(subjectsDescribed, equalTo(Collections.singletonList("DescribeSpy")));
     }
 
     @Test(expected = SpecDeclarationFailed.class)
@@ -89,6 +99,19 @@ public class FunctionalDslStrategyTest {
 
     public AnotherInstanceSpy() {
       _numTimesInstantiated++;
+    }
+  }
+
+  public static class DescribeSpy {
+    private static BehaviorDeclaration _declaration;
+
+    static void declarationShouldHaveBeenInvoked() {
+      Mockito.verify(_declaration, Mockito.times(1)).declareSpecs();
+    }
+
+    {
+      _declaration = Mockito.mock(BehaviorDeclaration.class);
+      FunctionalDsl.describe("DescribeSpy", _declaration);
     }
   }
 

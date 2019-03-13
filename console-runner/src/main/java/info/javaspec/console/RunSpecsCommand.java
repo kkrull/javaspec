@@ -37,7 +37,7 @@ final class RunSpecsCommand implements Command {
     return reporter.hasFailingSpecs() ? 1 : 0;
   }
 
-  public int runNew(SpecReporter reporter) {
+  public int runNew(SpecReporter reporter) { //TODO KDK: Can this be swapped in, now?
     SpecCollection rootCollection;
     try {
       rootCollection = this.factory.declareSpecs();

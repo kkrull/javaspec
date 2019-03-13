@@ -14,6 +14,7 @@ public class FunctionalDslStrategy implements SpecCollectionFactory {
 
   @Override
   public SpecCollection declareSpecs() {
+    FunctionalDsl.openScope();
     for(String className : this.classNames) {
       Class<?> specClass;
       try {
@@ -29,6 +30,6 @@ public class FunctionalDslStrategy implements SpecCollectionFactory {
       }
     }
 
-    return new RootCollection();
+    return FunctionalDsl.closeScope();
   }
 }
