@@ -25,13 +25,21 @@ class Exceptions {
   }
 
   public static final class SpecDeclarationFailed extends RuntimeException {
+    public static SpecDeclarationFailed whenLoading(String className, Throwable cause) {
+      return new SpecDeclarationFailed(
+        String.format("Failed to load class %s, to declare specs", className),
+        cause
+      );
+    }
+
     static SpecDeclarationFailed whenInstantiating(Class<?> specClass, Exception cause) {
       return new SpecDeclarationFailed(
         String.format("Failed to instantiate class %s, to declare specs", specClass.getName()),
-        cause);
+        cause
+      );
     }
 
-    private SpecDeclarationFailed(String message, Exception cause) {
+    private SpecDeclarationFailed(String message, Throwable cause) {
       super(message, cause);
     }
   }

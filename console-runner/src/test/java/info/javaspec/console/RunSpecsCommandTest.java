@@ -6,7 +6,6 @@ import info.javaspec.SpecReporter;
 import info.javaspec.lang.lambda.InstanceSpecFinder;
 import info.javaspec.lang.lambda.SpecCollectionFactory;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;

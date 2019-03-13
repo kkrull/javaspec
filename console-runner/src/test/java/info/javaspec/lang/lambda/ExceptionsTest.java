@@ -45,17 +45,34 @@ public class ExceptionsTest {
   }
 
   public class specDeclarationFailed {
-    @Test
-    public void saysWhichClassCanNotBeInstantiated() throws Exception {
-      Exception exception = SpecDeclarationFailed.whenInstantiating(Test.class, null);
-      assertThat(exception.getMessage(), equalTo("Failed to instantiate class org.junit.Test, to declare specs"));
+    public class whenLoading {
+      @Test
+      public void saysWhichClassCanNotBeLoaded() throws Exception {
+        Exception exception = SpecDeclarationFailed.whenLoading("a.Class", null);
+        assertThat(exception.getMessage(), equalTo("Failed to load class a.Class, to declare specs"));
+      }
+
+      @Test
+      public void includesTheCause() throws Exception {
+        Exception cause = new ClassNotFoundException();
+        Exception exception = SpecDeclarationFailed.whenLoading("a.Class", cause);
+        assertThat(exception.getCause(), sameInstance(cause));
+      }
     }
 
-    @Test
-    public void includesTheCause() throws Exception {
-      Exception cause = new SecurityException();
-      Exception exception = SpecDeclarationFailed.whenInstantiating(Test.class, cause);
-      assertThat(exception.getCause(), sameInstance(cause));
+    public class whenInstantiating {
+      @Test
+      public void saysWhichClassCanNotBeInstantiated() throws Exception {
+        Exception exception = SpecDeclarationFailed.whenInstantiating(Test.class, null);
+        assertThat(exception.getMessage(), equalTo("Failed to instantiate class org.junit.Test, to declare specs"));
+      }
+
+      @Test
+      public void includesTheCause() throws Exception {
+        Exception cause = new SecurityException();
+        Exception exception = SpecDeclarationFailed.whenInstantiating(Test.class, cause);
+        assertThat(exception.getCause(), sameInstance(cause));
+      }
     }
   }
 }

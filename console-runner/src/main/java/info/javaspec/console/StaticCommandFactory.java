@@ -1,6 +1,7 @@
 package info.javaspec.console;
 
 import info.javaspec.lang.lambda.FunctionalDsl;
+import info.javaspec.lang.lambda.FunctionalDslStrategy;
 import info.javaspec.lang.lambda.InstanceSpecFinder;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class StaticCommandFactory implements ArgumentParser.CommandFactory {
 
     return new RunSpecsCommand(
       specFinder,
-      () -> { throw new UnsupportedOperationException(); },
+      new FunctionalDslStrategy(classNames),
       classNames
     );
   }
