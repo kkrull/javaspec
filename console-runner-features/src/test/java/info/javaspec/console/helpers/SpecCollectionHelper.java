@@ -38,7 +38,7 @@ public class SpecCollectionHelper {
   }
 
   public void runThatCollection() {
-    runner().run(getSelectedCollection());
+    getSelectedCollection().runSpecs(new MockSpecReporter());
   }
 
   public SpecCollection getSelectedCollection() {
@@ -54,14 +54,5 @@ public class SpecCollectionHelper {
 
   private SpecCollection getRootCollection() {
     return this.rootCollection;
-  }
-
-  private SpecCollectionRunner runner() {
-    return collection -> collection.runSpecs(new MockSpecReporter());
-  }
-
-  @FunctionalInterface
-  interface SpecCollectionRunner {
-    void run(SpecCollection collection);
   }
 }
