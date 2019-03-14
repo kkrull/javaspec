@@ -1,6 +1,7 @@
 package info.javaspec.console;
 
 import info.javaspec.RunObserver;
+import info.javaspec.console.HelpCommand.HelpObserver;
 
 import java.util.List;
 
@@ -16,12 +17,12 @@ final class ArgumentParser implements Main.CommandParser {
   @Override
   public Command parseCommand(List<String> args) {
     if(args.isEmpty())
-      return this.factory.helpCommand();
+      return this.factory.helpCommand(this.reporter);
 
     String command = args.get(0);
     switch(command) {
       case "help":
-        return this.factory.helpCommand();
+        return this.factory.helpCommand(this.reporter);
 
       case "run":
         List<String> classNames = args.subList(1, args.size());
@@ -33,7 +34,7 @@ final class ArgumentParser implements Main.CommandParser {
   }
 
   interface CommandFactory {
-    Command helpCommand();
+    Command helpCommand(HelpObserver observer);
 
     Command runSpecsCommand(RunObserver observer, List<String> classNames);
   }

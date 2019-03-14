@@ -19,6 +19,13 @@ public final class MockReporter implements Reporter {
     this.specPassedReceived = new LinkedList<>();
   }
 
+  /* HelpObserver */
+
+  @Override
+  public void writeMessage(List<String> lines) { }
+
+  /* RunObserver */
+
   @Override
   public boolean hasFailingSpecs() {
     return !this.specFailedReceived.isEmpty();

@@ -33,25 +33,27 @@ public class ArgumentParserTest {
   public class parseCommand {
     public class givenNoArguments {
       @Test
-      public void returnsHelpCommand() throws Exception {
+      public void returnsHelpCommandWithTheReporter() throws Exception {
         Command helpCommand = Mockito.mock(Command.class);
-        Mockito.when(factory.helpCommand())
+        Mockito.when(factory.helpCommand(Mockito.any()))
           .thenReturn(helpCommand);
 
         Command returned = subject.parseCommand(Collections.emptyList());
         assertThat(returned, sameInstance(helpCommand));
+        Mockito.verify(factory).helpCommand(Mockito.same(reporter));
       }
     }
 
     public class givenHelp {
       @Test
-      public void returnsHelpCommand() throws Exception {
+      public void returnsHelpCommandWithTheReporter() throws Exception {
         Command helpCommand = Mockito.mock(Command.class);
-        Mockito.when(factory.helpCommand())
+        Mockito.when(factory.helpCommand(Mockito.any()))
           .thenReturn(helpCommand);
 
         Command returned = subject.parseCommand(Collections.singletonList("help"));
         assertThat(returned, sameInstance(helpCommand));
+        Mockito.verify(factory).helpCommand(Mockito.same(reporter));
       }
     }
 

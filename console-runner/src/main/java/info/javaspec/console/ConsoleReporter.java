@@ -4,6 +4,7 @@ import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
 
 import java.io.PrintStream;
+import java.util.List;
 
 final class ConsoleReporter implements Reporter {
   private final PrintStream output;
@@ -14,6 +15,15 @@ final class ConsoleReporter implements Reporter {
   public ConsoleReporter(PrintStream output) {
     this.output = output;
   }
+
+  /* HelpObserver */
+
+  @Override
+  public void writeMessage(List<String> lines) {
+    throw new UnsupportedOperationException();
+  }
+
+  /* RunObserver */
 
   @Override
   public boolean hasFailingSpecs() {

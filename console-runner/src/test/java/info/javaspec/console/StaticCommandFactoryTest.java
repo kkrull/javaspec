@@ -3,6 +3,7 @@ package info.javaspec.console;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.RunObserver;
 import info.javaspec.console.ArgumentParser.CommandFactory;
+import info.javaspec.console.HelpCommand.HelpObserver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +26,7 @@ public class StaticCommandFactoryTest {
   public class helpCommand {
     @Test
     public void returnsHelpCommand() throws Exception {
-      Command command = subject.helpCommand();
+      Command command = subject.helpCommand(Mockito.mock(HelpObserver.class));
       assertThat(command, instanceOf(HelpCommand.class));
     }
   }
