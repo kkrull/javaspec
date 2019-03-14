@@ -1,7 +1,7 @@
 package info.javaspec.console;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.SpecReporter;
+import info.javaspec.RunObserver;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -16,17 +16,17 @@ public class HelpCommandTest {
   private Command subject;
 
   public class run {
-    private SpecReporter reporter;
+    private RunObserver observer;
 
     @Before
     public void setup() throws Exception {
       subject = new HelpCommand();
-      reporter = Mockito.mock(SpecReporter.class);
+      observer = Mockito.mock(RunObserver.class);
     }
 
     @Test
     public void returns0() throws Exception {
-      int status = subject.run(reporter);
+      int status = subject.run(observer);
       assertThat(status, equalTo(0));
     }
 

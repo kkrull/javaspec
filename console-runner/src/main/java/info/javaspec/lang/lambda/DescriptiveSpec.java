@@ -1,7 +1,7 @@
 package info.javaspec.lang.lambda;
 
 import info.javaspec.Spec;
-import info.javaspec.SpecReporter;
+import info.javaspec.RunObserver;
 
 final class DescriptiveSpec implements Spec {
   private final String intendedBehavior;
@@ -18,15 +18,15 @@ final class DescriptiveSpec implements Spec {
   }
 
   @Override
-  public void run(SpecReporter reporter) {
-    reporter.specStarting(this);
+  public void run(RunObserver observer) {
+    observer.specStarting(this);
     try {
       this.verification.run();
     } catch(AssertionError | Exception e) {
-      reporter.specFailed(this);
+      observer.specFailed(this);
       return;
     }
 
-    reporter.specPassed(this);
+    observer.specPassed(this);
   }
 }

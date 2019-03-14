@@ -1,6 +1,6 @@
 package info.javaspec.console.helpers;
 
-import info.javaspec.MockSpecReporter;
+import info.javaspec.MockRunObserver;
 import info.javaspec.SpecCollection;
 import info.javaspec.lang.lambda.FunctionalDslFactory;
 import info.javaspec.lang.lambda.SpecCollectionFactory;
@@ -38,7 +38,7 @@ public class SpecCollectionHelper {
   }
 
   public void runThatCollection() {
-    getSelectedCollection().runSpecs(new MockSpecReporter());
+    getSelectedCollection().runSpecs(new MockRunObserver());
   }
 
   public SpecCollection getSelectedCollection() {

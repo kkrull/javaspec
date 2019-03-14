@@ -1,7 +1,7 @@
 package info.javaspec.console;
 
 import info.javaspec.SpecCollection;
-import info.javaspec.SpecReporter;
+import info.javaspec.RunObserver;
 import info.javaspec.lang.lambda.SpecCollectionFactory;
 
 final class RunSpecsCommand implements Command {
@@ -12,7 +12,7 @@ final class RunSpecsCommand implements Command {
   }
 
   @Override
-  public int run(SpecReporter reporter) {
+  public int run(RunObserver observer) {
     SpecCollection rootCollection;
     try {
       rootCollection = this.factory.declareSpecs();
@@ -20,9 +20,9 @@ final class RunSpecsCommand implements Command {
       return 2;
     }
 
-    reporter.runStarting();
-    rootCollection.runSpecs(reporter);
-    reporter.runFinished();
-    return reporter.hasFailingSpecs() ? 1 : 0;
+    observer.runStarting();
+    rootCollection.runSpecs(observer);
+    observer.runFinished();
+    return observer.hasFailingSpecs() ? 1 : 0;
   }
 }

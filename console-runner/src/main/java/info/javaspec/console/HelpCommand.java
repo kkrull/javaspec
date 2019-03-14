@@ -1,10 +1,10 @@
 package info.javaspec.console;
 
-import info.javaspec.SpecReporter;
+import info.javaspec.RunObserver;
 
 final class HelpCommand implements Command {
   @Override
-  public int run(SpecReporter reporter) {
+  public int run(RunObserver observer) {
     return 0;
   }
 }

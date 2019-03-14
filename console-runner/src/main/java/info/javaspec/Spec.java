@@ -4,5 +4,5 @@ package info.javaspec;
 public interface Spec {
   String intendedBehavior();
 
-  void run(SpecReporter reporter);
+  void run(RunObserver observer);
 }

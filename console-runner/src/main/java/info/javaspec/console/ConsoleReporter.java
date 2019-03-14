@@ -2,11 +2,11 @@ package info.javaspec.console;
 
 import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
-import info.javaspec.SpecReporter;
+import info.javaspec.RunObserver;
 
 import java.io.PrintStream;
 
-final class ConsoleReporter implements SpecReporter {
+final class ConsoleReporter implements RunObserver {
   private final PrintStream output;
   private int numStarted;
   private int numFailed;

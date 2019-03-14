@@ -1,6 +1,6 @@
 package info.javaspec;
 
-public interface SpecReporter {
+public interface RunObserver {
   void collectionStarting(SpecCollection collection);
 
   boolean hasFailingSpecs();

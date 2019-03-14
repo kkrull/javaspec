@@ -1,8 +1,8 @@
 package info.javaspec.console;
 
-import info.javaspec.SpecReporter;
+import info.javaspec.RunObserver;
 
 @FunctionalInterface
 interface Command {
-  int run(SpecReporter reporter);
+  int run(RunObserver observer);
 }

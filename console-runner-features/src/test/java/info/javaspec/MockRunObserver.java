@@ -8,11 +8,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
 
-public final class MockSpecReporter implements SpecReporter {
+public final class MockRunObserver implements RunObserver {
   private final List<Spec> specFailedReceived;
   private final List<Spec> specPassedReceived;
 
-  public MockSpecReporter() {
+  public MockRunObserver() {
     this.specFailedReceived = new LinkedList<>();
     this.specPassedReceived = new LinkedList<>();
   }
