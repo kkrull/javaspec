@@ -33,21 +33,21 @@ public class RunSpecsCommandTest {
     @Test
     public void declaresSpecs() throws Exception {
       subject = new RunSpecsCommand(factory, observer);
-      subject.run(observer);
+      subject.run();
       Mockito.verify(factory).declareSpecs();
     }
 
     @Test
     public void runsTheReturnedCollection() throws Exception {
       subject = new RunSpecsCommand(factory, observer);
-      subject.run(observer);
+      subject.run();
       Mockito.verify(collection).runSpecs(observer);
     }
 
     @Test
     public void reportsTheRunStartingAndFinishing() throws Exception {
       subject = new RunSpecsCommand(factory, observer);
-      subject.run(observer);
+      subject.run();
       Mockito.verify(observer).runStarting();
       Mockito.verify(observer).runFinished();
     }
@@ -55,7 +55,7 @@ public class RunSpecsCommandTest {
     @Test
     public void returns0WhenThereAreNoFailingSpecs() throws Exception {
       subject = new RunSpecsCommand(factory, observer);
-      int statusCode = subject.run(observer);
+      int statusCode = subject.run();
       assertThat(statusCode, equalTo(0));
     }
 
@@ -64,7 +64,7 @@ public class RunSpecsCommandTest {
       Mockito.when(observer.hasFailingSpecs()).thenReturn(true);
 
       subject = new RunSpecsCommand(factory, observer);
-      int statusCode = subject.run(observer);
+      int statusCode = subject.run();
       assertThat(statusCode, equalTo(1));
     }
 
@@ -74,7 +74,7 @@ public class RunSpecsCommandTest {
         .thenThrow(new RuntimeException("bang!"));
 
       subject = new RunSpecsCommand(factory, observer);
-      int statusCode = subject.run(observer);
+      int statusCode = subject.run();
       assertThat(statusCode, equalTo(2));
     }
   }

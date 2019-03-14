@@ -2,7 +2,6 @@ package info.javaspec.console;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.Reporter;
-import info.javaspec.RunObserver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,12 +26,12 @@ public class MainTest {
     @Test
     public void runsTheCommand() throws Exception {
       subject.runCommand(this.command);
-      Mockito.verify(this.command, Mockito.times(1)).run(this.reporter);
+      Mockito.verify(this.command, Mockito.times(1)).run();
     }
 
     @Test
     public void exitsWithTheExitCodeReturnedByTheCommand() throws Exception {
-      Mockito.stub(this.command.run(this.reporter)).toReturn(42);
+      Mockito.stub(this.command.run()).toReturn(42);
       subject.runCommand(this.command);
       Mockito.verify(this.system, Mockito.times(1)).exit(42);
     }

@@ -26,7 +26,7 @@ public class HelpCommandTest {
 
     @Test
     public void returns0() throws Exception {
-      int status = subject.run(observer);
+      int status = subject.run();
       assertThat(status, equalTo(0));
     }
 

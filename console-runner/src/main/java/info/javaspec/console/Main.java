@@ -18,7 +18,7 @@ public final class Main {
   }
 
   static void main(Reporter reporter, ExitHandler system, String... args) {
-    CommandParser parser = new ArgumentParser(new StaticCommandFactory());
+    CommandParser parser = new ArgumentParser(new StaticCommandFactory(), reporter);
     Main cli = new Main(reporter, system);
     cli.runCommand(parser.parseCommand(Arrays.asList(args)));
   }
@@ -29,7 +29,7 @@ public final class Main {
   }
 
   void runCommand(Command command) {
-    int code = command.run(this.reporter);
+    int code = command.run();
     this.system.exit(code);
   }
 

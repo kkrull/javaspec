@@ -1,12 +1,17 @@
 package info.javaspec.console;
 
+import info.javaspec.Reporter;
+import info.javaspec.RunObserver;
+
 import java.util.List;
 
 final class ArgumentParser implements Main.CommandParser {
   private final CommandFactory factory;
+  private final Reporter reporter;
 
-  public ArgumentParser(CommandFactory factory) {
+  public ArgumentParser(CommandFactory factory, Reporter reporter) {
     this.factory = factory;
+    this.reporter = reporter;
   }
 
   @Override
@@ -21,7 +26,7 @@ final class ArgumentParser implements Main.CommandParser {
 
       case "run":
         List<String> classNames = args.subList(1, args.size());
-        return this.factory.runSpecsCommand(classNames);
+        return this.factory.runSpecsCommand(this.reporter, classNames);
 
       default:
         throw InvalidCommand.named(command);
@@ -31,7 +36,7 @@ final class ArgumentParser implements Main.CommandParser {
   interface CommandFactory {
     Command helpCommand();
 
-    Command runSpecsCommand(List<String> classNames);
+    Command runSpecsCommand(RunObserver observer, List<String> classNames);
   }
 
   static final class InvalidCommand extends RuntimeException {

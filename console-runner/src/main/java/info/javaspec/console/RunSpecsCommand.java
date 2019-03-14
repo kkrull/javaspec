@@ -14,7 +14,7 @@ final class RunSpecsCommand implements Command {
   }
 
   @Override
-  public int run(RunObserver observer) {
+  public int run() {
     SpecCollection rootCollection;
     try {
       rootCollection = this.factory.declareSpecs();
@@ -22,9 +22,9 @@ final class RunSpecsCommand implements Command {
       return 2;
     }
 
-    observer.runStarting();
-    rootCollection.runSpecs(observer);
-    observer.runFinished();
-    return observer.hasFailingSpecs() ? 1 : 0;
+    this.observer.runStarting();
+    rootCollection.runSpecs(this.observer);
+    this.observer.runFinished();
+    return this.observer.hasFailingSpecs() ? 1 : 0;
   }
 }

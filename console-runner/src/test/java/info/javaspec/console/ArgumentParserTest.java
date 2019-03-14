@@ -1,6 +1,8 @@
 package info.javaspec.console;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
+import info.javaspec.Reporter;
+import info.javaspec.RunObserver;
 import info.javaspec.console.ArgumentParser.CommandFactory;
 import info.javaspec.console.ArgumentParser.InvalidCommand;
 import org.junit.Before;
@@ -20,11 +22,13 @@ import static org.hamcrest.Matchers.sameInstance;
 public class ArgumentParserTest {
   private Main.CommandParser subject;
   private CommandFactory factory;
+  private Reporter reporter;
 
   @Before
   public void setup() throws Exception {
     factory = Mockito.mock(CommandFactory.class);
-    subject = new ArgumentParser(factory);
+    reporter = Mockito.mock(Reporter.class);
+    subject = new ArgumentParser(factory, reporter);
   }
 
   public class parseCommand {
@@ -56,12 +60,17 @@ public class ArgumentParserTest {
       @Test
       public void createsRunSpecsCommandWithNoClassNames() throws Exception {
         Command runCommand = Mockito.mock(Command.class);
-        Mockito.when(factory.runSpecsCommand(Matchers.anyListOf(String.class)))
-          .thenReturn(runCommand);
+        Mockito.when(
+          factory.runSpecsCommand(
+            Matchers.any(RunObserver.class),
+            Matchers.anyListOf(String.class))
+        ).thenReturn(runCommand);
 
         Command returned = subject.parseCommand(Arrays.asList("run"));
         Mockito.verify(factory).runSpecsCommand(
-          Matchers.eq(Collections.emptyList()));
+          Matchers.same(reporter),
+          Matchers.eq(Collections.emptyList())
+        );
         assertThat(returned, sameInstance(runCommand));
       }
     }
@@ -70,12 +79,17 @@ public class ArgumentParserTest {
       @Test
       public void createsRunSpecsCommandWithTheRestOfTheArgsAsClassNames() throws Exception {
         Command runCommand = Mockito.mock(Command.class);
-        Mockito.when(factory.runSpecsCommand(Matchers.anyListOf(String.class)))
-          .thenReturn(runCommand);
+        Mockito.when(
+          factory.runSpecsCommand(
+            Matchers.any(RunObserver.class),
+            Matchers.anyListOf(String.class))
+        ).thenReturn(runCommand);
 
         Command returned = subject.parseCommand(Arrays.asList("run", "one"));
         Mockito.verify(factory).runSpecsCommand(
-          Matchers.eq(Collections.singletonList("one")));
+          Matchers.same(reporter),
+          Matchers.eq(Collections.singletonList("one"))
+        );
         assertThat(returned, sameInstance(runCommand));
       }
     }
