@@ -5,10 +5,10 @@ import info.javaspec.lang.lambda.Exceptions.SpecDeclarationFailed;
 
 import java.util.List;
 
-public class FunctionalDslStrategy implements SpecCollectionFactory {
+public class FunctionalDslFactory implements SpecCollectionFactory {
   private final List<String> classNames;
 
-  public FunctionalDslStrategy(List<String> classNames) {
+  public FunctionalDslFactory(List<String> classNames) {
     this.classNames = classNames;
   }
 

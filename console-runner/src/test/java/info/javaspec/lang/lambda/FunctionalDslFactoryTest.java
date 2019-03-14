@@ -3,9 +3,7 @@ package info.javaspec.lang.lambda;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.SpecCollection;
 import info.javaspec.lang.lambda.Exceptions.SpecDeclarationFailed;
-import org.hamcrest.Matchers;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -17,10 +15,9 @@ import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
 
 @RunWith(HierarchicalContextRunner.class)
-public class FunctionalDslStrategyTest {
+public class FunctionalDslFactoryTest {
   private SpecCollectionFactory subject;
 
   public class declareSpecs {
@@ -31,7 +28,7 @@ public class FunctionalDslStrategyTest {
 
     @Test
     public void instantiatesEachSpecClass() throws Exception {
-      subject = new FunctionalDslStrategy(Arrays.asList(
+      subject = new FunctionalDslFactory(Arrays.asList(
         OneInstanceSpy.class.getName(),
         AnotherInstanceSpy.class.getName()
       ));
@@ -43,7 +40,7 @@ public class FunctionalDslStrategyTest {
 
     @Test
     public void returnsASubCollectionForEachSubjectDescribedWithTheDsl() throws Exception {
-      subject = new FunctionalDslStrategy(Collections.singletonList(DescribeSpy.class.getName()));
+      subject = new FunctionalDslFactory(Collections.singletonList(DescribeSpy.class.getName()));
       SpecCollection returned = subject.declareSpecs();
       DescribeSpy.declarationShouldHaveBeenInvoked();
 
@@ -55,37 +52,33 @@ public class FunctionalDslStrategyTest {
 
     @Test(expected = SpecDeclarationFailed.class)
     public void throwsGivenAClassNameThatDoesNotExist() throws Exception {
-      subject = new FunctionalDslStrategy(Collections.singletonList("com.bogus.Class"));
+      subject = new FunctionalDslFactory(Collections.singletonList("com.bogus.Class"));
       subject.declareSpecs();
     }
 
     @Test(expected = SpecDeclarationFailed.class)
     public void throwsGivenAClassThatDoesNotLoad() throws Exception {
-      subject = new FunctionalDslStrategy(Collections.singletonList("info.javaspec.lang.lambda.ExplodingStaticInitializer"));
+      subject = new FunctionalDslFactory(Collections.singletonList("info.javaspec.lang.lambda.ExplodingStaticInitializer"));
       subject.declareSpecs();
     }
 
     @Test(expected = SpecDeclarationFailed.class)
     public void throwsGivenAClassThatCanNotBeInstantiated() throws Exception {
-      subject = new FunctionalDslStrategy(Collections.singletonList("info.javaspec.lang.lambda.FunctionalDslStrategyTest$AbstractClass"));
+      subject = new FunctionalDslFactory(Collections.singletonList("info.javaspec.lang.lambda.FunctionalDslFactoryTest$AbstractClass"));
       subject.declareSpecs();
     }
 
     @Test(expected = SpecDeclarationFailed.class)
     public void throwsGivenAClassThatFailsToInstantiate() throws Exception {
-      subject = new FunctionalDslStrategy(Collections.singletonList("info.javaspec.lang.lambda.FunctionalDslStrategyTest$ExplodingConstructor"));
+      subject = new FunctionalDslFactory(Collections.singletonList("info.javaspec.lang.lambda.FunctionalDslFactoryTest$ExplodingConstructor"));
       subject.declareSpecs();
     }
 
     @Test(expected = SpecDeclarationFailed.class)
     public void throwsGivenAnInaccessibleClass() throws Exception {
-      subject = new FunctionalDslStrategy(Collections.singletonList("info.javaspec.lang.lambda.FunctionalDslStrategyTest$HiddenClass"));
+      subject = new FunctionalDslFactory(Collections.singletonList("info.javaspec.lang.lambda.FunctionalDslFactoryTest$HiddenClass"));
       subject.declareSpecs();
     }
-  }
-
-  private List<String> anySpecClasses() {
-    return Collections.emptyList();
   }
 
   public static abstract class AbstractClass { }

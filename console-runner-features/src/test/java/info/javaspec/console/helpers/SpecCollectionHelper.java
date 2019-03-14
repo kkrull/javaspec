@@ -2,7 +2,7 @@ package info.javaspec.console.helpers;
 
 import info.javaspec.MockSpecReporter;
 import info.javaspec.SpecCollection;
-import info.javaspec.lang.lambda.FunctionalDslStrategy;
+import info.javaspec.lang.lambda.FunctionalDslFactory;
 import info.javaspec.lang.lambda.SpecCollectionFactory;
 
 import java.util.Collections;
@@ -33,7 +33,7 @@ public class SpecCollectionHelper {
     List<String> specClassNames = specClasses.stream()
       .map(Class::getName)
       .collect(Collectors.toList());
-    SpecCollectionFactory factory = new FunctionalDslStrategy(specClassNames);
+    SpecCollectionFactory factory = new FunctionalDslFactory(specClassNames);
     this.rootCollection = factory.declareSpecs();
   }
 
