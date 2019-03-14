@@ -1,7 +1,5 @@
 package info.javaspec.console;
 
-import info.javaspec.Reporter;
-
 import java.util.Arrays;
 import java.util.List;
 

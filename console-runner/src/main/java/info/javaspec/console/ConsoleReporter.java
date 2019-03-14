@@ -1,6 +1,5 @@
 package info.javaspec.console;
 
-import info.javaspec.Reporter;
 import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
 

@@ -1,5 +1,7 @@
 package info.javaspec;
 
+import info.javaspec.console.Reporter;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
