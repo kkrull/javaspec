@@ -1,6 +1,7 @@
 package info.javaspec.console;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
+import info.javaspec.Reporter;
 import info.javaspec.RunObserver;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,13 +12,13 @@ import org.mockito.Mockito;
 public class MainTest {
   public class runCommand {
     private Main subject;
-    private RunObserver reporter;
+    private Reporter reporter;
     private Main.ExitHandler system;
     private Command command;
 
     @Before
     public void setup() {
-      this.reporter = Mockito.mock(RunObserver.class);
+      this.reporter = Mockito.mock(Reporter.class);
       this.system = Mockito.mock(Main.ExitHandler.class);
       this.subject = new Main(this.reporter, this.system);
       this.command = Mockito.mock(Command.class);

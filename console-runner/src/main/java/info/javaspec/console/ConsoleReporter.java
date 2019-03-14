@@ -1,12 +1,12 @@
 package info.javaspec.console;
 
+import info.javaspec.Reporter;
 import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
-import info.javaspec.RunObserver;
 
 import java.io.PrintStream;
 
-final class ConsoleReporter implements RunObserver {
+final class ConsoleReporter implements Reporter {
   private final PrintStream output;
   private int numStarted;
   private int numFailed;

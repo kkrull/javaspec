@@ -12,6 +12,6 @@ public class StaticCommandFactory implements ArgumentParser.CommandFactory {
 
   @Override
   public Command runSpecsCommand(List<String> classNames) {
-    return new RunSpecsCommand(new FunctionalDslFactory(classNames));
+    return new RunSpecsCommand(new FunctionalDslFactory(classNames), null);
   }
 }

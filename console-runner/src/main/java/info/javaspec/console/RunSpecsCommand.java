@@ -6,9 +6,11 @@ import info.javaspec.lang.lambda.SpecCollectionFactory;
 
 final class RunSpecsCommand implements Command {
   private final SpecCollectionFactory factory;
+  private final RunObserver observer;
 
-  public RunSpecsCommand(SpecCollectionFactory factory) {
+  public RunSpecsCommand(SpecCollectionFactory factory, RunObserver observer) {
     this.factory = factory;
+    this.observer = observer;
   }
 
   @Override

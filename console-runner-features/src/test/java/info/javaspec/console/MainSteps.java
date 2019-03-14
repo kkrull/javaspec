@@ -3,12 +3,12 @@ package info.javaspec.console;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import info.javaspec.MockRunObserver;
+import info.javaspec.MockReporter;
 
 /** Steps observing what happens in the overall process of running specs, from *within* the same process */
 public class MainSteps {
   private RunsMain execRunCommand;
-  private MockRunObserver mockReporter;
+  private MockReporter mockReporter;
   private MockExitHandler system;
 
   private Verification declaredSpecsRan;
@@ -22,7 +22,7 @@ public class MainSteps {
 
   @Given("^I have a JavaSpec class runner$")
   public void iHaveAClassRunner() throws Exception {
-    this.mockReporter = new MockRunObserver();
+    this.mockReporter = new MockReporter();
     this.system = new MockExitHandler();
   }
 
