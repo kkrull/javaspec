@@ -18,14 +18,14 @@ public final class FunctionalDsl {
 
   private FunctionalDsl() { /* static class */ }
 
-  public static void openScope() {
+  static void openScope() {
     if(_instance != null)
       throw new DeclarationAlreadyStarted();
 
     _instance = new DeclarationScope();
   }
 
-  public static SpecCollection closeScope() {
+  static SpecCollection closeScope() {
     if(_instance == null)
       throw new DeclarationNotStarted();
 
