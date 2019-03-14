@@ -2,11 +2,12 @@ package info.javaspec.console.helpers;
 
 import info.javaspec.MockSpecReporter;
 import info.javaspec.SpecCollection;
-import info.javaspec.lang.lambda.FunctionalDsl;
-import info.javaspec.lang.lambda.InstanceSpecFinder;
+import info.javaspec.lang.lambda.FunctionalDslStrategy;
+import info.javaspec.lang.lambda.SpecCollectionFactory;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SpecCollectionHelper {
   private final SpecHelper specHelper;
@@ -28,13 +29,12 @@ public class SpecCollectionHelper {
   }
 
   public void loadSpecsFromClass() {
-    InstanceSpecFinder finder = new InstanceSpecFinder(strategy -> {
-      FunctionalDsl.openScope();
-      strategy.declareSpecs();
-      return FunctionalDsl.closeScope();
-    });
     List<Class<?>> specClasses = Collections.singletonList(this.specHelper.getDeclaringClass());
-    this.rootCollection = finder.findSpecs(specClasses);
+    List<String> specClassNames = specClasses.stream()
+      .map(Class::getName)
+      .collect(Collectors.toList());
+    SpecCollectionFactory factory = new FunctionalDslStrategy(specClassNames);
+    this.rootCollection = factory.declareSpecs();
   }
 
   public void runThatCollection() {
