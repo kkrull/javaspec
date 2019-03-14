@@ -1,7 +1,6 @@
 package info.javaspec.lang.lambda;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.lang.lambda.Exceptions.DeclarationAlreadyStarted;
 import info.javaspec.lang.lambda.Exceptions.DeclarationNotStarted;
 import info.javaspec.lang.lambda.Exceptions.NoSubjectDefined;
 import info.javaspec.lang.lambda.Exceptions.SpecDeclarationFailed;
@@ -14,17 +13,6 @@ import static org.hamcrest.Matchers.sameInstance;
 
 @RunWith(HierarchicalContextRunner.class)
 public class ExceptionsTest {
-  public class declarationAlreadyStarted {
-    @Test
-    public void describesTheProblemToDevelopers() throws Exception {
-      Exception subject = new DeclarationAlreadyStarted();
-      assertThat(
-        subject.getMessage(),
-        equalTo("Declaration has already been started.  Please call FunctionalDsl::closeScope on the prior declaration, if a brand new root collection is desired.")
-      );
-    }
-  }
-
   public class declarationNotStarted {
     @Test
     public void explainsTheProblemToDevelopers() throws Exception {
