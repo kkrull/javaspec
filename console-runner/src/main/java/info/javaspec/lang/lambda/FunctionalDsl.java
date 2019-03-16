@@ -4,7 +4,6 @@ import info.javaspec.SpecCollection;
 
 import java.util.Optional;
 
-import static info.javaspec.lang.lambda.Exceptions.DeclarationAlreadyStarted;
 import static info.javaspec.lang.lambda.Exceptions.DeclarationNotStarted;
 
 /**
@@ -18,17 +17,11 @@ public final class FunctionalDsl {
 
   private FunctionalDsl() { /* static class */ }
 
-  public static void openScope() {
-    if(_instance != null)
-      throw new DeclarationAlreadyStarted();
-
+  static void openScope() {
     _instance = new DeclarationScope();
   }
 
-  public static SpecCollection closeScope() {
-    if(_instance == null)
-      throw new DeclarationNotStarted();
-
+  static SpecCollection closeScope() {
     SpecCollection rootCollection = _instance.createRootCollection();
     _instance = null;
     return rootCollection;

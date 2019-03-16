@@ -2,9 +2,9 @@ package info.javaspec.lang.lambda;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.SpecCollection;
-import info.javaspec.lang.lambda.Exceptions.DeclarationAlreadyStarted;
 import info.javaspec.lang.lambda.Exceptions.DeclarationNotStarted;
-import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -20,24 +20,17 @@ import static org.hamcrest.Matchers.instanceOf;
 public class FunctionalDslTest {
   private SpecCollection returned;
 
-  @After
+  @Before
   public void setup() throws Exception {
     FunctionalDsl.reset();
   }
 
+  @AfterClass
+  public static void teardown() throws Exception {
+    FunctionalDsl.reset();
+  }
+
   public class closeScope {
-    @Test(expected = DeclarationNotStarted.class)
-    public void throwsWhenTheScopeHasNotBeenOpened() throws Exception {
-      FunctionalDsl.closeScope();
-    }
-
-    @Test(expected = DeclarationNotStarted.class)
-    public void throwsWhenTheScopeHasAlreadyBeenClosed() throws Exception {
-      FunctionalDsl.openScope();
-      FunctionalDsl.closeScope();
-      FunctionalDsl.closeScope();
-    }
-
     public class whenTheScopeIsOpen {
       @Test
       public void returnsTheRootSpecCollectionFromTheDeclarationScope() throws Exception {
@@ -90,14 +83,6 @@ public class FunctionalDslTest {
           .collect(Collectors.toList());
         assertThat(descriptions, equalTo(Collections.singletonList("behaves")));
       }
-    }
-  }
-
-  public class openScope {
-    @Test(expected = DeclarationAlreadyStarted.class)
-    public void throwsWhenTheScopeIsAlreadyOpen() throws Exception {
-      FunctionalDsl.openScope();
-      FunctionalDsl.openScope();
     }
   }
 

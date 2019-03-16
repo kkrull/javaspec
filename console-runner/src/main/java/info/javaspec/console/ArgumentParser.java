@@ -1,30 +1,47 @@
 package info.javaspec.console;
 
-import info.javaspec.lang.lambda.FunctionalDsl;
-import info.javaspec.lang.lambda.InstanceSpecFinder;
-
 import java.util.List;
 
 final class ArgumentParser implements Main.CommandParser {
-  private final CommandFactory commandFactory;
+  private final CommandFactory factory;
 
-  public ArgumentParser(CommandFactory commandFactory) {
-    this.commandFactory = commandFactory;
+  public ArgumentParser(CommandFactory factory) {
+    this.factory = factory;
   }
 
   @Override
   public Command parseCommand(List<String> args) {
-    InstanceSpecFinder specFinder = new InstanceSpecFinder(strategy -> {
-      FunctionalDsl.openScope();
-      strategy.declareSpecs();
-      return FunctionalDsl.closeScope();
-    });
+    if(args.isEmpty())
+      return this.factory.helpCommand();
 
-    return this.commandFactory.runSpecsCommand(specFinder, args);
+    String command = args.get(0);
+    switch(command) {
+      case "help":
+        return this.factory.helpCommand();
+
+      case "run":
+        List<String> classNames = args.subList(1, args.size());
+        return this.factory.runSpecsCommand(classNames);
+
+      default:
+        throw InvalidCommand.named(command);
+    }
   }
 
-  @FunctionalInterface
   interface CommandFactory {
-    Command runSpecsCommand(InstanceSpecFinder finder, List<String> classNames);
+    Command helpCommand();
+
+    Command runSpecsCommand(List<String> classNames);
+  }
+
+  static final class InvalidCommand extends RuntimeException {
+    public static InvalidCommand named(String command) {
+      String message = String.format("Invalid command: %s", command);
+      return new InvalidCommand(message);
+    }
+
+    private InvalidCommand(String message) {
+      super(message);
+    }
   }
 }

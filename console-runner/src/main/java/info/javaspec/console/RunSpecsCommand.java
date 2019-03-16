@@ -2,32 +2,24 @@ package info.javaspec.console;
 
 import info.javaspec.SpecCollection;
 import info.javaspec.SpecReporter;
-import info.javaspec.lang.lambda.InstanceSpecFinder;
-
-import java.util.LinkedList;
-import java.util.List;
+import info.javaspec.lang.lambda.SpecCollectionFactory;
 
 final class RunSpecsCommand implements Command {
-  private final InstanceSpecFinder finder;
-  private final List<String> specClassNames;
+  private final SpecCollectionFactory factory;
 
-  public RunSpecsCommand(InstanceSpecFinder specFinder, List<String> specClassNames) {
-    this.finder = specFinder;
-    this.specClassNames = specClassNames;
+  public RunSpecsCommand(SpecCollectionFactory factory) {
+    this.factory = factory;
   }
 
   @Override
   public int run(SpecReporter reporter) {
-    List<Class<?>> specClasses = new LinkedList<>();
-    for(String className : this.specClassNames) {
-      try {
-        specClasses.add(Class.forName(className));
-      } catch(ClassNotFoundException e) {
-        return 2;
-      }
+    SpecCollection rootCollection;
+    try {
+      rootCollection = this.factory.declareSpecs();
+    } catch(Exception e) {
+      return 2;
     }
 
-    SpecCollection rootCollection = this.finder.findSpecs(specClasses);
     reporter.runStarting();
     rootCollection.runSpecs(reporter);
     reporter.runFinished();
