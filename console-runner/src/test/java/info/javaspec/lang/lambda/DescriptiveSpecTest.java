@@ -1,7 +1,7 @@
 package info.javaspec.lang.lambda;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.SpecReporter;
+import info.javaspec.RunObserver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,50 +23,50 @@ public class DescriptiveSpecTest {
   }
 
   public class run {
-    private SpecReporter reporter;
+    private RunObserver observer;
 
     @Before
     public void setup() throws Exception {
-      reporter = Mockito.mock(SpecReporter.class);
+      observer = Mockito.mock(RunObserver.class);
     }
 
     @Test
     public void reportsTheSpecStarting() throws Exception {
       subject = new DescriptiveSpec(anyIntendedBehavior(), anyBehaviorVerification());
-      subject.run(reporter);
-      Mockito.verify(reporter).specStarting(subject);
+      subject.run(observer);
+      Mockito.verify(observer).specStarting(subject);
     }
 
     @Test
     public void runsTheGivenBehaviorVerification() throws Exception {
       BehaviorVerification verification = Mockito.mock(BehaviorVerification.class);
       subject = new DescriptiveSpec(anyIntendedBehavior(), verification);
-      subject.run(reporter);
+      subject.run(observer);
       Mockito.verify(verification).run();
     }
 
     @Test
     public void reportsAPassingSpecWhenTheVerificationDoesNotThrowAnything() throws Exception {
       subject = new DescriptiveSpec(anyIntendedBehavior(), anyBehaviorVerification());
-      subject.run(reporter);
-      Mockito.verify(reporter).specPassed(subject);
-      Mockito.verify(reporter, Mockito.never()).specFailed(subject);
+      subject.run(observer);
+      Mockito.verify(observer).specPassed(subject);
+      Mockito.verify(observer, Mockito.never()).specFailed(subject);
     }
 
     @Test
     public void reportsAFailingSpecWhenTheVerificationThrowsAssertionError() throws Exception {
       subject = new DescriptiveSpec(anyIntendedBehavior(), () -> { throw new AssertionError(); });
-      subject.run(reporter);
-      Mockito.verify(reporter).specFailed(subject);
-      Mockito.verify(reporter, Mockito.never()).specPassed(subject);
+      subject.run(observer);
+      Mockito.verify(observer).specFailed(subject);
+      Mockito.verify(observer, Mockito.never()).specPassed(subject);
     }
 
     @Test
     public void reportsAFailingSpecWhenTheVerificationThrowsExceptions() throws Exception {
       subject = new DescriptiveSpec(anyIntendedBehavior(), () -> { throw new RuntimeException(); });
-      subject.run(reporter);
-      Mockito.verify(reporter).specFailed(subject);
-      Mockito.verify(reporter, Mockito.never()).specPassed(subject);
+      subject.run(observer);
+      Mockito.verify(observer).specFailed(subject);
+      Mockito.verify(observer, Mockito.never()).specPassed(subject);
     }
   }
 

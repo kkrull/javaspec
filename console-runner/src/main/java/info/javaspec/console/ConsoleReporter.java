@@ -2,11 +2,11 @@ package info.javaspec.console;
 
 import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
-import info.javaspec.SpecReporter;
 
 import java.io.PrintStream;
+import java.util.List;
 
-final class ConsoleReporter implements SpecReporter {
+final class ConsoleReporter implements Reporter {
   private final PrintStream output;
   private int numStarted;
   private int numFailed;
@@ -15,6 +15,15 @@ final class ConsoleReporter implements SpecReporter {
   public ConsoleReporter(PrintStream output) {
     this.output = output;
   }
+
+  /* HelpObserver */
+
+  @Override
+  public void writeMessage(List<String> lines) {
+    lines.forEach(this.output::println);
+  }
+
+  /* RunObserver */
 
   @Override
   public boolean hasFailingSpecs() {

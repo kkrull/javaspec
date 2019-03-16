@@ -2,15 +2,12 @@ package info.javaspec.console;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.SpecCollection;
-import info.javaspec.SpecReporter;
+import info.javaspec.RunObserver;
 import info.javaspec.lang.lambda.SpecCollectionFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-
-import java.util.Collections;
-import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -19,7 +16,7 @@ import static org.hamcrest.Matchers.equalTo;
 public class RunSpecsCommandTest {
   private RunSpecsCommand subject;
   private SpecCollectionFactory factory;
-  private SpecReporter reporter;
+  private RunObserver observer;
   private SpecCollection collection;
 
   public class run {
@@ -29,45 +26,45 @@ public class RunSpecsCommandTest {
       collection = Mockito.mock(SpecCollection.class);
       Mockito.when(factory.declareSpecs()).thenReturn(collection);
 
-      reporter = Mockito.mock(SpecReporter.class);
-      Mockito.when(reporter.hasFailingSpecs()).thenReturn(false);
+      observer = Mockito.mock(RunObserver.class);
+      Mockito.when(observer.hasFailingSpecs()).thenReturn(false);
     }
 
     @Test
     public void declaresSpecs() throws Exception {
-      subject = new RunSpecsCommand(factory);
-      subject.run(reporter);
+      subject = new RunSpecsCommand(factory, observer);
+      subject.run();
       Mockito.verify(factory).declareSpecs();
     }
 
     @Test
     public void runsTheReturnedCollection() throws Exception {
-      subject = new RunSpecsCommand(factory);
-      subject.run(reporter);
-      Mockito.verify(collection).runSpecs(reporter);
+      subject = new RunSpecsCommand(factory, observer);
+      subject.run();
+      Mockito.verify(collection).runSpecs(observer);
     }
 
     @Test
     public void reportsTheRunStartingAndFinishing() throws Exception {
-      subject = new RunSpecsCommand(factory);
-      subject.run(reporter);
-      Mockito.verify(reporter).runStarting();
-      Mockito.verify(reporter).runFinished();
+      subject = new RunSpecsCommand(factory, observer);
+      subject.run();
+      Mockito.verify(observer).runStarting();
+      Mockito.verify(observer).runFinished();
     }
 
     @Test
     public void returns0WhenThereAreNoFailingSpecs() throws Exception {
-      subject = new RunSpecsCommand(factory);
-      int statusCode = subject.run(reporter);
+      subject = new RunSpecsCommand(factory, observer);
+      int statusCode = subject.run();
       assertThat(statusCode, equalTo(0));
     }
 
     @Test
     public void returns1WhenAnySpecsFail() throws Exception {
-      Mockito.when(reporter.hasFailingSpecs()).thenReturn(true);
+      Mockito.when(observer.hasFailingSpecs()).thenReturn(true);
 
-      subject = new RunSpecsCommand(factory);
-      int statusCode = subject.run(reporter);
+      subject = new RunSpecsCommand(factory, observer);
+      int statusCode = subject.run();
       assertThat(statusCode, equalTo(1));
     }
 
@@ -76,13 +73,9 @@ public class RunSpecsCommandTest {
       Mockito.when(factory.declareSpecs())
         .thenThrow(new RuntimeException("bang!"));
 
-      subject = new RunSpecsCommand(factory);
-      int statusCode = subject.run(reporter);
+      subject = new RunSpecsCommand(factory, observer);
+      int statusCode = subject.run();
       assertThat(statusCode, equalTo(2));
     }
-  }
-
-  private List<String> anyClassNames() {
-    return Collections.emptyList();
   }
 }

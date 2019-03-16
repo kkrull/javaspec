@@ -1,5 +1,7 @@
 package info.javaspec;
 
+import info.javaspec.console.Reporter;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -8,14 +10,21 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
 
-public final class MockSpecReporter implements SpecReporter {
+public final class MockReporter implements Reporter {
   private final List<Spec> specFailedReceived;
   private final List<Spec> specPassedReceived;
 
-  public MockSpecReporter() {
+  public MockReporter() {
     this.specFailedReceived = new LinkedList<>();
     this.specPassedReceived = new LinkedList<>();
   }
+
+  /* HelpObserver */
+
+  @Override
+  public void writeMessage(List<String> lines) { }
+
+  /* RunObserver */
 
   @Override
   public boolean hasFailingSpecs() {

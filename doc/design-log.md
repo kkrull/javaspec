@@ -12,8 +12,8 @@ Technical debt:
 
 Features:
 
-- Help command.
-- Handle a run command that can't load a class.
+- Formatted test output.
+- Documented (tested) error reporting for things like not being able to find/load/instantiate a spec class.
   It may be helpful to return a value type for the exit status, instead of a just the number, so the offending class can
   be reported.
 - Report spec failures to the console reporter.

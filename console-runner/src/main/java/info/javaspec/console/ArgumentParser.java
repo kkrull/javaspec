@@ -1,27 +1,32 @@
 package info.javaspec.console;
 
+import info.javaspec.RunObserver;
+import info.javaspec.console.HelpCommand.HelpObserver;
+
 import java.util.List;
 
 final class ArgumentParser implements Main.CommandParser {
   private final CommandFactory factory;
+  private final Reporter reporter;
 
-  public ArgumentParser(CommandFactory factory) {
+  public ArgumentParser(CommandFactory factory, Reporter reporter) {
     this.factory = factory;
+    this.reporter = reporter;
   }
 
   @Override
   public Command parseCommand(List<String> args) {
     if(args.isEmpty())
-      return this.factory.helpCommand();
+      return this.factory.helpCommand(this.reporter);
 
     String command = args.get(0);
     switch(command) {
       case "help":
-        return this.factory.helpCommand();
+        return this.factory.helpCommand(this.reporter);
 
       case "run":
         List<String> classNames = args.subList(1, args.size());
-        return this.factory.runSpecsCommand(classNames);
+        return this.factory.runSpecsCommand(this.reporter, classNames);
 
       default:
         throw InvalidCommand.named(command);
@@ -29,9 +34,9 @@ final class ArgumentParser implements Main.CommandParser {
   }
 
   interface CommandFactory {
-    Command helpCommand();
+    Command helpCommand(HelpObserver observer);
 
-    Command runSpecsCommand(List<String> classNames);
+    Command runSpecsCommand(RunObserver observer, List<String> classNames);
   }
 
   static final class InvalidCommand extends RuntimeException {

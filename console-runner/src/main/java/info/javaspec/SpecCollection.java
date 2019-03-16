@@ -8,7 +8,7 @@ public interface SpecCollection {
 
   List<String> intendedBehaviors();
 
-  void runSpecs(SpecReporter reporter);
+  void runSpecs(RunObserver observer);
 
   List<SpecCollection> subCollections();
 }

@@ -2,7 +2,7 @@ package info.javaspec.lang.lambda;
 
 import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
-import info.javaspec.SpecReporter;
+import info.javaspec.RunObserver;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -45,10 +45,10 @@ final class SequentialCollection implements WritableSpecCollection {
   }
 
   @Override
-  public void runSpecs(SpecReporter reporter) {
-    reporter.collectionStarting(this);
-    this.specs.forEach(x -> x.run(reporter));
-    this.children.forEach(x -> x.runSpecs(reporter));
+  public void runSpecs(RunObserver observer) {
+    observer.collectionStarting(this);
+    this.specs.forEach(x -> x.run(observer));
+    this.children.forEach(x -> x.runSpecs(observer));
   }
 
   @Override

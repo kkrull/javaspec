@@ -1,18 +1,20 @@
 package info.javaspec.console;
 
 import info.javaspec.SpecCollection;
-import info.javaspec.SpecReporter;
+import info.javaspec.RunObserver;
 import info.javaspec.lang.lambda.SpecCollectionFactory;
 
 final class RunSpecsCommand implements Command {
   private final SpecCollectionFactory factory;
+  private final RunObserver observer;
 
-  public RunSpecsCommand(SpecCollectionFactory factory) {
+  public RunSpecsCommand(SpecCollectionFactory factory, RunObserver observer) {
     this.factory = factory;
+    this.observer = observer;
   }
 
   @Override
-  public int run(SpecReporter reporter) {
+  public int run() {
     SpecCollection rootCollection;
     try {
       rootCollection = this.factory.declareSpecs();
@@ -20,9 +22,9 @@ final class RunSpecsCommand implements Command {
       return 2;
     }
 
-    reporter.runStarting();
-    rootCollection.runSpecs(reporter);
-    reporter.runFinished();
-    return reporter.hasFailingSpecs() ? 1 : 0;
+    this.observer.runStarting();
+    rootCollection.runSpecs(this.observer);
+    this.observer.runFinished();
+    return this.observer.hasFailingSpecs() ? 1 : 0;
   }
 }

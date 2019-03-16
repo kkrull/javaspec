@@ -3,7 +3,7 @@ package info.javaspec.lang.lambda;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
-import info.javaspec.SpecReporter;
+import info.javaspec.RunObserver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -84,18 +84,18 @@ public class SequentialCollectionTest {
   }
 
   public class runSpecs {
-    private SpecReporter reporter;
+    private RunObserver observer;
 
     @Before
     public void setup() throws Exception {
-      reporter = Mockito.mock(SpecReporter.class);
+      observer = Mockito.mock(RunObserver.class);
     }
 
     @Test
     public void reportsThatTheCollectionIsBeingRun() throws Exception {
       subject = new SequentialCollection(anyDescription());
-      subject.runSpecs(reporter);
-      Mockito.verify(reporter).collectionStarting(subject);
+      subject.runSpecs(observer);
+      Mockito.verify(observer).collectionStarting(subject);
     }
 
     @Test
@@ -104,9 +104,9 @@ public class SequentialCollectionTest {
 
       subject = new SequentialCollection(anyDescription());
       subject.addSpec(spec);
-      subject.runSpecs(reporter);
+      subject.runSpecs(observer);
 
-      Mockito.verify(spec).run(reporter);
+      Mockito.verify(spec).run(observer);
     }
 
     @Test
@@ -117,7 +117,7 @@ public class SequentialCollectionTest {
       subject = new SequentialCollection(anyDescription());
       subject.addSpec(addedFirst);
       subject.addSpec(addedSecond);
-      subject.runSpecs(reporter);
+      subject.runSpecs(observer);
 
       InOrder order = Mockito.inOrder(addedFirst, addedSecond);
       order.verify(addedFirst).run(Mockito.any());
@@ -133,11 +133,11 @@ public class SequentialCollectionTest {
       subject = new SequentialCollection(anyDescription());
       subject.addSubCollection(firstChild);
       subject.addSubCollection(secondChild);
-      subject.runSpecs(reporter);
+      subject.runSpecs(observer);
 
       InOrder order = Mockito.inOrder(firstChild, secondChild);
-      order.verify(firstChild).runSpecs(reporter);
-      order.verify(secondChild).runSpecs(reporter);
+      order.verify(firstChild).runSpecs(observer);
+      order.verify(secondChild).runSpecs(observer);
       order.verifyNoMoreInteractions();
     }
 
@@ -149,11 +149,11 @@ public class SequentialCollectionTest {
       subject = new SequentialCollection(anyDescription());
       subject.addSpec(spec);
       subject.addSubCollection(subCollection);
-      subject.runSpecs(reporter);
+      subject.runSpecs(observer);
 
       InOrder order = Mockito.inOrder(subCollection, spec);
-      order.verify(spec).run(reporter);
-      order.verify(subCollection).runSpecs(reporter);
+      order.verify(spec).run(observer);
+      order.verify(subCollection).runSpecs(observer);
       order.verifyNoMoreInteractions();
     }
 
