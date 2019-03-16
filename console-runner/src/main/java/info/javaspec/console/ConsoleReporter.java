@@ -20,7 +20,7 @@ final class ConsoleReporter implements Reporter {
 
   @Override
   public void writeMessage(List<String> lines) {
-    throw new UnsupportedOperationException();
+    lines.forEach(this.output::println);
   }
 
   /* RunObserver */

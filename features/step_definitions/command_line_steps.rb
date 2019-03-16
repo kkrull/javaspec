@@ -74,7 +74,8 @@ Then(/^the runner's exit status should be 0$/) do
 end
 
 Then(/^the runner's output should be$/) do |text|
-  expect(spec_runner_helper.runner_output).to eq(text)
+  # Somehow the Gherkin docstring doesn't end in a newline, even though it's there
+  expect(spec_runner_helper.runner_output.rstrip).to eq(text)
 end
 
 Then(/^The runner should describe what is being tested$/) do
