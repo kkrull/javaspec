@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class Main {
-  private final Reporter reporter;
   private final ExitHandler system;
 
   public static void main(String... args) {
@@ -17,12 +16,11 @@ public final class Main {
 
   static void main(Reporter reporter, ExitHandler system, String... args) {
     CommandParser parser = new ArgumentParser(new StaticCommandFactory(), reporter);
-    Main cli = new Main(reporter, system);
+    Main cli = new Main(system);
     cli.runCommand(parser.parseCommand(Arrays.asList(args)));
   }
 
-  Main(Reporter reporter, ExitHandler system) {
-    this.reporter = reporter;
+  Main(ExitHandler system) {
     this.system = system;
   }
 

@@ -10,15 +10,13 @@ import org.mockito.Mockito;
 public class MainTest {
   public class runCommand {
     private Main subject;
-    private Reporter reporter;
     private Main.ExitHandler system;
     private Command command;
 
     @Before
     public void setup() {
-      this.reporter = Mockito.mock(Reporter.class);
       this.system = Mockito.mock(Main.ExitHandler.class);
-      this.subject = new Main(this.reporter, this.system);
+      this.subject = new Main(this.system);
       this.command = Mockito.mock(Command.class);
     }
 
