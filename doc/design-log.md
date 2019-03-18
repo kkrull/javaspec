@@ -1,5 +1,15 @@
 # Design Log
 
+## Linting
+
+    java -jar checkstyle-8.18-all.jar -c ./google_checks.xml console-runner/src/main/java/info/javaspec
+    
+    
+- Style file derived from Google checks: https://raw.githubusercontent.com/checkstyle/checkstyle/master/src/main/resources/google_checks.xml
+- Run according to instructions here: http://checkstyle.sourceforge.net/cmdline.html#Download_and_Run
+- TODO: Write a Rake task that downloads the jar from Maven central, and another task that runs the check
+
+
 ## Coming up
 
 Technical debt:
