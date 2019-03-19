@@ -4,17 +4,11 @@
   "https://checkstyle.org/dtds/configuration_1_3.dtd">
 
 <!--
-    Checkstyle configuration that checks the Google coding conventions from Google Java Style
-    that can be found at https://google.github.io/styleguide/javaguide.html.
+Derived from [Google's Java Style](https://google.github.io/styleguide/javaguide.html), originally authored by:
+Max Vetrenko, Ruslan Diachenko, and Roman Ivanov.
 
-    Checkstyle is very configurable. Be sure to read the documentation at
-    http://checkstyle.sf.net (or in your downloaded distribution).
-
-    To completely disable a check, just comment it out or delete it from the file.
-
-    Authors: Max Vetrenko, Ruslan Diachenko, Roman Ivanov.
- -->
-
+See http://checkstyle.sf.net for Checkstyle configuration options.
+-->
 <module name="Checker">
   <property name="charset" value="UTF-8" />
   <property name="severity" value="warning" />
