@@ -1,5 +1,6 @@
 *.iml
 *.swp
 .idea/
-target/
 .yardoc/
+checkstyle/checkstyle-8.18-all.jar
+target/

@@ -7,10 +7,23 @@ features_dir = File.join File.dirname(__FILE__), 'features'
 desc 'Compile and run all tests'
 task default: %w[java:test cucumber]
 
+namespace :checkstyle do
+  desc 'Download Checkstyle'
+  task :download do
+    sh *%w[curl -Ls https://github.com/checkstyle/checkstyle/releases/download/checkstyle-8.18/checkstyle-8.18-all.jar -o checkstyle/checkstyle-8.18-all.jar]
+  end
+
+  desc 'Perform static analysis on Java code'
+  task :run do
+    # http://checkstyle.sourceforge.net/cmdline.html#Download_and_Run
+    sh *%w[java -jar checkstyle/checkstyle-8.18-all.jar -c ./checkstyle.xml console-runner/src console-runner-features/src]
+  end
+end
+
+
 Cucumber::Rake::Task.new do |task|
   task.cucumber_opts = %w[--tags 'not @wip']
 end
-
 namespace :cucumber do
   desc 'Run Yard server that auto-generates documentation for all gems'
   task 'doc-server' do
