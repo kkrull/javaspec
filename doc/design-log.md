@@ -4,8 +4,6 @@
 
     java -jar checkstyle-8.18-all.jar -c ./google_checks.xml console-runner/src/main/java/info/javaspec
     
-    
-- Style file derived from Google checks: https://raw.githubusercontent.com/checkstyle/checkstyle/master/src/main/resources/google_checks.xml
 - Run according to instructions here: http://checkstyle.sourceforge.net/cmdline.html#Download_and_Run
 - TODO: Write a Rake task that downloads the jar from Maven central, and another task that runs the check
 
@@ -14,7 +12,6 @@
 
 Technical debt:
 
-- Add a linter.
 - Break up and organize the Ruby feature tests now that there are a few more of them.
 - Put the Java artifacts on independent version numbers.  There really isn't any 2.x development on the artifacts that
   have already been released.
