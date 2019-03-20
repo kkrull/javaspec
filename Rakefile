@@ -10,11 +10,15 @@ task default: %w[java:test cucumber]
 namespace :checkstyle do
   desc 'Download Checkstyle'
   task :download do
-    sh *%w[curl -Ls https://github.com/checkstyle/checkstyle/releases/download/checkstyle-8.18/checkstyle-8.18-all.jar -o checkstyle/checkstyle-8.18-all.jar]
+    filename = 'checkstyle-8.18-all.jar'
+    local_path = "checkstyle/#{filename}"
+    next if File.exists? local_path
+
+    sh *%W[curl -Ls https://github.com/checkstyle/checkstyle/releases/download/checkstyle-8.18/#{filename} -o #{local_path}]
   end
 
   desc 'Perform static analysis on Java code'
-  task :run do
+  task :run => :download do
     # http://checkstyle.sourceforge.net/cmdline.html#Download_and_Run
     sh *%w[java -jar checkstyle/checkstyle-8.18-all.jar -c ./checkstyle.xml console-runner/src console-runner-features/src]
   end
