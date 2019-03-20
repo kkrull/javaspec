@@ -5,7 +5,7 @@ console_runner_class_dir = File.join File.dirname(__FILE__), 'console-runner/tar
 features_dir = File.join File.dirname(__FILE__), 'features'
 
 desc 'Compile and run all tests'
-task default: %w[java:test cucumber]
+task default: %w[java:test cucumber checkstyle:run]
 
 namespace :checkstyle do
   desc 'Download Checkstyle'
