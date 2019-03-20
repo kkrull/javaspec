@@ -8,19 +8,19 @@ desc 'Compile and run all tests'
 task default: %w[java:test cucumber checkstyle:run]
 
 namespace :checkstyle do
+  filename = 'checkstyle-8.18-all.jar'
+  local_path = "checkstyle/#{filename}"
+
   desc 'Download Checkstyle'
   task :download do
-    filename = 'checkstyle-8.18-all.jar'
-    local_path = "checkstyle/#{filename}"
     next if File.exists? local_path
-
     sh *%W[curl -Ls https://github.com/checkstyle/checkstyle/releases/download/checkstyle-8.18/#{filename} -o #{local_path}]
   end
 
   desc 'Perform static analysis on Java code'
   task :run => :download do
     # http://checkstyle.sourceforge.net/cmdline.html#Download_and_Run
-    sh *%w[java -jar checkstyle/checkstyle-8.18-all.jar -c ./checkstyle.xml console-runner/src console-runner-features/src]
+    sh *%W[java -jar #{local_path} -c ./checkstyle.xml console-runner/src console-runner-features/src]
   end
 end
 
@@ -28,6 +28,7 @@ end
 Cucumber::Rake::Task.new do |task|
   task.cucumber_opts = %w[--tags 'not @wip']
 end
+
 namespace :cucumber do
   desc 'Run Yard server that auto-generates documentation for all gems'
   task 'doc-server' do
