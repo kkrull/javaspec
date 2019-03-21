@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.Optional;
 import java.util.Properties;
 
-/** Loads configuration from a properties file, encoded in the given stream */
+/** Loads configuration from a properties file, encoded in the given stream. */
 final class AppConfigGateway {
   private final Properties config;
 

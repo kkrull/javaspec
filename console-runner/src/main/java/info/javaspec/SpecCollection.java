@@ -2,7 +2,7 @@ package info.javaspec;
 
 import java.util.List;
 
-/** A composite collection of related specs */
+/** A composite collection of related specs. */
 public interface SpecCollection {
   String description();
 

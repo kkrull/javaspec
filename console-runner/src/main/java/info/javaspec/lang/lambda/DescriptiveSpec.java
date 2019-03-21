@@ -1,7 +1,7 @@
 package info.javaspec.lang.lambda;
 
-import info.javaspec.Spec;
 import info.javaspec.RunObserver;
+import info.javaspec.Spec;
 
 final class DescriptiveSpec implements Spec {
   private final String intendedBehavior;

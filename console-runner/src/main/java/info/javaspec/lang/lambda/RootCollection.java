@@ -1,8 +1,8 @@
 package info.javaspec.lang.lambda;
 
+import info.javaspec.RunObserver;
 import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
-import info.javaspec.RunObserver;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

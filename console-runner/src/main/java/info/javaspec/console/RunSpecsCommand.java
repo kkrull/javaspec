@@ -1,7 +1,7 @@
 package info.javaspec.console;
 
-import info.javaspec.SpecCollection;
 import info.javaspec.RunObserver;
+import info.javaspec.SpecCollection;
 import info.javaspec.lang.lambda.SpecCollectionFactory;
 
 final class RunSpecsCommand implements Command {
