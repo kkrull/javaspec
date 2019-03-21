@@ -1,8 +1,8 @@
 package info.javaspec.console;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.SpecCollection;
 import info.javaspec.RunObserver;
+import info.javaspec.SpecCollection;
 import info.javaspec.lang.lambda.SpecCollectionFactory;
 import org.junit.Before;
 import org.junit.Test;
