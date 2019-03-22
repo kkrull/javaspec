@@ -32,6 +32,7 @@ Feature: JavaSpec CLI (external process)
     When I run the specs in that class
     Then The runner should run the specs defined in that class
     And The runner should indicate which specs passed and failed
+    And the console output should not be so gross
 
 
   Scenario: The CLI should describe what is being tested
