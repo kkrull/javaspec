@@ -1,8 +1,8 @@
 package info.javaspec.lang.lambda;
 
+import info.javaspec.RunObserver;
 import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
-import info.javaspec.RunObserver;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -10,7 +10,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-/** Runs specs in the order they are added */
+/** Runs specs in the order they are added. */
 final class SequentialCollection implements WritableSpecCollection {
   private final String description;
   private final List<Spec> specs;

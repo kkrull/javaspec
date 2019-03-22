@@ -1,9 +1,9 @@
 package info.javaspec.lang.lambda;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
+import info.javaspec.RunObserver;
 import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
-import info.javaspec.RunObserver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +29,8 @@ public class RootCollectionTest {
     }
 
     public class whenOneOrMoreSubCollectionsHaveBeenAdded {
-      private SpecCollection firstChild, secondChild;
+      private SpecCollection firstChild;
+      private SpecCollection secondChild;
 
       @Before
       public void setup() throws Exception {

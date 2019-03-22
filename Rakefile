@@ -4,8 +4,31 @@ require 'cucumber/rake/task'
 console_runner_class_dir = File.join File.dirname(__FILE__), 'console-runner/target/classes'
 features_dir = File.join File.dirname(__FILE__), 'features'
 
-desc 'Compile and run all tests'
-task default: %w[java:test cucumber]
+desc 'Compile, run all tests, and run checkstyle'
+task default: %w[java:test cucumber checkstyle:run]
+
+namespace :checkstyle do
+  filename = 'checkstyle-8.18-all.jar'
+  local_path = "checkstyle/#{filename}"
+
+  desc 'Download Checkstyle'
+  task :download do
+    next if File.exists? local_path
+    sh *%W[curl -Ls https://github.com/checkstyle/checkstyle/releases/download/checkstyle-8.18/#{filename} -o #{local_path}]
+  end
+
+  desc 'Perform static analysis on Java code'
+  task :run => :download do
+    # http://checkstyle.sourceforge.net/cmdline.html#Download_and_Run
+    sh *%W[java -jar #{local_path} -c ./checkstyle-main.xml console-runner/src/main/java console-runner-features/src/main/java]
+    sh *%W[java -jar #{local_path} -c ./checkstyle-test.xml console-runner/src/test/java console-runner-features/src/test/java]
+  end
+end
+
+
+desc 'Clean everything'
+task :clean => 'java:clean'
+
 
 Cucumber::Rake::Task.new do |task|
   task.cucumber_opts = %w[--tags 'not @wip']

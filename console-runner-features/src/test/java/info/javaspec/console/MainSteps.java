@@ -5,7 +5,7 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import info.javaspec.MockReporter;
 
-/** Steps observing what happens in the overall process of running specs, from *within* the same process */
+/** Steps observing what happens in the overall process of running specs, from *within* the same process. */
 public class MainSteps {
   private RunsMain execRunCommand;
   private MockReporter mockReporter;
@@ -42,12 +42,22 @@ public class MainSteps {
 
   @Given("^I have a Java class that defines a suite of passing lambda specs$")
   public void iHaveAJavaClassThatDefinesPassingLambdaSpecs() throws Exception {
-    this.execRunCommand = () -> Main.main(this.mockReporter, this.system, "run", MainStepsOnePasses.class.getCanonicalName());
+    this.execRunCommand = () -> Main.main(
+      this.mockReporter,
+      this.system,
+      "run",
+      MainStepsOnePasses.class.getCanonicalName()
+    );
   }
 
   @Given("^I have a Java class that defines a suite of 1 or more failing lambda specs$")
   public void iHaveAClassWithFailingSpecs() throws Exception {
-    this.execRunCommand = () -> Main.main(this.mockReporter, this.system, "run", MainStepsOneFails.class.getCanonicalName());
+    this.execRunCommand = () -> Main.main(
+      this.mockReporter,
+      this.system,
+      "run",
+      MainStepsOneFails.class.getCanonicalName()
+    );
   }
 
   @When("^I run the specs in that class$")

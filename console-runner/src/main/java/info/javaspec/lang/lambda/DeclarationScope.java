@@ -6,7 +6,7 @@ import info.javaspec.SpecCollection;
 import java.util.Optional;
 import java.util.Stack;
 
-/** Groups recently-declared specs into a collection of specs that can be run together */
+/** Groups recently-declared specs into a collection of specs that can be run together. */
 final class DeclarationScope {
   private final Stack<WritableSpecCollection> collections;
 
@@ -17,8 +17,13 @@ final class DeclarationScope {
 
   public void declareSpecsFor(String subject, BehaviorDeclaration describeBehavior) {
     SequentialCollection newSubjectCollection = new SequentialCollection(subject);
-    leafCollection().get().addSubCollection(newSubjectCollection); //Add the child collection in line with any other declared specs
-    this.collections.push(newSubjectCollection); //Push on to the stack in case there are nested describes
+
+    //Add the child collection in line with any other declared specs
+    leafCollection().get().addSubCollection(newSubjectCollection);
+
+    //Push on to the stack in case there are nested describes
+    this.collections.push(newSubjectCollection);
+
     describeBehavior.declareSpecs();
     this.collections.pop();
   }

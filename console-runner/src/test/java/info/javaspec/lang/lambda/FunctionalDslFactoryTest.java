@@ -58,30 +58,34 @@ public class FunctionalDslFactoryTest {
 
     @Test(expected = SpecDeclarationFailed.class)
     public void throwsGivenAClassThatDoesNotLoad() throws Exception {
-      subject = new FunctionalDslFactory(Collections.singletonList("info.javaspec.lang.lambda.ExplodingStaticInitializer"));
+      subject = new FunctionalDslFactory(
+        Collections.singletonList("info.javaspec.lang.lambda.ExplodingStaticInitializer"));
       subject.declareSpecs();
     }
 
     @Test(expected = SpecDeclarationFailed.class)
     public void throwsGivenAClassThatCanNotBeInstantiated() throws Exception {
-      subject = new FunctionalDslFactory(Collections.singletonList("info.javaspec.lang.lambda.FunctionalDslFactoryTest$AbstractClass"));
+      subject = new FunctionalDslFactory(
+        Collections.singletonList("info.javaspec.lang.lambda.FunctionalDslFactoryTest$AbstractClass"));
       subject.declareSpecs();
     }
 
     @Test(expected = SpecDeclarationFailed.class)
     public void throwsGivenAClassThatFailsToInstantiate() throws Exception {
-      subject = new FunctionalDslFactory(Collections.singletonList("info.javaspec.lang.lambda.FunctionalDslFactoryTest$ExplodingConstructor"));
+      subject = new FunctionalDslFactory(
+        Collections.singletonList("info.javaspec.lang.lambda.FunctionalDslFactoryTest$ExplodingConstructor"));
       subject.declareSpecs();
     }
 
     @Test(expected = SpecDeclarationFailed.class)
     public void throwsGivenAnInaccessibleClass() throws Exception {
-      subject = new FunctionalDslFactory(Collections.singletonList("info.javaspec.lang.lambda.FunctionalDslFactoryTest$HiddenClass"));
+      subject = new FunctionalDslFactory(
+        Collections.singletonList("info.javaspec.lang.lambda.FunctionalDslFactoryTest$HiddenClass"));
       subject.declareSpecs();
     }
   }
 
-  public static abstract class AbstractClass { }
+  public abstract static class AbstractClass { }
 
   public static class AnotherInstanceSpy {
     private static int _numTimesInstantiated = 0;
