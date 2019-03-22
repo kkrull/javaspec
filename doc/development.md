@@ -54,6 +54,19 @@ If your Java code is already compiled and you just want to run the Cucumber Ruby
 [rake]: https://github.com/ruby/rake
 
 
+## Style and Static Analysis (Checkstyle)
+
+[Checkstyle][checkstyle-config] is used to check the code format and style.  Run it with `rake checkstyle:run`.
+Different configurations are used, depending upon where you are in the source tree:
+
+- `src/main/java` code is checked with `checkstyle-main.xml`
+- `src/test/java` code is checked with `checkstyle-test.xml`.  A few of the rules are relaxed, so that long
+  descriptions of behavior can be written out as Java classes and method names.
+
+
+[checkstyle-config]: http://checkstyle.sourceforge.net/config.html
+
+
 ### Testing
 
 There are a number of different testing tools that are used for testing, and tests are written in a

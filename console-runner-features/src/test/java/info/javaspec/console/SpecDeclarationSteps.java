@@ -17,7 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 
-/** Steps about spec declaration syntax forms */
+/** Steps about spec declaration syntax forms. */
 public class SpecDeclarationSteps {
   private final SpecHelper specHelper;
   private final SpecCollectionHelper specCollectionHelper;
@@ -40,7 +40,8 @@ public class SpecDeclarationSteps {
     specLambdasRan = () -> assertThat(OneSpies.numTimesRan, equalTo(1));
   }
 
-  @Given("^I have a spec declaration that calls `describe` with a class and a lambda containing 1 or more `it` statements$")
+  @Given(
+    "^I have a spec declaration that calls `describe` with a class and a lambda containing 1 or more `it` statements$")
   public void iHaveASpecDeclarationCallingDescribe() throws Exception {
     specHelper.setDeclaringClass(DescribeTwo.class);
     thatDescription = "Illudium Q-36 Explosive Space Modulator";

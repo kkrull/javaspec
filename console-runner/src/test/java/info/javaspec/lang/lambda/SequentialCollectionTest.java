@@ -30,7 +30,8 @@ public class SequentialCollectionTest {
 
 
     public class whenOneOrMoreSubCollectionsHaveBeenAdded {
-      private SpecCollection firstChild, secondChild;
+      private SpecCollection firstChild;
+      private SpecCollection secondChild;
 
       @Before
       public void setup() throws Exception {

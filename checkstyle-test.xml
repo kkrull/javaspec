@@ -111,7 +111,32 @@ See http://checkstyle.sf.net for Checkstyle configuration options.
       <message key="name.invalidPattern" value="Lambda parameter name ''{0}'' must match pattern ''{1}''." />
     </module>
 
-    <module name="LeftCurly" />
+    <module name="LeftCurly">
+      <property name="tokens"
+                value="
+                  ANNOTATION_DEF,
+                  CLASS_DEF,
+                  CTOR_DEF,
+                  ENUM_CONSTANT_DEF,
+                  ENUM_DEF,
+                  INTERFACE_DEF,
+                  LITERAL_CASE,
+                  LITERAL_CATCH,
+                  LITERAL_DEFAULT,
+                  LITERAL_DO,
+                  LITERAL_ELSE,
+                  LITERAL_FINALLY,
+                  LITERAL_FOR,
+                  LITERAL_IF,
+                  LITERAL_SWITCH,
+                  LITERAL_SYNCHRONIZED,
+                  LITERAL_TRY,
+                  LITERAL_WHILE,
+                  METHOD_DEF,
+                  OBJBLOCK,
+                  STATIC_INIT"
+      />
+    </module>
 
     <module name="LineLength">
       <property name="max" value="120" />
