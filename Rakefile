@@ -4,7 +4,7 @@ require 'cucumber/rake/task'
 console_runner_class_dir = File.join File.dirname(__FILE__), 'console-runner/target/classes'
 features_dir = File.join File.dirname(__FILE__), 'features'
 
-desc 'Compile and run all tests'
+desc 'Compile, run all tests, and run checkstyle'
 task default: %w[java:test cucumber checkstyle:run]
 
 namespace :checkstyle do
@@ -24,6 +24,10 @@ namespace :checkstyle do
     sh *%W[java -jar #{local_path} -c ./checkstyle-test.xml console-runner/src/test/java console-runner-features/src/test/java]
   end
 end
+
+
+desc 'Clean everything'
+task :clean => 'java:clean'
 
 
 Cucumber::Rake::Task.new do |task|
