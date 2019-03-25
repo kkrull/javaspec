@@ -39,7 +39,7 @@ Feature: JavaSpec CLI (external process)
 
     Given I have a JavaSpec runner for the console
     And I have 1 or more Java classes that cover the breadth of possible outcomes
-    When I run the specs in those classes
+    When I run those specs in plain text format
     Then the runner's output should not contain any ANSI escape sequences
     And the runner's output should be
     """
