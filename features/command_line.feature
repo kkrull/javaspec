@@ -32,7 +32,23 @@ Feature: JavaSpec CLI (external process)
     When I run the specs in that class
     Then The runner should run the specs defined in that class
     And The runner should indicate which specs passed and failed
-    And the console output should not be so gross
+
+  @wip
+  Scenario: Text output should still be legible, when running specs in a terminal that doesn't grok ANSI color codes
+    Here's looking at you, Jenkins.
+
+    Given I have a JavaSpec runner for the console
+    And I have 1 or more Java classes that cover the breadth of possible outcomes
+    When I run the specs in those classes
+    Then the runner's output should not contain any ANSI escape sequences
+    And the runner's output should be
+    """
+    Illudium Q-36 Explosive Space Modulator
+    - discombobulates: FAIL
+    - explodes: PASS
+
+    [Testing complete] Passed: 1, Failed: 1, Total: 2
+    """
 
 
   Scenario: The CLI should describe what is being tested
