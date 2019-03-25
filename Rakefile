@@ -31,7 +31,11 @@ task :clean => 'java:clean'
 
 
 Cucumber::Rake::Task.new do |task|
-  task.cucumber_opts = %w[--tags 'not @wip']
+  task.cucumber_opts = %w[
+    --quiet
+    --strict
+    --tags 'not @wip'
+  ]
 end
 
 namespace :cucumber do
