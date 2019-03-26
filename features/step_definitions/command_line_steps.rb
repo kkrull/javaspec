@@ -41,7 +41,7 @@ Given(/^I have a Java class that defines a suite of 1 or more failing lambda spe
 end
 
 Given(/^I have 1 or more Java classes that defines lambda specs$/) do
-  spec_runner_helper.spec_classes = ['info.javaspec.example.AllPass', 'info.javaspec.example.OneFails']
+  spec_runner_helper.spec_classes = %w[info.javaspec.example.AllPass info.javaspec.example.OneFails]
 
   spec_runner_helper.spec_run_verification do |output|
     expect(output).to match(/^AllPass/)
@@ -88,15 +88,6 @@ end
 
 Then(/^The runner should run the specs in each of those classes$/) do
   spec_runner_helper.verify_specs_ran
-end
-
-Then(/^The runner should indicate whether each spec passed or failed$/) do
-  expect(spec_runner_helper.runner_output).to match(/says hello: PASS/)
-end
-
-Then(/^The runner should indicate whether all specs passed, or any failed$/) do
-  expect(spec_runner_helper.exit_status).to eq(0)
-  expect(spec_runner_helper.runner_output).to include("Passed: 1\tFailed: 0\tTotal: 1")
 end
 
 Then(/^The runner should indicate which specs passed and failed$/) do
