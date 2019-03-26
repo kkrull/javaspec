@@ -1,4 +1,3 @@
-@log_commands
 Feature: JavaSpec CLI (external process)
   As a developer who is working on some code that is covered by specs
   In order to know what code is working and where it is failing
@@ -9,8 +8,7 @@ Feature: JavaSpec CLI (external process)
   I want to run JavaSpec as its own process and observe its behavior from a separate test process
 
 
-  ## Basic CLI behavior: What commands are available?  How does javaspec work, as a process?
-  ## TODO KDK: Running specs is just an example of any command that can succeed or fail.  Make the steps more generic?
+  ## Basic CLI behavior: What commands are available?  How does `javaspec` work, as a process?
 
   Scenario: The CLI should offer to help when it's run without any arguments
     Given I have a JavaSpec runner for the console

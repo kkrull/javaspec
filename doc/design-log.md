@@ -4,7 +4,6 @@
 
 Technical debt:
 
-- *plan* Break up and organize the Ruby feature tests now that there are a few more of them.
 - Put the Java artifacts on independent version numbers.  There really isn't any 2.x development on the artifacts that
   have already been released.
 

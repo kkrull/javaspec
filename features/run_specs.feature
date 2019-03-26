@@ -5,8 +5,8 @@ Feature: Run command (external process)
   I want to run specs on the command line and see a text report of specs and their results
 
   As a developer who is working on JavaSpec
-  In order to definitively say how JavaSpec runs specs and reports results on the console
-  I want to run JavaSpec from code where it is easy to scrape console output and define how it should be presented
+  In order to demonstrate how JavaSpec runs specs and reports results on the console
+  I want to run JavaSpec from code where it is easy to scrape console output and to define how it should be presented
 
 
   ## Run basics: What does executing the `run` command tell the developer?
