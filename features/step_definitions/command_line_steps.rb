@@ -13,12 +13,10 @@ Given(/^I have a Java class that defines a suite of 1 or more failing lambda spe
 end
 
 When(/^I run the runner without any arguments$/) do
-  spec_runner_helper.verify_class_files_exist
   spec_runner_helper.exec_with_no_command! logger
 end
 
 When(/^I run the specs in that class$/) do
-  spec_runner_helper.verify_class_files_exist
   spec_runner_helper.exec_run! logger
 end
 

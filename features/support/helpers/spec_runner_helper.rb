@@ -21,12 +21,14 @@ class SpecRunnerContext
   end
 
   def exec_run!(logger)
+    verify_class_files_exist
     command = "java -cp #{runner_class_dir}:#{spec_class_dir} #{runner_class} run #{spec_classes.join(' ')}"
     logger.command_starting command
     run_simple command, :fail_on_error => false
   end
 
   def exec_with_no_command!(logger)
+    verify_class_files_exist
     command = "java -cp #{runner_class_dir}:#{spec_class_dir} #{runner_class}"
     logger.command_starting command
     run_simple command, :fail_on_error => false
@@ -44,13 +46,6 @@ class SpecRunnerContext
     @run_assertion = block
   end
 
-  def verify_class_files_exist
-    expect(runner_class_file).to be_an_existing_file
-    spec_classes.each do |class_name|
-      expect(spec_class_file(class_name)).to be_an_existing_file
-    end
-  end
-
   def verify_specs_ran
     @run_assertion.call runner_output
   end
@@ -60,6 +55,13 @@ class SpecRunnerContext
   end
 
   private
+
+  def verify_class_files_exist
+    expect(runner_class_file).to be_an_existing_file
+    spec_classes.each do |class_name|
+      expect(spec_class_file(class_name)).to be_an_existing_file
+    end
+  end
 
   def runner_class_dir
     File.expand_path '../../../../console-runner/target/classes', __FILE__

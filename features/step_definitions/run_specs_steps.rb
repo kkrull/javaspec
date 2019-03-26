@@ -43,7 +43,6 @@ Given(/^I have 1 or more Java classes that defines lambda specs$/) do
 end
 
 When(/^I run the specs in those classes$/) do
-  spec_runner_helper.verify_class_files_exist
   spec_runner_helper.exec_run! logger
 end
 
