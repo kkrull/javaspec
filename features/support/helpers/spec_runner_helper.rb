@@ -20,9 +20,9 @@ class SpecRunnerContext
     last_command_stopped.exit_status
   end
 
-  def exec_run!(logger)
+  def exec_run!(logger, reporter: 'plaintext') #TODO KDK: Switch back to java to have it take in the reporter argument
     verify_class_files_exist
-    command = "java -cp #{runner_class_dir}:#{spec_class_dir} #{runner_class} run #{spec_classes.join(' ')}"
+    command = "java -cp #{runner_class_dir}:#{spec_class_dir} #{runner_class} run --reporter=#{reporter} #{spec_classes.join(' ')}"
     logger.command_starting command
     run_simple command, :fail_on_error => false
   end

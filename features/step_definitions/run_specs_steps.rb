@@ -42,8 +42,18 @@ Given(/^I have 1 or more Java classes that defines lambda specs$/) do
   end
 end
 
+Given(/^I have 2 or more spec collections with a variety of results$/) do
+  # https://en.wikipedia.org/wiki/Wile_E._Coyote_and_the_Road_Runner
+  # https://en.wikipedia.org/wiki/Beep,_Beep_(film)
+  spec_runner_helper.spec_classes = %w[info.javaspec.example.BeepBeep]
+end
+
 When(/^I run the specs in those classes$/) do
   spec_runner_helper.exec_run! logger
+end
+
+When(/^I run those specs with a plain text reporter$/) do
+  spec_runner_helper.exec_run! logger, reporter: 'plaintext'
 end
 
 Then(/^The runner should describe what is being tested$/) do
@@ -60,4 +70,8 @@ end
 
 Then(/^The runner should indicate which specs passed and failed$/) do
   spec_runner_helper.verify_spec_results
+end
+
+Then(/^the runner's output should not contain any ANSI escape sequences$/) do
+  pending
 end

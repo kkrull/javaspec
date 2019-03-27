@@ -36,19 +36,32 @@ Feature: Run command (external process)
 
   ## Run specifics: How does it present this information to the developer?
 
-  @wip
+  @wip @focus
   Scenario: Text output should still be legible, when running specs in a terminal that doesn't grok ANSI color codes
-  Here's looking at you, Jenkins.
+
+  Note: Although plugins exist to parse and/or strip color codes from the output, the escape sequences used to change
+  color and move around on the terminal are often output as plain text on Jenkins.
+
+  Spec reference: https://en.wikipedia.org/wiki/Beep,_Beep_(film)
+
+  java ... info.javaspec.console.Main run --reporter=plaintext info.javaspec.example.BeepBeep
 
     Given I have a JavaSpec runner for the console
-    And I have 1 or more Java classes that cover the breadth of possible outcomes
-    When I run those specs in plain text format
+    And I have 2 or more spec collections with a variety of results
+    When I run those specs with a plain text reporter
     Then the runner's output should not contain any ANSI escape sequences
     And the runner's output should be
     """
-    Illudium Q-36 Explosive Space Modulator
-    - discombobulates: FAIL
-    - explodes: PASS
+    Spring-operated boxing glove
+      when the spring expands
+        - pushes the rock holding it backwards: PASS
 
-    [Testing complete] Passed: 1, Failed: 1, Total: 2
+      when the spring contracts again
+        - punches any nearby coyote in the face: PASS
+
+    Tightrope
+    - supports a coyote holding an anvil: FAIL
+    - recoils when the coyote drops the anvil: PASS
+
+    [Testing complete] Passed: 3, Failed: 1, Total: 4
     """
