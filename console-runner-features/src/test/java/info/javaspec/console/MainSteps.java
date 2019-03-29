@@ -30,7 +30,13 @@ public class MainSteps {
   public void iHaveAJavaClassWithLambdaSpecs() throws Exception {
     this.execRunCommand = () -> {
       MainStepsOneOfEach.reset();
-      Main.main(this.mockReporter, this.system, "run", MainStepsOneOfEach.class.getCanonicalName());
+      Main.main(
+        this.mockReporter,
+        this.system,
+        "run",
+        "--reporter=plaintext",
+        MainStepsOneOfEach.class.getCanonicalName()
+      );
     };
 
     this.declaredSpecsRan = MainStepsOneOfEach::specsShouldHaveRun;
@@ -46,6 +52,7 @@ public class MainSteps {
       this.mockReporter,
       this.system,
       "run",
+      "--reporter=plaintext",
       MainStepsOnePasses.class.getCanonicalName()
     );
   }
@@ -56,6 +63,7 @@ public class MainSteps {
       this.mockReporter,
       this.system,
       "run",
+      "--reporter=plaintext",
       MainStepsOneFails.class.getCanonicalName()
     );
   }
