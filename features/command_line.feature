@@ -24,6 +24,11 @@ Feature: JavaSpec CLI (external process)
 
       run <spec class name> [spec class name...]
         run specs in Java classes
+
+        --reporter [reporter]
+
+          plaintext   Plain-text reporter without any colors or other escape sequences.
+                      Useful for continuous integration servers.
     """
 
 
