@@ -12,6 +12,12 @@ Given(/^I have a Java class that defines a suite of 1 or more failing lambda spe
   spec_runner_helper.spec_classes = ['info.javaspec.example.OneFails']
 end
 
+When(/^I ask for help on the run command$/) do
+  spec_runner_helper.exec! logger,
+    args: %w[help run],
+    fail_on_error: false
+end
+
 When(/^I run the runner without any arguments$/) do
   spec_runner_helper.exec_with_no_command! logger
 end

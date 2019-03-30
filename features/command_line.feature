@@ -10,26 +10,38 @@ Feature: JavaSpec CLI (external process)
 
   ## Basic CLI behavior: What commands are available?  How does `javaspec` work, as a process?
 
+  @focus
   Scenario: The CLI should offer to help when it's run without any arguments
     Given I have a JavaSpec runner for the console
     When I run the runner without any arguments
-    Then the runner's exit status should be 0
-    And the runner's output should be
+    Then the runner's output should be
     """
     Usage: javaspec <command> [<arguments>]
 
-    Commands:
-      help
-        show this help
+    ## Commands ##
 
-      run <spec class name> [spec class name...]
-        run specs in Java classes
-
-        --reporter [reporter]
-
-          plaintext   Plain-text reporter without any colors or other escape sequences.
-                      Useful for continuous integration servers.
+    help  show a list of commands, or help on a specific command
+    run   run specs in Java classes
     """
+    And the runner's exit status should be 0
+
+
+  Scenario: The CLI should tell you how to use the run command
+    Given I have a JavaSpec runner for the console
+    When I ask for help on the run command
+    Then the runner's output should be
+    """
+    Usage:   javaspec run --reporter=plaintext <spec class> [spec class...]
+    Example: javaspec run --reporter=plaintext com.acme.AnvilSpecs com.acme.SpringOperatedBoxingGloveSpecs
+
+    ## Options ##
+
+    --reporter=[reporter]   How you want to find out which spec is running and what their results are
+
+      plaintext   Plain-text output without any colors or other escape sequences.
+                  Useful for preventing garbled output on continuous integration servers.
+    """
+    And the runner's exit status should be 0
 
 
   Scenario: The CLI should report all passing specs with its exit code

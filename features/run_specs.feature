@@ -36,7 +36,7 @@ Feature: Run command (external process)
 
   ## Run specifics: How does it present this information to the developer?
 
-  @wip @focus
+  @wip
   Scenario: Text output should still be legible, when running specs in a terminal that doesn't grok ANSI color codes
 
   Note: Although plugins exist to parse and/or strip color codes from the output, the escape sequences used to change
@@ -54,10 +54,10 @@ Feature: Run command (external process)
     """
     Spring-operated boxing glove
       when the spring expands
-        - pushes the rock holding it backwards: PASS
+      - pushes the rock holding it backwards: PASS
 
       when the spring contracts again
-        - punches any nearby coyote in the face: PASS
+      - punches any nearby coyote in the face: PASS
 
     Tightrope
     - supports a coyote holding an anvil: FAIL

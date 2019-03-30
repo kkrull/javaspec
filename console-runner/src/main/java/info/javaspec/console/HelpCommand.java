@@ -15,17 +15,10 @@ final class HelpCommand implements Command {
     this.observer.writeMessage(Arrays.asList(
       "Usage: javaspec <command> [<arguments>]",
       "",
-      "Commands:",
-      "  help",
-      "    show this help",
+      "## Commands ##",
       "",
-      "  run <spec class name> [spec class name...]",
-      "    run specs in Java classes",
-      "",
-      "  --reporter [reporter]",
-      "",
-      "    plaintext   Plain-text reporter without any colors or other escape sequences.",
-      "                Useful for continuous integration servers."
+      "help  show a list of commands, or help on a specific command",
+      "run   run specs in Java classes"
     ));
 
     return 0;
