@@ -1,7 +1,6 @@
 package info.javaspec.console;
 
 import java.util.Arrays;
-import java.util.List;
 
 final class HelpCommand implements Command {
   private final HelpObserver observer;
@@ -22,9 +21,5 @@ final class HelpCommand implements Command {
     ));
 
     return 0;
-  }
-
-  public interface HelpObserver {
-    void writeMessage(List<String> lines);
   }
 }
