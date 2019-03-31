@@ -20,25 +20,21 @@ class SpecRunnerContext
     last_command_stopped.exit_status
   end
 
+  def exec_help!(logger, command)
+    exec! logger, args: ['help', command]
+  end
+
+  def exec_run!(logger, reporter: 'plaintext')
+    exec! logger,
+      args: ['run', "--reporter=#{reporter}", *spec_classes],
+      fail_on_error: false
+  end
+
   def exec!(logger, args: [], fail_on_error: true)
     verify_class_files_exist
     command = "java -cp #{runner_class_dir}:#{spec_class_dir} #{runner_class} #{args.join(' ')}"
     logger.command_starting command
     run_simple command, fail_on_error: fail_on_error
-  end
-
-  def exec_run!(logger, reporter: 'plaintext')
-    verify_class_files_exist
-    command = "java -cp #{runner_class_dir}:#{spec_class_dir} #{runner_class} run --reporter=#{reporter} #{spec_classes.join(' ')}"
-    logger.command_starting command
-    run_simple command, :fail_on_error => false
-  end
-
-  def exec_with_no_command!(logger)
-    verify_class_files_exist
-    command = "java -cp #{runner_class_dir}:#{spec_class_dir} #{runner_class}"
-    logger.command_starting command
-    run_simple command, :fail_on_error => false
   end
 
   def runner_output

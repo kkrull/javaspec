@@ -13,13 +13,11 @@ Given(/^I have a Java class that defines a suite of 1 or more failing lambda spe
 end
 
 When(/^I ask for help on the run command$/) do
-  spec_runner_helper.exec! logger,
-    args: %w[help run],
-    fail_on_error: false
+  spec_runner_helper.exec_help! logger, 'run'
 end
 
 When(/^I run the runner without any arguments$/) do
-  spec_runner_helper.exec_with_no_command! logger
+  spec_runner_helper.exec! logger
 end
 
 When(/^I run the specs in that class$/) do
