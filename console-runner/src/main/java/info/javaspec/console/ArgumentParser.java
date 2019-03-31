@@ -15,32 +15,28 @@ final class ArgumentParser implements Main.CommandParser {
   }
 
   @Override
-  public Command parseCommand(List<String> args) {
-    if(args.isEmpty())
+  public Command parseCommand(List<String> commandThenArguments) {
+    if(commandThenArguments.isEmpty())
       return this.factory.helpCommand(this.reporter);
 
-    String command = args.get(0);
+    String command = commandThenArguments.get(0);
+    List<String> arguments = commandThenArguments.subList(1, commandThenArguments.size());
     switch(command) {
       case "help":
         return this.factory.helpCommand(this.reporter);
 
       case "run":
-        return parseRunCommand(args);
+        if(arguments.isEmpty())
+          throw InvalidCommand.noReporterDefined(commandThenArguments);
+        else if(!"--reporter=plaintext".equals(arguments.get(0)))
+          throw InvalidCommand.noReporterDefined(commandThenArguments);
+
+        List<String> classNames = arguments.subList(1, arguments.size());
+        return this.factory.runSpecsCommand(this.reporter, classNames);
 
       default:
         throw InvalidCommand.noCommandNamed(command);
     }
-  }
-
-  private Command parseRunCommand(List<String> args) {
-    List<String> runArgs = args.subList(1, args.size());
-    if(runArgs.isEmpty())
-      throw InvalidCommand.noReporterDefined(args);
-    else if(!"--reporter=plaintext".equals(runArgs.get(0)))
-      throw InvalidCommand.noReporterDefined(args);
-
-    List<String> classNames = runArgs.subList(1, runArgs.size());
-    return this.factory.runSpecsCommand(this.reporter, classNames);
   }
 
   interface CommandFactory {
@@ -56,7 +52,9 @@ final class ArgumentParser implements Main.CommandParser {
     }
 
     public static InvalidCommand noReporterDefined(List<String> args) {
-      String message = String.format("No reporter specified.  Please use the --reporter option", String.join(" ", args));
+      String message = String.format(
+        "%s: No reporter specified.  Please use the --reporter option.",
+        String.join(" ", args));
       return new InvalidCommand(message);
     }
 

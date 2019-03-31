@@ -6,13 +6,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 
 @RunWith(HierarchicalContextRunner.class)
 public class HelpCommandTest {
@@ -33,23 +32,16 @@ public class HelpCommandTest {
     }
 
     @Test
-    public void writesUsageWithTheGivenObserver() throws Exception {
+    public void writesGeneralForm() throws Exception {
       subject.run();
-      observer.writeMessageShouldHaveReceived(
-        "Usage: javaspec <command> [<arguments>]",
-        "",
-        "Commands:",
-        "  help",
-        "    show this help",
-        "",
-        "  run <spec class name> [spec class name...]",
-        "    run specs in Java classes",
-        "",
-        "  --reporter [reporter]",
-        "",
-        "    plaintext   Plain-text reporter without any colors or other escape sequences.",
-        "                Useful for continuous integration servers."
-      );
+      observer.writeMessageShouldHaveReceivedLine("Usage: javaspec <command> [<arguments>]");
+    }
+
+    @Test
+    public void listsEachKnownCommand() throws Exception {
+      subject.run();
+      observer.writeMessageShouldHaveReceivedCommand("help", "show a list of commands, or help on a specific command");
+      observer.writeMessageShouldHaveReceivedCommand("run", "run specs in Java classes");
     }
   }
 
@@ -61,11 +53,17 @@ public class HelpCommandTest {
       this.writeMessageReceived.addAll(lines);
     }
 
-    public void writeMessageShouldHaveReceived(String... expectedLines) {
-      List<String> expectedList = Arrays.stream(expectedLines)
-        .collect(Collectors.toList());
+    public void writeMessageShouldHaveReceivedCommand(String command, String description) {
+      Optional<String> matchingLine = this.writeMessageReceived.stream()
+        .filter(line -> line.startsWith(command))
+        .findFirst();
 
-      assertThat(this.writeMessageReceived, equalTo(expectedList));
+      assertThat(matchingLine.isPresent(), is(true));
+      assertThat(matchingLine.get(), endsWith(description));
+    }
+
+    public void writeMessageShouldHaveReceivedLine(String line) {
+      assertThat(this.writeMessageReceived, hasItem(equalTo(line)));
     }
   }
 }

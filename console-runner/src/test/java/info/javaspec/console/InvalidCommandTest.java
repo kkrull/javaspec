@@ -24,7 +24,9 @@ public class InvalidCommandTest {
     @Test
     public void reportsTheInvalidCommand() throws Exception {
       Exception command = InvalidCommand.noReporterDefined(Arrays.asList("run com.megacorp.widget"));
-      assertThat(command.getMessage(), equalTo("No reporter specified.  Please use the --reporter option"));
+      assertThat(
+        command.getMessage(),
+        equalTo("run com.megacorp.widget: No reporter specified.  Please use the --reporter option."));
     }
   }
 }
