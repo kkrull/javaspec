@@ -116,6 +116,15 @@ namespace :java do
 end
 
 
+namespace :jetbrains do
+  desc 'Remove all project files from Jetbrains IDEs'
+  task :reset do
+    sh *%w[rm -Rf .idea]
+    sh "find . -iname '*.iml' -print -exec rm -Rf {} +"
+  end
+end
+
+
 namespace :release do
   desc 'Build artifacts for release'
   task :build do
