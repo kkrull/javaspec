@@ -74,4 +74,7 @@ end
 
 Then(/^the runner's output should not contain any ANSI escape sequences$/) do
   pending
+  puts "==START==", spec_runner_helper.runner_output.length
+  puts spec_runner_helper.runner_output
+  puts "==END=="
 end
