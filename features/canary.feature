@@ -1,4 +1,3 @@
-@focus
 Feature: Cucumber Canary
   As a developer who is working on JavaSpec
   In order to know my tests are working
@@ -9,9 +8,9 @@ Feature: Cucumber Canary
   @keep-ansi-escape-sequences
   Scenario: Cucumber should be able to tell when a process has no colorized output
     Given a file named "hello_world_plain.rb" with:
-      """
-      puts "Hello World!"
-      """
+    """
+    puts "Hello World!"
+    """
     When I successfully run `ruby ./hello_world_plain.rb`
     Then the output should contain "Hello World!"
     And the output should not contain:

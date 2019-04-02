@@ -9,7 +9,6 @@ Feature: JavaSpec CLI (external process)
 
 
   ## Basic CLI behavior: What commands are available?  How does `javaspec` work, as a process?
-
   
   Scenario: The CLI should offer to help when it's run without any arguments
     Given I have a JavaSpec runner for the console

@@ -43,8 +43,6 @@ Given(/^I have 1 or more Java classes that defines lambda specs$/) do
 end
 
 Given(/^I have 2 or more spec collections with a variety of results$/) do
-  # https://en.wikipedia.org/wiki/Wile_E._Coyote_and_the_Road_Runner
-  # https://en.wikipedia.org/wiki/Beep,_Beep_(film)
   spec_runner_helper.spec_classes = %w[info.javaspec.example.BeepBeep]
 end
 
