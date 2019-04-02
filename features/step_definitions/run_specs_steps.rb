@@ -73,8 +73,5 @@ Then(/^The runner should indicate which specs passed and failed$/) do
 end
 
 Then(/^the runner's output should not contain any ANSI escape sequences$/) do
-  pending
-  puts "==START==", spec_runner_helper.runner_output.length
-  puts spec_runner_helper.runner_output
-  puts "==END=="
+  expect(spec_runner_helper.runner_output).not_to include("\e")
 end
