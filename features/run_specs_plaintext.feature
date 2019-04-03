@@ -22,7 +22,6 @@ Feature: Run specs with plaintext reporter
     Then the runner's output should not contain any ANSI escape sequences
 
 
-  @focus
   @wip
   Scenario: Specs should be shown as a bulleted list under the subject
     Given I have a JavaSpec runner for the console

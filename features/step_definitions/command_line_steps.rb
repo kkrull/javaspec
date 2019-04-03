@@ -35,10 +35,10 @@ end
 
 Then(/^The runner should indicate that all specs passed$/) do
   expect(spec_runner_helper.exit_status).to eq(0)
-  expect(spec_runner_helper.runner_output).to include("Passed: 1\tFailed: 0\tTotal: 1")
+  expect(spec_runner_helper.runner_output).to include("[Testing complete] Passed: 1, Failed: 0, Total: 1")
 end
 
 Then(/^The runner should indicate that 1 or more specs have failed$/) do
   expect(spec_runner_helper.exit_status).to eq(1)
-  expect(spec_runner_helper.runner_output).to include("Passed: 0\tFailed: 1\tTotal: 1")
+  expect(spec_runner_helper.runner_output).to include("[Testing complete] Passed: 0, Failed: 1, Total: 1")
 end

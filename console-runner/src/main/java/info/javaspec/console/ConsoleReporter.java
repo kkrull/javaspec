@@ -59,10 +59,11 @@ final class ConsoleReporter implements Reporter {
   @Override
   public void runFinished() {
     this.output.printf(
-      "Passed: %d\tFailed: %d\tTotal: %d\n",
+      "[Testing complete] Passed: %d, Failed: %d, Total: %d%s",
       this.numPassed,
       this.numFailed,
-      this.numStarted
+      this.numStarted,
+      System.lineSeparator()
     );
   }
 }

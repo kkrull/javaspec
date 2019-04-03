@@ -38,7 +38,7 @@ Given(/^I have 1 or more Java classes that defines lambda specs$/) do
     expect(output).to match(/^OneFails/)
     expect(output).to match(/^fails/)
 
-    expect(output).to include("Passed: 1\tFailed: 1\tTotal: 2")
+    expect(output).to include('[Testing complete] Passed: 1, Failed: 1, Total: 2')
   end
 end
 
