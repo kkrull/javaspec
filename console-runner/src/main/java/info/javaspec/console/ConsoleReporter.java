@@ -31,7 +31,7 @@ final class ConsoleReporter implements Reporter {
   public void collectionStarting(SpecCollection collection) {
     if(this.hasPrintedFirstCollection)
       this.output.println();
-    
+
     this.output.println(collection.description());
     this.hasPrintedFirstCollection = true;
   }

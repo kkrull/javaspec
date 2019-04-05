@@ -35,7 +35,6 @@ Feature: Run specs with plaintext reporter
     """
 
 
-  @wip @focus
   Scenario: 2 or more subjects should be separated by a newline
     Given I have a JavaSpec runner for the console
     And I have specs that describe 2 or more subjects
@@ -51,4 +50,3 @@ Feature: Run specs with plaintext reporter
 
     [Testing complete] Passed: 1, Failed: 2, Total: 3
     """
-
