@@ -2,7 +2,6 @@ package info.javaspec.lang.lambda;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.RunObserver;
-import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +16,7 @@ import static org.hamcrest.Matchers.*;
 
 @RunWith(HierarchicalContextRunner.class)
 public class RootCollectionTest {
-  private WritableSpecCollection subject;
+  private RootCollection subject;
 
   public class subCollections {
     public class whenNoSubCollectionsHaveBeenAdded {
@@ -64,22 +63,10 @@ public class RootCollectionTest {
   }
 
   public class intendedBehaviors {
-    public class whenNoSpecsHaveBeenAdded {
-      @Test
-      public void returnsAnEmptyCollection() throws Exception {
-        subject = new RootCollection();
-        assertThat(subject.intendedBehaviors(), empty());
-      }
-    }
-
-    public class whenSpecsHaveBeenAdded {
-      @Test
-      public void returnsAListOfEachSpecsBehaviorInTheOrderTheyWereAdded() throws Exception {
-        subject = new RootCollection();
-        subject.addSpec(specWithBehavior("FirstBehavior"));
-        subject.addSpec(specWithBehavior("SecondBehavior"));
-        assertThat(subject.intendedBehaviors(), contains("FirstBehavior", "SecondBehavior"));
-      }
+    @Test
+    public void returnsAnEmptyCollection() throws Exception {
+      subject = new RootCollection();
+      assertThat(subject.intendedBehaviors(), empty());
     }
   }
 
@@ -100,33 +87,6 @@ public class RootCollectionTest {
     }
 
     @Test
-    public void runsSpecsWithTheGivenReporter() throws Exception {
-      Spec spec = Mockito.mock(Spec.class);
-
-      subject = new RootCollection();
-      subject.addSpec(spec);
-      subject.runSpecs(observer);
-
-      Mockito.verify(spec).run(observer);
-    }
-
-    @Test
-    public void runsSpecsInTheOrderTheyWereAdded() throws Exception {
-      Spec addedFirst = Mockito.mock(Spec.class);
-      Spec addedSecond = Mockito.mock(Spec.class);
-
-      subject = new RootCollection();
-      subject.addSpec(addedFirst);
-      subject.addSpec(addedSecond);
-      subject.runSpecs(observer);
-
-      InOrder order = Mockito.inOrder(addedFirst, addedSecond);
-      order.verify(addedFirst).run(Mockito.any());
-      order.verify(addedSecond).run(Mockito.any());
-      order.verifyNoMoreInteractions();
-    }
-
-    @Test
     public void runsSubCollectionsInTheOrderTheyWereAdded() throws Exception {
       SpecCollection firstChild = Mockito.mock(SpecCollection.class, "FirstSubCollection");
       SpecCollection secondChild = Mockito.mock(SpecCollection.class, "SecondSubCollection");
@@ -141,28 +101,5 @@ public class RootCollectionTest {
       order.verify(secondChild).runSpecs(observer);
       order.verifyNoMoreInteractions();
     }
-
-    @Test
-    public void runsSpecsInThisCollectionBeforeRunningSubCollections() throws Exception {
-      SpecCollection subCollection = Mockito.mock(SpecCollection.class, "SubCollection");
-      Spec spec = Mockito.mock(Spec.class, "Spec");
-
-      subject = new RootCollection();
-      subject.addSpec(spec);
-      subject.addSubCollection(subCollection);
-      subject.runSpecs(observer);
-
-      InOrder order = Mockito.inOrder(subCollection, spec);
-      order.verify(spec).run(observer);
-      order.verify(subCollection).runSpecs(observer);
-      order.verifyNoMoreInteractions();
-    }
-
-  }
-
-  private Spec specWithBehavior(String behavior) {
-    Spec spec = Mockito.mock(Spec.class);
-    Mockito.when(spec.intendedBehavior()).thenReturn(behavior);
-    return spec;
   }
 }

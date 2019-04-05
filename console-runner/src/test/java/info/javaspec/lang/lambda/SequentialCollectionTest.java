@@ -17,7 +17,7 @@ import static org.hamcrest.Matchers.*;
 
 @RunWith(HierarchicalContextRunner.class)
 public class SequentialCollectionTest {
-  private WritableSpecCollection subject;
+  private SequentialCollection subject;
 
   public class subCollections {
     public class whenNoSubCollectionsHaveBeenAdded {

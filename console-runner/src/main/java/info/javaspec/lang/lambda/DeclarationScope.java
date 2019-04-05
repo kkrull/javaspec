@@ -9,7 +9,7 @@ import java.util.Stack;
 /** Groups recently-declared specs into a collection of specs that can be run together. */
 final class DeclarationScope {
   private final RootCollection rootCollection;
-  private final Stack<WritableSpecCollection> subjectCollections;
+  private final Stack<SequentialCollection> subjectCollections;
 
   public DeclarationScope() {
     this.rootCollection = new RootCollection();
@@ -43,12 +43,13 @@ final class DeclarationScope {
     return this.rootCollection;
   }
 
-  private WritableSpecCollection currentCollection() {
+  private CompositeSpecCollection currentCollection() {
     return subjectCollection()
+      .map(CompositeSpecCollection.class::cast)
       .orElse(this.rootCollection);
   }
 
-  private Optional<WritableSpecCollection> subjectCollection() {
+  private Optional<SequentialCollection> subjectCollection() {
     return this.subjectCollections.isEmpty()
       ? Optional.empty()
       : Optional.of(this.subjectCollections.peek());
