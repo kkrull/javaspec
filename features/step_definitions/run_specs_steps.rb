@@ -4,13 +4,13 @@ Given(/^I have a Java class that defines a suite of lambda specs$/) do
   spec_runner_helper.spec_classes = ['info.javaspec.example.OneOfEachResult']
 
   spec_runner_helper.spec_run_verification do |output|
-    expect(output).to match(/^passes/)
-    expect(output).to match(/^fails/)
+    expect(output).to match(/passes/)
+    expect(output).to match(/fails/)
   end
 
   spec_runner_helper.spec_result_verification do |output|
-    expect(output).to match(/^passes: PASS$/)
-    expect(output).to match(/^fails: FAIL$/)
+    expect(output).to match(/passes: PASS$/)
+    expect(output).to match(/fails: FAIL$/)
   end
 end
 
@@ -18,13 +18,13 @@ Given(/^I have a Java class that defines a suite of lambda specs describing a su
   spec_runner_helper.spec_classes = ['info.javaspec.example.DescribeTwo']
 
   spec_runner_helper.spec_run_verification do |output|
-    expect(output).to match(/^discombobulates/)
-    expect(output).to match(/^explodes/)
+    expect(output).to match(/discombobulates/)
+    expect(output).to match(/explodes/)
   end
 
   spec_runner_helper.spec_result_verification do |output|
-    expect(output).to match(/^discombobulates: PASS$/)
-    expect(output).to match(/^explodes: PASS$/)
+    expect(output).to match(/discombobulates: PASS$/)
+    expect(output).to match(/explodes: PASS$/)
   end
 end
 
@@ -33,10 +33,10 @@ Given(/^I have 1 or more Java classes that defines lambda specs$/) do
 
   spec_runner_helper.spec_run_verification do |output|
     expect(output).to match(/^AllPass/)
-    expect(output).to match(/^passes/)
+    expect(output).to match(/passes/)
 
     expect(output).to match(/^OneFails/)
-    expect(output).to match(/^fails/)
+    expect(output).to match(/fails/)
 
     expect(output).to include('[Testing complete] Passed: 1, Failed: 1, Total: 2')
   end

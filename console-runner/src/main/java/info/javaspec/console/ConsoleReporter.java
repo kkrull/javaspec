@@ -36,7 +36,7 @@ final class ConsoleReporter implements Reporter {
   @Override
   public void specStarting(Spec spec) {
     this.numStarted++;
-    this.output.print(spec.intendedBehavior());
+    listItemPrint(spec.intendedBehavior());
   }
 
   @Override
@@ -58,12 +58,16 @@ final class ConsoleReporter implements Reporter {
 
   @Override
   public void runFinished() {
-    this.output.printf(
-      "[Testing complete] Passed: %d, Failed: %d, Total: %d%s",
+    this.output.println();
+    this.output.println(String.format("[Testing complete] Passed: %d, Failed: %d, Total: %d",
       this.numPassed,
       this.numFailed,
-      this.numStarted,
-      System.lineSeparator()
-    );
+      this.numStarted
+    ));
+  }
+
+  private void listItemPrint(String item) {
+    this.output.print("- ");
+    this.output.print(item);
   }
 }
