@@ -33,30 +33,20 @@ public class ConsoleReporterTest {
   public class collectionStarting {
     @Test
     public void printsTheDescriptionForTheFirstSpecCollection() throws Exception {
-      SpecCollection first = Mockito.mock(SpecCollection.class);
-      Mockito.when(first.description()).thenReturn("first");
-
-      subject.collectionStarting(first);
+      subject.collectionStarting(anyCollectionDescribedAs("first"));
       output.shouldHavePrintedLine(equalTo("first"));
     }
 
     @Test
     public void printsANewlineBetweenSpecCollections() throws Exception {
-      SpecCollection first = Mockito.mock(SpecCollection.class);
-      Mockito.when(first.description()).thenReturn("first");
-
-      SpecCollection second = Mockito.mock(SpecCollection.class);
-      Mockito.when(second.description()).thenReturn("second");
-
-      subject.collectionStarting(first);
-      subject.collectionStarting(second);
+      subject.collectionStarting(anyCollectionDescribedAs("first"));
+      subject.collectionStarting(anyCollectionDescribedAs("second"));
       output.shouldHavePrintedTheseLines(
         equalTo("first"),
         isEmptyString(),
         equalTo("second")
       );
     }
-
   }
 
   public class runFinished {
@@ -109,6 +99,12 @@ public class ConsoleReporterTest {
       output.shouldHavePrintedLine(equalTo("one"));
       output.shouldHavePrintedLine(equalTo("two"));
     }
+  }
+
+  private SpecCollection anyCollectionDescribedAs(String description) {
+    SpecCollection collection = Mockito.mock(SpecCollection.class);
+    Mockito.when(collection.description()).thenReturn(description);
+    return collection;
   }
 
   private Spec anySpecNamed(String behavior) {

@@ -8,24 +8,25 @@ import java.util.Stack;
 
 /** Groups recently-declared specs into a collection of specs that can be run together. */
 final class DeclarationScope {
-  private final Stack<WritableSpecCollection> collections;
+  private final RootCollection rootCollection;
+  private final Stack<WritableSpecCollection> subjectCollections;
 
   public DeclarationScope() {
-    this.collections = new Stack<>();
-    this.collections.push(new RootCollection());
+    this.rootCollection = new RootCollection();
+    this.subjectCollections = new Stack<>();
   }
 
   public void declareSpecsFor(String subject, BehaviorDeclaration describeBehavior) {
     SequentialCollection newSubjectCollection = new SequentialCollection(subject);
 
     //Add the child collection in line with any other declared specs
-    leafCollection().get().addSubCollection(newSubjectCollection);
+    currentCollection().addSubCollection(newSubjectCollection);
 
     //Push on to the stack in case there are nested describes
-    this.collections.push(newSubjectCollection);
+    this.subjectCollections.push(newSubjectCollection);
 
     describeBehavior.declareSpecs();
-    this.collections.pop();
+    this.subjectCollections.pop();
   }
 
   public void createSpec(String intendedBehavior, BehaviorVerification verification) {
@@ -36,21 +37,20 @@ final class DeclarationScope {
   }
 
   public SpecCollection createRootCollection() {
-    SpecCollection rootCollection = this.collections.pop();
-    if(!this.collections.isEmpty())
+    if(!this.subjectCollections.isEmpty())
       throw new IllegalStateException("Spec declaration ended prematurely");
 
-    return rootCollection;
+    return this.rootCollection;
+  }
+
+  private WritableSpecCollection currentCollection() {
+    return subjectCollection()
+      .orElse(this.rootCollection);
   }
 
   private Optional<WritableSpecCollection> subjectCollection() {
-    return this.leafCollection()
-      .filter(x -> !RootCollection.class.equals(x.getClass()));
-  }
-
-  private Optional<WritableSpecCollection> leafCollection() {
-    return this.collections.empty()
+    return this.subjectCollections.isEmpty()
       ? Optional.empty()
-      : Optional.of(this.collections.peek());
+      : Optional.of(this.subjectCollections.peek());
   }
 }
