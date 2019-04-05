@@ -22,9 +22,7 @@ final class RunSpecsCommand implements Command {
       return 2;
     }
 
-    this.observer.runStarting();
     rootCollection.runSpecs(this.observer);
-    this.observer.runFinished();
     return this.observer.hasFailingSpecs() ? 1 : 0;
   }
 }

@@ -47,8 +47,9 @@ final class RootCollection implements WritableSpecCollection {
 
   @Override
   public void runSpecs(RunObserver observer) {
-    observer.collectionStarting(this);
+    observer.runStarting();
     this.specs.forEach(x -> x.run(observer));
     this.subCollections().forEach(x -> x.runSpecs(observer));
+    observer.runFinished();
   }
 }

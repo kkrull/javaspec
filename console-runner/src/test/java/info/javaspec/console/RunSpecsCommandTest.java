@@ -45,14 +45,6 @@ public class RunSpecsCommandTest {
     }
 
     @Test
-    public void reportsTheRunStartingAndFinishing() throws Exception {
-      subject = new RunSpecsCommand(factory, observer);
-      subject.run();
-      Mockito.verify(observer).runStarting();
-      Mockito.verify(observer).runFinished();
-    }
-
-    @Test
     public void returns0WhenThereAreNoFailingSpecs() throws Exception {
       subject = new RunSpecsCommand(factory, observer);
       int statusCode = subject.run();

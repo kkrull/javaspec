@@ -92,10 +92,11 @@ public class RootCollectionTest {
     }
 
     @Test
-    public void reportsThatTheCollectionIsBeingRun() throws Exception {
+    public void reportsTheRunStartingAndFinishing() throws Exception {
       subject = new RootCollection();
       subject.runSpecs(observer);
-      Mockito.verify(observer).collectionStarting(subject);
+      Mockito.verify(observer).runStarting();
+      Mockito.verify(observer).runFinished();
     }
 
     @Test

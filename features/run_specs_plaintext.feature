@@ -11,7 +11,6 @@ Feature: Run specs with plaintext reporter
 
   ## Run specifics: How does a plaintext reporter present information to the developer?
 
-  @focus
   Scenario: Text output should still be legible, when running specs in a terminal that doesn't grok ANSI color codes
   Note: Although plugins exist to parse and/or strip color codes from the output, the escape sequences used to change
   color and move around on the terminal are often output as plain text on Jenkins.
@@ -22,7 +21,7 @@ Feature: Run specs with plaintext reporter
     Then the runner's output should not contain any ANSI escape sequences
 
 
-  @wip
+  @wip @focus
   Scenario: Specs should be shown as a bulleted list under the subject
     Given I have a JavaSpec runner for the console
     And I have specs that describe a single subject
