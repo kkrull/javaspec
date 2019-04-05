@@ -35,10 +35,10 @@ Feature: Run specs with plaintext reporter
     """
 
 
-  @wip
+  @wip @focus
   Scenario: 2 or more subjects should be separated by a newline
     Given I have a JavaSpec runner for the console
-    And I have specs that describe a 2 or more subjects
+    And I have specs that describe 2 or more subjects
     When I run those specs with a plain text reporter
     Then the runner's output should be
     """

@@ -2,6 +2,7 @@ package info.javaspec.console;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.Spec;
+import info.javaspec.SpecCollection;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -27,6 +28,35 @@ public class ConsoleReporterTest {
   public void setup() throws Exception {
     output = MockPrintStream.create();
     subject = new ConsoleReporter(output);
+  }
+
+  public class collectionStarting {
+    @Test
+    public void printsTheDescriptionForTheFirstSpecCollection() throws Exception {
+      SpecCollection first = Mockito.mock(SpecCollection.class);
+      Mockito.when(first.description()).thenReturn("first");
+
+      subject.collectionStarting(first);
+      output.shouldHavePrintedLine(equalTo("first"));
+    }
+
+    @Test
+    public void printsANewlineBetweenSpecCollections() throws Exception {
+      SpecCollection first = Mockito.mock(SpecCollection.class);
+      Mockito.when(first.description()).thenReturn("first");
+
+      SpecCollection second = Mockito.mock(SpecCollection.class);
+      Mockito.when(second.description()).thenReturn("second");
+
+      subject.collectionStarting(first);
+      subject.collectionStarting(second);
+      output.shouldHavePrintedTheseLines(
+        equalTo("first"),
+        isEmptyString(),
+        equalTo("second")
+      );
+    }
+
   }
 
   public class runFinished {
@@ -105,6 +135,11 @@ public class ConsoleReporterTest {
 
     public void shouldHavePrintedLine(Matcher<String> matcher) {
       assertThat(printedLines(), hasItem(matcher));
+    }
+
+    @SafeVarargs
+    public final void shouldHavePrintedTheseLines(Matcher<String>... lineMatchers) {
+      assertThat(printedLines(), Matchers.contains(lineMatchers));
     }
 
     private List<String> printedLines() {
