@@ -50,3 +50,20 @@ Feature: Run specs with plaintext reporter
 
     [Testing complete] Passed: 1, Failed: 2, Total: 3
     """
+
+  @wip @focus
+  Scenario: Nested context should be indented
+    Given I have a JavaSpec runner for the console
+    And I have specs that describe context-specific behavior
+    When I run those specs with a plain text reporter
+    Then the runner's output should be
+    """
+    Spring-operated boxing glove
+      when the spring expands
+      - pushes the rock holding it backwards: PASS
+
+      when the spring contracts again
+      - punches any nearby coyote in the face: PASS
+
+    [Testing complete] Passed: 2, Failed: 0, Total: 2
+    """
