@@ -1,6 +1,7 @@
 package info.javaspec.lang.lambda;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -17,6 +18,12 @@ public class DeclarationScopeTest {
       Exception exception = capture(Exceptions.NoSubjectDefined.class,
         () -> declaration.createSpec("goes boom", () -> {}));
       assertThat(exception.getMessage(), equalTo("No subject defined for spec: goes boom"));
+    }
+  }
+
+  public class describeSpecsFor {
+    @Test @Ignore
+    public void supportsNestedContexts() throws Exception {
     }
   }
 }
