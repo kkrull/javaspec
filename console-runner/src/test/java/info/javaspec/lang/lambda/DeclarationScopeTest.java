@@ -98,9 +98,22 @@ public class DeclarationScopeTest {
       }
     }
 
-//    public class whenANestedSubjectHasBeenDeclaredInsideOfAnother {
-//
-//    }
+    public class whenANestedSubjectHasBeenDeclaredInsideOfAnother {
+      @Test @Ignore
+      public void thatSubjectsCollectionHasASubCollectionForThatContext() throws Exception {
+        scope = anyDeclarationScope();
+        scope.declareSpecsFor("outer subject", () -> {
+          scope.declareSpecsFor("inner subject", anyBehaviorDeclaration());
+        });
+
+        root = scope.createRootCollection();
+        subjectCollection = root.subCollections().get(0);
+        List<String> subCollectionDescriptions = subjectCollection.subCollections().stream()
+          .map(SpecCollection::description)
+          .collect(Collectors.toList());
+        assertThat(subCollectionDescriptions, contains("inner subject"));
+      }
+    }
   }
 
   public class createSpec {

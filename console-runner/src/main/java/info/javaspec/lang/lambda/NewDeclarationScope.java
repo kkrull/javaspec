@@ -9,27 +9,35 @@ import java.util.Stack;
 
 /** Groups recently-declared specs into a collection of specs that can be run together. */
 final class NewDeclarationScope {
-  private RootCollection rootCollection;
-  private SequentialCollection currentSubject;
+  private final RootCollection rootCollection;
+  private final Stack<SequentialCollection> subjectCollections;
 
   public NewDeclarationScope() {
     this.rootCollection = new RootCollection();
+    this.subjectCollections = new Stack<>();
   }
 
   public void declareSpecsFor(String subject, BehaviorDeclaration describeBehavior) {
-    this.currentSubject = new SequentialCollection(subject);
-    this.rootCollection.addSubCollection(this.currentSubject);
+    SequentialCollection currentSubject = new SequentialCollection(subject);
+    this.rootCollection.addSubCollection(currentSubject);
+    this.subjectCollections.push(currentSubject);
     describeBehavior.declareSpecs();
   }
 
   public void createSpec(String intendedBehavior, BehaviorVerification verification) {
-    DescriptiveSpec spec = new DescriptiveSpec(intendedBehavior, verification);
-    Optional.ofNullable(this.currentSubject)
+    Spec spec = new DescriptiveSpec(intendedBehavior, verification);
+    currentSubject()
       .orElseThrow(() -> NoSubjectDefined.forSpec(intendedBehavior))
       .addSpec(spec);
   }
 
   public SpecCollection createRootCollection() {
     return this.rootCollection;
+  }
+
+  private Optional<SequentialCollection> currentSubject() {
+    return this.subjectCollections.isEmpty()
+      ? Optional.empty()
+      : Optional.of(this.subjectCollections.peek());
   }
 }
