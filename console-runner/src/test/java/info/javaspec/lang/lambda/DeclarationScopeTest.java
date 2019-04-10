@@ -4,6 +4,7 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.RunObserver;
 import info.javaspec.SpecCollection;
 import info.javaspec.lang.lambda.Exceptions.NoSubjectDefined;
+import org.hamcrest.Matcher;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,11 +50,9 @@ public class DeclarationScopeTest {
         scope.declareSpecsFor("Anvil", anyBehaviorDeclaration());
         root = scope.createRootCollection();
 
-        List<String> descriptions = root.subCollections().stream()
-          .map(SpecCollection::description)
-          .collect(Collectors.toList());
-        assertThat(descriptions, contains("Anvil"));
-        assertThat(root.subCollections().get(0), instanceOf(SequentialCollection.class));
+        shouldHaveSubCollectionsDescribing(root, contains("Anvil"));
+        subjectCollection = root.subCollections().get(0);
+        assertThat(subjectCollection, instanceOf(SequentialCollection.class));
       }
     }
 
@@ -99,7 +98,7 @@ public class DeclarationScopeTest {
     }
 
     public class whenANestedSubjectHasBeenDeclaredInsideOfAnother {
-      @Test @Ignore
+      @Test
       public void thatSubjectsCollectionHasASubCollectionForThatContext() throws Exception {
         scope = anyDeclarationScope();
         scope.declareSpecsFor("outer subject", () -> {
@@ -107,11 +106,29 @@ public class DeclarationScopeTest {
         });
 
         root = scope.createRootCollection();
+        shouldHaveSubCollectionsDescribing(root, contains("outer subject"));
+
         subjectCollection = root.subCollections().get(0);
-        List<String> subCollectionDescriptions = subjectCollection.subCollections().stream()
-          .map(SpecCollection::description)
-          .collect(Collectors.toList());
-        assertThat(subCollectionDescriptions, contains("inner subject"));
+        shouldHaveSubCollectionsDescribing(subjectCollection, contains("inner subject"));
+      }
+    }
+
+    public class whenSpecsAreDeclaredForAnOuterSubjectAfterDeclaringAnInnerSubject {
+      @Test
+      public void theSpecsExistInTheScopeInWhichTheyAreDeclared() throws Exception {
+        scope = anyDeclarationScope();
+        scope.declareSpecsFor("outer subject", () -> {
+          scope.declareSpecsFor("inner subject", anyBehaviorDeclaration());
+
+          scope.createSpec("afterthought", anyBehaviorVerification());
+        });
+
+        root = scope.createRootCollection();
+        SpecCollection outerSubject = root.subCollections().get(0);
+        assertThat(outerSubject.intendedBehaviors(), contains("afterthought"));
+
+        SpecCollection innerSubject = outerSubject.subCollections().get(0);
+        assertThat(innerSubject.intendedBehaviors(), empty());
       }
     }
   }
@@ -151,5 +168,15 @@ public class DeclarationScopeTest {
 
   private RunObserver anyRunObserver() {
     return Mockito.mock(RunObserver.class);
+  }
+
+  private static void shouldHaveSubCollectionsDescribing(
+    SpecCollection collection,
+    Matcher<Iterable<? extends String>> descriptionsMatcher) {
+
+    List<String> descriptions = collection.subCollections().stream()
+      .map(SpecCollection::description)
+      .collect(Collectors.toList());
+    assertThat(descriptions, descriptionsMatcher);
   }
 }

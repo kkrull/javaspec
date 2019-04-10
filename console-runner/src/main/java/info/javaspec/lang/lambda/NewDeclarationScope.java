@@ -18,10 +18,12 @@ final class NewDeclarationScope {
   }
 
   public void declareSpecsFor(String subject, BehaviorDeclaration describeBehavior) {
-    SequentialCollection currentSubject = new SequentialCollection(subject);
-    this.rootCollection.addSubCollection(currentSubject);
-    this.subjectCollections.push(currentSubject);
+    SequentialCollection newSubject = new SequentialCollection(subject);
+    currentCollection().addSubCollection(newSubject);
+    this.subjectCollections.push(newSubject);
+
     describeBehavior.declareSpecs();
+    this.subjectCollections.pop();
   }
 
   public void createSpec(String intendedBehavior, BehaviorVerification verification) {
@@ -33,6 +35,12 @@ final class NewDeclarationScope {
 
   public SpecCollection createRootCollection() {
     return this.rootCollection;
+  }
+
+  private CompositeSpecCollection currentCollection() {
+    return currentSubject()
+      .map(CompositeSpecCollection.class::cast)
+      .orElse(this.rootCollection);
   }
 
   private Optional<SequentialCollection> currentSubject() {
