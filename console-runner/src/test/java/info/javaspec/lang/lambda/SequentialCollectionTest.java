@@ -28,7 +28,6 @@ public class SequentialCollectionTest {
       }
     }
 
-
     public class whenOneOrMoreSubCollectionsHaveBeenAdded {
       private SpecCollection firstChild;
       private SpecCollection secondChild;

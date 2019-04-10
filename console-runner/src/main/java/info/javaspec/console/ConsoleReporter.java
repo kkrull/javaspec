@@ -22,7 +22,7 @@ final class ConsoleReporter implements Reporter {
 
   @Override
   public void writeMessage(List<String> lines) {
-    lines.forEach(this.output::println);
+    lines.forEach(this::printMessage);
   }
 
   /* RunObserver */
@@ -30,7 +30,7 @@ final class ConsoleReporter implements Reporter {
   @Override
   public void collectionStarting(SpecCollection collection) {
     if(this.hasPrintedFirstCollection)
-      this.output.println();
+      printSeparator();
 
     this.output.println(collection.description());
     this.hasPrintedFirstCollection = true;
@@ -46,18 +46,19 @@ final class ConsoleReporter implements Reporter {
 
   @Override
   public void runFinished() {
-    this.output.println();
-    this.output.println(String.format("[Testing complete] Passed: %d, Failed: %d, Total: %d",
+    printSeparator();
+    printMessage(
+      "[Testing complete] Passed: %d, Failed: %d, Total: %d",
       this.numPassed,
       this.numFailed,
       this.numStarted
-    ));
+    );
   }
 
   @Override
   public void specStarting(Spec spec) {
     this.numStarted++;
-    listItemPrint(spec.intendedBehavior());
+    printListItem(spec.intendedBehavior());
   }
 
   @Override
@@ -72,8 +73,20 @@ final class ConsoleReporter implements Reporter {
     this.output.println(": PASS");
   }
 
-  private void listItemPrint(String item) {
+  private void printListItem(String item) {
     this.output.print("- ");
     this.output.print(item);
+  }
+
+  private void printMessage(String format, Object... args) {
+    printMessage(String.format(format, args));
+  }
+
+  private void printMessage(String message) {
+    this.output.println(message);
+  }
+
+  private void printSeparator() {
+    this.output.println();
   }
 }
