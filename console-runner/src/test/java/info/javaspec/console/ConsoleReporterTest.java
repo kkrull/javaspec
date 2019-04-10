@@ -32,21 +32,47 @@ public class ConsoleReporterTest {
   }
 
   public class beginCollection {
-    @Test
-    public void printsTheDescriptionForTheFirstSpecCollection() throws Exception {
-      subject.beginCollection(anyCollectionDescribing("first"));
-      output.shouldHavePrintedLine(equalTo("first"));
+    public class whenThereAreNoOtherCollectionsInScope {
+      @Test
+      public void printsTheDescriptionForTheFirstSpecCollection() throws Exception {
+        subject.beginCollection(anyCollectionDescribing("first"));
+        output.shouldHavePrintedLine(equalTo("first"));
+      }
+
+      @Test
+      public void printsANewlineBetweenSpecCollections() throws Exception {
+        SpecCollection first = anyCollectionDescribing("first");
+        subject.beginCollection(first);
+        subject.endCollection(first);
+
+        SpecCollection second = anyCollectionDescribing("second");
+        subject.beginCollection(second);
+        subject.endCollection(second);
+
+        output.shouldHavePrintedTheseLines(
+          equalTo("first"),
+          isEmptyString(),
+          equalTo("second")
+        );
+      }
     }
 
-    @Test
-    public void printsANewlineBetweenSpecCollections() throws Exception {
-      subject.beginCollection(anyCollectionDescribing("first"));
-      subject.beginCollection(anyCollectionDescribing("second"));
-      output.shouldHavePrintedTheseLines(
-        equalTo("first"),
-        isEmptyString(),
-        equalTo("second")
-      );
+    public class whenThereAreOtherCollectionsStillInScope {
+      @Test @Ignore
+      public void indentsTheNewCollection() throws Exception {
+        SpecCollection outer = anyCollectionDescribing("outer");
+        subject.beginCollection(outer);
+
+        SpecCollection inner = anyCollectionDescribing("inner");
+        subject.beginCollection(inner);
+        subject.endCollection(inner);
+
+        subject.endCollection(outer);
+        output.shouldHavePrintedTheseLines(
+          equalTo("outer"),
+          equalTo("  inner")
+        );
+      }
     }
   }
 
@@ -91,9 +117,20 @@ public class ConsoleReporterTest {
     public class whenTheSpecIsInANestedSubjectCollection {
       @Test @Ignore
       public void printsTheSpecBehaviorAsAListItemWithIndentation() throws Exception {
-        subject.beginCollection(anyCollectionDescribing("some specific circumstance"));
-        subject.specStarting(anySpecNamed("does something specific"));
-        output.shouldHavePrintedLine(equalTo("  - does something specific"));
+        SpecCollection outer = anyCollectionDescribing("widgets");
+        subject.beginCollection(outer);
+
+        SpecCollection inner = anyCollectionDescribing("under some specific circumstance");
+        subject.beginCollection(inner);
+        subject.specStarting(anySpecNamed("do something specific"));
+        subject.endCollection(inner);
+
+        subject.endCollection(outer);
+        output.shouldHavePrintedTheseLines(
+          equalTo("widgets"),
+          equalTo("  under some specific circumstance"),
+          equalTo("  - do something specific")
+        );
       }
     }
   }

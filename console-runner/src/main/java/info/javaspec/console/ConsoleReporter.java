@@ -18,7 +18,7 @@ final class ConsoleReporter implements Reporter {
   public ConsoleReporter(PrintStream output) {
     this.output = output;
     this.scopes = new Stack<>();
-    this.scopes.push(new ScopeState());
+    this.scopes.push(new ScopeState()); //TODO KDK: Consider putting the root scope on the stack #runStarting
   }
 
   /* HelpObserver */
@@ -32,6 +32,7 @@ final class ConsoleReporter implements Reporter {
 
   @Override
   public void beginCollection(SpecCollection collection) {
+    //TODO KDK: Push a new, derived scope onto the stack that has indentation starting at nested collections
     this.scopes.peek().println(collection.description());
   }
 
