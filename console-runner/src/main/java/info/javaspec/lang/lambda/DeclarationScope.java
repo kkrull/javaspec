@@ -2,6 +2,7 @@ package info.javaspec.lang.lambda;
 
 import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
+import info.javaspec.lang.lambda.Exceptions.NoSubjectDefined;
 
 import java.util.Optional;
 import java.util.Stack;
@@ -18,11 +19,7 @@ final class DeclarationScope {
 
   public void declareSpecsFor(String subject, BehaviorDeclaration describeBehavior) {
     SequentialCollection newSubjectCollection = new SequentialCollection(subject);
-
-    //Add the child collection in line with any other declared specs
     currentCollection().addSubCollection(newSubjectCollection);
-
-    //Push on to the stack in case there are nested describes
     this.subjectCollections.push(newSubjectCollection);
 
     describeBehavior.declareSpecs();
@@ -32,14 +29,11 @@ final class DeclarationScope {
   public void createSpec(String intendedBehavior, BehaviorVerification verification) {
     Spec spec = new DescriptiveSpec(intendedBehavior, verification);
     subjectCollection()
-      .orElseThrow(() -> Exceptions.NoSubjectDefined.forSpec(intendedBehavior))
+      .orElseThrow(() -> NoSubjectDefined.forSpec(intendedBehavior))
       .addSpec(spec);
   }
 
   public SpecCollection createRootCollection() {
-    if(!this.subjectCollections.isEmpty())
-      throw new IllegalStateException("Spec declaration ended prematurely");
-
     return this.rootCollection;
   }
 

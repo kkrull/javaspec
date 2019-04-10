@@ -5,7 +5,6 @@ import info.javaspec.RunObserver;
 import info.javaspec.SpecCollection;
 import info.javaspec.lang.lambda.Exceptions.NoSubjectDefined;
 import org.hamcrest.Matcher;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -19,7 +18,7 @@ import static org.hamcrest.Matchers.*;
 
 @RunWith(HierarchicalContextRunner.class)
 public class DeclarationScopeTest {
-  private NewDeclarationScope scope;
+  private DeclarationScope scope;
   private SpecCollection root;
   private SpecCollection subjectCollection;
 
@@ -144,12 +143,6 @@ public class DeclarationScopeTest {
     }
   }
 
-  public class describeSpecsFor {
-    @Test @Ignore
-    public void supportsNestedContexts() throws Exception {
-    }
-  }
-
   private String anySubject() {
     return "<default subject>";
   }
@@ -162,8 +155,8 @@ public class DeclarationScopeTest {
     return () -> {};
   }
 
-  private NewDeclarationScope anyDeclarationScope() {
-    return new NewDeclarationScope();
+  private DeclarationScope anyDeclarationScope() {
+    return new DeclarationScope();
   }
 
   private RunObserver anyRunObserver() {
