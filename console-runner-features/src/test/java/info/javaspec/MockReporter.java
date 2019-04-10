@@ -65,5 +65,8 @@ public final class MockReporter implements Reporter {
   public void specStarting(Spec spec) { }
 
   @Override
-  public void collectionStarting(SpecCollection collection) { }
+  public void beginCollection(SpecCollection collection) { }
+
+  @Override
+  public void endCollection(SpecCollection collection) { }
 }

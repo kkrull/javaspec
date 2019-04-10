@@ -95,7 +95,9 @@ public class SequentialCollectionTest {
     public void reportsThatTheCollectionIsBeingRun() throws Exception {
       subject = new SequentialCollection(anyDescription());
       subject.runSpecs(observer);
-      Mockito.verify(observer).collectionStarting(subject);
+      Mockito.verify(observer).beginCollection(subject);
+      Mockito.verify(observer).endCollection(subject);
+      Mockito.verifyNoMoreInteractions(observer);
     }
 
     @Test

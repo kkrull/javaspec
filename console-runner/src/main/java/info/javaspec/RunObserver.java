@@ -1,7 +1,9 @@
 package info.javaspec;
 
 public interface RunObserver {
-  void collectionStarting(SpecCollection collection);
+  void beginCollection(SpecCollection collection);
+
+  void endCollection(SpecCollection collection);
 
   boolean hasFailingSpecs();
 

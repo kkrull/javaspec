@@ -6,6 +6,7 @@ import info.javaspec.SpecCollection;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -30,17 +31,17 @@ public class ConsoleReporterTest {
     subject = new ConsoleReporter(output);
   }
 
-  public class collectionStarting {
+  public class beginCollection {
     @Test
     public void printsTheDescriptionForTheFirstSpecCollection() throws Exception {
-      subject.collectionStarting(anyCollectionDescribedAs("first"));
+      subject.beginCollection(anyCollectionDescribing("first"));
       output.shouldHavePrintedLine(equalTo("first"));
     }
 
     @Test
     public void printsANewlineBetweenSpecCollections() throws Exception {
-      subject.collectionStarting(anyCollectionDescribedAs("first"));
-      subject.collectionStarting(anyCollectionDescribedAs("second"));
+      subject.beginCollection(anyCollectionDescribing("first"));
+      subject.beginCollection(anyCollectionDescribing("second"));
       output.shouldHavePrintedTheseLines(
         equalTo("first"),
         isEmptyString(),
@@ -79,10 +80,21 @@ public class ConsoleReporterTest {
   }
 
   public class specStarting {
-    @Test
-    public void printsTheSpecBehaviorAsAListItem() throws Exception {
-      subject.specStarting(anySpecNamed("does its thing"));
-      output.shouldHavePrintedLine(equalTo("- does its thing"));
+    public class whenTheSpecIsInATopLevelSubjectCollection {
+      @Test
+      public void printsTheSpecBehaviorAsAListItemWithoutAnyIndentation() throws Exception {
+        subject.specStarting(anySpecNamed("does its thing"));
+        output.shouldHavePrintedLine(equalTo("- does its thing"));
+      }
+    }
+
+    public class whenTheSpecIsInANestedSubjectCollection {
+      @Test @Ignore
+      public void printsTheSpecBehaviorAsAListItemWithIndentation() throws Exception {
+        subject.beginCollection(anyCollectionDescribing("some specific circumstance"));
+        subject.specStarting(anySpecNamed("does something specific"));
+        output.shouldHavePrintedLine(equalTo("  - does something specific"));
+      }
     }
   }
 
@@ -101,7 +113,7 @@ public class ConsoleReporterTest {
     }
   }
 
-  private SpecCollection anyCollectionDescribedAs(String description) {
+  private SpecCollection anyCollectionDescribing(String description) {
     SpecCollection collection = Mockito.mock(SpecCollection.class);
     Mockito.when(collection.description()).thenReturn(description);
     return collection;

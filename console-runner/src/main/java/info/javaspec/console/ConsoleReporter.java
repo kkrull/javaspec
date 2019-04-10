@@ -5,17 +5,20 @@ import info.javaspec.SpecCollection;
 
 import java.io.PrintStream;
 import java.util.List;
+import java.util.Stack;
 
 final class ConsoleReporter implements Reporter {
   private final PrintStream output;
+  private final Stack<ScopeState> scopes;
+
   private int numStarted;
   private int numFailed;
   private int numPassed;
-  private boolean hasPrintedFirstCollection;
 
   public ConsoleReporter(PrintStream output) {
     this.output = output;
-    this.hasPrintedFirstCollection = false;
+    this.scopes = new Stack<>();
+    this.scopes.push(new ScopeState());
   }
 
   /* HelpObserver */
@@ -28,12 +31,13 @@ final class ConsoleReporter implements Reporter {
   /* RunObserver */
 
   @Override
-  public void collectionStarting(SpecCollection collection) {
-    if(this.hasPrintedFirstCollection)
-      printSeparator();
+  public void beginCollection(SpecCollection collection) {
+    this.scopes.peek().println(collection.description());
+  }
 
-    this.output.println(collection.description());
-    this.hasPrintedFirstCollection = true;
+  @Override
+  public void endCollection(SpecCollection collection) {
+//    throw new UnsupportedOperationException();
   }
 
   @Override
@@ -88,5 +92,21 @@ final class ConsoleReporter implements Reporter {
 
   private void printSeparator() {
     this.output.println();
+  }
+
+  private class ScopeState {
+    private boolean hasPrintedAnyLines;
+
+    public ScopeState() {
+      this.hasPrintedAnyLines = false;
+    }
+
+    public void println(String lineWithinScope) {
+      if(this.hasPrintedAnyLines)
+        printSeparator();
+
+      output.println(lineWithinScope);
+      this.hasPrintedAnyLines = true;
+    }
   }
 }

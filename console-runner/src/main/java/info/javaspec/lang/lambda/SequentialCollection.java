@@ -46,9 +46,10 @@ final class SequentialCollection implements SubjectCollection, CompositeSpecColl
 
   @Override
   public void runSpecs(RunObserver observer) {
-    observer.collectionStarting(this);
+    observer.beginCollection(this);
     this.specs.forEach(x -> x.run(observer));
     this.children.forEach(x -> x.runSpecs(observer));
+    observer.endCollection(this);
   }
 
   @Override
