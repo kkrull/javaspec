@@ -3,19 +3,16 @@ package info.javaspec.console;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
+import info.javaspec.testutil.Assertions;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -35,24 +32,32 @@ public class ConsoleReporterTest {
     public class whenThereAreNoOtherCollectionsInScope {
       @Test
       public void printsTheDescriptionForTheFirstSpecCollection() throws Exception {
-        subject.beginCollection(anyCollectionDescribing("first"));
-        output.shouldHavePrintedLine(equalTo("first"));
+        subjectRuns(() -> subject.beginCollection(anyCollectionDescribing("first")));
+        output.shouldHavePrintedTheseLines(
+          equalTo("first"),
+          isEmptyString(),
+          closingMessageMatcher()
+        );
       }
 
       @Test
       public void printsANewlineBetweenSpecCollections() throws Exception {
-        SpecCollection first = anyCollectionDescribing("first");
-        subject.beginCollection(first);
-        subject.endCollection(first);
+        subjectRuns(() -> {
+          SpecCollection first = anyCollectionDescribing("first");
+          subject.beginCollection(first);
+          subject.endCollection(first);
 
-        SpecCollection second = anyCollectionDescribing("second");
-        subject.beginCollection(second);
-        subject.endCollection(second);
+          SpecCollection second = anyCollectionDescribing("second");
+          subject.beginCollection(second);
+          subject.endCollection(second);
+        });
 
         output.shouldHavePrintedTheseLines(
           equalTo("first"),
           isEmptyString(),
-          equalTo("second")
+          equalTo("second"),
+          isEmptyString(),
+          closingMessageMatcher()
         );
       }
     }
@@ -60,17 +65,22 @@ public class ConsoleReporterTest {
     public class whenThereAreOtherCollectionsStillInScope {
       @Test @Ignore
       public void indentsTheNewCollection() throws Exception {
-        SpecCollection outer = anyCollectionDescribing("outer");
-        subject.beginCollection(outer);
+        subjectRuns(() -> {
+          SpecCollection outer = anyCollectionDescribing("outer");
+          subject.beginCollection(outer);
 
-        SpecCollection inner = anyCollectionDescribing("inner");
-        subject.beginCollection(inner);
-        subject.endCollection(inner);
+          SpecCollection inner = anyCollectionDescribing("inner");
+          subject.beginCollection(inner);
+          subject.endCollection(inner);
 
-        subject.endCollection(outer);
+          subject.endCollection(outer);
+        });
+
         output.shouldHavePrintedTheseLines(
           equalTo("outer"),
-          equalTo("  inner")
+          equalTo("  inner"), //TODO KDK: It's printing the newline between two collections at the same level, instead of indenting and printing the nested scope on the very next line
+          isEmptyString(),
+          closingMessageMatcher()
         );
       }
     }
@@ -79,29 +89,46 @@ public class ConsoleReporterTest {
   public class runFinished {
     @Test
     public void printsANewlineFollowedBySpecCounts() throws Exception {
+      subject.runStarting();
       subject.runFinished();
-      output.shouldHavePrintedLine(isEmptyString());
-      output.shouldHavePrintedLine(equalTo("[Testing complete] Passed: 0, Failed: 0, Total: 0"));
+      output.shouldHavePrintedTheseLines(
+        isEmptyString(),
+        equalTo("[Testing complete] Passed: 0, Failed: 0, Total: 0")
+      );
     }
   }
 
   public class specFailed {
     @Test
     public void printsFailAndNewline() throws Exception {
-      Spec spec = anySpecNamed("should work");
-      subject.specStarting(spec);
-      subject.specFailed(spec);
-      output.shouldHavePrintedLine(endsWith("should work: FAIL"));
+      subjectRuns(() -> {
+        Spec spec = anySpecNamed("should work");
+        subject.specStarting(spec);
+        subject.specFailed(spec);
+      });
+
+      output.shouldHavePrintedTheseLines(
+        endsWith("should work: FAIL"),
+        isEmptyString(),
+        closingMessageMatcher()
+      );
     }
   }
 
   public class specPassed {
     @Test
     public void printsPassAndNewline() throws Exception {
-      Spec spec = anySpecNamed("works");
-      subject.specStarting(spec);
-      subject.specPassed(spec);
-      output.shouldHavePrintedLine(endsWith("works: PASS"));
+      subjectRuns(() -> {
+        Spec spec = anySpecNamed("works");
+        subject.specStarting(spec);
+        subject.specPassed(spec);
+      });
+
+      output.shouldHavePrintedTheseLines(
+        endsWith("works: PASS"),
+        isEmptyString(),
+        closingMessageMatcher()
+      );
     }
   }
 
@@ -110,7 +137,10 @@ public class ConsoleReporterTest {
       @Test
       public void printsTheSpecBehaviorAsAListItemWithoutAnyIndentation() throws Exception {
         subject.specStarting(anySpecNamed("does its thing"));
-        output.shouldHavePrintedLine(equalTo("- does its thing"));
+
+        output.shouldHavePrintedTheseLines(
+          equalTo("- does its thing")
+        );
       }
     }
 
@@ -138,17 +168,26 @@ public class ConsoleReporterTest {
   public class writeMessage {
     @Test
     public void writesNothingGivenAnEmptyList() throws Exception {
-      subject.writeMessage(Collections.emptyList());
-      output.outputShouldBe(Matchers.isEmptyString());
+      subjectRuns(() -> subject.writeMessage(Collections.emptyList()));
+      output.shouldHavePrintedTheseLines(
+        isEmptyString(),
+        closingMessageMatcher()
+      );
     }
 
     @Test
     public void writesOneLineForEachGivenString() throws Exception {
-      subject.writeMessage(Arrays.asList("one", "two"));
-      output.shouldHavePrintedLine(equalTo("one"));
-      output.shouldHavePrintedLine(equalTo("two"));
+      subjectRuns(() -> subject.writeMessage(Arrays.asList("one", "two")));
+      output.shouldHavePrintedTheseLines(
+        equalTo("one"),
+        equalTo("two"),
+        isEmptyString(),
+        closingMessageMatcher()
+      );
     }
   }
+
+  /* Setup */
 
   private SpecCollection anyCollectionDescribing(String description) {
     SpecCollection collection = Mockito.mock(SpecCollection.class);
@@ -162,35 +201,15 @@ public class ConsoleReporterTest {
     return spec;
   }
 
-  static final class MockPrintStream extends PrintStream {
-    private final ByteArrayOutputStream printedBytes;
+  /* Action helpers */
 
-    public static MockPrintStream create() {
-      return new MockPrintStream(new ByteArrayOutputStream());
-    }
+  private void subjectRuns(Assertions.Thunk thunk) throws Exception {
+    subject.runStarting();
+    thunk.run();
+    subject.runFinished();
+  }
 
-    public MockPrintStream(ByteArrayOutputStream printedBytes) {
-      super(printedBytes);
-      this.printedBytes = printedBytes;
-    }
-
-    public void outputShouldBe(Matcher<String> matcher) {
-      assertThat(this.printedBytes.toString(), matcher);
-    }
-
-    public void shouldHavePrintedLine(Matcher<String> matcher) {
-      assertThat(printedLines(), hasItem(matcher));
-    }
-
-    @SafeVarargs
-    public final void shouldHavePrintedTheseLines(Matcher<String>... lineMatchers) {
-      assertThat(printedLines(), Matchers.contains(lineMatchers));
-    }
-
-    private List<String> printedLines() {
-      String concatenatedOutput = this.printedBytes.toString();
-      String[] lines = concatenatedOutput.split(System.lineSeparator());
-      return Arrays.asList(lines);
-    }
+  private Matcher<String> closingMessageMatcher() {
+    return startsWith("[Testing complete]");
   }
 }
