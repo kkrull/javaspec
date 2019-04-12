@@ -1,3 +1,4 @@
+@log_commands
 Feature: JavaSpec CLI (external process)
   As a developer who is working on some code that is covered by specs
   In order to know what code is working and where it is failing

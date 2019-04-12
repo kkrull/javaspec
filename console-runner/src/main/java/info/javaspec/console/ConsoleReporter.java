@@ -9,7 +9,7 @@ import java.util.Stack;
 
 final class ConsoleReporter implements Reporter {
   private final PrintStream output;
-  private final Stack<ScopeState> scopes;
+  private final Stack<ReporterState> scopeStates;
 
   private int numStarted;
   private int numFailed;
@@ -17,23 +17,22 @@ final class ConsoleReporter implements Reporter {
 
   public ConsoleReporter(PrintStream output) {
     this.output = output;
-    this.scopes = new Stack<>();
-    this.scopes.push(new ScopeState()); //TODO KDK: Consider putting the root scope on the stack #runStarting
+    this.scopeStates = new Stack<>();
+    this.scopeStates.push(ReporterState.newRoot(output));
   }
 
   /* HelpObserver */
 
   @Override
   public void writeMessage(List<String> lines) {
-    lines.forEach(this::printMessage);
+    innerScopeState().writeMessage(lines);
   }
 
   /* RunObserver */
 
   @Override
   public void beginCollection(SpecCollection collection) {
-    //TODO KDK: Push a new, derived scope onto the stack that has indentation starting at nested collections
-    this.scopes.peek().println(collection.description());
+    innerScopeState().beginCollection(collection);
   }
 
   @Override
@@ -51,8 +50,8 @@ final class ConsoleReporter implements Reporter {
 
   @Override
   public void runFinished() {
-    printSeparator();
-    printMessage(
+    innerScopeState().printSeparator();
+    innerScopeState().writeMessage(
       "[Testing complete] Passed: %d, Failed: %d, Total: %d",
       this.numPassed,
       this.numFailed,
@@ -63,51 +62,22 @@ final class ConsoleReporter implements Reporter {
   @Override
   public void specStarting(Spec spec) {
     this.numStarted++;
-    printListItem(spec.intendedBehavior());
+    innerScopeState().specStarting(spec);
   }
 
   @Override
   public void specFailed(Spec spec) {
     this.numFailed++;
-    this.output.println(": FAIL");
+    innerScopeState().specFailed(spec);
   }
 
   @Override
   public void specPassed(Spec spec) {
     this.numPassed++;
-    this.output.println(": PASS");
+    innerScopeState().specPassed(spec);
   }
 
-  private void printListItem(String item) {
-    this.output.print("- ");
-    this.output.print(item);
-  }
-
-  private void printMessage(String format, Object... args) {
-    printMessage(String.format(format, args));
-  }
-
-  private void printMessage(String message) {
-    this.output.println(message);
-  }
-
-  private void printSeparator() {
-    this.output.println();
-  }
-
-  private class ScopeState {
-    private boolean hasPrintedAnyLines;
-
-    public ScopeState() {
-      this.hasPrintedAnyLines = false;
-    }
-
-    public void println(String lineWithinScope) {
-      if(this.hasPrintedAnyLines)
-        printSeparator();
-
-      output.println(lineWithinScope);
-      this.hasPrintedAnyLines = true;
-    }
+  private ReporterState innerScopeState() {
+    return this.scopeStates.peek();
   }
 }

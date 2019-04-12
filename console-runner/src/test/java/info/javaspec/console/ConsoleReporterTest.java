@@ -14,7 +14,6 @@ import org.mockito.Mockito;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @RunWith(HierarchicalContextRunner.class)
@@ -136,10 +135,18 @@ public class ConsoleReporterTest {
     public class whenTheSpecIsInATopLevelSubjectCollection {
       @Test
       public void printsTheSpecBehaviorAsAListItemWithoutAnyIndentation() throws Exception {
-        subject.specStarting(anySpecNamed("does its thing"));
+        subjectRuns(() -> {
+          SpecCollection collection = anyCollection();
+          subject.beginCollection(collection);
+          subject.specStarting(anySpecNamed("does its thing"));
+          subject.endCollection(collection);
+        });
 
         output.shouldHavePrintedTheseLines(
-          equalTo("- does its thing")
+          any(String.class),
+          equalTo("- does its thing"),
+//          isEmptyString(),
+          closingMessageMatcher()
         );
       }
     }
@@ -147,19 +154,24 @@ public class ConsoleReporterTest {
     public class whenTheSpecIsInANestedSubjectCollection {
       @Test @Ignore
       public void printsTheSpecBehaviorAsAListItemWithIndentation() throws Exception {
-        SpecCollection outer = anyCollectionDescribing("widgets");
-        subject.beginCollection(outer);
+        subjectRuns(() -> {
+          SpecCollection outer = anyCollectionDescribing("widgets");
+          subject.beginCollection(outer);
 
-        SpecCollection inner = anyCollectionDescribing("under some specific circumstance");
-        subject.beginCollection(inner);
-        subject.specStarting(anySpecNamed("do something specific"));
-        subject.endCollection(inner);
+          SpecCollection inner = anyCollectionDescribing("under some specific circumstance");
+          subject.beginCollection(inner);
+          subject.specStarting(anySpecNamed("do something specific"));
+          subject.endCollection(inner);
 
-        subject.endCollection(outer);
+          subject.endCollection(outer);
+        });
+
         output.shouldHavePrintedTheseLines(
           equalTo("widgets"),
           equalTo("  under some specific circumstance"),
-          equalTo("  - do something specific")
+          equalTo("  - do something specific"),
+          isEmptyString(),
+          closingMessageMatcher()
         );
       }
     }
@@ -168,26 +180,27 @@ public class ConsoleReporterTest {
   public class writeMessage {
     @Test
     public void writesNothingGivenAnEmptyList() throws Exception {
-      subjectRuns(() -> subject.writeMessage(Collections.emptyList()));
-      output.shouldHavePrintedTheseLines(
-        isEmptyString(),
-        closingMessageMatcher()
-      );
+      subject.writeMessage(Collections.emptyList());
+      output.outputShouldBe(isEmptyString());
     }
 
     @Test
     public void writesOneLineForEachGivenString() throws Exception {
-      subjectRuns(() -> subject.writeMessage(Arrays.asList("one", "two")));
+      subject.writeMessage(Arrays.asList("one", "two"));
       output.shouldHavePrintedTheseLines(
         equalTo("one"),
-        equalTo("two"),
-        isEmptyString(),
-        closingMessageMatcher()
+        equalTo("two")
       );
     }
   }
 
   /* Setup */
+
+  private SpecCollection anyCollection() {
+    SpecCollection collection = Mockito.mock(SpecCollection.class);
+    Mockito.when(collection.description()).thenReturn("<default description>");
+    return collection;
+  }
 
   private SpecCollection anyCollectionDescribing(String description) {
     SpecCollection collection = Mockito.mock(SpecCollection.class);
