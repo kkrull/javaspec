@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Stack;
 
 final class ConsoleReporter implements Reporter {
-  private final PrintStream output;
   private final Stack<ReporterState> scopeStates;
 
   private int numStarted;
@@ -16,7 +15,6 @@ final class ConsoleReporter implements Reporter {
   private int numPassed;
 
   public ConsoleReporter(PrintStream output) {
-    this.output = output;
     this.scopeStates = new Stack<>();
     this.scopeStates.push(ReporterState.newRoot(output));
   }
