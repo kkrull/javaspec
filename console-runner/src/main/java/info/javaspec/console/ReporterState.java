@@ -9,27 +9,34 @@ import java.util.List;
 class ReporterState implements Reporter {
   private final PrintStream output;
   private final String indentCollections;
+  private final String indentSpecs;
   private final boolean isRoot;
   private final String source;
 
   private boolean hasPrintedAnyLines;
 
   public static ReporterState newRoot(PrintStream output) {
-    return new ReporterState(output, "", true, "<root>");
+    return new ReporterState(output, "", "", true, "<root>");
   }
 
-  private ReporterState(PrintStream output, String indentCollections, boolean isRoot, String source) {
+  private ReporterState(PrintStream output, String indentCollections, String indentSpecs, boolean isRoot, String source) {
     this.output = output;
     this.indentCollections = indentCollections;
+    this.indentSpecs = indentSpecs;
     this.isRoot = isRoot;
     this.source = source;
     this.hasPrintedAnyLines = false;
   }
 
   public ReporterState createInnerScope(String source) {
+    String indentSpecs = this.isRoot
+      ? ""
+      : this.indentSpecs + "  ";
+
     return new ReporterState(
       this.output,
       this.indentCollections + "  ",
+      indentSpecs,
       false,
       source
     );
@@ -49,13 +56,6 @@ class ReporterState implements Reporter {
   /* RunObserver */
 
   public void beginCollection(SpecCollection collection) {
-//    System.out.printf("[ReporterState#beginCollection] source=%s, indentCollections=%d, isRoot=%s, hasPrintedAnyLines=%s\n",
-//      this.source,
-//      this.indentCollections.length(),
-//      this.isRoot,
-//      this.hasPrintedAnyLines
-//    );
-
     if(this.hasPrintedAnyLines)
       printSeparator();
 
@@ -79,7 +79,8 @@ class ReporterState implements Reporter {
 
   @Override
   public void specStarting(Spec spec) {
-    printListItem(spec.intendedBehavior());
+    this.output.print(this.indentSpecs + "- ");
+    this.output.print(spec.intendedBehavior());
   }
 
   @Override
@@ -93,11 +94,6 @@ class ReporterState implements Reporter {
   }
 
   /* Generic */
-
-  private void printListItem(String item) {
-    this.output.print("- ");
-    this.output.print(item);
-  }
 
   private void printMessage(String message) {
     this.output.println(message);

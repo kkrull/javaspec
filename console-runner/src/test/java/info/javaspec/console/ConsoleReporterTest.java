@@ -6,7 +6,6 @@ import info.javaspec.SpecCollection;
 import info.javaspec.testutil.Assertions;
 import org.hamcrest.Matcher;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -152,7 +151,7 @@ public class ConsoleReporterTest {
     }
 
     public class whenTheSpecIsInANestedSubjectCollection {
-      @Test @Ignore
+      @Test
       public void printsTheSpecBehaviorAsAListItemWithIndentation() throws Exception {
         subjectRuns(() -> {
           SpecCollection outer = anyCollectionDescribing("widgets");
@@ -170,7 +169,7 @@ public class ConsoleReporterTest {
           equalTo("widgets"),
           equalTo("  under some specific circumstance"),
           equalTo("  - do something specific"),
-          isEmptyString(),
+//          isEmptyString(),
           closingMessageMatcher()
         );
       }
