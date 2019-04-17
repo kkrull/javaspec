@@ -30,11 +30,26 @@ final class ConsoleReporter implements Reporter {
 
   @Override
   public void beginCollection(SpecCollection collection) {
-    innerScopeState().beginCollection(collection);
+//    System.out.printf("[ConsoleReporter#beginCollection] collection=%s, scopeStates=%s\n",
+//      collection.description(),
+//      this.scopeStates
+//    );
+
+    ReporterState currentScope = innerScopeState();
+    currentScope.beginCollection(collection);
+
+    ReporterState newScope = currentScope.createInnerScope(collection.description());
+    this.scopeStates.push(newScope);
   }
 
   @Override
   public void endCollection(SpecCollection collection) {
+//    System.out.printf("[ConsoleReporter#endCollection] collection=%s, scopeStates=%s\n",
+//      collection.description(),
+//      this.scopeStates
+//    );
+
+    this.scopeStates.pop();
 //    throw new UnsupportedOperationException();
   }
 

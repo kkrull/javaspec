@@ -8,15 +8,31 @@ import java.util.List;
 
 class ReporterState implements Reporter {
   private final PrintStream output;
+  private final String indentCollections;
+  private final boolean isRoot;
+  private final String source;
+
   private boolean hasPrintedAnyLines;
 
   public static ReporterState newRoot(PrintStream output) {
-    return new ReporterState(output);
+    return new ReporterState(output, "", true, "<root>");
   }
 
-  private ReporterState(PrintStream output) {
+  private ReporterState(PrintStream output, String indentCollections, boolean isRoot, String source) {
     this.output = output;
+    this.indentCollections = indentCollections;
+    this.isRoot = isRoot;
+    this.source = source;
     this.hasPrintedAnyLines = false;
+  }
+
+  public ReporterState createInnerScope(String source) {
+    return new ReporterState(
+      this.output,
+      this.indentCollections + "  ",
+      false,
+      source
+    );
   }
 
   /* HelpObserver */
@@ -33,10 +49,17 @@ class ReporterState implements Reporter {
   /* RunObserver */
 
   public void beginCollection(SpecCollection collection) {
+//    System.out.printf("[ReporterState#beginCollection] source=%s, indentCollections=%d, isRoot=%s, hasPrintedAnyLines=%s\n",
+//      this.source,
+//      this.indentCollections.length(),
+//      this.isRoot,
+//      this.hasPrintedAnyLines
+//    );
+
     if(this.hasPrintedAnyLines)
       printSeparator();
 
-    this.output.println(collection.description());
+    this.output.println(this.indentCollections + collection.description());
     this.hasPrintedAnyLines = true;
   }
 
@@ -82,5 +105,10 @@ class ReporterState implements Reporter {
 
   public void printSeparator() {
     this.output.println();
+  }
+
+  @Override
+  public String toString() {
+    return this.source;
   }
 }

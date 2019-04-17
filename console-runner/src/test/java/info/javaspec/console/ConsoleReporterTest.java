@@ -62,7 +62,7 @@ public class ConsoleReporterTest {
     }
 
     public class whenThereAreOtherCollectionsStillInScope {
-      @Test @Ignore
+      @Test
       public void indentsTheNewCollection() throws Exception {
         subjectRuns(() -> {
           SpecCollection outer = anyCollectionDescribing("outer");
@@ -77,7 +77,7 @@ public class ConsoleReporterTest {
 
         output.shouldHavePrintedTheseLines(
           equalTo("outer"),
-          equalTo("  inner"), //TODO KDK: It's printing the newline between two collections at the same level, instead of indenting and printing the nested scope on the very next line
+          equalTo("  inner"),
           isEmptyString(),
           closingMessageMatcher()
         );
