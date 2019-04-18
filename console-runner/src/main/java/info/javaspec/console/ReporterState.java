@@ -19,7 +19,11 @@ class ReporterState implements Reporter {
     return new ReporterState(output, "", "", true, "<root>");
   }
 
-  private ReporterState(PrintStream output, String indentCollections, String indentSpecs, boolean isRoot, String source) {
+  private ReporterState(PrintStream output,
+                        String indentCollections,
+                        String indentSpecs,
+                        boolean isRoot,
+                        String source) {
     this.output = output;
     this.indentCollections = indentCollections;
     this.indentSpecs = indentSpecs;
