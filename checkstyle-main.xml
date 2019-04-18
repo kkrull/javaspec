@@ -62,8 +62,6 @@ See http://checkstyle.sf.net for Checkstyle configuration options.
       <message key="name.invalidPattern" value="Class type name ''{0}'' must match pattern ''{1}''." />
     </module>
 
-    <module name="CommentsIndentation" />
-
     <module name="CustomImportOrder">
       <property name="customImportOrderRules" value="THIRD_PARTY_PACKAGE###STATIC" />
       <property name="separateLineBetweenGroups" value="true" />
