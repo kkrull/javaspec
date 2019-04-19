@@ -38,7 +38,7 @@ public class NewConsoleReporterTest {
 
     public class givenOneOrMoreCollections {
       @Test
-      public void printsABlankLineBetweenCollectionsAndTotals() throws Exception {
+      public void printsABlankLineBeforeTheTotals() throws Exception {
         subjectRuns(() -> {
           SpecCollection collection = anyCollectionDescribing("widgets");
           subject.beginCollection(collection);
@@ -55,7 +55,7 @@ public class NewConsoleReporterTest {
 
     public class givenOneOrMoreFailingSpecs {
       @Test
-      public void printsASeparatorBeforeTheFinalResult() throws Exception {
+      public void printsABlankLineBeforeTheTotals() throws Exception {
         subjectRuns(() -> {
           Spec spec = anySpecNamed("behaves");
           subject.specStarting(spec);
@@ -72,7 +72,7 @@ public class NewConsoleReporterTest {
 
     public class givenOneOrMorePassingSpecs {
       @Test
-      public void printsASeparatorBeforeTheFinalResult() throws Exception {
+      public void printsASeparatorBeforeTheTotals() throws Exception {
         subjectRuns(() -> {
           Spec spec = anySpecNamed("behaves");
           subject.specStarting(spec);
@@ -130,7 +130,7 @@ public class NewConsoleReporterTest {
     }
 
     @Test
-    public void indentsSpecsWithinTheInnerCollection() throws Exception {
+    public void indentsSpecsToBeFlushWithTheContainingCollection() throws Exception {
       subjectRuns(() -> {
         SpecCollection outer = anyCollectionDescribing("outer");
         subject.beginCollection(outer);
@@ -177,7 +177,7 @@ public class NewConsoleReporterTest {
 
   public class givenASpec {
     @Test
-    public void printsTheSpecsAsAListItem() throws Exception {
+    public void printsTheSpecAsAListItem() throws Exception {
       subjectRuns(() -> {
         Spec spec = anySpecNamed("behaves");
         subject.specStarting(spec);
@@ -185,17 +185,6 @@ public class NewConsoleReporterTest {
       });
 
       output.shouldHavePrintedLine(startsWith("- behaves"));
-    }
-
-    @Test
-    public void printsTheBehaviorAndResultForAPassingSpec() throws Exception {
-      subjectRuns(() -> {
-        Spec spec = anySpecNamed("behaves");
-        subject.specStarting(spec);
-        subject.specPassed(spec);
-      });
-
-      output.shouldHavePrintedLine(endsWith("behaves: PASS"));
     }
 
     @Test
@@ -207,6 +196,17 @@ public class NewConsoleReporterTest {
       });
 
       output.shouldHavePrintedLine(endsWith("behaves: FAIL"));
+    }
+
+    @Test
+    public void printsTheBehaviorAndResultForAPassingSpec() throws Exception {
+      subjectRuns(() -> {
+        Spec spec = anySpecNamed("behaves");
+        subject.specStarting(spec);
+        subject.specPassed(spec);
+      });
+
+      output.shouldHavePrintedLine(endsWith("behaves: PASS"));
     }
   }
 
