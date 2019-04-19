@@ -9,10 +9,12 @@ import java.util.List;
 final class NewConsoleReporter implements Reporter {
   private final PrintStream output;
   private boolean hasPrintedLines;
+  private String indentation;
 
   public NewConsoleReporter(PrintStream output) {
     this.output = output;
     this.hasPrintedLines = false;
+    this.indentation = "";
   }
 
   /* HelpObserver */
@@ -25,7 +27,11 @@ final class NewConsoleReporter implements Reporter {
   /* RunObserver */
 
   @Override
-  public void beginCollection(SpecCollection collection) { }
+  public void beginCollection(SpecCollection collection) {
+    this.output.println(this.indentation + collection.description());
+    this.hasPrintedLines = true;
+    this.indentation += "  ";
+  }
 
   @Override
   public void endCollection(SpecCollection collection) { }

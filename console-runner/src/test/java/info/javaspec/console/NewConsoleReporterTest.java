@@ -12,7 +12,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import static org.hamcrest.Matchers.*;
 
@@ -61,7 +60,7 @@ public class NewConsoleReporterTest {
         output.shouldHavePrintedTheseLines(
           containsString("behaves"),
           isEmptyString(),
-          closingMessageMatcher()
+          testTallyMatcher()
         );
       }
     }
@@ -78,9 +77,81 @@ public class NewConsoleReporterTest {
         output.shouldHavePrintedTheseLines(
           containsString("behaves"),
           isEmptyString(),
-          closingMessageMatcher()
+          testTallyMatcher()
         );
       }
+    }
+  }
+
+  public class givenACollection {
+    @Test
+    public void printsThatCollectionsDescription() throws Exception {
+      subjectRuns(() -> {
+        SpecCollection collection = anyCollectionDescribing("widgets");
+        subject.beginCollection(collection);
+        subject.endCollection(collection);
+      });
+
+      output.shouldHavePrintedLine(containsString("widgets"));
+    }
+
+    @Test
+    public void printsABlankLineBetweenCollectionsAndTotals() throws Exception {
+      subjectRuns(() -> {
+        SpecCollection collection = anyCollectionDescribing("widgets");
+        subject.beginCollection(collection);
+        subject.endCollection(collection);
+      });
+
+      output.shouldHavePrintedTheseLines(
+        containsString("widgets"),
+        isEmptyString(),
+        testTallyMatcher()
+      );
+    }
+  }
+
+  public class givenAnInnerCollection {
+    @Test
+    public void indentsTheInnerCollection() throws Exception {
+      subjectRuns(() -> {
+        SpecCollection outer = anyCollectionDescribing("outer");
+        subject.beginCollection(outer);
+
+        SpecCollection inner = anyCollectionDescribing("inner");
+        subject.beginCollection(inner);
+        subject.endCollection(inner);
+
+        subject.endCollection(outer);
+      });
+
+      output.shouldHavePrintedLine(startsWith("  inner"));
+    }
+
+    @Test @Ignore
+    public void indentsSpecsWithinTheInnerCollection() throws Exception {
+
+    }
+
+    @Test
+    public void doesNotSeparateAdjacentlyOpeningScopes() throws Exception {
+      subjectRuns(() -> {
+        SpecCollection outer = anyCollectionDescribing("outer");
+        subject.beginCollection(outer);
+
+        SpecCollection inner = anyCollectionDescribing("inner");
+        subject.beginCollection(inner);
+        subject.endCollection(inner);
+
+        subject.endCollection(outer);
+      });
+
+      output.shouldHavePrintedTheseLines(
+        startsWith("outer"),
+        startsWith("  inner"),
+        isEmptyString(),
+        testTallyMatcher()
+      );
     }
   }
 
@@ -147,7 +218,7 @@ public class NewConsoleReporterTest {
     subject.runFinished();
   }
 
-  private Matcher<String> closingMessageMatcher() {
+  private Matcher<String> testTallyMatcher() {
     return startsWith("[Testing complete]");
   }
 }
