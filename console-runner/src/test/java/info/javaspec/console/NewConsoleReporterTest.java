@@ -6,7 +6,6 @@ import info.javaspec.SpecCollection;
 import info.javaspec.testutil.Assertions;
 import org.hamcrest.Matcher;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -26,24 +25,30 @@ public class NewConsoleReporterTest {
     subject = new NewConsoleReporter(output);
   }
 
-  public class writeMessage {
-    @Test
-    public void writesTheGivenLinesWithNoIndentation() throws Exception {
-      subject.writeMessage(Arrays.asList("one", "two"));
-      output.shouldHavePrintedTheseLines(
-        equalTo("one"),
-        equalTo("two")
-      );
-    }
-  }
-
-  public class whenRunningSpecs {
+  public class runFinished {
     public class givenNoSpecs {
       @Test
       public void printsZeroTotals() throws Exception {
         subjectRuns(() -> {});
-        output.shouldHavePrintedTheseLines(
+        output.shouldHavePrintedExactly(
           equalTo("[Testing complete] Passed: 0, Failed: 0, Total: 0")
+        );
+      }
+    }
+
+    public class givenOneOrMoreCollections {
+      @Test
+      public void printsABlankLineBetweenCollectionsAndTotals() throws Exception {
+        subjectRuns(() -> {
+          SpecCollection collection = anyCollectionDescribing("widgets");
+          subject.beginCollection(collection);
+          subject.endCollection(collection);
+        });
+
+        output.shouldHavePrintedExactly(
+          containsString("widgets"),
+          isEmptyString(),
+          testTallyMatcher()
         );
       }
     }
@@ -57,7 +62,7 @@ public class NewConsoleReporterTest {
           subject.specFailed(spec);
         });
 
-        output.shouldHavePrintedTheseLines(
+        output.shouldHavePrintedExactly(
           containsString("behaves"),
           isEmptyString(),
           testTallyMatcher()
@@ -74,12 +79,23 @@ public class NewConsoleReporterTest {
           subject.specPassed(spec);
         });
 
-        output.shouldHavePrintedTheseLines(
+        output.shouldHavePrintedExactly(
           containsString("behaves"),
           isEmptyString(),
           testTallyMatcher()
         );
       }
+    }
+  }
+
+  public class writeMessage {
+    @Test
+    public void writesTheGivenLinesWithNoIndentation() throws Exception {
+      subject.writeMessage(Arrays.asList("one", "two"));
+      output.shouldHavePrintedExactly(
+        equalTo("one"),
+        equalTo("two")
+      );
     }
   }
 
@@ -93,21 +109,6 @@ public class NewConsoleReporterTest {
       });
 
       output.shouldHavePrintedLine(containsString("widgets"));
-    }
-
-    @Test
-    public void printsABlankLineBetweenCollectionsAndTotals() throws Exception {
-      subjectRuns(() -> {
-        SpecCollection collection = anyCollectionDescribing("widgets");
-        subject.beginCollection(collection);
-        subject.endCollection(collection);
-      });
-
-      output.shouldHavePrintedTheseLines(
-        containsString("widgets"),
-        isEmptyString(),
-        testTallyMatcher()
-      );
     }
   }
 
@@ -128,13 +129,32 @@ public class NewConsoleReporterTest {
       output.shouldHavePrintedLine(startsWith("  inner"));
     }
 
-    @Test @Ignore
+    @Test
     public void indentsSpecsWithinTheInnerCollection() throws Exception {
+      subjectRuns(() -> {
+        SpecCollection outer = anyCollectionDescribing("outer");
+        subject.beginCollection(outer);
 
+        SpecCollection inner = anyCollectionDescribing("inner");
+        subject.beginCollection(inner);
+
+        Spec spec = anySpecNamed("spec");
+        subject.specStarting(spec);
+        subject.specPassed(spec);
+
+        subject.endCollection(inner);
+        subject.endCollection(outer);
+      });
+
+      output.shouldHavePrintedLines(
+        startsWith("outer"),
+        startsWith("  inner"),
+        startsWith("  - spec")
+      );
     }
 
     @Test
-    public void doesNotSeparateAdjacentlyOpeningScopes() throws Exception {
+    public void printsTheFirstInnerCollectionImmediatelyAfterItsParentCollection() throws Exception {
       subjectRuns(() -> {
         SpecCollection outer = anyCollectionDescribing("outer");
         subject.beginCollection(outer);
@@ -146,7 +166,7 @@ public class NewConsoleReporterTest {
         subject.endCollection(outer);
       });
 
-      output.shouldHavePrintedTheseLines(
+      output.shouldHavePrintedExactly(
         startsWith("outer"),
         startsWith("  inner"),
         isEmptyString(),

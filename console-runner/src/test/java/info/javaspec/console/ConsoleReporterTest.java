@@ -31,7 +31,7 @@ public class ConsoleReporterTest {
       @Test
       public void printsTheDescriptionForTheFirstSpecCollection() throws Exception {
         subjectRuns(() -> subject.beginCollection(anyCollectionDescribing("first")));
-        output.shouldHavePrintedTheseLines(
+        output.shouldHavePrintedExactly(
           equalTo("first"),
           isEmptyString(),
           closingMessageMatcher()
@@ -50,7 +50,7 @@ public class ConsoleReporterTest {
           subject.endCollection(second);
         });
 
-        output.shouldHavePrintedTheseLines(
+        output.shouldHavePrintedExactly(
           equalTo("first"),
           isEmptyString(),
           equalTo("second"),
@@ -74,7 +74,7 @@ public class ConsoleReporterTest {
           subject.endCollection(outer);
         });
 
-        output.shouldHavePrintedTheseLines(
+        output.shouldHavePrintedExactly(
           equalTo("outer"),
           equalTo("  inner"),
           isEmptyString(),
@@ -89,7 +89,7 @@ public class ConsoleReporterTest {
     public void printsANewlineFollowedBySpecCounts() throws Exception {
       subject.runStarting();
       subject.runFinished();
-      output.shouldHavePrintedTheseLines(
+      output.shouldHavePrintedExactly(
         isEmptyString(),
         equalTo("[Testing complete] Passed: 0, Failed: 0, Total: 0")
       );
@@ -105,7 +105,7 @@ public class ConsoleReporterTest {
         subject.specFailed(spec);
       });
 
-      output.shouldHavePrintedTheseLines(
+      output.shouldHavePrintedExactly(
         endsWith("should work: FAIL"),
         isEmptyString(),
         closingMessageMatcher()
@@ -122,7 +122,7 @@ public class ConsoleReporterTest {
         subject.specPassed(spec);
       });
 
-      output.shouldHavePrintedTheseLines(
+      output.shouldHavePrintedExactly(
         endsWith("works: PASS"),
         isEmptyString(),
         closingMessageMatcher()
@@ -141,7 +141,7 @@ public class ConsoleReporterTest {
           subject.endCollection(collection);
         });
 
-        output.shouldHavePrintedTheseLines(
+        output.shouldHavePrintedExactly(
           any(String.class),
           equalTo("- does its thing"),
 //          isEmptyString(),
@@ -165,7 +165,7 @@ public class ConsoleReporterTest {
           subject.endCollection(outer);
         });
 
-        output.shouldHavePrintedTheseLines(
+        output.shouldHavePrintedExactly(
           equalTo("widgets"),
           equalTo("  under some specific circumstance"),
           equalTo("  - do something specific"),
@@ -186,7 +186,7 @@ public class ConsoleReporterTest {
     @Test
     public void writesOneLineForEachGivenString() throws Exception {
       subject.writeMessage(Arrays.asList("one", "two"));
-      output.shouldHavePrintedTheseLines(
+      output.shouldHavePrintedExactly(
         equalTo("one"),
         equalTo("two")
       );
