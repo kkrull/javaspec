@@ -8,9 +8,11 @@ import java.util.List;
 
 final class NewConsoleReporter implements Reporter {
   private final PrintStream output;
+  private boolean hasPrintedLines;
 
   public NewConsoleReporter(PrintStream output) {
     this.output = output;
+    this.hasPrintedLines = false;
   }
 
   /* HelpObserver */
@@ -38,6 +40,9 @@ final class NewConsoleReporter implements Reporter {
 
   @Override
   public void runFinished() {
+    if(this.hasPrintedLines)
+      this.output.println();
+
     this.output.println("[Testing complete] Passed: 0, Failed: 0, Total: 0");
   }
 
@@ -49,10 +54,12 @@ final class NewConsoleReporter implements Reporter {
   @Override
   public void specFailed(Spec spec) {
     this.output.println(": FAIL");
+    this.hasPrintedLines = true;
   }
 
   @Override
   public void specPassed(Spec spec) {
     this.output.println(": PASS");
+    this.hasPrintedLines = true;
   }
 }

@@ -49,9 +49,37 @@ public class NewConsoleReporterTest {
       }
     }
 
-    public class givenOneOrMoreSpecs {
-      @Test @Ignore
+    public class givenOneOrMoreFailingSpecs {
+      @Test
       public void printsASeparatorBeforeTheFinalResult() throws Exception {
+        subjectRuns(() -> {
+          Spec spec = anySpecNamed("behaves");
+          subject.specStarting(spec);
+          subject.specFailed(spec);
+        });
+
+        output.shouldHavePrintedTheseLines(
+          containsString("behaves"),
+          isEmptyString(),
+          closingMessageMatcher()
+        );
+      }
+    }
+
+    public class givenOneOrMorePassingSpecs {
+      @Test
+      public void printsASeparatorBeforeTheFinalResult() throws Exception {
+        subjectRuns(() -> {
+          Spec spec = anySpecNamed("behaves");
+          subject.specStarting(spec);
+          subject.specPassed(spec);
+        });
+
+        output.shouldHavePrintedTheseLines(
+          containsString("behaves"),
+          isEmptyString(),
+          closingMessageMatcher()
+        );
       }
     }
   }
@@ -65,10 +93,7 @@ public class NewConsoleReporterTest {
         subject.specPassed(spec);
       });
 
-      output.shouldHavePrintedTheseLines(
-        startsWith("- behaves"),
-        closingMessageMatcher()
-      );
+      output.shouldHavePrintedLine(startsWith("- behaves"));
     }
 
     @Test
@@ -79,10 +104,7 @@ public class NewConsoleReporterTest {
         subject.specPassed(spec);
       });
 
-      output.shouldHavePrintedTheseLines(
-        endsWith("behaves: PASS"),
-        closingMessageMatcher()
-      );
+      output.shouldHavePrintedLine(endsWith("behaves: PASS"));
     }
 
     @Test
@@ -93,10 +115,7 @@ public class NewConsoleReporterTest {
         subject.specFailed(spec);
       });
 
-      output.shouldHavePrintedTheseLines(
-        endsWith("behaves: FAIL"),
-        closingMessageMatcher()
-      );
+      output.shouldHavePrintedLine(endsWith("behaves: FAIL"));
     }
   }
 
