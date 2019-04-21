@@ -263,7 +263,17 @@ public class NewConsoleReporterTest {
       }
     }
 
+    public class givenOneOrMoreSpecs {
+      @Test @Ignore
+      public void addsThoseToTheTotalNumberOfSpecs() throws Exception {
+      }
+    }
+
     public class givenOneOrMoreFailingSpecs {
+      @Test @Ignore
+      public void addsThoseToTheTotalNumberOfFailingSpecs() throws Exception {
+      }
+
       @Test
       public void startsANewParagraph() throws Exception {
         subjectRuns(() -> {
@@ -281,6 +291,10 @@ public class NewConsoleReporterTest {
     }
 
     public class givenOneOrMorePassingSpecs {
+      @Test @Ignore
+      public void addsThoseToTheTotalNumberOfPassingSpecs() throws Exception {
+      }
+
       @Test
       public void startsANewParagraph() throws Exception {
         subjectRuns(() -> {

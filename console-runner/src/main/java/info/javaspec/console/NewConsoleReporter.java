@@ -11,13 +11,12 @@ import java.util.List;
 final class NewConsoleReporter implements Reporter {
   private final PrintStream output;
   private final Deque<CollectionScope> scopes;
-
-  private boolean hasPrintedAnyLines;
+  private boolean hasEverPrintedAnything;
 
   public NewConsoleReporter(PrintStream output) {
     this.output = output;
     this.scopes = new ArrayDeque<>();
-    this.hasPrintedAnyLines = false;
+    this.hasEverPrintedAnything = false;
   }
 
   /* HelpObserver */
@@ -32,11 +31,8 @@ final class NewConsoleReporter implements Reporter {
   @Override
   public void beginCollection(SpecCollection collection) {
     CollectionScope containingScope = this.scopes.peekLast();
-    if(containingScope.hasPrintedAnything())
-      this.output.println();
-
     containingScope.beginCollection(collection);
-    this.hasPrintedAnyLines = true;
+    this.hasEverPrintedAnything = true;
 
     CollectionScope newScope = CollectionScope.forCollection(collection, containingScope);
     this.scopes.addLast(newScope);
@@ -59,7 +55,7 @@ final class NewConsoleReporter implements Reporter {
 
   @Override
   public void runFinished() {
-    if(this.hasPrintedAnyLines)
+    if(this.hasEverPrintedAnything)
       this.output.println();
 
     this.output.println("[Testing complete] Passed: 0, Failed: 0, Total: 0");
@@ -67,20 +63,19 @@ final class NewConsoleReporter implements Reporter {
 
   @Override
   public void specStarting(Spec spec) {
-    CollectionScope scope = this.scopes.peekLast();
-    scope.specStarting(spec);
+    this.scopes.peekLast().specStarting(spec);
   }
 
   @Override
   public void specFailed(Spec spec) {
-    this.output.println(": FAIL");
-    this.hasPrintedAnyLines = true;
+    this.scopes.peekLast().specFailed(spec);
+    this.hasEverPrintedAnything = true;
   }
 
   @Override
   public void specPassed(Spec spec) {
-    this.output.println(": PASS");
-    this.hasPrintedAnyLines = true;
+    this.scopes.peekLast().specPassed(spec);
+    this.hasEverPrintedAnything = true;
   }
 
   private static final class CollectionScope {
@@ -88,15 +83,15 @@ final class NewConsoleReporter implements Reporter {
     private final PrintStream output;
     private final String collectionIndent;
     private final String specIndent;
-    private int numItemsPrinted;
+    private int numCollectionsPrinted;
 
     public static CollectionScope forCollection(SpecCollection collection, CollectionScope parent) {
-      String specIndent = parent.isRoot ? "" : parent.specIndent + "  ";
+      String indentSpecsOnlyInInnerCollections = parent.isRoot ? "" : parent.specIndent + "  ";
       return new CollectionScope(
         false,
         parent.output,
         parent.collectionIndent + "  ",
-        specIndent
+        indentSpecsOnlyInInnerCollections
       );
     }
 
@@ -114,24 +109,27 @@ final class NewConsoleReporter implements Reporter {
       this.output = output;
       this.collectionIndent = collectionIndent;
       this.specIndent = specIndent;
-      this.numItemsPrinted = 0;
+      this.numCollectionsPrinted = 0;
     }
 
     public void beginCollection(SpecCollection collection) {
+      if(this.numCollectionsPrinted > 0)
+        this.output.println();
+
       this.output.println(this.collectionIndent + collection.description());
-      somethingPrinted();
-    }
-
-    public boolean hasPrintedAnything() {
-      return this.numItemsPrinted > 0;
-    }
-
-    public void somethingPrinted() {
-      this.numItemsPrinted++;
+      this.numCollectionsPrinted++;
     }
 
     public void specStarting(Spec spec) {
       this.output.print(this.specIndent + "- " + spec.intendedBehavior());
+    }
+
+    public void specFailed(Spec spec) {
+      this.output.println(": FAIL");
+    }
+
+    public void specPassed(Spec spec) {
+      this.output.println(": PASS");
     }
   }
 }
