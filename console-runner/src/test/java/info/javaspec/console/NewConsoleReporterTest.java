@@ -26,6 +26,161 @@ public class NewConsoleReporterTest {
     subject = new NewConsoleReporter(output);
   }
 
+  public class beginCollection {
+    @Test
+    public void printsTheDescription() throws Exception {
+      subjectRuns(() -> {
+        SpecCollection collection = anyCollectionDescribing("widgets");
+        subject.beginCollection(collection);
+        subject.endCollection(collection);
+      });
+
+      output.shouldHavePrintedLine(containsString("widgets"));
+    }
+
+    public class givenAnInnerCollection {
+      @Test
+      public void increasesIndentation() throws Exception {
+        subjectRuns(() -> {
+          SpecCollection outer = anyCollectionDescribing("outer");
+          subject.beginCollection(outer);
+
+          SpecCollection inner = anyCollectionDescribing("inner");
+          subject.beginCollection(inner);
+          subject.endCollection(inner);
+
+          subject.endCollection(outer);
+        });
+
+        output.shouldHavePrintedLine(startsWith("  inner"));
+      }
+
+      @Test
+      public void continuesTheSameParagraph() throws Exception {
+        subjectRuns(() -> {
+          SpecCollection outer = anyCollectionDescribing("outer");
+          subject.beginCollection(outer);
+
+          SpecCollection inner = anyCollectionDescribing("inner");
+          subject.beginCollection(inner);
+          subject.endCollection(inner);
+
+          subject.endCollection(outer);
+        });
+
+        output.shouldHavePrintedExactly(
+          startsWith("outer"),
+          containsString("inner"),
+          isEmptyString(),
+          testTallyMatcher()
+        );
+      }
+    }
+
+    public class givenTwoOrMoreCollectionsWithTheSameParentCollection {
+      @Test
+      public void indentsThoseCollectionsTheSame() throws Exception {
+        subjectRuns(() -> {
+          SpecCollection first = anyCollectionDescribing("first");
+          subject.beginCollection(first);
+          subject.endCollection(first);
+
+          SpecCollection second = anyCollectionDescribing("second");
+          subject.beginCollection(second);
+          subject.endCollection(second);
+        });
+
+        output.shouldHavePrintedLines(
+          startsWith("first"),
+          startsWith("second")
+        );
+      }
+
+      @Test @Ignore
+      public void startsANewParagraphForEachCollectionAfterTheFirstOne() throws Exception {
+        subjectRuns(() -> {
+          SpecCollection first = anyCollectionDescribing("first");
+          subject.beginCollection(first);
+          subject.endCollection(first);
+
+          SpecCollection second = anyCollectionDescribing("second");
+          subject.beginCollection(second);
+          subject.endCollection(second);
+        });
+
+        output.shouldHavePrintedExactly(
+          startsWith("first"),
+          isEmptyString(),
+          startsWith("second")
+        );
+      }
+    }
+  }
+
+  public class specFailed {
+    @Test
+    public void indicatesWhichSpecFailed() throws Exception {
+      subjectRuns(() -> {
+        Spec spec = anySpecNamed("behaves");
+        subject.specStarting(spec);
+        subject.specFailed(spec);
+      });
+
+      output.shouldHavePrintedLine(endsWith("behaves: FAIL"));
+    }
+  }
+
+  public class specPassed {
+    @Test
+    public void indicatesWhichSpecPassed() throws Exception {
+      subjectRuns(() -> {
+        Spec spec = anySpecNamed("behaves");
+        subject.specStarting(spec);
+        subject.specPassed(spec);
+      });
+
+      output.shouldHavePrintedLine(endsWith("behaves: PASS"));
+    }
+  }
+
+  public class specStarting {
+    @Test
+    public void printsTheSpecAsAListItem() throws Exception {
+      subjectRuns(() -> {
+        Spec spec = anySpecNamed("behaves");
+        subject.specStarting(spec);
+        subject.specPassed(spec);
+      });
+
+      output.shouldHavePrintedLine(containsString("- behaves"));
+    }
+
+    public class whenCollectionContainingTheSpecIsIndented {
+      @Test
+      public void indentsSpecsFlushWithThatCollection() throws Exception {
+        subjectRuns(() -> {
+          SpecCollection outer = anyCollection();
+          subject.beginCollection(outer);
+
+          SpecCollection inner = anyCollectionDescribing("inner");
+          subject.beginCollection(inner);
+
+          Spec spec = anySpecNamed("spec");
+          subject.specStarting(spec);
+          subject.specPassed(spec);
+
+          subject.endCollection(inner);
+          subject.endCollection(outer);
+        });
+
+        output.shouldHavePrintedLines(
+          startsWith("  inner"),
+          startsWith("  - spec")
+        );
+      }
+    }
+  }
+
   public class runFinished {
     public class givenNoSpecs {
       @Test
@@ -37,7 +192,7 @@ public class NewConsoleReporterTest {
 
     public class givenNoSpecsOrCollections {
       @Test
-      public void doesNotPrintABlankLineBeforeTheTotals() throws Exception {
+      public void doesNotStartANewParagraph() throws Exception {
         subjectRuns(() -> {});
         output.shouldHavePrintedExactly(
           equalTo("[Testing complete] Passed: 0, Failed: 0, Total: 0")
@@ -105,155 +260,6 @@ public class NewConsoleReporterTest {
         equalTo("one"),
         equalTo("two")
       );
-    }
-  }
-
-  public class givenACollection {
-    @Test
-    public void printsThatCollectionsDescription() throws Exception {
-      subjectRuns(() -> {
-        SpecCollection collection = anyCollectionDescribing("widgets");
-        subject.beginCollection(collection);
-        subject.endCollection(collection);
-      });
-
-      output.shouldHavePrintedLine(containsString("widgets"));
-    }
-  }
-
-  public class givenAnInnerCollection {
-    @Test
-    public void indentsTheInnerCollection() throws Exception {
-      subjectRuns(() -> {
-        SpecCollection outer = anyCollectionDescribing("outer");
-        subject.beginCollection(outer);
-
-        SpecCollection inner = anyCollectionDescribing("inner");
-        subject.beginCollection(inner);
-        subject.endCollection(inner);
-
-        subject.endCollection(outer);
-      });
-
-      output.shouldHavePrintedLine(startsWith("  inner"));
-    }
-
-    @Test
-    public void indentsSpecsToBeFlushWithTheContainingCollection() throws Exception {
-      subjectRuns(() -> {
-        SpecCollection outer = anyCollection();
-        subject.beginCollection(outer);
-
-        SpecCollection inner = anyCollectionDescribing("inner");
-        subject.beginCollection(inner);
-
-        Spec spec = anySpecNamed("spec");
-        subject.specStarting(spec);
-        subject.specPassed(spec);
-
-        subject.endCollection(inner);
-        subject.endCollection(outer);
-      });
-
-      output.shouldHavePrintedLines(
-        startsWith("  inner"),
-        startsWith("  - spec")
-      );
-    }
-
-    @Test
-    public void continuesTheSameParagraph() throws Exception {
-      subjectRuns(() -> {
-        SpecCollection outer = anyCollectionDescribing("outer");
-        subject.beginCollection(outer);
-
-        SpecCollection inner = anyCollectionDescribing("inner");
-        subject.beginCollection(inner);
-        subject.endCollection(inner);
-
-        subject.endCollection(outer);
-      });
-
-      output.shouldHavePrintedExactly(
-        startsWith("outer"),
-        containsString("inner"),
-        isEmptyString(),
-        testTallyMatcher()
-      );
-    }
-  }
-
-  public class givenTwoOrMoreCollectionsWithTheSameParentCollection {
-    @Test
-    public void indentsThoseCollectionsTheSame() throws Exception {
-      subjectRuns(() -> {
-        SpecCollection first = anyCollectionDescribing("first");
-        subject.beginCollection(first);
-        subject.endCollection(first);
-
-        SpecCollection second = anyCollectionDescribing("second");
-        subject.beginCollection(second);
-        subject.endCollection(second);
-      });
-
-      output.shouldHavePrintedLines(
-        startsWith("first"),
-        startsWith("second")
-      );
-    }
-
-    @Test @Ignore
-    public void startsANewParagraphForEachCollectionAfterTheFirstCollection() throws Exception {
-      subjectRuns(() -> {
-        SpecCollection first = anyCollectionDescribing("first");
-        subject.beginCollection(first);
-        subject.endCollection(first);
-
-        SpecCollection second = anyCollectionDescribing("second");
-        subject.beginCollection(second);
-        subject.endCollection(second);
-      });
-
-      output.shouldHavePrintedExactly(
-        startsWith("first"),
-        isEmptyString(),
-        startsWith("second")
-      );
-    }
-  }
-
-  public class givenASpec {
-    @Test
-    public void printsTheSpecAsAListItem() throws Exception {
-      subjectRuns(() -> {
-        Spec spec = anySpecNamed("behaves");
-        subject.specStarting(spec);
-        subject.specPassed(spec);
-      });
-
-      output.shouldHavePrintedLine(containsString("- behaves"));
-    }
-
-    @Test
-    public void printsTheBehaviorAndResultForAFailingSpec() throws Exception {
-      subjectRuns(() -> {
-        Spec spec = anySpecNamed("behaves");
-        subject.specStarting(spec);
-        subject.specFailed(spec);
-      });
-
-      output.shouldHavePrintedLine(endsWith("behaves: FAIL"));
-    }
-
-    @Test
-    public void printsTheBehaviorAndResultForAPassingSpec() throws Exception {
-      subjectRuns(() -> {
-        Spec spec = anySpecNamed("behaves");
-        subject.specStarting(spec);
-        subject.specPassed(spec);
-      });
-
-      output.shouldHavePrintedLine(endsWith("behaves: PASS"));
     }
   }
 
