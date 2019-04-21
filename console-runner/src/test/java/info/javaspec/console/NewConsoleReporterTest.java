@@ -96,7 +96,7 @@ public class NewConsoleReporterTest {
         );
       }
 
-      @Test @Ignore
+      @Test
       public void startsANewParagraphForEachCollectionAfterTheFirstOne() throws Exception {
         subjectRuns(() -> {
           SpecCollection first = anyCollectionDescribing("first");
@@ -111,7 +111,9 @@ public class NewConsoleReporterTest {
         output.shouldHavePrintedExactly(
           startsWith("first"),
           isEmptyString(),
-          startsWith("second")
+          startsWith("second"),
+          isEmptyString(),
+          testTallyMatcher()
         );
       }
     }

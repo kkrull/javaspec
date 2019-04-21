@@ -4,10 +4,14 @@ import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
 
 import java.io.PrintStream;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 
 final class NewConsoleReporter implements Reporter {
   private final PrintStream output;
+  private final Deque<Scope> scopes;
+
   private boolean hasPrintedAnyLines;
   private String collectionIndentation;
   private String specIndentation;
@@ -15,6 +19,7 @@ final class NewConsoleReporter implements Reporter {
 
   public NewConsoleReporter(PrintStream output) {
     this.output = output;
+    this.scopes = new ArrayDeque<>();
     this.hasPrintedAnyLines = false;
     this.collectionIndentation = "";
     this.specIndentation = "";
@@ -32,14 +37,19 @@ final class NewConsoleReporter implements Reporter {
 
   @Override
   public void beginCollection(SpecCollection collection) {
-    this.numCollectionsInScope += 1;
+    if(this.scopes.peekLast().hasPrintedAnything())
+      this.output.println();
 
     this.output.println(this.collectionIndentation + collection.description());
+    this.scopes.peekLast().somethingPrinted();
     this.hasPrintedAnyLines = true;
+    this.numCollectionsInScope += 1;
 
     this.collectionIndentation += "  ";
     if(this.numCollectionsInScope > 1)
       this.specIndentation += "  ";
+
+    this.scopes.addLast(Scope.forCollection(collection));
   }
 
   @Override
@@ -47,6 +57,7 @@ final class NewConsoleReporter implements Reporter {
     this.collectionIndentation = this.collectionIndentation.substring(0, this.collectionIndentation.length() - 2);
     this.specIndentation = this.specIndentation.substring(0, Math.max(0, this.specIndentation.length() - 2));
     this.numCollectionsInScope -= 1;
+    this.scopes.removeLast();
   }
 
   @Override
@@ -55,7 +66,9 @@ final class NewConsoleReporter implements Reporter {
   }
 
   @Override
-  public void runStarting() { }
+  public void runStarting() {
+    this.scopes.addLast(Scope.forRoot());
+  }
 
   @Override
   public void runFinished() {
@@ -80,5 +93,31 @@ final class NewConsoleReporter implements Reporter {
   public void specPassed(Spec spec) {
     this.output.println(": PASS");
     this.hasPrintedAnyLines = true;
+  }
+
+  private static final class Scope {
+    private final String source;
+    private int numItemsPrinted;
+
+    public static Scope forRoot() {
+      return new Scope("root");
+    }
+
+    public static Scope forCollection(SpecCollection collection) {
+      return new Scope(collection.description());
+    }
+
+    private Scope(String source) {
+      this.source = source;
+      this.numItemsPrinted = 0;
+    }
+
+    public boolean hasPrintedAnything() {
+      return this.numItemsPrinted > 0;
+    }
+
+    public void somethingPrinted() {
+      this.numItemsPrinted++;
+    }
   }
 }
