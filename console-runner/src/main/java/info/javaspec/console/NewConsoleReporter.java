@@ -13,7 +13,6 @@ final class NewConsoleReporter implements Reporter {
   private final Deque<CollectionScope> scopes;
 
   private boolean hasPrintedAnyLines;
-  private String collectionIndentation;
   private String specIndentation;
   private int numCollectionsInScope;
 
@@ -21,7 +20,6 @@ final class NewConsoleReporter implements Reporter {
     this.output = output;
     this.scopes = new ArrayDeque<>();
     this.hasPrintedAnyLines = false;
-    this.collectionIndentation = "";
     this.specIndentation = "";
     this.numCollectionsInScope = 0;
   }
@@ -41,21 +39,19 @@ final class NewConsoleReporter implements Reporter {
     if(containingScope.hasPrintedAnything())
       this.output.println();
 
-    this.output.println(this.collectionIndentation + collection.description());
-    containingScope.somethingPrinted();
+    containingScope.beginCollection(collection);
     this.hasPrintedAnyLines = true;
     this.numCollectionsInScope += 1;
 
-    this.collectionIndentation += "  ";
     if(this.numCollectionsInScope > 1)
       this.specIndentation += "  ";
 
-    this.scopes.addLast(CollectionScope.forCollection(collection));
+    CollectionScope newScope = CollectionScope.forCollection(collection, containingScope);
+    this.scopes.addLast(newScope);
   }
 
   @Override
   public void endCollection(SpecCollection collection) {
-    this.collectionIndentation = this.collectionIndentation.substring(0, this.collectionIndentation.length() - 2);
     this.specIndentation = this.specIndentation.substring(0, Math.max(0, this.specIndentation.length() - 2));
     this.numCollectionsInScope -= 1;
     this.scopes.removeLast();
@@ -68,7 +64,7 @@ final class NewConsoleReporter implements Reporter {
 
   @Override
   public void runStarting() {
-    this.scopes.addLast(CollectionScope.forRoot());
+    this.scopes.addLast(CollectionScope.forRoot(this.output));
   }
 
   @Override
@@ -97,20 +93,27 @@ final class NewConsoleReporter implements Reporter {
   }
 
   private static final class CollectionScope {
-    private final String source;
+    private final PrintStream output;
+    private final String collectionIndentation;
     private int numItemsPrinted;
 
-    public static CollectionScope forRoot() {
-      return new CollectionScope("root");
+    public static CollectionScope forCollection(SpecCollection collection, CollectionScope parentScope) {
+      return new CollectionScope(parentScope.output, parentScope.collectionIndentation + "  ");
     }
 
-    public static CollectionScope forCollection(SpecCollection collection) {
-      return new CollectionScope(collection.description());
+    public static CollectionScope forRoot(PrintStream output) {
+      return new CollectionScope(output, "");
     }
 
-    private CollectionScope(String source) {
-      this.source = source;
+    private CollectionScope(PrintStream output, String collectionIndentation) {
+      this.output = output;
+      this.collectionIndentation = collectionIndentation;
       this.numItemsPrinted = 0;
+    }
+
+    public void beginCollection(SpecCollection collection) {
+      this.output.println(this.collectionIndentation + collection.description());
+      somethingPrinted();
     }
 
     public boolean hasPrintedAnything() {
