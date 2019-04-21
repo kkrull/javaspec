@@ -10,7 +10,7 @@ import java.util.List;
 
 final class NewConsoleReporter implements Reporter {
   private final PrintStream output;
-  private final Deque<Scope> scopes;
+  private final Deque<CollectionScope> scopes;
 
   private boolean hasPrintedAnyLines;
   private String collectionIndentation;
@@ -37,11 +37,12 @@ final class NewConsoleReporter implements Reporter {
 
   @Override
   public void beginCollection(SpecCollection collection) {
-    if(this.scopes.peekLast().hasPrintedAnything())
+    CollectionScope containingScope = this.scopes.peekLast();
+    if(containingScope.hasPrintedAnything())
       this.output.println();
 
     this.output.println(this.collectionIndentation + collection.description());
-    this.scopes.peekLast().somethingPrinted();
+    containingScope.somethingPrinted();
     this.hasPrintedAnyLines = true;
     this.numCollectionsInScope += 1;
 
@@ -49,7 +50,7 @@ final class NewConsoleReporter implements Reporter {
     if(this.numCollectionsInScope > 1)
       this.specIndentation += "  ";
 
-    this.scopes.addLast(Scope.forCollection(collection));
+    this.scopes.addLast(CollectionScope.forCollection(collection));
   }
 
   @Override
@@ -67,7 +68,7 @@ final class NewConsoleReporter implements Reporter {
 
   @Override
   public void runStarting() {
-    this.scopes.addLast(Scope.forRoot());
+    this.scopes.addLast(CollectionScope.forRoot());
   }
 
   @Override
@@ -95,19 +96,19 @@ final class NewConsoleReporter implements Reporter {
     this.hasPrintedAnyLines = true;
   }
 
-  private static final class Scope {
+  private static final class CollectionScope {
     private final String source;
     private int numItemsPrinted;
 
-    public static Scope forRoot() {
-      return new Scope("root");
+    public static CollectionScope forRoot() {
+      return new CollectionScope("root");
     }
 
-    public static Scope forCollection(SpecCollection collection) {
-      return new Scope(collection.description());
+    public static CollectionScope forCollection(SpecCollection collection) {
+      return new CollectionScope(collection.description());
     }
 
-    private Scope(String source) {
+    private CollectionScope(String source) {
       this.source = source;
       this.numItemsPrinted = 0;
     }
