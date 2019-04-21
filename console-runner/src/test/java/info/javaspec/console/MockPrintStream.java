@@ -28,7 +28,7 @@ final class MockPrintStream extends PrintStream {
   }
 
   public void shouldHavePrintedLine(Matcher<String> matcher) {
-    assertThat(printedLines(), hasItem(matcher));
+    assertThat(actualAsDocString(), printedLines(), hasItem(matcher));
   }
 
   @SafeVarargs

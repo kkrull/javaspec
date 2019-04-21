@@ -179,6 +179,50 @@ public class NewConsoleReporterTest {
         );
       }
     }
+
+    public class afterAnEarlierCollectionHasEnded {
+      @Test
+      public void decreasesIndentationToMatchTheCollectionThatIsStillInScope() throws Exception {
+        subjectRuns(() -> {
+          SpecCollection outer = anyCollectionDescribing("outer");
+          subject.beginCollection(outer);
+
+          SpecCollection inner = anyCollectionDescribing("inner");
+          subject.beginCollection(inner);
+          subject.endCollection(inner);
+
+          Spec spec = anySpecNamed("outer spec");
+          subject.specStarting(spec);
+          subject.specPassed(spec);
+
+          subject.endCollection(outer);
+        });
+
+        output.shouldHavePrintedLine(startsWith("- outer spec"));
+      }
+    }
+
+    public class givenTwoOuterCollectionsWithSpecs {
+      @Test
+      public void indentsThoseSpecsTheSame() throws Exception {
+        subjectRuns(() -> {
+          SpecCollection firstCollection = anyCollectionDescribing("first");
+          subject.beginCollection(firstCollection);
+          subject.endCollection(firstCollection);
+
+          SpecCollection secondCollection = anyCollectionDescribing("second");
+          subject.beginCollection(secondCollection);
+
+          Spec spec = anySpecNamed("second spec");
+          subject.specStarting(spec);
+          subject.specPassed(spec);
+
+          subject.endCollection(secondCollection);
+        });
+
+        output.shouldHavePrintedLine(startsWith("- second spec"));
+      }
+    }
   }
 
   public class runFinished {

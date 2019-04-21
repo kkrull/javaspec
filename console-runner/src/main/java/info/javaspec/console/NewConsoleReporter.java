@@ -45,6 +45,8 @@ final class NewConsoleReporter implements Reporter {
   @Override
   public void endCollection(SpecCollection collection) {
     this.collectionIndentation = this.collectionIndentation.substring(0, this.collectionIndentation.length() - 2);
+    this.specIndentation = this.specIndentation.substring(0, Math.max(0, this.specIndentation.length() - 2));
+    this.numCollectionsInScope -= 1;
   }
 
   @Override
