@@ -77,5 +77,4 @@ final class NewConsoleReporter implements Reporter {
     this.scopes.peekLast().specPassed(spec);
     this.hasEverPrintedAnything = true;
   }
-
 }

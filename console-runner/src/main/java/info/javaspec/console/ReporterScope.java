@@ -5,41 +5,37 @@ import info.javaspec.SpecCollection;
 
 import java.io.PrintStream;
 
-final class ReporterScope {
-  private final boolean isRoot;
+abstract class ReporterScope {
   private final PrintStream output;
   private final String collectionIndent;
   private final String specIndent;
+
   private boolean hasPrintedAnyCollections;
 
-  public static ReporterScope forCollection(SpecCollection collection, ReporterScope parent) {
-    String indentSpecsOnlyInInnerCollections = parent.isRoot ? "" : parent.specIndent + "  ";
-    return new ReporterScope(
-      false,
+  public static ReporterScope forCollection(SpecCollection _collection, ReporterScope parent) {
+    return new CollectionReporterScope(
       parent.output,
       parent.collectionIndent + "  ",
-      indentSpecsOnlyInInnerCollections
+      parent.specIndent + parent.howMuchToIndentSpecsInChildScope()
     );
   }
 
   public static ReporterScope forRoot(PrintStream output) {
-    return new ReporterScope(
-      true,
+    return new RootReporterScope(
       output,
       "",
       ""
     );
   }
 
-  private ReporterScope(boolean isRoot, PrintStream output, String collectionIndent, String specIndent) {
-    this.isRoot = isRoot;
+  private ReporterScope(PrintStream output, String collectionIndent, String specIndent) {
     this.output = output;
     this.collectionIndent = collectionIndent;
     this.specIndent = specIndent;
     this.hasPrintedAnyCollections = false;
   }
 
-  public void beginCollection(SpecCollection collection) {
+  public final void beginCollection(SpecCollection collection) {
     if(this.hasPrintedAnyCollections)
       this.output.println();
 
@@ -47,15 +43,40 @@ final class ReporterScope {
     this.hasPrintedAnyCollections = true;
   }
 
-  public void specStarting(Spec spec) {
+  protected abstract String howMuchToIndentSpecsInChildScope();
+
+  public final void specStarting(Spec spec) {
     this.output.print(this.specIndent + "- " + spec.intendedBehavior());
   }
 
-  public void specFailed(Spec spec) {
+  public final void specFailed(Spec spec) {
     this.output.println(": FAIL");
   }
 
-  public void specPassed(Spec spec) {
+  public final void specPassed(Spec spec) {
     this.output.println(": PASS");
+  }
+
+  private static final class CollectionReporterScope extends ReporterScope {
+    public CollectionReporterScope(PrintStream output, String collectionIndent, String specIndent) {
+      super(output, collectionIndent, specIndent);
+    }
+
+    @Override
+    protected String howMuchToIndentSpecsInChildScope() {
+      return "  ";
+    }
+  }
+
+  private static final class RootReporterScope extends ReporterScope {
+    public RootReporterScope(PrintStream output, String collectionIndent, String specIndent) {
+      super(output, collectionIndent, specIndent);
+    }
+
+    @Override
+    protected String howMuchToIndentSpecsInChildScope() {
+      //The root collection has no output.  Its _children_ do top-level output, without indenting.
+      return "";
+    }
   }
 }
