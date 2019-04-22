@@ -10,7 +10,7 @@ import java.util.List;
 
 final class NewConsoleReporter implements Reporter {
   private final PrintStream output;
-  private final Deque<CollectionScope> scopes;
+  private final Deque<ReporterScope> scopes;
   private boolean hasEverPrintedAnything;
 
   public NewConsoleReporter(PrintStream output) {
@@ -30,11 +30,11 @@ final class NewConsoleReporter implements Reporter {
 
   @Override
   public void beginCollection(SpecCollection collection) {
-    CollectionScope containingScope = this.scopes.peekLast();
+    ReporterScope containingScope = this.scopes.peekLast();
     containingScope.beginCollection(collection);
     this.hasEverPrintedAnything = true;
 
-    CollectionScope newScope = CollectionScope.forCollection(collection, containingScope);
+    ReporterScope newScope = ReporterScope.forCollection(collection, containingScope);
     this.scopes.addLast(newScope);
   }
 
@@ -50,7 +50,7 @@ final class NewConsoleReporter implements Reporter {
 
   @Override
   public void runStarting() {
-    this.scopes.addLast(CollectionScope.forRoot(this.output));
+    this.scopes.addLast(ReporterScope.forRoot(this.output));
   }
 
   @Override
@@ -78,58 +78,4 @@ final class NewConsoleReporter implements Reporter {
     this.hasEverPrintedAnything = true;
   }
 
-  private static final class CollectionScope {
-    private final boolean isRoot;
-    private final PrintStream output;
-    private final String collectionIndent;
-    private final String specIndent;
-    private int numCollectionsPrinted;
-
-    public static CollectionScope forCollection(SpecCollection collection, CollectionScope parent) {
-      String indentSpecsOnlyInInnerCollections = parent.isRoot ? "" : parent.specIndent + "  ";
-      return new CollectionScope(
-        false,
-        parent.output,
-        parent.collectionIndent + "  ",
-        indentSpecsOnlyInInnerCollections
-      );
-    }
-
-    public static CollectionScope forRoot(PrintStream output) {
-      return new CollectionScope(
-        true,
-        output,
-        "",
-        ""
-      );
-    }
-
-    private CollectionScope(boolean isRoot, PrintStream output, String collectionIndent, String specIndent) {
-      this.isRoot = isRoot;
-      this.output = output;
-      this.collectionIndent = collectionIndent;
-      this.specIndent = specIndent;
-      this.numCollectionsPrinted = 0;
-    }
-
-    public void beginCollection(SpecCollection collection) {
-      if(this.numCollectionsPrinted > 0)
-        this.output.println();
-
-      this.output.println(this.collectionIndent + collection.description());
-      this.numCollectionsPrinted++;
-    }
-
-    public void specStarting(Spec spec) {
-      this.output.print(this.specIndent + "- " + spec.intendedBehavior());
-    }
-
-    public void specFailed(Spec spec) {
-      this.output.println(": FAIL");
-    }
-
-    public void specPassed(Spec spec) {
-      this.output.println(": PASS");
-    }
-  }
 }
