@@ -30,12 +30,12 @@ final class NewConsoleReporter implements Reporter {
 
   @Override
   public void beginCollection(SpecCollection collection) {
-    ReporterScope containingScope = this.scopes.peekLast();
-    containingScope.beginCollection(collection);
+    ReporterScope reportCurrentEvent = scopeForCurrentEvents();
+    reportCurrentEvent.beginCollection(collection);
     this.hasEverPrintedAnything = true;
 
-    ReporterScope newScope = ReporterScope.forCollection(collection, containingScope);
-    this.scopes.addLast(newScope);
+    ReporterScope reportFutureEvents = ReporterScope.forCollection(collection, reportCurrentEvent);
+    this.scopes.addLast(reportFutureEvents);
   }
 
   @Override
@@ -63,18 +63,22 @@ final class NewConsoleReporter implements Reporter {
 
   @Override
   public void specStarting(Spec spec) {
-    this.scopes.peekLast().specStarting(spec);
+    scopeForCurrentEvents().specStarting(spec);
   }
 
   @Override
   public void specFailed(Spec spec) {
-    this.scopes.peekLast().specFailed(spec);
+    scopeForCurrentEvents().specFailed(spec);
     this.hasEverPrintedAnything = true;
   }
 
   @Override
   public void specPassed(Spec spec) {
-    this.scopes.peekLast().specPassed(spec);
+    scopeForCurrentEvents().specPassed(spec);
     this.hasEverPrintedAnything = true;
+  }
+
+  private ReporterScope scopeForCurrentEvents() {
+    return this.scopes.peekLast();
   }
 }
