@@ -6,7 +6,6 @@ import info.javaspec.SpecCollection;
 import info.javaspec.testutil.Assertions;
 import org.hamcrest.Matcher;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -264,14 +263,28 @@ public class NewConsoleReporterTest {
     }
 
     public class givenOneOrMoreSpecs {
-      @Test @Ignore
+      @Test
       public void addsThoseToTheTotalNumberOfSpecs() throws Exception {
+        subjectRuns(() -> {
+          Spec spec = anySpecNamed("behaves");
+          subject.specStarting(spec);
+          subject.specPassed(spec);
+        });
+
+        output.shouldHavePrintedLine(containsString("Total: 1"));
       }
     }
 
     public class givenOneOrMoreFailingSpecs {
-      @Test @Ignore
+      @Test
       public void addsThoseToTheTotalNumberOfFailingSpecs() throws Exception {
+        subjectRuns(() -> {
+          Spec spec = anySpecNamed("explodes");
+          subject.specStarting(spec);
+          subject.specFailed(spec);
+        });
+
+        output.shouldHavePrintedLine(containsString("Failed: 1"));
       }
 
       @Test
@@ -291,8 +304,15 @@ public class NewConsoleReporterTest {
     }
 
     public class givenOneOrMorePassingSpecs {
-      @Test @Ignore
+      @Test
       public void addsThoseToTheTotalNumberOfPassingSpecs() throws Exception {
+        subjectRuns(() -> {
+          Spec spec = anySpecNamed("behaves");
+          subject.specStarting(spec);
+          subject.specPassed(spec);
+        });
+
+        output.shouldHavePrintedLine(containsString("Passed: 1"));
       }
 
       @Test

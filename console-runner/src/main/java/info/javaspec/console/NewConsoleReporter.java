@@ -13,10 +13,18 @@ final class NewConsoleReporter implements Reporter {
   private final Deque<ReporterScope> scopes;
   private boolean hasEverPrintedAnything;
 
+  private int numSpecsFailed;
+  private int numSpecsPassed;
+  private int numSpecsTotal;
+
   public NewConsoleReporter(PrintStream output) {
     this.output = output;
     this.scopes = new ArrayDeque<>();
+
     this.hasEverPrintedAnything = false;
+    this.numSpecsFailed = 0;
+    this.numSpecsPassed = 0;
+    this.numSpecsTotal = 0;
   }
 
   /* HelpObserver */
@@ -58,24 +66,32 @@ final class NewConsoleReporter implements Reporter {
     if(this.hasEverPrintedAnything)
       this.output.println();
 
-    this.output.println("[Testing complete] Passed: 0, Failed: 0, Total: 0");
+    this.output.println(String.format(
+      "[Testing complete] Passed: %d, Failed: %d, Total: %d",
+      this.numSpecsPassed,
+      this.numSpecsFailed,
+      this.numSpecsTotal
+    ));
   }
 
   @Override
   public void specStarting(Spec spec) {
     scopeForCurrentEvents().specStarting(spec);
+    this.numSpecsTotal++;
   }
 
   @Override
   public void specFailed(Spec spec) {
     scopeForCurrentEvents().specFailed(spec);
     this.hasEverPrintedAnything = true;
+    this.numSpecsFailed++;
   }
 
   @Override
   public void specPassed(Spec spec) {
     scopeForCurrentEvents().specPassed(spec);
     this.hasEverPrintedAnything = true;
+    this.numSpecsPassed++;
   }
 
   private ReporterScope scopeForCurrentEvents() {
