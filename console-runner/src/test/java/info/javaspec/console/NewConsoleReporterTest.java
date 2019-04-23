@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 
 import java.util.Arrays;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @RunWith(HierarchicalContextRunner.class)
@@ -115,6 +116,30 @@ public class NewConsoleReporterTest {
           testTallyMatcher()
         );
       }
+    }
+  }
+
+  public class hasFailingSpecs {
+    @Test
+    public void returnsFalseWhenNoSpecsFailed() throws Exception {
+      subjectRuns(() -> {
+        Spec spec = anySpecNamed("behaves");
+        subject.specStarting(spec);
+        subject.specPassed(spec);
+      });
+
+      assertThat(subject.hasFailingSpecs(), equalTo(false));
+    }
+
+    @Test
+    public void returnsTrueWhenOneOrMoreSpecsFailed() throws Exception {
+      subjectRuns(() -> {
+        Spec spec = anySpecNamed("behaves");
+        subject.specStarting(spec);
+        subject.specFailed(spec);
+      });
+
+      assertThat(subject.hasFailingSpecs(), equalTo(true));
     }
   }
 

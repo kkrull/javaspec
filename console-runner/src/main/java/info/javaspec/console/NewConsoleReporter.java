@@ -53,7 +53,7 @@ final class NewConsoleReporter implements Reporter {
 
   @Override
   public boolean hasFailingSpecs() {
-    throw new UnsupportedOperationException();
+    return this.numSpecsFailed > 0;
   }
 
   @Override
