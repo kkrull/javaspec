@@ -11,8 +11,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
-import java.util.Collections;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @RunWith(HierarchicalContextRunner.class)
@@ -27,42 +27,36 @@ public class ConsoleReporterTest {
   }
 
   public class beginCollection {
-    public class whenThereAreNoOtherCollectionsInScope {
-      @Test
-      public void printsTheDescriptionForTheFirstSpecCollection() throws Exception {
-        subjectRuns(() -> subject.beginCollection(anyCollectionDescribing("first")));
-        output.shouldHavePrintedExactly(
-          equalTo("first"),
-          isEmptyString(),
-          closingMessageMatcher()
-        );
-      }
+    @Test
+    public void printsTheDescription() throws Exception {
+      subjectRuns(() -> {
+        SpecCollection collection = anyCollectionDescribing("widgets");
+        subject.beginCollection(collection);
+        subject.endCollection(collection);
+      });
 
-      @Test
-      public void printsANewlineBetweenSpecCollections() throws Exception {
-        subjectRuns(() -> {
-          SpecCollection first = anyCollectionDescribing("first");
-          subject.beginCollection(first);
-          subject.endCollection(first);
-
-          SpecCollection second = anyCollectionDescribing("second");
-          subject.beginCollection(second);
-          subject.endCollection(second);
-        });
-
-        output.shouldHavePrintedExactly(
-          equalTo("first"),
-          isEmptyString(),
-          equalTo("second"),
-          isEmptyString(),
-          closingMessageMatcher()
-        );
-      }
+      output.shouldHavePrintedLine(containsString("widgets"));
     }
 
-    public class whenThereAreOtherCollectionsStillInScope {
+    public class givenAnInnerCollection {
       @Test
-      public void indentsTheNewCollection() throws Exception {
+      public void increasesIndentation() throws Exception {
+        subjectRuns(() -> {
+          SpecCollection outer = anyCollectionDescribing("outer");
+          subject.beginCollection(outer);
+
+          SpecCollection inner = anyCollectionDescribing("inner");
+          subject.beginCollection(inner);
+          subject.endCollection(inner);
+
+          subject.endCollection(outer);
+        });
+
+        output.shouldHavePrintedLine(startsWith("  inner"));
+      }
+
+      @Test
+      public void continuesTheSameParagraph() throws Exception {
         subjectRuns(() -> {
           SpecCollection outer = anyCollectionDescribing("outer");
           subject.beginCollection(outer);
@@ -75,102 +69,289 @@ public class ConsoleReporterTest {
         });
 
         output.shouldHavePrintedExactly(
-          equalTo("outer"),
-          equalTo("  inner"),
+          startsWith("outer"),
+          containsString("inner"),
           isEmptyString(),
-          closingMessageMatcher()
+          testTallyMatcher()
+        );
+      }
+    }
+
+    public class givenTwoOrMoreCollectionsWithTheSameParentCollection {
+      @Test
+      public void indentsThoseCollectionsTheSame() throws Exception {
+        subjectRuns(() -> {
+          SpecCollection first = anyCollectionDescribing("first");
+          subject.beginCollection(first);
+          subject.endCollection(first);
+
+          SpecCollection second = anyCollectionDescribing("second");
+          subject.beginCollection(second);
+          subject.endCollection(second);
+        });
+
+        output.shouldHavePrintedLines(
+          startsWith("first"),
+          startsWith("second")
+        );
+      }
+
+      @Test
+      public void startsANewParagraphForEachCollectionAfterTheFirstOne() throws Exception {
+        subjectRuns(() -> {
+          SpecCollection first = anyCollectionDescribing("first");
+          subject.beginCollection(first);
+          subject.endCollection(first);
+
+          SpecCollection second = anyCollectionDescribing("second");
+          subject.beginCollection(second);
+          subject.endCollection(second);
+        });
+
+        output.shouldHavePrintedExactly(
+          startsWith("first"),
+          isEmptyString(),
+          startsWith("second"),
+          isEmptyString(),
+          testTallyMatcher()
         );
       }
     }
   }
 
-  public class runFinished {
+  public class hasFailingSpecs {
     @Test
-    public void printsANewlineFollowedBySpecCounts() throws Exception {
-      subject.runStarting();
-      subject.runFinished();
-      output.shouldHavePrintedExactly(
-        isEmptyString(),
-        equalTo("[Testing complete] Passed: 0, Failed: 0, Total: 0")
-      );
+    public void returnsFalseWhenNoSpecsFailed() throws Exception {
+      subjectRuns(() -> {
+        Spec spec = anySpecNamed("behaves");
+        subject.specStarting(spec);
+        subject.specPassed(spec);
+      });
+
+      assertThat(subject.hasFailingSpecs(), equalTo(false));
+    }
+
+    @Test
+    public void returnsTrueWhenOneOrMoreSpecsFailed() throws Exception {
+      subjectRuns(() -> {
+        Spec spec = anySpecNamed("behaves");
+        subject.specStarting(spec);
+        subject.specFailed(spec);
+      });
+
+      assertThat(subject.hasFailingSpecs(), equalTo(true));
     }
   }
 
   public class specFailed {
     @Test
-    public void printsFailAndNewline() throws Exception {
+    public void indicatesWhichSpecFailed() throws Exception {
       subjectRuns(() -> {
-        Spec spec = anySpecNamed("should work");
+        Spec spec = anySpecNamed("behaves");
         subject.specStarting(spec);
         subject.specFailed(spec);
       });
 
-      output.shouldHavePrintedExactly(
-        endsWith("should work: FAIL"),
-        isEmptyString(),
-        closingMessageMatcher()
-      );
+      output.shouldHavePrintedLine(endsWith("behaves: FAIL"));
     }
   }
 
   public class specPassed {
     @Test
-    public void printsPassAndNewline() throws Exception {
+    public void indicatesWhichSpecPassed() throws Exception {
       subjectRuns(() -> {
-        Spec spec = anySpecNamed("works");
+        Spec spec = anySpecNamed("behaves");
         subject.specStarting(spec);
         subject.specPassed(spec);
       });
 
-      output.shouldHavePrintedExactly(
-        endsWith("works: PASS"),
-        isEmptyString(),
-        closingMessageMatcher()
-      );
+      output.shouldHavePrintedLine(endsWith("behaves: PASS"));
     }
   }
 
   public class specStarting {
-    public class whenTheSpecIsInATopLevelSubjectCollection {
+    @Test
+    public void printsTheSpecAsAListItem() throws Exception {
+      subjectRuns(() -> {
+        Spec spec = anySpecNamed("behaves");
+        subject.specStarting(spec);
+        subject.specPassed(spec);
+      });
+
+      output.shouldHavePrintedLine(containsString("- behaves"));
+    }
+
+    public class whenCollectionContainingTheSpecIsIndented {
       @Test
-      public void printsTheSpecBehaviorAsAListItemWithoutAnyIndentation() throws Exception {
+      public void indentsSpecsFlushWithThatCollection() throws Exception {
         subjectRuns(() -> {
-          SpecCollection collection = anyCollection();
-          subject.beginCollection(collection);
-          subject.specStarting(anySpecNamed("does its thing"));
-          subject.endCollection(collection);
+          SpecCollection outer = anyCollection();
+          subject.beginCollection(outer);
+
+          SpecCollection inner = anyCollectionDescribing("inner");
+          subject.beginCollection(inner);
+
+          Spec spec = anySpecNamed("spec");
+          subject.specStarting(spec);
+          subject.specPassed(spec);
+
+          subject.endCollection(inner);
+          subject.endCollection(outer);
         });
 
-        output.shouldHavePrintedExactly(
-          any(String.class),
-          equalTo("- does its thing"),
-//          isEmptyString(),
-          closingMessageMatcher()
+        output.shouldHavePrintedLines(
+          startsWith("  inner"),
+          startsWith("  - spec")
         );
       }
     }
 
-    public class whenTheSpecIsInANestedSubjectCollection {
+    public class afterAnEarlierCollectionHasEnded {
       @Test
-      public void printsTheSpecBehaviorAsAListItemWithIndentation() throws Exception {
+      public void decreasesIndentationToMatchTheCollectionThatIsStillInScope() throws Exception {
         subjectRuns(() -> {
-          SpecCollection outer = anyCollectionDescribing("widgets");
+          SpecCollection outer = anyCollectionDescribing("outer");
           subject.beginCollection(outer);
 
-          SpecCollection inner = anyCollectionDescribing("under some specific circumstance");
+          SpecCollection inner = anyCollectionDescribing("inner");
           subject.beginCollection(inner);
-          subject.specStarting(anySpecNamed("do something specific"));
           subject.endCollection(inner);
+
+          Spec spec = anySpecNamed("outer spec");
+          subject.specStarting(spec);
+          subject.specPassed(spec);
 
           subject.endCollection(outer);
         });
 
+        output.shouldHavePrintedLine(startsWith("- outer spec"));
+      }
+    }
+
+    public class givenTwoOuterCollectionsWithSpecs {
+      @Test
+      public void indentsThoseSpecsTheSame() throws Exception {
+        subjectRuns(() -> {
+          SpecCollection firstCollection = anyCollectionDescribing("first");
+          subject.beginCollection(firstCollection);
+          subject.endCollection(firstCollection);
+
+          SpecCollection secondCollection = anyCollectionDescribing("second");
+          subject.beginCollection(secondCollection);
+
+          Spec spec = anySpecNamed("second spec");
+          subject.specStarting(spec);
+          subject.specPassed(spec);
+
+          subject.endCollection(secondCollection);
+        });
+
+        output.shouldHavePrintedLine(startsWith("- second spec"));
+      }
+    }
+  }
+
+  public class runFinished {
+    public class givenNoSpecs {
+      @Test
+      public void printsZeroTotals() throws Exception {
+        subjectRuns(() -> {});
+        output.shouldHavePrintedLine(equalTo("[Testing complete] Passed: 0, Failed: 0, Total: 0"));
+      }
+    }
+
+    public class givenNoSpecsOrCollections {
+      @Test
+      public void doesNotStartANewParagraph() throws Exception {
+        subjectRuns(() -> {});
         output.shouldHavePrintedExactly(
-          equalTo("widgets"),
-          equalTo("  under some specific circumstance"),
-          equalTo("  - do something specific"),
-//          isEmptyString(),
-          closingMessageMatcher()
+          equalTo("[Testing complete] Passed: 0, Failed: 0, Total: 0")
+        );
+      }
+    }
+
+    public class givenOneOrMoreCollections {
+      @Test
+      public void startsANewParagraph() throws Exception {
+        subjectRuns(() -> {
+          SpecCollection collection = anyCollectionDescribing("widgets");
+          subject.beginCollection(collection);
+          subject.endCollection(collection);
+        });
+
+        output.shouldHavePrintedExactly(
+          containsString("widgets"),
+          isEmptyString(),
+          testTallyMatcher()
+        );
+      }
+    }
+
+    public class givenOneOrMoreSpecs {
+      @Test
+      public void addsThoseToTheTotalNumberOfSpecs() throws Exception {
+        subjectRuns(() -> {
+          Spec spec = anySpecNamed("behaves");
+          subject.specStarting(spec);
+          subject.specPassed(spec);
+        });
+
+        output.shouldHavePrintedLine(containsString("Total: 1"));
+      }
+    }
+
+    public class givenOneOrMoreFailingSpecs {
+      @Test
+      public void addsThoseToTheTotalNumberOfFailingSpecs() throws Exception {
+        subjectRuns(() -> {
+          Spec spec = anySpecNamed("explodes");
+          subject.specStarting(spec);
+          subject.specFailed(spec);
+        });
+
+        output.shouldHavePrintedLine(containsString("Failed: 1"));
+      }
+
+      @Test
+      public void startsANewParagraph() throws Exception {
+        subjectRuns(() -> {
+          Spec spec = anySpecNamed("behaves");
+          subject.specStarting(spec);
+          subject.specFailed(spec);
+        });
+
+        output.shouldHavePrintedExactly(
+          containsString("behaves"),
+          isEmptyString(),
+          testTallyMatcher()
+        );
+      }
+    }
+
+    public class givenOneOrMorePassingSpecs {
+      @Test
+      public void addsThoseToTheTotalNumberOfPassingSpecs() throws Exception {
+        subjectRuns(() -> {
+          Spec spec = anySpecNamed("behaves");
+          subject.specStarting(spec);
+          subject.specPassed(spec);
+        });
+
+        output.shouldHavePrintedLine(containsString("Passed: 1"));
+      }
+
+      @Test
+      public void startsANewParagraph() throws Exception {
+        subjectRuns(() -> {
+          Spec spec = anySpecNamed("behaves");
+          subject.specStarting(spec);
+          subject.specPassed(spec);
+        });
+
+        output.shouldHavePrintedExactly(
+          containsString("behaves"),
+          isEmptyString(),
+          testTallyMatcher()
         );
       }
     }
@@ -178,13 +359,7 @@ public class ConsoleReporterTest {
 
   public class writeMessage {
     @Test
-    public void writesNothingGivenAnEmptyList() throws Exception {
-      subject.writeMessage(Collections.emptyList());
-      output.outputShouldBe(isEmptyString());
-    }
-
-    @Test
-    public void writesOneLineForEachGivenString() throws Exception {
+    public void printsThoseLinesWithoutIndentation() throws Exception {
       subject.writeMessage(Arrays.asList("one", "two"));
       output.shouldHavePrintedExactly(
         equalTo("one"),
@@ -221,7 +396,7 @@ public class ConsoleReporterTest {
     subject.runFinished();
   }
 
-  private Matcher<String> closingMessageMatcher() {
+  private Matcher<String> testTallyMatcher() {
     return startsWith("[Testing complete]");
   }
 }

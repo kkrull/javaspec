@@ -4,83 +4,97 @@ import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
 
 import java.io.PrintStream;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
-import java.util.Stack;
 
 final class ConsoleReporter implements Reporter {
-  private final Stack<ReporterState> scopeStates;
+  private final PrintStream output;
+  private final Deque<ReporterScope> scopes;
+  private boolean hasEverPrintedAnything;
 
-  private int numStarted;
-  private int numFailed;
-  private int numPassed;
+  private int numSpecsFailed;
+  private int numSpecsPassed;
+  private int numSpecsTotal;
 
   public ConsoleReporter(PrintStream output) {
-    this.scopeStates = new Stack<>();
-    this.scopeStates.push(ReporterState.newRoot(output));
+    this.output = output;
+    this.scopes = new ArrayDeque<>();
+
+    this.hasEverPrintedAnything = false;
+    this.numSpecsFailed = 0;
+    this.numSpecsPassed = 0;
+    this.numSpecsTotal = 0;
   }
 
   /* HelpObserver */
 
   @Override
   public void writeMessage(List<String> lines) {
-    innerScopeState().writeMessage(lines);
+    lines.forEach(this.output::println);
   }
 
   /* RunObserver */
 
   @Override
   public void beginCollection(SpecCollection collection) {
-    ReporterState currentScope = innerScopeState();
-    currentScope.beginCollection(collection);
+    ReporterScope reportCurrentEvent = scopeForCurrentEvents();
+    reportCurrentEvent.beginCollection(collection);
+    this.hasEverPrintedAnything = true;
 
-    ReporterState newScope = currentScope.createInnerScope(collection.description());
-    this.scopeStates.push(newScope);
+    ReporterScope reportFutureEvents = ReporterScope.forCollection(collection, reportCurrentEvent);
+    this.scopes.addLast(reportFutureEvents);
   }
 
   @Override
   public void endCollection(SpecCollection collection) {
-    this.scopeStates.pop();
-//    throw new UnsupportedOperationException();
+    this.scopes.removeLast();
   }
 
   @Override
   public boolean hasFailingSpecs() {
-    return numFailed > 0;
+    return this.numSpecsFailed > 0;
   }
 
   @Override
-  public void runStarting() { }
+  public void runStarting() {
+    this.scopes.addLast(ReporterScope.forRoot(this.output));
+  }
 
   @Override
   public void runFinished() {
-    innerScopeState().printSeparator();
-    innerScopeState().writeMessage(
+    if(this.hasEverPrintedAnything)
+      this.output.println();
+
+    this.output.println(String.format(
       "[Testing complete] Passed: %d, Failed: %d, Total: %d",
-      this.numPassed,
-      this.numFailed,
-      this.numStarted
-    );
+      this.numSpecsPassed,
+      this.numSpecsFailed,
+      this.numSpecsTotal
+    ));
   }
 
   @Override
   public void specStarting(Spec spec) {
-    this.numStarted++;
-    innerScopeState().specStarting(spec);
+    scopeForCurrentEvents().specStarting(spec);
+    this.numSpecsTotal++;
   }
 
   @Override
   public void specFailed(Spec spec) {
-    this.numFailed++;
-    innerScopeState().specFailed(spec);
+    scopeForCurrentEvents().specFailed(spec);
+    this.hasEverPrintedAnything = true;
+    this.numSpecsFailed++;
   }
 
   @Override
   public void specPassed(Spec spec) {
-    this.numPassed++;
-    innerScopeState().specPassed(spec);
+    scopeForCurrentEvents().specPassed(spec);
+    this.hasEverPrintedAnything = true;
+    this.numSpecsPassed++;
   }
 
-  private ReporterState innerScopeState() {
-    return this.scopeStates.peek();
+  private ReporterScope scopeForCurrentEvents() {
+    return this.scopes.peekLast();
   }
 }
