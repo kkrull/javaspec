@@ -11,20 +11,12 @@ import java.util.List;
 final class ConsoleReporter implements Reporter {
   private final PrintStream output;
   private final Deque<ReporterScope> scopes;
-  private boolean hasEverPrintedAnything;
-
-  private int numSpecsFailed;
-  private int numSpecsPassed;
-  private int numSpecsTotal;
+  private final EventCounter count;
 
   public ConsoleReporter(PrintStream output) {
     this.output = output;
     this.scopes = new ArrayDeque<>();
-
-    this.hasEverPrintedAnything = false;
-    this.numSpecsFailed = 0;
-    this.numSpecsPassed = 0;
-    this.numSpecsTotal = 0;
+    this.count = new EventCounter();
   }
 
   /* HelpObserver */
@@ -40,7 +32,7 @@ final class ConsoleReporter implements Reporter {
   public void beginCollection(SpecCollection collection) {
     ReporterScope reportCurrentEvent = scopeForCurrentEvents();
     reportCurrentEvent.beginCollection(collection);
-    this.hasEverPrintedAnything = true;
+    this.count.beginCollection();
 
     ReporterScope reportFutureEvents = ReporterScope.forCollection(collection, reportCurrentEvent);
     this.scopes.addLast(reportFutureEvents);
@@ -53,7 +45,7 @@ final class ConsoleReporter implements Reporter {
 
   @Override
   public boolean hasFailingSpecs() {
-    return this.numSpecsFailed > 0;
+    return this.count.hasFailingSpecs();
   }
 
   @Override
@@ -63,38 +55,83 @@ final class ConsoleReporter implements Reporter {
 
   @Override
   public void runFinished() {
-    if(this.hasEverPrintedAnything)
+    boolean hasPrintedAtLeastOneLine = this.count.haveAnyCollectionsStarted() || this.count.haveAnySpecsFinished();
+    if(hasPrintedAtLeastOneLine)
       this.output.println();
 
-    this.output.println(String.format(
-      "[Testing complete] Passed: %d, Failed: %d, Total: %d",
-      this.numSpecsPassed,
-      this.numSpecsFailed,
-      this.numSpecsTotal
-    ));
+    this.count.printSpecTally(this.output);
   }
 
   @Override
   public void specStarting(Spec spec) {
     scopeForCurrentEvents().specStarting(spec);
-    this.numSpecsTotal++;
+    this.count.specStarting();
   }
 
   @Override
   public void specFailed(Spec spec) {
     scopeForCurrentEvents().specFailed(spec);
-    this.hasEverPrintedAnything = true;
-    this.numSpecsFailed++;
+    this.count.specFailed();
   }
 
   @Override
   public void specPassed(Spec spec) {
     scopeForCurrentEvents().specPassed(spec);
-    this.hasEverPrintedAnything = true;
-    this.numSpecsPassed++;
+    this.count.specPassed();
   }
 
   private ReporterScope scopeForCurrentEvents() {
     return this.scopes.peekLast();
+  }
+
+  private static final class EventCounter {
+    private int numCollectionsStarted;
+    private int numSpecsFailed;
+    private int numSpecsPassed;
+    private int numSpecsTotal;
+
+    public EventCounter() {
+      this.numSpecsFailed = 0;
+      this.numSpecsPassed = 0;
+      this.numSpecsTotal = 0;
+    }
+
+    public void beginCollection() {
+      this.numCollectionsStarted++;
+    }
+
+    public boolean hasFailingSpecs() {
+      return this.numSpecsFailed > 0;
+    }
+
+    public boolean haveAnyCollectionsStarted() {
+      return this.numCollectionsStarted > 0;
+    }
+
+    public boolean haveAnySpecsFinished() {
+      return this.numSpecsFailed > 0
+        || this.numSpecsPassed > 0;
+    }
+
+    public void printSpecTally(PrintStream output) {
+      output.println(String.format(
+        "[Testing complete] Passed: %d, Failed: %d, Total: %d",
+        this.numSpecsPassed,
+        this.numSpecsFailed,
+        this.numSpecsTotal
+      ));
+    }
+
+    public void specStarting() {
+      this.numSpecsTotal++;
+    }
+
+    public void specFailed() {
+      this.numSpecsFailed++;
+    }
+
+    public void specPassed() {
+      this.numSpecsPassed++;
+    }
   }
 }

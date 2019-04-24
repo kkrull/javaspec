@@ -51,7 +51,7 @@ Feature: Run specs with plaintext reporter
     [Testing complete] Passed: 1, Failed: 2, Total: 3
     """
 
-  
+
   Scenario: Nested context should be indented
     Given I have a JavaSpec runner for the console
     And I have specs that describe context-specific behavior
