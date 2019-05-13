@@ -357,6 +357,23 @@ public class ConsoleReporterTest {
     }
   }
 
+  public class runStarting {
+    public class whenCalledForASubsequentRun {
+      @Test
+      public void resetsSpecCounts() throws Exception {
+        subjectRuns(() -> {
+          Spec spec = anySpecNamed("behaves");
+          subject.specStarting(spec);
+          subject.specPassed(spec);
+        });
+        subjectRuns(() -> { });
+
+        String secondTestTally = "[Testing complete] Passed: 0, Failed: 0, Total: 0";
+        output.outputShouldBe(endsWith(secondTestTally + System.lineSeparator()));
+      }
+    }
+  }
+
   public class writeMessage {
     @Test
     public void printsThoseLinesWithoutIndentation() throws Exception {

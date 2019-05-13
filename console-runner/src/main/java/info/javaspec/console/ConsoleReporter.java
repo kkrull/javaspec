@@ -50,6 +50,7 @@ final class ConsoleReporter implements Reporter {
 
   @Override
   public void runStarting() {
+    this.count.reset();
     this.scopes.addLast(ReporterScope.forRoot(this.output));
   }
 
@@ -120,6 +121,12 @@ final class ConsoleReporter implements Reporter {
         this.numSpecsFailed,
         this.numSpecsTotal
       ));
+    }
+
+    public void reset() {
+      this.numSpecsFailed = 0;
+      this.numSpecsPassed = 0;
+      this.numSpecsTotal = 0;
     }
 
     public void specStarting() {

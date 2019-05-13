@@ -24,7 +24,7 @@ final class MockPrintStream extends PrintStream {
   }
 
   public void outputShouldBe(Matcher<String> matcher) {
-    assertThat(this.printedBytes.toString(), matcher);
+    assertThat(actualAsDocString(), this.printedBytes.toString(), matcher);
   }
 
   public void shouldHavePrintedLine(Matcher<String> matcher) {
