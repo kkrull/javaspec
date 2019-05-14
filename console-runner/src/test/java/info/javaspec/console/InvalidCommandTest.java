@@ -20,7 +20,7 @@ public class InvalidCommandTest {
     }
   }
 
-  public class noReporterDefied {
+  public class noReporterDefined {
     @Test
     public void reportsTheInvalidCommand() throws Exception {
       Exception command = InvalidCommand.noReporterDefined(Arrays.asList("run com.megacorp.widget"));
