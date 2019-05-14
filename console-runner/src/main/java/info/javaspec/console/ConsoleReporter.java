@@ -59,7 +59,7 @@ final class ConsoleReporter implements Reporter {
 
   @Override
   public void runFinished() {
-    boolean hasPrintedAtLeastOneLine = this.count.haveAnyCollectionsStarted() || this.count.haveAnySpecsFinished();
+    boolean hasPrintedAtLeastOneLine = this.count.haveAnyEventsOccurred();
     if(hasPrintedAtLeastOneLine)
       this.output.println();
 
@@ -109,13 +109,9 @@ final class ConsoleReporter implements Reporter {
       return this.numSpecsFailed > 0;
     }
 
-    public boolean haveAnyCollectionsStarted() {
-      return this.numCollectionsStarted > 0;
-    }
-
-    public boolean haveAnySpecsFinished() {
-      return this.numSpecsFailed > 0
-        || this.numSpecsPassed > 0;
+    public boolean haveAnyEventsOccurred() {
+      return this.numCollectionsStarted > 0
+        || this.numSpecsTotal > 0;
     }
 
     public void printSpecTally(PrintStream output) {
