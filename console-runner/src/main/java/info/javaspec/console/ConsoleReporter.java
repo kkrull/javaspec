@@ -50,6 +50,9 @@ final class ConsoleReporter implements Reporter {
 
   @Override
   public void runStarting() {
+    if(!this.scopes.isEmpty())
+      throw new RunAlreadyStarted();
+
     this.count.reset();
     this.scopes.addLast(ReporterScope.forRoot(this.output));
   }
@@ -61,6 +64,7 @@ final class ConsoleReporter implements Reporter {
       this.output.println();
 
     this.count.printSpecTally(this.output);
+    this.scopes.removeLast();
   }
 
   @Override
@@ -139,6 +143,14 @@ final class ConsoleReporter implements Reporter {
 
     public void specPassed() {
       this.numSpecsPassed++;
+    }
+  }
+
+  static class RunAlreadyStarted extends IllegalStateException {
+    public RunAlreadyStarted() {
+      super("Tried to start a new run, before finishing the current one."
+        + "  Please call #runFinished, first."
+      );
     }
   }
 }

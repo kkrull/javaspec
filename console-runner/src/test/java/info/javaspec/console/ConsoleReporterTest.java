@@ -3,6 +3,7 @@ package info.javaspec.console;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
+import info.javaspec.console.ConsoleReporter.RunAlreadyStarted;
 import info.javaspec.testutil.Assertions;
 import org.hamcrest.Matcher;
 import org.junit.Before;
@@ -358,6 +359,23 @@ public class ConsoleReporterTest {
   }
 
   public class runStarting {
+    public class whenCalledAgainBeforeFinishingAnEarlierRun {
+      @Test(expected = RunAlreadyStarted.class)
+      public void throwsRunAlreadyStarted() throws Exception {
+        subject.runStarting();
+        subject.runStarting();
+      }
+
+      @Test
+      public void theExceptionContainsAUsefulMessage() throws Exception {
+        Exception exception = new RunAlreadyStarted();
+        assertThat(exception.getMessage(),
+          equalTo("Tried to start a new run, before finishing the current one."
+            + "  Please call #runFinished, first.")
+        );
+      }
+    }
+
     public class whenCalledForASubsequentRun {
       @Test
       public void resetsSpecCounts() throws Exception {
