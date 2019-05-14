@@ -6,10 +6,7 @@ import static info.javaspec.lang.lambda.FunctionalDsl.it;
 public class Tightrope {
   {
     describe("Tightrope", () -> {
-      it("supports a coyote holding an anvil", () -> {
-        throw new AssertionError("tightrope stretched down to the ground");
-      });
-
+      it("sags to the ground, when a coyote with an anvil is standing on it", () -> { });
       it("recoils when the coyote drops the anvil", () -> { });
     });
   }

@@ -28,10 +28,10 @@ Feature: Run specs with plaintext reporter
     Then the runner's output should be
     """
     Tightrope
-    - supports a coyote holding an anvil: FAIL
+    - sags to the ground, when a coyote with an anvil is standing on it: PASS
     - recoils when the coyote drops the anvil: PASS
 
-    [Testing complete] Passed: 1, Failed: 1, Total: 2
+    [Testing complete] Passed: 2, Failed: 0, Total: 2
     """
 
 
@@ -42,13 +42,13 @@ Feature: Run specs with plaintext reporter
     Then the runner's output should be
     """
     Anvil
-    - falls on a passing road runner: FAIL
+    - levitates mid-air, to avoid falling on a passing road runner: PASS
 
     Tightrope
-    - supports a coyote holding an anvil: FAIL
+    - sags to the ground, when a coyote with an anvil is standing on it: PASS
     - recoils when the coyote drops the anvil: PASS
 
-    [Testing complete] Passed: 1, Failed: 2, Total: 3
+    [Testing complete] Passed: 3, Failed: 0, Total: 3
     """
 
 

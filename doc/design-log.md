@@ -2,20 +2,20 @@
 
 ## Coming up
 
+Features:
+
+- Report spec failures to the console reporter.
+  - This will cause `Spec#run` to pass the error to `SpecReporter#specFailed`.
+  - Format the console output.
+- Documented (tested) error reporting for things like not being able to find/load/instantiate a spec class.
+  It may be helpful to return a value type for the exit status, instead of a just the number, so the offending class can
+  be reported.
+
+
 Technical debt:
 
 - Put the Java artifacts on independent version numbers.  There really isn't any 2.x development on the artifacts that
   have already been released.
-
-
-Features:
-
-- Documented (tested) error reporting for things like not being able to find/load/instantiate a spec class.
-  It may be helpful to return a value type for the exit status, instead of a just the number, so the offending class can
-  be reported.
-- Report spec failures to the console reporter.
-  - This will cause `Spec#run` to pass the error to `SpecReporter#specFailed`.
-  - Format the console output.
 
 
 ## Clarifying the terminology
