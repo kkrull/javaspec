@@ -1,19 +1,19 @@
 package info.javaspec.console;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @RunWith(HierarchicalContextRunner.class)
-public class HelpCommandTest {
+public class DetailedHelpCommandTest {
   private Command subject;
   private MockHelpObserver observer;
 
@@ -21,7 +21,7 @@ public class HelpCommandTest {
     @Before
     public void setup() throws Exception {
       observer = new MockHelpObserver();
-      subject = new HelpCommand(observer);
+      subject = new DetailedHelpCommand(observer, "run");
     }
 
     @Test
@@ -31,16 +31,22 @@ public class HelpCommandTest {
     }
 
     @Test
-    public void writesGeneralForm() throws Exception {
+    public void writestheGeneralForm() throws Exception {
       subject.run();
-      observer.writeMessageShouldHaveReceivedLine("Usage: javaspec <command> [<arguments>]");
+      observer.writeMessageShouldHaveReceivedLine(startsWith("Usage:   javaspec run"));
     }
 
     @Test
-    public void listsEachKnownCommand() throws Exception {
+    public void writesAnExample() throws Exception {
       subject.run();
-      observer.writeMessageShouldHaveReceivedCommand("help", "show a list of commands, or help on a specific command");
-      observer.writeMessageShouldHaveReceivedCommand("run", "run specs in Java classes");
+      observer.writeMessageShouldHaveReceivedLine(startsWith("Example: javaspec run"));
+    }
+
+    @Test
+    public void listsEachOption() throws Exception {
+      subject.run();
+      observer.writeMessageShouldHaveReceivedLine(startsWith("--reporter=[reporter]"));
+      observer.writeMessageShouldHaveReceivedLine(containsString("plaintext"));
     }
   }
 
@@ -52,17 +58,8 @@ public class HelpCommandTest {
       this.writeMessageReceived.addAll(lines);
     }
 
-    public void writeMessageShouldHaveReceivedCommand(String command, String description) {
-      Optional<String> matchingLine = this.writeMessageReceived.stream()
-        .filter(line -> line.startsWith(command))
-        .findFirst();
-
-      assertThat(matchingLine.isPresent(), is(true));
-      assertThat(matchingLine.get(), endsWith(description));
-    }
-
-    public void writeMessageShouldHaveReceivedLine(String line) {
-      assertThat(this.writeMessageReceived, hasItem(equalTo(line)));
+    public void writeMessageShouldHaveReceivedLine(Matcher<String> lineMatcher) {
+      assertThat(this.writeMessageReceived, hasItem(lineMatcher));
     }
   }
 }

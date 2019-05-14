@@ -4,16 +4,19 @@ import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
 
 import java.io.PrintStream;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 
 final class ConsoleReporter implements Reporter {
   private final PrintStream output;
-  private int numStarted;
-  private int numFailed;
-  private int numPassed;
+  private final Deque<ReporterScope> scopes;
+  private final EventCounter count;
 
   public ConsoleReporter(PrintStream output) {
     this.output = output;
+    this.scopes = new ArrayDeque<>();
+    this.count = new EventCounter();
   }
 
   /* HelpObserver */
@@ -26,43 +29,124 @@ final class ConsoleReporter implements Reporter {
   /* RunObserver */
 
   @Override
+  public void beginCollection(SpecCollection collection) {
+    ReporterScope reportCurrentEvent = scopeForCurrentEvents();
+    reportCurrentEvent.beginCollection(collection);
+    this.count.beginCollection();
+
+    ReporterScope reportFutureEvents = ReporterScope.forCollection(collection, reportCurrentEvent);
+    this.scopes.addLast(reportFutureEvents);
+  }
+
+  @Override
+  public void endCollection(SpecCollection collection) {
+    this.scopes.removeLast();
+  }
+
+  @Override
   public boolean hasFailingSpecs() {
-    return numFailed > 0;
+    return this.count.hasFailingSpecs();
   }
 
   @Override
-  public void runStarting() { }
+  public void runStarting() {
+    if(!this.scopes.isEmpty())
+      throw new RunAlreadyStarted();
 
-  @Override
-  public void specStarting(Spec spec) {
-    this.numStarted++;
-    this.output.print(spec.intendedBehavior());
-  }
-
-  @Override
-  public void specFailed(Spec spec) {
-    this.numFailed++;
-    this.output.println(": FAIL");
-  }
-
-  @Override
-  public void specPassed(Spec spec) {
-    this.numPassed++;
-    this.output.println(": PASS");
-  }
-
-  @Override
-  public void collectionStarting(SpecCollection collection) {
-    this.output.println(collection.description());
+    this.count.reset();
+    this.scopes.addLast(ReporterScope.forRoot(this.output));
   }
 
   @Override
   public void runFinished() {
-    this.output.printf(
-      "Passed: %d\tFailed: %d\tTotal: %d\n",
-      this.numPassed,
-      this.numFailed,
-      this.numStarted
-    );
+    boolean hasPrintedAtLeastOneLine = this.count.haveAnyEventsOccurred();
+    if(hasPrintedAtLeastOneLine)
+      this.output.println();
+
+    this.count.printSpecTally(this.output);
+    this.scopes.removeLast();
+  }
+
+  @Override
+  public void specStarting(Spec spec) {
+    scopeForCurrentEvents().specStarting(spec);
+    this.count.specStarting();
+  }
+
+  @Override
+  public void specFailed(Spec spec) {
+    scopeForCurrentEvents().specFailed(spec);
+    this.count.specFailed();
+  }
+
+  @Override
+  public void specPassed(Spec spec) {
+    scopeForCurrentEvents().specPassed(spec);
+    this.count.specPassed();
+  }
+
+  private ReporterScope scopeForCurrentEvents() {
+    return this.scopes.peekLast();
+  }
+
+  private static final class EventCounter {
+    private int numCollectionsStarted;
+    private int numSpecsFailed;
+    private int numSpecsPassed;
+    private int numSpecsTotal;
+
+    public EventCounter() {
+      this.numSpecsFailed = 0;
+      this.numSpecsPassed = 0;
+      this.numSpecsTotal = 0;
+    }
+
+    public void beginCollection() {
+      this.numCollectionsStarted++;
+    }
+
+    public boolean hasFailingSpecs() {
+      return this.numSpecsFailed > 0;
+    }
+
+    public boolean haveAnyEventsOccurred() {
+      return this.numCollectionsStarted > 0
+        || this.numSpecsTotal > 0;
+    }
+
+    public void printSpecTally(PrintStream output) {
+      output.println(String.format(
+        "[Testing complete] Passed: %d, Failed: %d, Total: %d",
+        this.numSpecsPassed,
+        this.numSpecsFailed,
+        this.numSpecsTotal
+      ));
+    }
+
+    public void reset() {
+      this.numSpecsFailed = 0;
+      this.numSpecsPassed = 0;
+      this.numSpecsTotal = 0;
+    }
+
+    public void specStarting() {
+      this.numSpecsTotal++;
+    }
+
+    public void specFailed() {
+      this.numSpecsFailed++;
+    }
+
+    public void specPassed() {
+      this.numSpecsPassed++;
+    }
+  }
+
+  static class RunAlreadyStarted extends IllegalStateException {
+    public RunAlreadyStarted() {
+      super("Tried to start a new run, before finishing the current one."
+        + "  Please call #runFinished, first."
+      );
+    }
   }
 }

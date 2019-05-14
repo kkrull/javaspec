@@ -17,7 +17,7 @@ import static org.hamcrest.Matchers.*;
 
 @RunWith(HierarchicalContextRunner.class)
 public class SequentialCollectionTest {
-  private WritableSpecCollection subject;
+  private SequentialCollection subject;
 
   public class subCollections {
     public class whenNoSubCollectionsHaveBeenAdded {
@@ -27,7 +27,6 @@ public class SequentialCollectionTest {
         assertThat(subject.subCollections(), empty());
       }
     }
-
 
     public class whenOneOrMoreSubCollectionsHaveBeenAdded {
       private SpecCollection firstChild;
@@ -96,7 +95,9 @@ public class SequentialCollectionTest {
     public void reportsThatTheCollectionIsBeingRun() throws Exception {
       subject = new SequentialCollection(anyDescription());
       subject.runSpecs(observer);
-      Mockito.verify(observer).collectionStarting(subject);
+      Mockito.verify(observer).beginCollection(subject);
+      Mockito.verify(observer).endCollection(subject);
+      Mockito.verifyNoMoreInteractions(observer);
     }
 
     @Test

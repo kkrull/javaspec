@@ -1,36 +1,24 @@
 package info.javaspec.lang.lambda;
 
 import info.javaspec.RunObserver;
-import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-final class RootCollection implements WritableSpecCollection {
+/** The root of a composite SpecCollection.  It doesn't describe anything, so it has no specs; only children. */
+final class RootCollection implements CompositeSpecCollection {
   private final List<SpecCollection> children;
-  private final List<Spec> specs;
 
   public RootCollection() {
     this.children = new LinkedList<>();
-    this.specs = new LinkedList<>();
   }
 
   @Override
   public void addSubCollection(SpecCollection collection) {
     this.children.add(collection);
-  }
-
-  @Override
-  public void addSpec(Spec spec) {
-    this.specs.add(spec);
-  }
-
-  @Override
-  public List<SpecCollection> subCollections() {
-    return new ArrayList<>(this.children);
   }
 
   @Override
@@ -40,15 +28,18 @@ final class RootCollection implements WritableSpecCollection {
 
   @Override
   public List<String> intendedBehaviors() {
-    return this.specs.stream()
-      .map(Spec::intendedBehavior)
-      .collect(Collectors.toList());
+    return Collections.emptyList();
   }
 
   @Override
   public void runSpecs(RunObserver observer) {
-    observer.collectionStarting(this);
-    this.specs.forEach(x -> x.run(observer));
+    observer.runStarting();
     this.subCollections().forEach(x -> x.runSpecs(observer));
+    observer.runFinished();
+  }
+
+  @Override
+  public List<SpecCollection> subCollections() {
+    return new ArrayList<>(this.children);
   }
 }

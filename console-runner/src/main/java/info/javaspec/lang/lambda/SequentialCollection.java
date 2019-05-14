@@ -10,8 +10,8 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-/** Runs specs in the order they are added. */
-final class SequentialCollection implements WritableSpecCollection {
+/** Describes a subject with any number of specs and sub-collections, both of which run in the order they are added. */
+final class SequentialCollection implements SubjectCollection, CompositeSpecCollection {
   private final String description;
   private final List<Spec> specs;
   private final List<SpecCollection> children;
@@ -46,9 +46,10 @@ final class SequentialCollection implements WritableSpecCollection {
 
   @Override
   public void runSpecs(RunObserver observer) {
-    observer.collectionStarting(this);
+    observer.beginCollection(this);
     this.specs.forEach(x -> x.run(observer));
     this.children.forEach(x -> x.runSpecs(observer));
+    observer.endCollection(this);
   }
 
   @Override

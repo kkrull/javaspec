@@ -31,7 +31,11 @@ task :clean => 'java:clean'
 
 
 Cucumber::Rake::Task.new do |task|
-  task.cucumber_opts = %w[--tags 'not @wip']
+  task.cucumber_opts = %w[
+    --quiet
+    --strict
+    --tags 'not @wip'
+  ]
 end
 
 namespace :cucumber do
@@ -108,6 +112,15 @@ namespace :java do
   task :test do
     #Cucumber options: https://github.com/cucumber/cucumber-java-skeleton#overriding-options
     sh *%w[mvn verify]
+  end
+end
+
+
+namespace :jetbrains do
+  desc 'Remove all project files from Jetbrains IDEs'
+  task :reset do
+    sh *%w[rm -Rf .idea]
+    sh "find . -iname '*.iml' -print -exec rm -Rf {} +"
   end
 end
 

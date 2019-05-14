@@ -4,14 +4,12 @@
 
 Technical debt:
 
-- Break up and organize the Ruby feature tests now that there are a few more of them.
 - Put the Java artifacts on independent version numbers.  There really isn't any 2.x development on the artifacts that
   have already been released.
 
 
 Features:
 
-- Formatted test output.
 - Documented (tested) error reporting for things like not being able to find/load/instantiate a spec class.
   It may be helpful to return a value type for the exit status, instead of a just the number, so the offending class can
   be reported.

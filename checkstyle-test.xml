@@ -60,8 +60,6 @@ See http://checkstyle.sf.net for Checkstyle configuration options.
       <message key="name.invalidPattern" value="Class type name ''{0}'' must match pattern ''{1}''." />
     </module>
 
-    <module name="CommentsIndentation" />
-
     <module name="EmptyBlock">
       <property name="option" value="TEXT" />
       <property name="tokens" value="LITERAL_TRY, LITERAL_FINALLY, LITERAL_IF, LITERAL_ELSE, LITERAL_SWITCH" />
@@ -194,7 +192,7 @@ See http://checkstyle.sf.net for Checkstyle configuration options.
     </module>
 
     <module name="ParameterName">
-      <property name="format" value="^[a-z]([a-z0-9][a-zA-Z0-9]*)?$" />
+      <property name="format" value="^[a-z_]([a-z0-9][a-zA-Z0-9]*)?$" />
       <message key="name.invalidPattern" value="Parameter name ''{0}'' must match pattern ''{1}''." />
     </module>
 
