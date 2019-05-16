@@ -1,9 +1,9 @@
-package info.javaspec.example;
+package info.javaspec.example.java;
 
 import static info.javaspec.lang.lambda.FunctionalDsl.describe;
 import static info.javaspec.lang.lambda.FunctionalDsl.it;
 
-public final class OneSpies {
+public final class OneSpiesSpecs {
   public static int numTimesRan = 0;
 
   {

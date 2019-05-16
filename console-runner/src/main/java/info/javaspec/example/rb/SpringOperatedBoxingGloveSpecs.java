@@ -1,10 +1,10 @@
-package info.javaspec.example;
+package info.javaspec.example.rb;
 
 import static info.javaspec.lang.lambda.FunctionalDsl.describe;
 import static info.javaspec.lang.lambda.FunctionalDsl.it;
 
 //https://en.wikipedia.org/wiki/Beep,_Beep_(film)
-public class SpringOperatedBoxingGlove {
+public class SpringOperatedBoxingGloveSpecs {
   {
     describe("Spring-operated boxing glove", () -> {
       describe("when the spring expands", () -> {

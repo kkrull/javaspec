@@ -79,7 +79,7 @@ public class ArgumentParserTest {
     public class givenRunWithoutAReporterOption {
       @Test(expected = InvalidCommand.class)
       public void throwsAnError() throws Exception {
-        subject.parseCommand(Arrays.asList("run", "info.javaspec.example.AllPass"));
+        subject.parseCommand(Arrays.asList("run", "one"));
       }
     }
 

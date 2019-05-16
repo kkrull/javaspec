@@ -1,4 +1,4 @@
-package info.javaspec.example;
+package info.javaspec.example.java;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import static info.javaspec.lang.lambda.FunctionalDsl.describe;
 import static info.javaspec.lang.lambda.FunctionalDsl.it;
 
-public final class DescribeTwo {
+public final class DescribeTwoSpecs {
   public static List<String> descriptionsRan = new LinkedList<>();
 
   {

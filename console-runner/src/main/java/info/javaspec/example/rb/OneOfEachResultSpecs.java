@@ -1,11 +1,13 @@
-package info.javaspec.example;
+package info.javaspec.example.rb;
 
 import static info.javaspec.lang.lambda.FunctionalDsl.describe;
 import static info.javaspec.lang.lambda.FunctionalDsl.it;
 
-public class OneFails {
+public class OneOfEachResultSpecs {
   {
-    describe("OneFails", () -> {
+    describe("OneOfEachResult", () -> {
+      it("passes", () -> {});
+
       it("fails", () -> {
         throw new AssertionError("bang!");
       });

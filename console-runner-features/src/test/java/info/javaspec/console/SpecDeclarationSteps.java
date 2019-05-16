@@ -6,8 +6,8 @@ import cucumber.api.java.en.When;
 import info.javaspec.SpecCollection;
 import info.javaspec.console.helpers.SpecCollectionHelper;
 import info.javaspec.console.helpers.SpecHelper;
-import info.javaspec.example.DescribeTwo;
-import info.javaspec.example.OneSpies;
+import info.javaspec.example.java.DescribeTwoSpecs;
+import info.javaspec.example.java.OneSpiesSpecs;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,19 +34,19 @@ public class SpecDeclarationSteps {
 
   @Given("^I have a spec declaration that calls `it` with a lambda and a description of intended behavior$")
   public void iHaveASpecDeclarationCallingIt() throws Exception {
-    specHelper.setDeclaringClass(OneSpies.class);
+    specHelper.setDeclaringClass(OneSpiesSpecs.class);
     thatDescription = "OneSpies";
     thatIntendedBehavior = "does a thing";
-    specLambdasRan = () -> assertThat(OneSpies.numTimesRan, equalTo(1));
+    specLambdasRan = () -> assertThat(OneSpiesSpecs.numTimesRan, equalTo(1));
   }
 
   @Given(
     "^I have a spec declaration that calls `describe` with a class and a lambda containing 1 or more `it` statements$")
   public void iHaveASpecDeclarationCallingDescribe() throws Exception {
-    specHelper.setDeclaringClass(DescribeTwo.class);
+    specHelper.setDeclaringClass(DescribeTwoSpecs.class);
     thatDescription = "Illudium Q-36 Explosive Space Modulator";
     thoseIntendedBehaviors = new ArrayList<>(Arrays.asList("discombobulates", "explodes"));
-    specLambdasRan = () -> assertThat(DescribeTwo.descriptionsRan, equalTo(thoseIntendedBehaviors));
+    specLambdasRan = () -> assertThat(DescribeTwoSpecs.descriptionsRan, equalTo(thoseIntendedBehaviors));
   }
 
   @When("^I load the specs from that declaration$")
