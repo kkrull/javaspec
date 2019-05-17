@@ -1,4 +1,4 @@
-package info.javaspec.example.java;
+package info.javaspec.example.declaration;
 
 import java.util.LinkedList;
 import java.util.List;

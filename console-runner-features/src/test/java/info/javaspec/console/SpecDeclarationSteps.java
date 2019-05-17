@@ -6,8 +6,8 @@ import cucumber.api.java.en.When;
 import info.javaspec.SpecCollection;
 import info.javaspec.console.helpers.SpecCollectionHelper;
 import info.javaspec.console.helpers.SpecHelper;
-import info.javaspec.example.java.DescribeTwoSpecs;
-import info.javaspec.example.java.OneSpiesSpecs;
+import info.javaspec.example.declaration.DescribeTwoSpecs;
+import info.javaspec.example.declaration.OneSpiesSpecs;
 
 import java.util.ArrayList;
 import java.util.Arrays;

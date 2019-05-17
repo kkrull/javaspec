@@ -1,4 +1,4 @@
-package info.javaspec.example.java;
+package info.javaspec.example.declaration;
 
 import static info.javaspec.lang.lambda.FunctionalDsl.describe;
 import static info.javaspec.lang.lambda.FunctionalDsl.it;
