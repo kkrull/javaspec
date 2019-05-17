@@ -2,6 +2,13 @@
 
 ## Coming up
 
+Technical debt:
+
+- Put the Java artifacts on independent version numbers.  There really isn't any 2.x development on the artifacts that
+  have already been released.
+- Switch to whatever license JUnit is using, to remove a potential blocker of adoption.
+
+
 Features:
 
 - Report spec failures to the console reporter.

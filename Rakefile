@@ -46,7 +46,7 @@ namespace :cucumber do
 
   desc 'Run Cucumber scenarios tagged with @focus'
   task :focus do
-    sh *%w[bundle exec cucumber -t @focus]
+    sh *%w[cucumber -t @focus]
   end
 end
 
@@ -144,4 +144,3 @@ namespace :travis do
     sh *%w[travis lint]
   end
 end
-

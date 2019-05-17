@@ -182,6 +182,7 @@
     <module>javaspec-sandbox</module>
     <module>console-runner</module>
     <module>console-runner-features</module>
+    <module>examples</module>
   </modules>
 
   <name>JavaSpec</name>

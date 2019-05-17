@@ -75,7 +75,7 @@ class SpecRunnerContext
   end
 
   def spec_class_dir
-    File.expand_path '../../../../console-runner/target/classes', __FILE__
+    File.expand_path '../../../../examples/target/classes', __FILE__
   end
 
   def spec_class_file(class_file)
