@@ -180,6 +180,7 @@
   <modules>
     <module>javaspec-runner</module>
     <module>javaspec-sandbox</module>
+    <module>lambda-api</module>
     <module>console-runner</module>
     <module>console-runner-features</module>
     <module>examples</module>

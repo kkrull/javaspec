@@ -32,7 +32,7 @@ class SpecRunnerContext
 
   def exec!(logger, args: [], fail_on_error: true)
     verify_class_files_exist
-    command = "java -cp #{runner_class_dir}:#{spec_class_dir} #{runner_class} #{args.join(' ')}"
+    command = "java -cp #{api_class_dir}:#{runner_class_dir}:#{spec_class_dir} #{runner_class} #{args.join(' ')}"
     logger.command_starting command
     run_simple command, fail_on_error: fail_on_error
   end
@@ -64,6 +64,10 @@ class SpecRunnerContext
     spec_classes.each do |class_name|
       expect(spec_class_file(class_name)).to be_an_existing_file
     end
+  end
+
+  def api_class_dir
+    File.expand_path '../../../../lambda-api/target/classes', __FILE__
   end
 
   def runner_class_dir

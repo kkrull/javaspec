@@ -20,8 +20,8 @@ namespace :checkstyle do
   desc 'Perform static analysis on Java code'
   task :run => :download do
     # http://checkstyle.sourceforge.net/cmdline.html#Download_and_Run
-    sh *%W[java -jar #{local_path} -c ./checkstyle-main.xml console-runner/src/main/java console-runner-features/src/main/java]
-    sh *%W[java -jar #{local_path} -c ./checkstyle-test.xml console-runner/src/test/java console-runner-features/src/test/java]
+    sh *%W[java -jar #{local_path} -c ./checkstyle-main.xml console-runner/src/main/java lambda-api/src/main/java]
+    sh *%W[java -jar #{local_path} -c ./checkstyle-test.xml console-runner/src/test/java console-runner-features/src/test/java lambda-api/src/test/java]
   end
 end
 
