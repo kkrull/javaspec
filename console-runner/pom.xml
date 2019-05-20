@@ -18,6 +18,10 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>info.javaspec</groupId>
+      <artifactId>lambda-api</artifactId>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
