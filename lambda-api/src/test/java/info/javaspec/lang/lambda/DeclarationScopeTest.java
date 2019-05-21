@@ -12,7 +12,6 @@ import org.mockito.Mockito;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static info.javaspec.testutil.Assertions.capture;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -133,13 +132,10 @@ public class DeclarationScopeTest {
   }
 
   public class createSpec {
-    @Test
+    @Test(expected = NoSubjectDefined.class)
     public void throwsWhenNoSubjectHasBeenDefined() throws Exception {
       scope = anyDeclarationScope();
-      Exception exception = capture(NoSubjectDefined.class, () ->
-        scope.createSpec("goes boom", anyBehaviorVerification()));
-
-      assertThat(exception.getMessage(), equalTo("No subject defined for spec: goes boom"));
+      scope.createSpec("goes boom", anyBehaviorVerification());
     }
   }
 
