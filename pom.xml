@@ -95,6 +95,11 @@
         <artifactId>javaspec-sandbox</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>info.javaspec</groupId>
+        <artifactId>lambda-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>com.google.guava</groupId>
@@ -180,8 +185,10 @@
   <modules>
     <module>javaspec-runner</module>
     <module>javaspec-sandbox</module>
+    <module>lambda-api</module>
     <module>console-runner</module>
     <module>console-runner-features</module>
+    <module>examples</module>
   </modules>
 
   <name>JavaSpec</name>

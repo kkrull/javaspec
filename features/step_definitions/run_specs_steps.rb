@@ -1,7 +1,7 @@
 ## Steps focused on how JavaSpecs runs specs
 
 Given(/^I have a Java class that defines a suite of lambda specs$/) do
-  spec_runner_helper.spec_classes = ['info.javaspec.example.OneOfEachResult']
+  spec_runner_helper.spec_classes = ['info.javaspec.example.rb.OneOfEachResultSpecs']
 
   spec_runner_helper.spec_run_verification do |output|
     expect(output).to match(/passes/)
@@ -15,7 +15,7 @@ Given(/^I have a Java class that defines a suite of lambda specs$/) do
 end
 
 Given(/^I have a Java class that defines a suite of lambda specs describing a subject$/) do
-  spec_runner_helper.spec_classes = ['info.javaspec.example.DescribeTwo']
+  spec_runner_helper.spec_classes = ['info.javaspec.example.rb.DescribeTwoSpecs']
 
   spec_runner_helper.spec_run_verification do |output|
     expect(output).to match(/discombobulates/)
@@ -29,7 +29,7 @@ Given(/^I have a Java class that defines a suite of lambda specs describing a su
 end
 
 Given(/^I have 1 or more Java classes that defines lambda specs$/) do
-  spec_runner_helper.spec_classes = %w[info.javaspec.example.AllPass info.javaspec.example.OneFails]
+  spec_runner_helper.spec_classes = %w[info.javaspec.example.rb.AllPassSpecs info.javaspec.example.rb.OneFailsSpecs]
 
   spec_runner_helper.spec_run_verification do |output|
     expect(output).to match(/^AllPass/)
@@ -43,7 +43,7 @@ Given(/^I have 1 or more Java classes that defines lambda specs$/) do
 end
 
 Given(/^I have 2 or more spec collections with a variety of results$/) do
-  spec_runner_helper.spec_classes = %w[info.javaspec.example.BeepBeep]
+  spec_runner_helper.spec_classes = %w[info.javaspec.example.rb.BeepBeepSpecs]
 end
 
 When(/^I run the specs in those classes$/) do

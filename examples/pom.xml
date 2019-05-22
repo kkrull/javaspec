@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>info.javaspec</groupId>
+    <artifactId>javaspec</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>examples</artifactId>
+  <version>2.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>info.javaspec</groupId>
+      <artifactId>console-runner</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>info.javaspec</groupId>
+      <artifactId>lambda-api</artifactId>
+    </dependency>
+  </dependencies>
+
+  <description>Example specs used for testing</description>
+
+  <name>JavaSpec: Examples</name>
+</project>

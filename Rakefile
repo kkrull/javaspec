@@ -20,8 +20,8 @@ namespace :checkstyle do
   desc 'Perform static analysis on Java code'
   task :run => :download do
     # http://checkstyle.sourceforge.net/cmdline.html#Download_and_Run
-    sh *%W[java -jar #{local_path} -c ./checkstyle-main.xml console-runner/src/main/java console-runner-features/src/main/java]
-    sh *%W[java -jar #{local_path} -c ./checkstyle-test.xml console-runner/src/test/java console-runner-features/src/test/java]
+    sh *%W[java -jar #{local_path} -c ./checkstyle-main.xml console-runner/src/main/java lambda-api/src/main/java]
+    sh *%W[java -jar #{local_path} -c ./checkstyle-test.xml console-runner/src/test/java console-runner-features/src/test/java lambda-api/src/test/java]
   end
 end
 
@@ -46,7 +46,7 @@ namespace :cucumber do
 
   desc 'Run Cucumber scenarios tagged with @focus'
   task :focus do
-    sh *%w[bundle exec cucumber -t @focus]
+    sh *%w[cucumber -t @focus]
   end
 end
 
@@ -144,4 +144,3 @@ namespace :travis do
     sh *%w[travis lint]
   end
 end
-

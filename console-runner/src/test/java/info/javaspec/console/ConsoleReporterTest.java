@@ -4,7 +4,6 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
 import info.javaspec.console.ConsoleReporter.RunAlreadyStarted;
-import info.javaspec.testutil.Assertions;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
@@ -425,7 +424,7 @@ public class ConsoleReporterTest {
 
   /* Action helpers */
 
-  private void subjectRuns(Assertions.Thunk thunk) throws Exception {
+  private void subjectRuns(Thunk thunk) throws Exception {
     subject.runStarting();
     thunk.run();
     subject.runFinished();
@@ -433,5 +432,11 @@ public class ConsoleReporterTest {
 
   private Matcher<String> testTallyMatcher() {
     return startsWith("[Testing complete]");
+  }
+
+
+  @FunctionalInterface
+  public interface Thunk {
+    void run() throws Exception;
   }
 }

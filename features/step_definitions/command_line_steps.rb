@@ -5,11 +5,11 @@ Given(/^I have a JavaSpec runner for the console$/) do
 end
 
 Given(/^I have a Java class that defines a suite of passing lambda specs$/) do
-  spec_runner_helper.spec_classes = ['info.javaspec.example.AllPass']
+  spec_runner_helper.spec_classes = ['info.javaspec.example.rb.AllPassSpecs']
 end
 
 Given(/^I have a Java class that defines a suite of 1 or more failing lambda specs$/) do
-  spec_runner_helper.spec_classes = ['info.javaspec.example.OneFails']
+  spec_runner_helper.spec_classes = ['info.javaspec.example.rb.OneFailsSpecs']
 end
 
 When(/^I ask for help on the run command$/) do

@@ -4,6 +4,9 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import info.javaspec.MockReporter;
+import info.javaspec.example.main.OneFailsSpecs;
+import info.javaspec.example.main.OneOfEachSpecs;
+import info.javaspec.example.main.OnePassesSpecs;
 
 /** Steps observing what happens in the overall process of running specs, from *within* the same process. */
 public class MainSteps {
@@ -29,17 +32,17 @@ public class MainSteps {
   @Given("^I have a Java class that defines a suite of lambda specs$")
   public void iHaveAJavaClassWithLambdaSpecs() throws Exception {
     this.execRunCommand = () -> {
-      MainStepsOneOfEach.reset();
+      OneOfEachSpecs.reset();
       Main.main(
         this.mockReporter,
         this.system,
         "run",
         "--reporter=plaintext",
-        MainStepsOneOfEach.class.getCanonicalName()
+        OneOfEachSpecs.class.getCanonicalName()
       );
     };
 
-    this.declaredSpecsRan = MainStepsOneOfEach::specsShouldHaveRun;
+    this.declaredSpecsRan = OneOfEachSpecs::specsShouldHaveRun;
     this.expectedResultsReported = () -> {
       this.mockReporter.specShouldHavePassed("passes");
       this.mockReporter.specShouldHaveFailed("fails");
@@ -53,7 +56,7 @@ public class MainSteps {
       this.system,
       "run",
       "--reporter=plaintext",
-      MainStepsOnePasses.class.getCanonicalName()
+      OnePassesSpecs.class.getCanonicalName()
     );
   }
 
@@ -64,7 +67,7 @@ public class MainSteps {
       this.system,
       "run",
       "--reporter=plaintext",
-      MainStepsOneFails.class.getCanonicalName()
+      OneFailsSpecs.class.getCanonicalName()
     );
   }
 

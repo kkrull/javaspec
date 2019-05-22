@@ -1,6 +1,7 @@
 package info.javaspec.console;
 
 import info.javaspec.RunObserver;
+import info.javaspec.console.help.HelpObserver;
 
 import java.util.List;
 
