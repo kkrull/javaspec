@@ -1,8 +1,10 @@
-package info.javaspec.console;
+package info.javaspec.console.help;
+
+import info.javaspec.console.Command;
 
 import java.util.Arrays;
 
-final class DetailedHelpCommand implements Command {
+public final class DetailedHelpCommand implements Command {
   private final HelpObserver observer;
   private final String forCommandNamed;
 

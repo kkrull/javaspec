@@ -1,6 +1,6 @@
 package info.javaspec.console;
 
 @FunctionalInterface
-interface Command {
+public interface Command {
   int run();
 }

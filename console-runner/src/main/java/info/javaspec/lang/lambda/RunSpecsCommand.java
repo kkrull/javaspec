@@ -1,10 +1,11 @@
-package info.javaspec.console;
+package info.javaspec.lang.lambda;
 
 import info.javaspec.RunObserver;
 import info.javaspec.SpecCollection;
+import info.javaspec.console.Command;
 import info.javaspec.lang.lambda.SpecCollectionFactory;
 
-final class RunSpecsCommand implements Command {
+public final class RunSpecsCommand implements Command {
   private final SpecCollectionFactory factory;
   private final RunObserver observer;
 

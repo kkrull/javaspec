@@ -1,6 +1,9 @@
-package info.javaspec.console;
+package info.javaspec.console.help;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
+import info.javaspec.console.Command;
+import info.javaspec.console.help.DetailedHelpCommand;
+import info.javaspec.console.help.HelpObserver;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,7 +1,7 @@
-package info.javaspec.console;
+package info.javaspec.console.help;
 
 import java.util.List;
 
-interface HelpObserver {
+public interface HelpObserver {
   void writeMessage(List<String> lines);
 }

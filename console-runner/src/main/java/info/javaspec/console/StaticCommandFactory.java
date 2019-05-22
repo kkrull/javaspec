@@ -1,7 +1,11 @@
 package info.javaspec.console;
 
 import info.javaspec.RunObserver;
+import info.javaspec.console.help.DetailedHelpCommand;
+import info.javaspec.console.help.HelpCommand;
+import info.javaspec.console.help.HelpObserver;
 import info.javaspec.lang.lambda.FunctionalDslFactory;
+import info.javaspec.lang.lambda.RunSpecsCommand;
 
 import java.util.List;
 
