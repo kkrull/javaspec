@@ -1,6 +1,6 @@
 package info.javaspec.lang.lambda;
 
-class Exceptions {
+final class Exceptions {
   public static final class DeclarationNotStarted extends IllegalStateException {
     DeclarationNotStarted() {
       super("No declaration has been started.  Has FunctionalDsl::openScope been called?");
