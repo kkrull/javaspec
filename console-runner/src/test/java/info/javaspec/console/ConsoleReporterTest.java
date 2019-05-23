@@ -424,7 +424,7 @@ public class ConsoleReporterTest {
 
   /* Action helpers */
 
-  private void subjectRuns(Thunk thunk) throws Exception {
+  private void subjectRuns(Thunk thunk) {
     subject.runStarting();
     thunk.run();
     subject.runFinished();
@@ -436,7 +436,7 @@ public class ConsoleReporterTest {
 
 
   @FunctionalInterface
-  public interface Thunk {
-    void run() throws Exception;
+  interface Thunk {
+    void run();
   }
 }
