@@ -6,6 +6,7 @@ import info.javaspec.SpecCollection;
 import info.javaspec.console.ConsoleReporter.RunAlreadyStarted;
 import org.hamcrest.Matcher;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -153,6 +154,22 @@ public class ConsoleReporterTest {
       });
 
       output.shouldHavePrintedLine(endsWith("behaves: FAIL"));
+    }
+
+    @Test @Ignore
+    public void showsTheStackTraceOfTheFailure() throws Exception {
+      subjectRuns(() -> {
+        Spec spec = anySpecNamed("behaves");
+        subject.specStarting(spec);
+        subject.specFailed(
+          spec,
+          new AssertionError("42 was supposed to be a satisfactory answer to the universe")
+        );
+      });
+
+      output.shouldHavePrintedLine(
+        startsWith("AssertionError: 42 was supposed to be a satisfactory answer to the universe")
+      );
     }
   }
 

@@ -42,6 +42,16 @@ public final class MockReporter implements Reporter {
     this.specFailedReceived.add(spec);
   }
 
+  @Override
+  public void specFailed(Spec spec, AssertionError _error) {
+    this.specFailedReceived.add(spec);
+  }
+
+  @Override
+  public void specFailed(Spec spec, Exception exception) {
+    this.specFailedReceived.add(spec);
+  }
+
   public void specShouldHaveFailed(String behavior) {
     List<String> failingSpecBehaviors = this.specFailedReceived.stream()
       .map(Spec::intendedBehavior)

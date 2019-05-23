@@ -48,24 +48,39 @@ public class DescriptiveSpecTest {
     @Test
     public void reportsAPassingSpecWhenTheVerificationDoesNotThrowAnything() throws Exception {
       subject = new DescriptiveSpec(anyIntendedBehavior(), anyBehaviorVerification());
+
       subject.run(observer);
       Mockito.verify(observer).specPassed(subject);
       Mockito.verify(observer, Mockito.never()).specFailed(subject);
+
+      Mockito.verify(observer, Mockito.never()).specFailed(
+        Mockito.same(subject),
+        Mockito.any(AssertionError.class)
+      );
+
+      Mockito.verify(observer, Mockito.never()).specFailed(
+        Mockito.same(subject),
+        Mockito.any(Exception.class)
+      );
     }
 
     @Test
     public void reportsAFailingSpecWhenTheVerificationThrowsAssertionError() throws Exception {
-      subject = new DescriptiveSpec(anyIntendedBehavior(), () -> { throw new AssertionError(); });
+      AssertionError error = new AssertionError();
+      subject = new DescriptiveSpec(anyIntendedBehavior(), () -> { throw error; });
+
       subject.run(observer);
-      Mockito.verify(observer).specFailed(subject);
+      Mockito.verify(observer).specFailed(subject, error);
       Mockito.verify(observer, Mockito.never()).specPassed(subject);
     }
 
     @Test
     public void reportsAFailingSpecWhenTheVerificationThrowsExceptions() throws Exception {
-      subject = new DescriptiveSpec(anyIntendedBehavior(), () -> { throw new RuntimeException(); });
+      RuntimeException exception = new RuntimeException();
+      subject = new DescriptiveSpec(anyIntendedBehavior(), () -> { throw exception; });
+
       subject.run(observer);
-      Mockito.verify(observer).specFailed(subject);
+      Mockito.verify(observer).specFailed(subject, exception);
       Mockito.verify(observer, Mockito.never()).specPassed(subject);
     }
   }

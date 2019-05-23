@@ -80,6 +80,18 @@ final class ConsoleReporter implements Reporter {
   }
 
   @Override
+  public void specFailed(Spec spec, AssertionError error) {
+    //TODO KDK: Implement
+    specFailed(spec);
+  }
+
+  @Override
+  public void specFailed(Spec spec, Exception exception) {
+    //TODO KDK: Implement
+    specFailed(spec);
+  }
+
+  @Override
   public void specPassed(Spec spec) {
     scopeForCurrentEvents().specPassed(spec);
     this.count.specPassed();

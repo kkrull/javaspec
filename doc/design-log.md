@@ -11,7 +11,7 @@ Technical debt:
 
 Features:
 
-- Report spec failures to the console reporter.
+- *wip* Report spec failures to the console reporter.
   - This will cause `Spec#run` to pass the error to `SpecReporter#specFailed`.
   - Format the console output.
 - Documented (tested) error reporting for things like not being able to find/load/instantiate a spec class.
