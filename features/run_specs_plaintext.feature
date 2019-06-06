@@ -67,3 +67,20 @@ Feature: Run specs with plaintext reporter
 
     [Testing complete] Passed: 2, Failed: 0, Total: 2
     """
+
+  
+  @wip
+  Scenario: Failing specs should report AssertionErrors
+    Given I have a JavaSpec runner for the console
+    And I have a failing spec
+    When I run those specs with a plain text reporter
+    Then the runner's output should be
+    """
+    Anvil (Coyote perspective)
+    - falls onto a passing road runner: FAIL [1]
+
+    Specs failed:
+    [1] AssertionError: The anvil was supposed to fall, but it is levitating in mid-air
+
+    [Testing complete] Passed: 0, Failed: 1, Total: 1
+    """
