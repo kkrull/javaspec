@@ -68,11 +68,12 @@ Feature: Run specs with plaintext reporter
     [Testing complete] Passed: 2, Failed: 0, Total: 2
     """
 
-  
+
   @wip
-  Scenario: Failing specs should report AssertionErrors
+  @focus
+  Scenario: Failing specs should report failure details
     Given I have a JavaSpec runner for the console
-    And I have a failing spec
+    And I have specs where 1 or more of them fail
     When I run those specs with a plain text reporter
     Then the runner's output should be
     """
