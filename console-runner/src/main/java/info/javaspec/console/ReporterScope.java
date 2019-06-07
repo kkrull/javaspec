@@ -49,15 +49,15 @@ abstract class ReporterScope {
     this.output.print(this.specIndent + "- " + spec.intendedBehavior());
   }
 
-  public final void specFailed(Spec spec) {
+  public final void specFailed() {
     this.output.println(": FAIL");
   }
 
-  public final void specFailed(Spec spec, int referenceNumber) {
+  public final void specFailed(int referenceNumber) {
     this.output.println(String.format(": FAIL [%d]", referenceNumber));
   }
 
-  public final void specPassed(Spec spec) {
+  public final void specPassed() {
     this.output.println(": PASS");
   }
 

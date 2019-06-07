@@ -75,26 +75,26 @@ final class ConsoleReporter implements Reporter {
 
   @Override
   public void specFailed(Spec spec) { //TODO KDK: Remove
-    scopeForCurrentEvents().specFailed(spec);
+    scopeForCurrentEvents().specFailed();
     this.count.specFailed();
   }
 
   @Override
   public void specFailed(Spec spec, AssertionError error) {
     this.count.specFailed();
-    scopeForCurrentEvents().specFailed(spec, this.count.numSpecsFailed);
+    scopeForCurrentEvents().specFailed(this.count.numSpecsFailed);
 //    error.printStackTrace(this.output);
   }
 
   @Override
   public void specFailed(Spec spec, Exception exception) {
-    scopeForCurrentEvents().specFailed(spec);
+    scopeForCurrentEvents().specFailed();
     this.count.specFailed();
   }
 
   @Override
   public void specPassed(Spec spec) {
-    scopeForCurrentEvents().specPassed(spec);
+    scopeForCurrentEvents().specPassed();
     this.count.specPassed();
   }
 
