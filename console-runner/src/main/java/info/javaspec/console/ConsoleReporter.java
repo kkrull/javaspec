@@ -63,6 +63,11 @@ final class ConsoleReporter implements Reporter {
     if(hasPrintedAtLeastOneLine)
       this.output.println();
 
+    if(this.count.hasFailingSpecs()) {
+      this.output.println("Specs failed:");
+      this.output.println();
+    }
+
     this.count.printSpecTally(this.output);
     this.scopes.removeLast();
   }

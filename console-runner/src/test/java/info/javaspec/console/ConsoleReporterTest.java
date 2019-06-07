@@ -354,6 +354,26 @@ public class ConsoleReporterTest {
         output.shouldHavePrintedExactly(
           containsString("behaves"),
           isEmptyString(),
+          equalTo("Specs failed:"),
+          isEmptyString(),
+          testTallyMatcher()
+        );
+      }
+
+      @Test
+      public void summarizesFailingSpecs() throws Exception {
+        subjectRuns(() -> {
+          Spec spec = anySpecNamed("behaves");
+          subject.specStarting(spec);
+          subject.specFailed(spec, new AssertionError("bang!"));
+        });
+
+//          equalTo("[1] java.lang.AssertionError: bang!"),
+        output.shouldHavePrintedExactly(
+          containsString("behaves"),
+          isEmptyString(),
+          equalTo("Specs failed:"),
+          isEmptyString(),
           testTallyMatcher()
         );
       }
@@ -468,7 +488,6 @@ public class ConsoleReporterTest {
   private Matcher<String> testTallyMatcher() {
     return startsWith("[Testing complete]");
   }
-
 
   @FunctionalInterface
   interface Thunk {
