@@ -72,28 +72,30 @@ Feature: Run specs with plaintext reporter
   @focus
   @wip
   Scenario: Failing specs should report failure details
+    TODO KDK: The stack trace size may change.  Can the full trace be replaced with a single line, representing it?
+
     Given I have a JavaSpec runner for the console
     And I have specs where 1 or more of them fail
     When I run those specs with a plain text reporter
-    Then the runner's de-tabbed output should be
+    Then the runner's de-tracified output should be
     """
     Anvil (Coyote perspective)
     * falls onto a passing road runner: FAIL [1]
 
     Specs failed:
     [1] java.lang.AssertionError: The anvil was supposed to fall, but it is levitating in mid-air
-      at info.javaspec.example.rb.CoyoteAnvilSpecs.lambda$null$0(CoyoteAnvilSpecs.java:10)
-      at info.javaspec.lang.lambda.DescriptiveSpec.run(DescriptiveSpec.java:24)
-      at info.javaspec.lang.lambda.SequentialCollection.lambda$runSpecs$0(SequentialCollection.java:50)
-      at java.lang.Iterable.forEach(Iterable.java:75)
-      at info.javaspec.lang.lambda.SequentialCollection.runSpecs(SequentialCollection.java:50)
-      at info.javaspec.lang.lambda.RootCollection.lambda$runSpecs$0(RootCollection.java:37)
-      at java.util.ArrayList.forEach(ArrayList.java:1257)
-      at info.javaspec.lang.lambda.RootCollection.runSpecs(RootCollection.java:37)
-      at info.javaspec.lang.lambda.RunSpecsCommand.run(RunSpecsCommand.java:26)
-      at info.javaspec.console.Main.runCommand(Main.java:28)
-      at info.javaspec.console.Main.main(Main.java:20)
-      at info.javaspec.console.Main.main(Main.java:10)
+    ...stack trace...
+    ...stack trace...
+    ...stack trace...
+    ...stack trace...
+    ...stack trace...
+    ...stack trace...
+    ...stack trace...
+    ...stack trace...
+    ...stack trace...
+    ...stack trace...
+    ...stack trace...
+    ...stack trace...
 
     [Testing complete] Passed: 0, Failed: 1, Total: 1
     """
