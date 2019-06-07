@@ -195,7 +195,7 @@ public class ConsoleReporterTest {
         subject.specPassed(spec);
       });
 
-      output.shouldHavePrintedLine(containsString("- behaves"));
+      output.shouldHavePrintedLine(containsString("* behaves"));
     }
 
     public class whenCollectionContainingTheSpecIsIndented {
@@ -218,7 +218,7 @@ public class ConsoleReporterTest {
 
         output.shouldHavePrintedLines(
           startsWith("  inner"),
-          startsWith("  - spec")
+          startsWith("  * spec")
         );
       }
     }
@@ -241,7 +241,7 @@ public class ConsoleReporterTest {
           subject.endCollection(outer);
         });
 
-        output.shouldHavePrintedLine(startsWith("- outer spec"));
+        output.shouldHavePrintedLine(startsWith("* outer spec"));
       }
     }
 
@@ -263,7 +263,7 @@ public class ConsoleReporterTest {
           subject.endCollection(secondCollection);
         });
 
-        output.shouldHavePrintedLine(startsWith("- second spec"));
+        output.shouldHavePrintedLine(startsWith("* second spec"));
       }
     }
   }

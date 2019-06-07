@@ -28,8 +28,8 @@ Feature: Run specs with plaintext reporter
     Then the runner's output should be
     """
     Tightrope
-    - sags to the ground, when a coyote with an anvil is standing on it: PASS
-    - recoils when the coyote drops the anvil: PASS
+    * sags to the ground, when a coyote with an anvil is standing on it: PASS
+    * recoils when the coyote drops the anvil: PASS
 
     [Testing complete] Passed: 2, Failed: 0, Total: 2
     """
@@ -42,11 +42,11 @@ Feature: Run specs with plaintext reporter
     Then the runner's output should be
     """
     Anvil
-    - levitates mid-air, to avoid falling on a passing road runner: PASS
+    * levitates mid-air, to avoid falling on a passing road runner: PASS
 
     Tightrope
-    - sags to the ground, when a coyote with an anvil is standing on it: PASS
-    - recoils when the coyote drops the anvil: PASS
+    * sags to the ground, when a coyote with an anvil is standing on it: PASS
+    * recoils when the coyote drops the anvil: PASS
 
     [Testing complete] Passed: 3, Failed: 0, Total: 3
     """
@@ -60,10 +60,10 @@ Feature: Run specs with plaintext reporter
     """
     Spring-operated boxing glove
       when the spring expands
-      - pushes the rock holding it backwards: PASS
+      * pushes the rock holding it backwards: PASS
 
       when the spring contracts again
-      - punches any nearby coyote in the face: PASS
+      * punches any nearby coyote in the face: PASS
 
     [Testing complete] Passed: 2, Failed: 0, Total: 2
     """
@@ -78,7 +78,7 @@ Feature: Run specs with plaintext reporter
     Then the runner's output should be
     """
     Anvil (Coyote perspective)
-    - falls onto a passing road runner: FAIL [1]
+    * falls onto a passing road runner: FAIL [1]
 
     Specs failed:
     [1] java.lang.AssertionError: The anvil was supposed to fall, but it is levitating in mid-air

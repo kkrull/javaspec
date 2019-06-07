@@ -46,7 +46,7 @@ abstract class ReporterScope {
   protected abstract String howMuchToIndentSpecsInChildScope();
 
   public final void specStarting(Spec spec) {
-    this.output.print(this.specIndent + "- " + spec.intendedBehavior());
+    this.output.print(this.specIndent + "* " + spec.intendedBehavior());
   }
 
   public final void specFailed(int referenceNumber) {
