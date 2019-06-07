@@ -14,7 +14,7 @@ final class ConsoleReporter implements Reporter {
   private final PrintStream output;
   private final Deque<ReporterScope> scopes;
   private final EventCounter count;
-  private final Map<Integer, AssertionError> failures;
+  private final Map<Integer, Throwable> failures;
 
   public ConsoleReporter(PrintStream output) {
     this.output = output;
@@ -91,9 +91,10 @@ final class ConsoleReporter implements Reporter {
   }
 
   @Override
-  public void specFailed(Spec spec, Exception exception) {
-    scopeForCurrentEvents().specFailed();
+  public void specFailed(Spec spec, Exception failure) {
     this.count.specFailed();
+    scopeForCurrentEvents().specFailed(this.count.numSpecsFailed);
+    this.failures.put(this.count.numSpecsFailed, failure);
   }
 
   @Override
@@ -102,7 +103,7 @@ final class ConsoleReporter implements Reporter {
     this.count.specPassed();
   }
 
-  private void detailSpecFailure(int referenceNumber, AssertionError failure) {
+  private void detailSpecFailure(int referenceNumber, Throwable failure) {
     this.output.println(String.format(
       "[%d] %s: %s",
       referenceNumber,

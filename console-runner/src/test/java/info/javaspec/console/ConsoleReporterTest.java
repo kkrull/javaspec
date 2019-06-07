@@ -165,25 +165,11 @@ public class ConsoleReporterTest {
 
         Spec two = anySpecNamed("fails twice");
         subject.specStarting(two);
-        subject.specFailed(two, new AssertionError("bang!"));
+        subject.specFailed(two, new RuntimeException("bang!"));
       });
 
       output.shouldHavePrintedLine(endsWith("fails once: FAIL [1]"));
       output.shouldHavePrintedLine(endsWith("fails twice: FAIL [2]"));
-    }
-
-    @Test
-    @Ignore
-    public void showsTheStackTraceOfTheFailure() throws Exception {
-      subjectRuns(() -> {
-        Spec spec = anySpecNamed("behaves");
-        subject.specStarting(spec);
-        subject.specFailed(spec, new AssertionError("bang!"));
-      });
-
-      output.shouldHavePrintedLine(
-        startsWith("java.lang.AssertionError: bang!")
-      );
     }
   }
 
@@ -367,18 +353,13 @@ public class ConsoleReporterTest {
 
           Spec secondSpec = anySpecNamed("fails twice");
           subject.specStarting(secondSpec);
-          subject.specFailed(secondSpec, new AssertionError("bang two!"));
+          subject.specFailed(secondSpec, new RuntimeException("bang two!"));
         });
 
-        output.shouldHavePrintedExactly(
-          containsString("fails once"),
-          containsString("fails twice"),
-          isEmptyString(),
+        output.shouldHavePrintedLines(
           equalTo("Specs failed:"),
           equalTo("[1] java.lang.AssertionError: bang one!"),
-          equalTo("[2] java.lang.AssertionError: bang two!"),
-          isEmptyString(),
-          testTallyMatcher()
+          equalTo("[2] java.lang.RuntimeException: bang two!")
         );
       }
     }
