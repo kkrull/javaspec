@@ -4,21 +4,19 @@ import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
 
 import java.io.PrintStream;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
 
 final class ConsoleReporter implements Reporter {
   private final PrintStream output;
   private final Deque<ReporterScope> scopes;
   private final EventCounter count;
-  private AssertionError failure;
-  private int failureNumber;
+  private final Map<Integer, AssertionError> failures;
 
   public ConsoleReporter(PrintStream output) {
     this.output = output;
     this.scopes = new ArrayDeque<>();
     this.count = new EventCounter();
+    this.failures = new LinkedHashMap<>();
   }
 
   /* HelpObserver */
@@ -67,12 +65,16 @@ final class ConsoleReporter implements Reporter {
 
     if(this.count.hasFailingSpecs()) {
       this.output.println("Specs failed:");
-      this.output.println(String.format(
-        "[%d] %s: %s",
-        this.failureNumber,
-        this.failure.getClass().getName(),
-        this.failure.getMessage()
-      ));
+      for(Map.Entry<Integer, AssertionError> entry : failures.entrySet()) {
+        int failureNumber = entry.getKey();
+        AssertionError failure = entry.getValue();
+        this.output.println(String.format(
+          "[%d] %s: %s",
+          failureNumber,
+          failure.getClass().getName(),
+          failure.getMessage()
+        ));
+      }
 
       this.output.println();
     }
@@ -91,8 +93,7 @@ final class ConsoleReporter implements Reporter {
   public void specFailed(Spec spec, AssertionError error) {
     this.count.specFailed();
     scopeForCurrentEvents().specFailed(this.count.numSpecsFailed);
-    this.failure = error;
-    this.failureNumber = this.count.numSpecsFailed;
+    this.failures.put(this.count.numSpecsFailed, error);
   }
 
   @Override

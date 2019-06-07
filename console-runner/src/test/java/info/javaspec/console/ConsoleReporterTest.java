@@ -360,16 +360,22 @@ public class ConsoleReporterTest {
       @Test
       public void summarizesFailingSpecs() throws Exception {
         subjectRuns(() -> {
-          Spec spec = anySpecNamed("behaves");
-          subject.specStarting(spec);
-          subject.specFailed(spec, new AssertionError("bang!"));
+          Spec firstSpec = anySpecNamed("fails once");
+          subject.specStarting(firstSpec);
+          subject.specFailed(firstSpec, new AssertionError("bang one!"));
+
+          Spec secondSpec = anySpecNamed("fails twice");
+          subject.specStarting(secondSpec);
+          subject.specFailed(secondSpec, new AssertionError("bang two!"));
         });
 
         output.shouldHavePrintedExactly(
-          containsString("behaves"),
+          containsString("fails once"),
+          containsString("fails twice"),
           isEmptyString(),
           equalTo("Specs failed:"),
-          equalTo("[1] java.lang.AssertionError: bang!"),
+          equalTo("[1] java.lang.AssertionError: bang one!"),
+          equalTo("[2] java.lang.AssertionError: bang two!"),
           isEmptyString(),
           testTallyMatcher()
         );
