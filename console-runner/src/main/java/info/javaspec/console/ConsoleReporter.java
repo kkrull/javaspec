@@ -83,8 +83,7 @@ final class ConsoleReporter implements Reporter {
   public void specFailed(Spec spec, AssertionError error) {
     //TODO KDK: Implement
     specFailed(spec);
-    this.output.println("AssertionError: bang!");
-    //this.output.println("AssertionError: 42 was supposed to be a satisfactory answer to the universe");
+    error.printStackTrace(this.output);
   }
 
   @Override

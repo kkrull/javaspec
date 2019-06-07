@@ -14,7 +14,7 @@ Given(/^I have a Java class with specs that pass, as well as specs that fail$/) 
   end
 
   spec_runner_helper.spec_error_verification do |output|
-    expect(output).to match(/AssertionError: bang!/)
+    expect(output).to match(/java.lang.AssertionError: bang!/)
   end
 end
 

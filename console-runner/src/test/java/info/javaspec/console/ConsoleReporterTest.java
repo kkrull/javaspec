@@ -168,7 +168,7 @@ public class ConsoleReporterTest {
       });
 
       output.shouldHavePrintedLine(
-        startsWith("AssertionError: bang!")
+        startsWith("java.lang.AssertionError: bang!")
       );
     }
   }
