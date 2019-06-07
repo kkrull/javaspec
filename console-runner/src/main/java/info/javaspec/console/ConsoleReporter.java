@@ -4,7 +4,11 @@ import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
 
 import java.io.PrintStream;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 final class ConsoleReporter implements Reporter {
   private final PrintStream output;
@@ -65,17 +69,7 @@ final class ConsoleReporter implements Reporter {
 
     if(this.count.hasFailingSpecs()) {
       this.output.println("Specs failed:");
-      for(Map.Entry<Integer, AssertionError> entry : failures.entrySet()) {
-        int failureNumber = entry.getKey();
-        AssertionError failure = entry.getValue();
-        this.output.println(String.format(
-          "[%d] %s: %s",
-          failureNumber,
-          failure.getClass().getName(),
-          failure.getMessage()
-        ));
-      }
-
+      failures.forEach(this::detailSpecFailure);
       this.output.println();
     }
 
@@ -90,10 +84,10 @@ final class ConsoleReporter implements Reporter {
   }
 
   @Override
-  public void specFailed(Spec spec, AssertionError error) {
+  public void specFailed(Spec spec, AssertionError failure) {
     this.count.specFailed();
     scopeForCurrentEvents().specFailed(this.count.numSpecsFailed);
-    this.failures.put(this.count.numSpecsFailed, error);
+    this.failures.put(this.count.numSpecsFailed, failure);
   }
 
   @Override
@@ -106,6 +100,15 @@ final class ConsoleReporter implements Reporter {
   public void specPassed(Spec spec) {
     scopeForCurrentEvents().specPassed();
     this.count.specPassed();
+  }
+
+  private void detailSpecFailure(int referenceNumber, AssertionError failure) {
+    this.output.println(String.format(
+      "[%d] %s: %s",
+      referenceNumber,
+      failure.getClass().getName(),
+      failure.getMessage()
+    ));
   }
 
   private ReporterScope scopeForCurrentEvents() {

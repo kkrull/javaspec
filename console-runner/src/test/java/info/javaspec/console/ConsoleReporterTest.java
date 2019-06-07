@@ -344,7 +344,7 @@ public class ConsoleReporterTest {
       }
 
       @Test
-      public void startsANewParagraph() throws Exception {
+      public void startsANewParagraphToListSpecFailures() throws Exception {
         subjectRuns(() -> {
           Spec spec = anySpecNamed("behaves");
           subject.specStarting(spec);
@@ -353,12 +353,13 @@ public class ConsoleReporterTest {
 
         output.shouldHavePrintedLines(
           containsString("behaves"),
-          isEmptyString()
+          isEmptyString(),
+          equalTo("Specs failed:")
         );
       }
 
       @Test
-      public void summarizesFailingSpecs() throws Exception {
+      public void detailsFailingSpecs() throws Exception {
         subjectRuns(() -> {
           Spec firstSpec = anySpecNamed("fails once");
           subject.specStarting(firstSpec);
