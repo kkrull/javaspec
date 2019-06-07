@@ -362,6 +362,20 @@ public class ConsoleReporterTest {
           equalTo("[2] java.lang.RuntimeException: bang two!")
         );
       }
+
+      @Test
+      public void printsStackTracesFromEachFailure() throws Exception {
+        subjectRuns(() -> {
+          Spec spec = anySpecNamed("fails");
+          subject.specStarting(spec);
+          subject.specFailed(spec, new AssertionError("bang!"));
+        });
+
+        output.shouldHavePrintedLines(
+          equalTo("[1] java.lang.AssertionError: bang!"),
+          containsString("at info.javaspec.console.ConsoleReporterTest")
+        );
+      }
     }
 
     public class givenOneOrMorePassingSpecs {

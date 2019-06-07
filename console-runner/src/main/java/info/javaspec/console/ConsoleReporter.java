@@ -104,12 +104,8 @@ final class ConsoleReporter implements Reporter {
   }
 
   private void detailSpecFailure(int referenceNumber, Throwable failure) {
-    this.output.println(String.format(
-      "[%d] %s: %s",
-      referenceNumber,
-      failure.getClass().getName(),
-      failure.getMessage()
-    ));
+    this.output.printf("[%d] ", referenceNumber);
+    failure.printStackTrace(this.output);
   }
 
   private ReporterScope scopeForCurrentEvents() {

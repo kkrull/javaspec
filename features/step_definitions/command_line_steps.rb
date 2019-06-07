@@ -33,6 +33,13 @@ Then(/^the runner's output should be$/) do |text|
   expect(spec_runner_helper.runner_output.rstrip).to eq(text)
 end
 
+Then(/^the runner's de-tabbed output should be$/) do |text|
+  # Somehow the Gherkin docstring doesn't end in a newline, even though it's there
+  newline_gone = spec_runner_helper.runner_output.rstrip
+  translated = newline_gone.gsub("\t", '  ')
+  expect(translated).to eq(text)
+end
+
 Then(/^The runner should indicate that all specs passed$/) do
   expect(spec_runner_helper.exit_status).to eq(0)
   expect(spec_runner_helper.runner_output).to include("[Testing complete] Passed: 1, Failed: 0, Total: 1")
