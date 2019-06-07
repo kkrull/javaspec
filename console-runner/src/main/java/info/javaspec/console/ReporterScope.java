@@ -53,6 +53,10 @@ abstract class ReporterScope {
     this.output.println(": FAIL");
   }
 
+  public final void specFailed(Spec spec, int referenceNumber) {
+    this.output.println(String.format(": FAIL [%d]", referenceNumber));
+  }
+
   public final void specPassed(Spec spec) {
     this.output.println(": PASS");
   }

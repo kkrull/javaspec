@@ -10,7 +10,7 @@ Given(/^I have a Java class with specs that pass, as well as specs that fail$/) 
 
   spec_runner_helper.spec_result_verification do |output|
     expect(output).to match(/passes: PASS$/)
-    expect(output).to match(/fails: FAIL$/)
+    expect(output).to match(/fails: FAIL/)
   end
 
   spec_runner_helper.spec_error_verification do |output|

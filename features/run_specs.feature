@@ -12,6 +12,7 @@ Feature: Run command (external process)
   ## Run basics: What does executing the `run` command tell the developer?
 
   @focus
+  @wip
   Scenario: The CLI should run specs and tell you what happened
     Given I have a JavaSpec runner for the console
     And I have a Java class with specs that pass, as well as specs that fail
