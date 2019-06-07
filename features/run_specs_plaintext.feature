@@ -81,7 +81,7 @@ Feature: Run specs with plaintext reporter
     - falls onto a passing road runner: FAIL [1]
 
     Specs failed:
-    [1] AssertionError: The anvil was supposed to fall, but it is levitating in mid-air
+    [1] java.lang.AssertionError: The anvil was supposed to fall, but it is levitating in mid-air
 
     [Testing complete] Passed: 0, Failed: 1, Total: 1
     """

@@ -351,12 +351,9 @@ public class ConsoleReporterTest {
           subject.specFailed(spec, anySpecFailure());
         });
 
-        output.shouldHavePrintedExactly(
+        output.shouldHavePrintedLines(
           containsString("behaves"),
-          isEmptyString(),
-          equalTo("Specs failed:"),
-          isEmptyString(),
-          testTallyMatcher()
+          isEmptyString()
         );
       }
 
@@ -368,11 +365,11 @@ public class ConsoleReporterTest {
           subject.specFailed(spec, new AssertionError("bang!"));
         });
 
-//          equalTo("[1] java.lang.AssertionError: bang!"),
         output.shouldHavePrintedExactly(
           containsString("behaves"),
           isEmptyString(),
           equalTo("Specs failed:"),
+          equalTo("[1] java.lang.AssertionError: bang!"),
           isEmptyString(),
           testTallyMatcher()
         );

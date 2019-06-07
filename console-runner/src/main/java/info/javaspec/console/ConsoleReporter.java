@@ -12,6 +12,8 @@ final class ConsoleReporter implements Reporter {
   private final PrintStream output;
   private final Deque<ReporterScope> scopes;
   private final EventCounter count;
+  private AssertionError failure;
+  private int failureNumber;
 
   public ConsoleReporter(PrintStream output) {
     this.output = output;
@@ -65,6 +67,13 @@ final class ConsoleReporter implements Reporter {
 
     if(this.count.hasFailingSpecs()) {
       this.output.println("Specs failed:");
+      this.output.println(String.format(
+        "[%d] %s: %s",
+        this.failureNumber,
+        this.failure.getClass().getName(),
+        this.failure.getMessage()
+      ));
+
       this.output.println();
     }
 
@@ -82,7 +91,8 @@ final class ConsoleReporter implements Reporter {
   public void specFailed(Spec spec, AssertionError error) {
     this.count.specFailed();
     scopeForCurrentEvents().specFailed(this.count.numSpecsFailed);
-//    error.printStackTrace(this.output);
+    this.failure = error;
+    this.failureNumber = this.count.numSpecsFailed;
   }
 
   @Override
