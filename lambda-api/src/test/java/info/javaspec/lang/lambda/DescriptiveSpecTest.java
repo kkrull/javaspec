@@ -51,7 +51,6 @@ public class DescriptiveSpecTest {
 
       subject.run(observer);
       Mockito.verify(observer).specPassed(subject);
-      Mockito.verify(observer, Mockito.never()).specFailed(subject);
 
       Mockito.verify(observer, Mockito.never()).specFailed(
         Mockito.same(subject),

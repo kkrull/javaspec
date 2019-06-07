@@ -11,8 +11,6 @@ public interface RunObserver {
 
   void specStarting(Spec spec);
 
-  void specFailed(Spec spec); //TODO KDK: Remove
-
   void specFailed(Spec spec, AssertionError error);
 
   void specFailed(Spec spec, Exception exception);

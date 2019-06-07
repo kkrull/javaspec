@@ -74,12 +74,6 @@ final class ConsoleReporter implements Reporter {
   }
 
   @Override
-  public void specFailed(Spec spec) { //TODO KDK: Remove
-    scopeForCurrentEvents().specFailed();
-    this.count.specFailed();
-  }
-
-  @Override
   public void specFailed(Spec spec, AssertionError error) {
     this.count.specFailed();
     scopeForCurrentEvents().specFailed(this.count.numSpecsFailed);
