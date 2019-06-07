@@ -69,8 +69,8 @@ Feature: Run specs with plaintext reporter
     """
 
 
-  @wip
   @focus
+  @wip
   Scenario: Failing specs should report failure details
     Given I have a JavaSpec runner for the console
     And I have specs where 1 or more of them fail

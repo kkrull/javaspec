@@ -156,19 +156,19 @@ public class ConsoleReporterTest {
       output.shouldHavePrintedLine(endsWith("behaves: FAIL"));
     }
 
-    @Test @Ignore
+    @Test
     public void showsTheStackTraceOfTheFailure() throws Exception {
       subjectRuns(() -> {
         Spec spec = anySpecNamed("behaves");
         subject.specStarting(spec);
         subject.specFailed(
           spec,
-          new AssertionError("42 was supposed to be a satisfactory answer to the universe")
+          new AssertionError("bang!")
         );
       });
 
       output.shouldHavePrintedLine(
-        startsWith("AssertionError: 42 was supposed to be a satisfactory answer to the universe")
+        startsWith("AssertionError: bang!")
       );
     }
   }
