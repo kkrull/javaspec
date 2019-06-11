@@ -28,16 +28,44 @@ Then(/^the runner's exit status should be 0$/) do
   expect(spec_runner_helper.exit_status).to eq(0)
 end
 
-Then(/^the runner's output should be$/) do |text|
+Then(/^the runner's output should be$/) do |expected_text|
   # Somehow the Gherkin docstring doesn't end in a newline, even though it's there
-  expect(spec_runner_helper.runner_output.rstrip).to eq(text)
+  expect(spec_runner_helper.runner_output.rstrip).to eq(expected_text)
 end
 
-Then(/^the runner's de-tracified output should be$/) do |text|
-  # Somehow the Gherkin docstring doesn't end in a newline, even though it's there
+Then(/^the runner's de-tracified output should be$/) do |expected_text|
   newline_gone = spec_runner_helper.runner_output.rstrip
-  translated = newline_gone.gsub(/\tat.*/, '...stack trace...')
-  expect(translated).to eq(text)
+
+  puts "Input: #{newline_gone.lines.length} lines"
+  translated = newline_gone.lines.map do |line|
+    case line 
+    when /^\s+at /
+      "...stack trace...\n"
+    else
+      line
+    end
+  end
+
+  puts "Translated: #{translated.length}"
+  puts translated
+
+  trace_shown = false
+  condensed = translated.select do |line|
+    case line
+    when /stack trace/
+      should_return = not(trace_shown)
+      trace_shown = true
+      should_return
+    else
+      true
+    end
+  end
+
+  puts "Condensed: #{condensed.length}"
+  puts condensed
+
+  expect(condensed).to eq(expected_text.lines)
+  expect(condensed.join).to eq(expected_text)
 end
 
 Then(/^The runner should indicate that all specs passed$/) do
