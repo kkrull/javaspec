@@ -1,9 +1,9 @@
-package info.javaspec.console;
+package info.javaspec.console.plaintext;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
-import info.javaspec.console.ConsoleReporter.RunAlreadyStarted;
+import info.javaspec.console.Reporter;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
@@ -372,7 +372,7 @@ public class ConsoleReporterTest {
 
         output.shouldHavePrintedLines(
           equalTo("[1] java.lang.AssertionError: bang!"),
-          containsString("at info.javaspec.console.ConsoleReporterTest")
+          containsString("at info.javaspec.console.plaintext.ConsoleReporterTest")
         );
       }
     }

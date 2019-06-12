@@ -1,4 +1,4 @@
-package info.javaspec.console;
+package info.javaspec.console.plaintext;
 
 import info.javaspec.Spec;
 import info.javaspec.SpecCollection;

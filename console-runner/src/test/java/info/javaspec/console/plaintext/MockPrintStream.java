@@ -1,4 +1,4 @@
-package info.javaspec.console;
+package info.javaspec.console.plaintext;
 
 import org.hamcrest.Matcher;
 
