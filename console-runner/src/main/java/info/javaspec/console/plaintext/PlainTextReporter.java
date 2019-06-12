@@ -11,13 +11,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class ConsoleReporter implements Reporter {
+public final class PlainTextReporter implements Reporter {
   private final PrintStream output;
   private final Deque<ReporterScope> scopes;
   private final EventCounter count;
   private final Map<Integer, Throwable> failures;
 
-  public ConsoleReporter(PrintStream output) {
+  public PlainTextReporter(PrintStream output) {
     this.output = output;
     this.scopes = new ArrayDeque<>();
     this.count = new EventCounter();

@@ -1,6 +1,6 @@
 package info.javaspec.console;
 
-import info.javaspec.console.plaintext.ConsoleReporter;
+import info.javaspec.console.plaintext.PlainTextReporter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -10,7 +10,7 @@ public final class Main {
 
   public static void main(String... args) {
     main(
-      new ConsoleReporter(System.out),
+      new PlainTextReporter(System.out),
       System::exit,
       args
     );

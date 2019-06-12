@@ -16,14 +16,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @RunWith(HierarchicalContextRunner.class)
-public class ConsoleReporterTest {
+public class PlainTextReporterTest {
   private Reporter subject;
   private MockPrintStream output;
 
   @Before
   public void setup() throws Exception {
     output = MockPrintStream.create();
-    subject = new ConsoleReporter(output);
+    subject = new PlainTextReporter(output);
   }
 
   public class beginCollection {
@@ -372,7 +372,7 @@ public class ConsoleReporterTest {
 
         output.shouldHavePrintedLines(
           equalTo("[1] java.lang.AssertionError: bang!"),
-          containsString("at info.javaspec.console.plaintext.ConsoleReporterTest")
+          containsString("at info.javaspec.console.plaintext.PlainTextReporterTest")
         );
       }
     }
