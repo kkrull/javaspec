@@ -12,7 +12,7 @@ abstract class ReporterScope {
 
   private boolean hasPrintedAnyCollections;
 
-  public static ReporterScope forCollection(SpecCollection _collection, ReporterScope parent) {
+  public static ReporterScope forCollection(ReporterScope parent) {
     return new CollectionReporterScope(
       parent.output,
       parent.collectionIndent + "  ",

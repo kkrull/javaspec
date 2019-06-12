@@ -38,7 +38,7 @@ final class ConsoleReporter implements Reporter {
     reportCurrentEvent.beginCollection(collection);
     this.count.beginCollection();
 
-    ReporterScope reportFutureEvents = ReporterScope.forCollection(collection, reportCurrentEvent);
+    ReporterScope reportFutureEvents = ReporterScope.forCollection(reportCurrentEvent);
     this.scopes.addLast(reportFutureEvents);
   }
 
