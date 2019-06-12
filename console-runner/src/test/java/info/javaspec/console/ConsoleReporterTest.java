@@ -6,7 +6,6 @@ import info.javaspec.SpecCollection;
 import info.javaspec.console.ConsoleReporter.RunAlreadyStarted;
 import org.hamcrest.Matcher;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;

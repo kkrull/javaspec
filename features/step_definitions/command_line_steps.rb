@@ -49,7 +49,7 @@ end
 
 def collapse_stacktrace(output)
   translated = output.lines.map do |line|
-    case line 
+    case line
     when /^\s+at /
       "...stack trace...\n"
     else
@@ -76,4 +76,3 @@ def expect_text_like_docstring(expected_text, actual_text)
   # Somehow the Gherkin docstring doesn't end in a newline, even though it's there
   expect(actual_text).to eq(expected_text + "\n")
 end
-
