@@ -38,7 +38,12 @@ public final class MockReporter implements Reporter {
   public void runStarting() { }
 
   @Override
-  public void specFailed(Spec spec) {
+  public void specFailed(Spec spec, AssertionError _error) {
+    this.specFailedReceived.add(spec);
+  }
+
+  @Override
+  public void specFailed(Spec spec, Exception exception) {
     this.specFailedReceived.add(spec);
   }
 

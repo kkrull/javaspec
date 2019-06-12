@@ -22,8 +22,11 @@ final class DescriptiveSpec implements Spec {
     observer.specStarting(this);
     try {
       this.verification.run();
-    } catch(AssertionError | Exception e) {
-      observer.specFailed(this);
+    } catch(AssertionError e) {
+      observer.specFailed(this, e);
+      return;
+    } catch(Exception e) {
+      observer.specFailed(this, e);
       return;
     }
 

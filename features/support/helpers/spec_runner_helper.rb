@@ -41,6 +41,10 @@ class SpecRunnerContext
     last_command_stopped.stdout
   end
 
+  def spec_error_verification(&block)
+    @error_assertion = block
+  end
+
   def spec_result_verification(&block)
     @result_assertion = block
   end
@@ -51,6 +55,10 @@ class SpecRunnerContext
 
   def verify_specs_ran
     @run_assertion.call runner_output
+  end
+
+  def verify_specs_reported_errors
+    @error_assertion.call runner_output
   end
 
   def verify_spec_results

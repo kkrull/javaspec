@@ -1,6 +1,6 @@
-## Steps focused on how JavaSpecs runs specs
+## Steps focused on how JavaSpec runs specs
 
-Given(/^I have a Java class that defines a suite of lambda specs$/) do
+Given(/^I have a Java class with specs that pass, as well as specs that fail$/) do
   spec_runner_helper.spec_classes = ['info.javaspec.example.rb.OneOfEachResultSpecs']
 
   spec_runner_helper.spec_run_verification do |output|
@@ -10,25 +10,24 @@ Given(/^I have a Java class that defines a suite of lambda specs$/) do
 
   spec_runner_helper.spec_result_verification do |output|
     expect(output).to match(/passes: PASS$/)
-    expect(output).to match(/fails: FAIL$/)
+    expect(output).to match(/fails: FAIL/)
+  end
+
+  spec_runner_helper.spec_error_verification do |output|
+    expect(output).to match(/java.lang.AssertionError: bang!/)
   end
 end
 
-Given(/^I have a Java class that defines a suite of lambda specs describing a subject$/) do
+Given(/^I have a Java class containing specs that describe a subject$/) do
   spec_runner_helper.spec_classes = ['info.javaspec.example.rb.DescribeTwoSpecs']
 
   spec_runner_helper.spec_run_verification do |output|
     expect(output).to match(/discombobulates/)
     expect(output).to match(/explodes/)
   end
-
-  spec_runner_helper.spec_result_verification do |output|
-    expect(output).to match(/discombobulates: PASS$/)
-    expect(output).to match(/explodes: PASS$/)
-  end
 end
 
-Given(/^I have 1 or more Java classes that defines lambda specs$/) do
+Given(/^I have 2 or more Java classes that define lambda specs$/) do
   spec_runner_helper.spec_classes = %w[info.javaspec.example.rb.AllPassSpecs info.javaspec.example.rb.OneFailsSpecs]
 
   spec_runner_helper.spec_run_verification do |output|
@@ -54,8 +53,12 @@ When(/^I run those specs with a plain text reporter$/) do
   spec_runner_helper.exec_run! logger, reporter: 'plaintext'
 end
 
-Then(/^The runner should describe what is being tested$/) do
+Then(/^The runner should describe the subject being tested$/) do
   expect(spec_runner_helper.runner_output).to include('Illudium Q-36 Explosive Space Modulator')
+end
+
+Then(/^The runner should describe what went wrong with each failing spec$/) do
+  spec_runner_helper.verify_specs_reported_errors
 end
 
 Then(/^The runner should run the specs defined in that class$/) do

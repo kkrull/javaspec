@@ -1,9 +1,9 @@
-package info.javaspec.console;
+package info.javaspec.console.plaintext;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
-import info.javaspec.console.ConsoleReporter.RunAlreadyStarted;
+import info.javaspec.console.Reporter;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,14 +16,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @RunWith(HierarchicalContextRunner.class)
-public class ConsoleReporterTest {
+public class PlainTextReporterTest {
   private Reporter subject;
   private MockPrintStream output;
 
   @Before
   public void setup() throws Exception {
     output = MockPrintStream.create();
-    subject = new ConsoleReporter(output);
+    subject = new PlainTextReporter(output);
   }
 
   public class beginCollection {
@@ -136,7 +136,7 @@ public class ConsoleReporterTest {
       subjectRuns(() -> {
         Spec spec = anySpecNamed("behaves");
         subject.specStarting(spec);
-        subject.specFailed(spec);
+        subject.specFailed(spec, anySpecFailure());
       });
 
       assertThat(subject.hasFailingSpecs(), equalTo(true));
@@ -149,10 +149,26 @@ public class ConsoleReporterTest {
       subjectRuns(() -> {
         Spec spec = anySpecNamed("behaves");
         subject.specStarting(spec);
-        subject.specFailed(spec);
+        subject.specFailed(spec, anySpecFailure());
       });
 
-      output.shouldHavePrintedLine(endsWith("behaves: FAIL"));
+      output.shouldHavePrintedLine(containsString("behaves: FAIL"));
+    }
+
+    @Test
+    public void addsAReferenceNumberToTheFailingSpec() throws Exception {
+      subjectRuns(() -> {
+        Spec one = anySpecNamed("fails once");
+        subject.specStarting(one);
+        subject.specFailed(one, new AssertionError("bang!"));
+
+        Spec two = anySpecNamed("fails twice");
+        subject.specStarting(two);
+        subject.specFailed(two, new RuntimeException("bang!"));
+      });
+
+      output.shouldHavePrintedLine(endsWith("fails once: FAIL [1]"));
+      output.shouldHavePrintedLine(endsWith("fails twice: FAIL [2]"));
     }
   }
 
@@ -178,7 +194,7 @@ public class ConsoleReporterTest {
         subject.specPassed(spec);
       });
 
-      output.shouldHavePrintedLine(containsString("- behaves"));
+      output.shouldHavePrintedLine(containsString("* behaves"));
     }
 
     public class whenCollectionContainingTheSpecIsIndented {
@@ -201,7 +217,7 @@ public class ConsoleReporterTest {
 
         output.shouldHavePrintedLines(
           startsWith("  inner"),
-          startsWith("  - spec")
+          startsWith("  * spec")
         );
       }
     }
@@ -224,7 +240,7 @@ public class ConsoleReporterTest {
           subject.endCollection(outer);
         });
 
-        output.shouldHavePrintedLine(startsWith("- outer spec"));
+        output.shouldHavePrintedLine(startsWith("* outer spec"));
       }
     }
 
@@ -246,7 +262,7 @@ public class ConsoleReporterTest {
           subject.endCollection(secondCollection);
         });
 
-        output.shouldHavePrintedLine(startsWith("- second spec"));
+        output.shouldHavePrintedLine(startsWith("* second spec"));
       }
     }
   }
@@ -306,24 +322,57 @@ public class ConsoleReporterTest {
         subjectRuns(() -> {
           Spec spec = anySpecNamed("explodes");
           subject.specStarting(spec);
-          subject.specFailed(spec);
+          subject.specFailed(spec, anySpecFailure());
         });
 
         output.shouldHavePrintedLine(containsString("Failed: 1"));
       }
 
       @Test
-      public void startsANewParagraph() throws Exception {
+      public void startsANewParagraphToListSpecFailures() throws Exception {
         subjectRuns(() -> {
           Spec spec = anySpecNamed("behaves");
           subject.specStarting(spec);
-          subject.specFailed(spec);
+          subject.specFailed(spec, anySpecFailure());
         });
 
-        output.shouldHavePrintedExactly(
+        output.shouldHavePrintedLines(
           containsString("behaves"),
           isEmptyString(),
-          testTallyMatcher()
+          equalTo("Specs failed:")
+        );
+      }
+
+      @Test
+      public void detailsFailingSpecs() throws Exception {
+        subjectRuns(() -> {
+          Spec firstSpec = anySpecNamed("fails once");
+          subject.specStarting(firstSpec);
+          subject.specFailed(firstSpec, new AssertionError("bang one!"));
+
+          Spec secondSpec = anySpecNamed("fails twice");
+          subject.specStarting(secondSpec);
+          subject.specFailed(secondSpec, new RuntimeException("bang two!"));
+        });
+
+        output.shouldHavePrintedLines(
+          equalTo("Specs failed:"),
+          equalTo("[1] java.lang.AssertionError: bang one!"),
+          equalTo("[2] java.lang.RuntimeException: bang two!")
+        );
+      }
+
+      @Test
+      public void printsStackTracesFromEachFailure() throws Exception {
+        subjectRuns(() -> {
+          Spec spec = anySpecNamed("fails");
+          subject.specStarting(spec);
+          subject.specFailed(spec, new AssertionError("bang!"));
+        });
+
+        output.shouldHavePrintedLines(
+          equalTo("[1] java.lang.AssertionError: bang!"),
+          containsString("at info.javaspec.console.plaintext.PlainTextReporterTest")
         );
       }
     }
@@ -416,6 +465,10 @@ public class ConsoleReporterTest {
     return collection;
   }
 
+  private AssertionError anySpecFailure() {
+    return new AssertionError();
+  }
+
   private Spec anySpecNamed(String behavior) {
     Spec spec = Mockito.mock(Spec.class);
     Mockito.when(spec.intendedBehavior()).thenReturn(behavior);
@@ -424,7 +477,7 @@ public class ConsoleReporterTest {
 
   /* Action helpers */
 
-  private void subjectRuns(Thunk thunk) throws Exception {
+  private void subjectRuns(Thunk thunk) {
     subject.runStarting();
     thunk.run();
     subject.runFinished();
@@ -434,9 +487,8 @@ public class ConsoleReporterTest {
     return startsWith("[Testing complete]");
   }
 
-
   @FunctionalInterface
-  public interface Thunk {
-    void run() throws Exception;
+  interface Thunk {
+    void run();
   }
 }

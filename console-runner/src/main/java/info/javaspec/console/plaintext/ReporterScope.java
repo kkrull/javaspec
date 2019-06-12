@@ -1,4 +1,4 @@
-package info.javaspec.console;
+package info.javaspec.console.plaintext;
 
 import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
@@ -12,7 +12,7 @@ abstract class ReporterScope {
 
   private boolean hasPrintedAnyCollections;
 
-  public static ReporterScope forCollection(SpecCollection _collection, ReporterScope parent) {
+  public static ReporterScope forCollection(ReporterScope parent) {
     return new CollectionReporterScope(
       parent.output,
       parent.collectionIndent + "  ",
@@ -46,14 +46,14 @@ abstract class ReporterScope {
   protected abstract String howMuchToIndentSpecsInChildScope();
 
   public final void specStarting(Spec spec) {
-    this.output.print(this.specIndent + "- " + spec.intendedBehavior());
+    this.output.print(this.specIndent + "* " + spec.intendedBehavior());
   }
 
-  public final void specFailed(Spec spec) {
-    this.output.println(": FAIL");
+  public final void specFailed(int referenceNumber) {
+    this.output.println(String.format(": FAIL [%d]", referenceNumber));
   }
 
-  public final void specPassed(Spec spec) {
+  public final void specPassed() {
     this.output.println(": PASS");
   }
 
