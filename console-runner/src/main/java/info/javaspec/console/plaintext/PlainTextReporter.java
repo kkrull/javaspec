@@ -94,16 +94,16 @@ public final class PlainTextReporter implements Reporter {
     specFailed(failure);
   }
 
-  @Override
-  public void specPassed(Spec spec) {
-    scopeForCurrentEvents().specPassed();
-    this.count.specPassed();
-  }
-
   private void specFailed(Throwable error) {
     int howManyHaveFailedNow = this.count.specFailed();
     scopeForCurrentEvents().specFailed(howManyHaveFailedNow);
     this.failures.put(howManyHaveFailedNow, error);
+  }
+
+  @Override
+  public void specPassed(Spec spec) {
+    scopeForCurrentEvents().specPassed();
+    this.count.specPassed();
   }
 
   private void detailSpecFailure(int referenceNumber, Throwable failure) {
