@@ -117,7 +117,7 @@ Use `rake travis:lint` to run a linter on any changes to `.travis.yml`.
 
 Rake also has tasks to automate the process of building and uploading a release.  This was as semi-automated process at
 best, even in its first incarnation as Bash scripts, and it would benefit from further refinement.  Old notes guiding
-the process are in [the outdated release document](release.md).
+the process are in [the outdated release document](../1.0.1/release.md).
 
 It relies upon tools such as [GPG][gpg] which will need to be installed, configured, and documented here.
 
