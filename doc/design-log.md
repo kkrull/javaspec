@@ -1,24 +1,26 @@
-# Design Log
-
-## Coming up
-
-Features:
-
-- Easy way to run JavaSpec's console-runner
-  - Fat jar of JavaSpec and its dependencies
-  - Bash script to set the classpath and run the jar
-  - Acceptance test, to know that it is working
-- Documented (tested) error reporting for things like not being able to find/load/instantiate a spec class.
-  It may be helpful to return a value type for the exit status, instead of a just the number, so the offending class can
-  be reported.
+# Design Log (JavaSpec 2.x)
 
 
-Technical debt:
+## Design Principles
 
-- Put the Java artifacts on independent version numbers.  There really isn't any 2.x development on the artifacts that
-  have already been released.
-- Switch to whatever license JUnit is using, to remove a potential blocker of adoption.
+A few thoughts collected along the way, as new features are completed:
 
+1. **Specs should be descriptive**: I was hesitant to require a description on all `Spec` implementations.  I decided
+to make it a requirement after realizing -- _the whole point of this library is to make it easier to describe things_.
+1. **Specs should be organized**: It is currently allowed to declare `it` anywhere, without saying what you are
+describing.  I don't think that makes much sense; developers should say what they are writing tests for.  With that
+in mind, it makes more sense for the eventual root suite that collects all the `describe` blocks to only allow child
+suites, not specs.
+
+
+I will leave you now, Adventurer, with these words of advice:
+
+> Go forth and solve a problem, without creating any new ones to take its place.
+
+May you be successful in your pursuit.
+
+
+# Design Log (JavaSpec 1.x)
 
 ## Clarifying the terminology
 

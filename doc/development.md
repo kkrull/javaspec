@@ -54,7 +54,7 @@ If your Java code is already compiled and you just want to run the Cucumber Ruby
 [rake]: https://github.com/ruby/rake
 
 
-## Style and Static Analysis (Checkstyle)
+### Style and Static Analysis (Checkstyle)
 
 [Checkstyle][checkstyle-config] is used to check the code format and style.  Run it with `rake checkstyle:run`.
 Different configurations are used, depending upon where you are in the source tree:
@@ -85,7 +85,7 @@ There are a number of different testing tools that are used for testing, and tes
   
 
 Note that - while it is possible to write the last category of tests in Java - the author's experiences have been:
- 
+
 - It's rather laborious to launch, monitor, and scrape output from external processes in Java, when it's so easy in Ruby.
 - Managing two independent scopes of testing in Maven is also rather laborious and unintuitive.  It is possible to say
   what you want to test by using different test plugins (Failsafe and Surefire), plugin configurations, and Maven
@@ -137,22 +137,3 @@ That's a great question.  JavaSpec is currently under development to add an addi
 (while retaining the MSpec-inspired syntax from the 1.x series) as well as an external test runner.
 This will likely result in more artifacts, that still need some further iteration before we can solve the problem of
 independent use without creating the problem of a mess of poorly-conceived JARs.
-
-
-## Design Principles
-
-A few thoughts collected along the way, as new features are completed:
-
-1. **Specs should be descriptive**: I was hesitant to require a description on all `Spec` implementations.  I decided
-to make it a requirement after realizing -- _the whole point of this library is to make it easier to describe things_.
-1. **Specs should be organized**: It is currently allowed to declare `it` anywhere, without saying what you are
-describing.  I don't think that makes much sense; developers should say what they are writing tests for.  With that
-in mind, it makes more sense for the eventual root suite that collects all the `describe` blocks to only allow child
-suites, not specs.
-
-
-I will leave you now, Adventurer, with these words of advice:
-
-> Go forth and solve a problem, without creating any new ones to take its place.
-
-May you be successful in your pursuit.
