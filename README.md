@@ -12,9 +12,9 @@ Behavior-Driven Development testing for Java using lambdas.  Inspired by [RSpec]
 
 JavaSpec attempts to be:
 
-- **Concise**: Simple behavior should be simple to test and describe in a small amount of space.
-- **Searchable**: Finding call sites in Java code is easy.  Finding where a test calls your code should be just as easy.
-- **Transparent**: You shouldn't have to keep any caveats in mind when writing test code.
+* **Concise**: Simple behavior should be simple to test and describe in a small amount of space.
+* **Searchable**: Finding call sites in Java code is easy.  Finding where a test calls your code should be just as easy.
+* **Transparent**: You shouldn't have to keep any caveats in mind when writing test code.
 
 There are many testing libraries out there with some of these characteristics, but expresiveness does not need to come
 at the cost of adding complexity.  For example you can write your tests in Ruby or Groovy (as the author once
@@ -50,11 +50,11 @@ instead of pretending like these are radical, never-before-seen ideas.
 
 In JUnit, you create a test class and put `@Test` methods in it.  JavaSpec is similar:
 
-- Make a test class.
-- Tag it with `@RunWith(JavaSpecRunner.class)`.
-- Include 1 or more `It` fields in the class and assign a no-arg lambda to it.  Put whatever code you would normally run
+* Make a test class.
+* Tag it with `@RunWith(JavaSpecRunner.class)`.
+* Include 1 or more `It` fields in the class and assign a no-arg lambda to it.  Put whatever code you would normally run
   in the `@Test` method in this lambda.
-- Run your tests anywhere you run JUnit.  Maven (surefire plugin) and Eclipse Luna work.
+* Run your tests anywhere you run JUnit.  Maven (surefire plugin) and Eclipse Luna work.
 
 A simple "Hello World" test looks like this:
 
@@ -76,11 +76,11 @@ this test, JUnit will report results for `says hello`.
 
 Machine.Specifications and JavaSpec represent the different steps of a test the same way:
 
-- An `Establish` lambda runs the Arrange part of your test.  This runs first, when present.
-- A `Because` lambda runs the Act part of your test.  This runs next, when present.
-- An `It` lambda does the Assert part of your test.
-- A `Cleanup` lambda - when present - always runs, even if a prior step failed.
-- If any step throws an exception, the test fails.
+* An `Establish` lambda runs the Arrange part of your test.  This runs first, when present.
+* A `Because` lambda runs the Act part of your test.  This runs next, when present.
+* An `It` lambda does the Assert part of your test.
+* A `Cleanup` lambda - when present - always runs, even if a prior step failed.
+* If any step throws an exception, the test fails.
 
 You can think of `Establish` and `Because` as what a `@Before` method would do in JUnit.  These lambdas run before each
 `It` lambda in the same class (and also before `It` fields in inner classes).  `Cleanup` is like `@After` in JUnit,
@@ -150,10 +150,10 @@ class WidgetTest {
 
 In short:
 
-- Only tag the outer-most class with `@RunWith(JavaSpecRunner.class)`.  Don't tag any inner classes with this.
-- Make as many contexts as you like by making nested, non-static classes.
-- Add up to 1 each of `Establish`, `Because` and `Cleanup` to each context class.
-- Make as many tests as you want in each context class with `It` lambdas.
+* Only tag the outer-most class with `@RunWith(JavaSpecRunner.class)`.  Don't tag any inner classes with this.
+* Make as many contexts as you like by making nested, non-static classes.
+* Add up to 1 each of `Establish`, `Because` and `Cleanup` to each context class.
+* Make as many tests as you want in each context class with `It` lambdas.
 
 
 ## If you have any other questions
@@ -170,19 +170,19 @@ request with any suggested modifications.
 
 # Future work
 
-- Ability to `@Ignore` a class or an `It`.  Better yet, `@Focus` on one, pesky test.
-- Use strings instead of identifiers to allow a more natural language for describing behavior.
-- Something similar to RSpec's `shared_examples` and `shared_context` could be useful.
+* Ability to `@Ignore` a class or an `It`.  Better yet, `@Focus` on one, pesky test.
+* Use strings instead of identifiers to allow a more natural language for describing behavior.
+* Something similar to RSpec's `shared_examples` and `shared_context` could be useful.
 
 
 # Release history
 
-- 1.0.1: Fixed [Issue 5](https://github.com/kkrull/javaspec/issues/5), catching some errors in initializing test classes.
-- 1.0: Full release.  Renamed artifact to `info.javaspec::javaspec-runner`.
-- 0.5: Fixed an issue where specs with the same field / context class name were showing up as still running in IntelliJ.
+* 1.0.1: Fixed [Issue 5](https://github.com/kkrull/javaspec/issues/5), catching some errors in initializing test classes.
+* 1.0: Full release.  Renamed artifact to `info.javaspec::javaspec-runner`.
+* 0.5: Fixed an issue where specs with the same field / context class name were showing up as still running in IntelliJ.
   Also renamed JUnit test display names to human-readable names, replacing snake case underscores with spaces.
-- 0.4.2: Fixed [Issue 2](https://github.com/kkrull/javaspec/issues/2), so that only one instance of a context class is
+* 0.4.2: Fixed [Issue 2](https://github.com/kkrull/javaspec/issues/2), so that only one instance of a context class is
   created for each test.
-- 0.4.1: Fixed [Issue 1](https://github.com/kkrull/javaspec/issues/1), dealing with being able to instantiate non-public
+* 0.4.1: Fixed [Issue 1](https://github.com/kkrull/javaspec/issues/1), dealing with being able to instantiate non-public
   context classes.
-- 0.4.0: Initial release
+* 0.4.0: Initial release

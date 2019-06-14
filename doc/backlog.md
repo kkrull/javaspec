@@ -2,7 +2,7 @@
 
 ## JavaSpec 2.0 (Mocha-like syntax run via console)
 
-Features:
+### Features
 
 * Easy way to run JavaSpec's console-runner
   * Fat jar of JavaSpec and its dependencies.
@@ -18,7 +18,7 @@ Features:
   * Publish new documentation (the Github page) for the new release.
 
 
-Technical debt:
+### Technical debt
 
 * Put the Java artifacts on independent version numbers.  There really isn't any 2.x development on the artifacts that
   have already been released.

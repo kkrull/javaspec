@@ -24,13 +24,13 @@ May you be successful in your pursuit.
 
 ## Clarifying the terminology
 
-- A **root context class** is the top-level class passed to `JavaSpecRunner`.  It's the outer-most level of detail
+* A **root context class** is the top-level class passed to `JavaSpecRunner`.  It's the outer-most level of detail
   of abstraction at which to run tests, and it may contain test fixtures and examples just like any other context class.
-- All other **context classes** are [inner classes](https://docs.oracle.com/javase/tutorial/java/javaOO/nested.html) 
+* All other **context classes** are [inner classes](https://docs.oracle.com/javase/tutorial/java/javaOO/nested.html) 
   enclosed within the root context class or another context class.  Each context class may contain test fixtures and
   examples, or it may exist solely for the purpose of describing the system under test in a structured and readable
   manner.
-- A **nested static class** could also contain `It` fields and the like, but it is not considered a context class at
+* A **nested static class** could also contain `It` fields and the like, but it is not considered a context class at
   this time.  It is, however, a perfectly reasonable place to put helper methods.
 
 
@@ -56,9 +56,9 @@ package / feature level, rather than operate on the exact boundaries among all c
 
 Workflows:
 
-- **Run a whole test file**: The intended target of `@RunWith` is an outer class.  It therefore can't be static.  
+* **Run a whole test file**: The intended target of `@RunWith` is an outer class.  It therefore can't be static.  
   It must also have a public no-arg constructor.
-- **Run a tests in a context**: The top-level class still must have `@RunWith`, but the class passed to the runner may
+* **Run a tests in a context**: The top-level class still must have `@RunWith`, but the class passed to the runner may
   not be the top-level class.  In this case, it must have a (implicit) constructor that takes its parent class as a
   parameter.
 

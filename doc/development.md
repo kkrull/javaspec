@@ -45,8 +45,8 @@ releasing sources without having to resort to less-than-intuitive Maven configur
 Rake tasks (which can be listed with `rake -T`) simply delegate to Maven, where Java sources are concerned.  The Rake
 tasks attempt to be as orthogonal as possible, meaning: 
 
-- Each task does one, logical thing.
-- Tasks can be run in any combination or sequence.
+* Each task does one, logical thing.
+* Tasks can be run in any combination or sequence.
 
 So if you want to run Cucumber Ruby tests against freshly-compiled Java code, you run `rake java:compile cucumber`.
 If your Java code is already compiled and you just want to run the Cucumber Ruby tests again, it's `rake cucumber`.
@@ -59,8 +59,8 @@ If your Java code is already compiled and you just want to run the Cucumber Ruby
 [Checkstyle][checkstyle-config] is used to check the code format and style.  Run it with `rake checkstyle:run`.
 Different configurations are used, depending upon where you are in the source tree:
 
-- `src/main/java` code is checked with `checkstyle-main.xml`
-- `src/test/java` code is checked with `checkstyle-test.xml`.  A few of the rules are relaxed, so that long
+* `src/main/java` code is checked with `checkstyle-main.xml`
+* `src/test/java` code is checked with `checkstyle-test.xml`.  A few of the rules are relaxed, so that long
   descriptions of behavior can be written out as Java classes and method names.
 
 
@@ -72,13 +72,13 @@ Different configurations are used, depending upon where you are in the source tr
 There are a number of different testing tools that are used for testing, and tests are written in a
 [variety of scopes][fowler-test-pyramid], or levels of abstraction.
 
-- Run `rake java:junit` to run JUnit tests on Java sources, using the familiar `mvn test` workflow.
+* Run `rake java:junit` to run JUnit tests on Java sources, using the familiar `mvn test` workflow.
   These offer immediate feedback on JavaSpec classes, from inside the same process.
-- Run `rake java:test` to run all those tests, plus [Cucumber-jvm][cucumber-jvm] tests in `info.javaspecfeature`.
+* Run `rake java:test` to run all those tests, plus [Cucumber-jvm][cucumber-jvm] tests in `info.javaspecfeature`.
   This runs acceptance tests for high-level - but less immediate - feedback on JavaSpec as a whole.
   The test code still runs in the same process as the production code being tested, so this leaves some possible gaps
   for things like runtime dependencies and class-loading.
-- Run `rake cucumber` or `rake cucumber:focus` to run (focused) Cucumber Ruby tests.
+* Run `rake cucumber` or `rake cucumber:focus` to run (focused) Cucumber Ruby tests.
   These tests focus on JavaSpec's behavior when run as an external process, so it covers things like exit codes and
   console output.  Note that the `cucumber-docker` tasks can be used to run build a Docker image to run these tests,
   if an extra layer of isolation is desired.
@@ -86,8 +86,8 @@ There are a number of different testing tools that are used for testing, and tes
 
 Note that - while it is possible to write the last category of tests in Java - the author's experiences have been:
 
-- It's rather laborious to launch, monitor, and scrape output from external processes in Java, when it's so easy in Ruby.
-- Managing two independent scopes of testing in Maven is also rather laborious and unintuitive.  It is possible to say
+* It's rather laborious to launch, monitor, and scrape output from external processes in Java, when it's so easy in Ruby.
+* Managing two independent scopes of testing in Maven is also rather laborious and unintuitive.  It is possible to say
   what you want to test by using different test plugins (Failsafe and Surefire), plugin configurations, and Maven
   profiles, but it's practically impossible for multiple people to maintain this effectively.
 
