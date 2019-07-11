@@ -2,12 +2,12 @@
 
 ## JavaSpec 2.0 (Mocha-like syntax run via console)
 
-### Scope 
+### Scope
 
 * Mocha-like syntax
-* that can be run in the console during development and on Jenkins for CI
-* that tells you which specs passed and failed
-* that tells you about the errors causing a spec to fail
+  * that can be run in the console during development and on Jenkins for CI
+  * that tells you which specs passed and failed
+  * that tells you about the errors causing a spec to fail
 
 
 ### Features
@@ -36,3 +36,4 @@
 * Enable others to contribute:
   * Identify good first commits
   * Contributing guide, with coding principles and instructions for submitting a pull request
+* `yard` [dependency alert](https://github.com/kkrull/javaspec/network/alert/Gemfile.lock/yard/open)

@@ -7,7 +7,7 @@ Releases target platform running [JRE 8+][jre-download] and any project that is 
 JavaSpec and its dependencies are available in the [Maven Central Repository][maven-central].
 
 [jre-download]: https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html
-[maven-central]: https://search.maven.org/
+[maven-central]: https://search.maven.org
 
 
 ## Development Environment
@@ -28,9 +28,9 @@ These can be installed on Homebrew systems as follows:
 Rake tasks and Cucumber Ruby code target the Ruby version listed in `.ruby-version`.  Something like [`rvm`][rvm] or
 [`rbenv`][rbenv] is recommended to install a compatible version of Ruby.
 
-[maven]: https://maven.apache.org/
+[maven]: https://maven.apache.org
 [rbenv]: https://github.com/rbenv/rbenv
-[rvm]: https://rvm.io/
+[rvm]: https://rvm.io
 
 
 ## Development
@@ -95,7 +95,7 @@ One final note about the way tests are organized: it's not an explicit goal to h
 that roughly correspond to the levels of the Testing Pyramid.  It just sort of turned out that way, by covering gaps
 the author encountered along the way, using whatever tools seemed practical at the time.
 
-[cucumber-jvm]: https://docs.cucumber.io/installation/java/
+[cucumber-jvm]: https://docs.cucumber.io/installation/java
 [fowler-test-pyramid]: https://martinfowler.com/bliki/TestPyramid.html
 
 
@@ -125,8 +125,8 @@ It also attempts to deploy JavaSpec to [Sonatype OSS][sonatype], which may not e
 anymore, as far as the author knows.
 
 
-[gpg]: https://gpgtools.org/
-[sonatype]: https://www.sonatype.com/
+[gpg]: https://gpgtools.org
+[sonatype]: https://www.sonatype.com
 
 
 ### Artifacts
