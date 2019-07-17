@@ -13,6 +13,9 @@
 ### Features
 
 * Easy way to run JavaSpec's console-runner
+  * Gradle's `application` plugin creates a
+    [distribution](https://docs.gradle.org/current/userguide/application_plugin.html) that
+    contains start scripts, which set up the classpath and call the JVM.
   * Fat jar of JavaSpec and its dependencies.
   * Bash script to set the classpath and run the jar.
   * Acceptance test, to know that it is working.
@@ -28,6 +31,8 @@
 
 ### Technical debt
 
+* Consider switching to [Gradle](https://docs.gradle.org/5.0/userguide/java_library_plugin.html).
+* Find a new home for artifacts, such as [Bintray OSS](https://bintray.com/signup/oss).
 * Separate the documentation for 1.x and 2.x.
 * Put the Java artifacts on independent version numbers.  There really isn't any 2.x development on the artifacts that
   have already been released.
