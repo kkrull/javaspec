@@ -147,4 +147,3 @@ syntax (while retaining the MSpec-inspired syntax from the 1.x series) as well a
 runner.  This will likely result in more artifacts, that still need some further iteration before we
 can solve the problem of independent use without creating the problem of a mess of poorly-conceived
 JARs.
-

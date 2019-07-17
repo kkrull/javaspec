@@ -43,5 +43,3 @@ Mocha-like syntax that:
 * Enable others to contribute:
   * Identify good first commits
   * Contributing guide, with coding principles and instructions for submitting a pull request
-* `yard` [dependency alert](https://github.com/kkrull/javaspec/network/alert/Gemfile.lock/yard/open)
-

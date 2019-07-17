@@ -75,4 +75,3 @@ For times when it doesn't, feel free to [post an issue][github-javaspec-issues] 
 or suggestions.
 
 [github-javaspec-issues]: https://github.com/kkrull/javaspec/issues
-
