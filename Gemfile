@@ -8,7 +8,7 @@ group :development do
   gem "rake", "~> 12.3.0"
   gem "rdoc", "~> 6.0"
   gem "travis", "~> 1.8"
-  gem "yard", "~> 0.9.16"
+  gem "yard", "~> 0.9.20"
 end
 
 group :test do

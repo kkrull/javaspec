@@ -1,9 +1,14 @@
-# JavaSpec
+# JavaSpec v1.0.1
 
 Behavior-Driven Development testing for Java using lambdas.  Inspired by [RSpec](http://rspec.info) and
 [Machine.Specifications](https://github.com/machine/machine.specifications).
 
-[![Build Status](https://travis-ci.org/kkrull/javaspec.svg?branch=master)](https://travis-ci.org/kkrull/javaspec)
+**This documentation is for JavaSpec 1.0.1.**  If you are looking for a different version, please see
+the [JavaSpec documentation site][github-io-javaspec].
+
+[![Build Status](https://travis-ci.org/kkrull/javaspec.svg?tag=v1.0.1)](https://travis-ci.org/kkrull/javaspec)
+
+[github-io-javaspec]: http://javaspec.info
 
 
 ## Why
@@ -166,22 +171,3 @@ and related classes.
 
 If that still doesn't do the trick, feel free to [post an issue](https://github.com/kkrull/javaspec/issues) or submit a
 pull request with any suggested modifications.
-
-
-# Future work
-
-*Work is underway to make a new 2.0 release with an entirely different syntax that looks more like
-Mocha or Jasmine than like .NET's Machine.Specifications.*
-
-
-# Release history
-
-* [1.0.1](doc/1.0.1/README.md): Fixed [Issue 5](https://github.com/kkrull/javaspec/issues/5), catching some errors in initializing test classes.
-* 1.0: Full release.  Renamed artifact to `info.javaspec::javaspec-runner`.
-* 0.5: Fixed an issue where specs with the same field / context class name were showing up as still running in IntelliJ.
-  Also renamed JUnit test display names to human-readable names, replacing snake case underscores with spaces.
-* 0.4.2: Fixed [Issue 2](https://github.com/kkrull/javaspec/issues/2), so that only one instance of a context class is
-  created for each test.
-* 0.4.1: Fixed [Issue 1](https://github.com/kkrull/javaspec/issues/1), dealing with being able to instantiate non-public
-  context classes.
-* 0.4.0: Initial release
