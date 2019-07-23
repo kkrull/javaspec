@@ -1,7 +1,9 @@
 *.iml
 *.swp
+.gradle/
 .idea/
 .yardoc/
 checkstyle-8.18-all.jar
+build/
 target/
 tmp/
