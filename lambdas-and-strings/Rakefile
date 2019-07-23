@@ -120,19 +120,6 @@ namespace :jetbrains do
 end
 
 
-namespace :release do
-  desc 'Build artifacts for release'
-  task :build do
-    sh *%w[mvn -Pgpg,release clean install]
-  end
-
-  desc 'Deploy a release'
-  task :deploy do
-    sh *%w[mvn -Pgpg,release deploy]
-  end
-end
-
-
 namespace :travis do
   desc 'Run the linter on the Travis configuration'
   task :lint do
