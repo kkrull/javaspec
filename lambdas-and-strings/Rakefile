@@ -81,13 +81,6 @@ end
 
 
 namespace :java do
-  desc 'Set a new version for all artifacts'
-  task 'bump-version' do
-    sh *%w[mvn versions:set]
-    sh *%w[mvn versions:commit]
-    puts "Remember to update the version expectation in the cucumber-jvm tests"
-  end
-
   desc 'Remove everything generated and compiled from Java code'
   task :clean do
     sh *%w[mvn clean]
