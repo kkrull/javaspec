@@ -1,7 +1,8 @@
 dist: trusty
 language: generic
 
-#TODO KDK: Change directories to lambdas-and-strings
+before_install: cd lambdas-and-strings
+
 install:
 - bundle --version
 - rake --version
