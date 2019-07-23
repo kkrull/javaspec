@@ -77,7 +77,6 @@ GEM
     typhoeus (0.8.0)
       ethon (>= 0.8.0)
     websocket (1.2.8)
-    yard (0.9.20)
 
 PLATFORMS
   ruby
@@ -88,7 +87,6 @@ DEPENDENCIES
   rake (~> 12.3.0)
   rdoc (~> 6.0)
   travis (~> 1.8)
-  yard (~> 0.9.20)
 
 BUNDLED WITH
    1.16.2

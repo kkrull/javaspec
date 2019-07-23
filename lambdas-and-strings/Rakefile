@@ -39,11 +39,6 @@ Cucumber::Rake::Task.new do |task|
 end
 
 namespace :cucumber do
-  desc 'Run Yard server that auto-generates documentation for all gems'
-  task 'doc-server' do
-    sh *%w[yard server --gems]
-  end
-
   desc 'Run Cucumber scenarios tagged with @focus'
   task :focus do
     sh *%w[cucumber -t @focus]
