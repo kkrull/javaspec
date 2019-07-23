@@ -91,15 +91,10 @@ namespace :java do
     sh *%w[mvn compile]
   end
 
-  desc 'Test with JUnit'
-  task :junit do
-    sh *%w[mvn test]
-  end
-
   desc 'Run all tests on Java code'
   task :test do
     #Cucumber options: https://github.com/cucumber/cucumber-java-skeleton#overriding-options
-    sh *%w[mvn verify]
+    sh *%w[mvn test]
   end
 end
 
