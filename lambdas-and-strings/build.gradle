@@ -8,13 +8,10 @@ allprojects {
 }
 
 subprojects {
-    apply plugin: 'java'
+    apply plugin: 'java-library'
 
     repositories {
-        mavenLocal()
-        maven {
-            url = 'http://repo.maven.apache.org/maven2'
-        }
+        jcenter()
     }
 
     sourceCompatibility = '1.8'
