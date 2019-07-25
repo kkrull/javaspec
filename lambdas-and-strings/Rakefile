@@ -7,7 +7,7 @@ features_dir = File.join File.dirname(__FILE__), 'features'
 desc 'Compile, run all tests, and run checkstyle'
 task default: %w[java:test cucumber checkstyle:run]
 
-namespace :checkstyle do
+namespace :checkstyle do #TODO KDK: Move to gradle check task
   filename = 'checkstyle-8.18-all.jar'
   local_path = "checkstyle/#{filename}"
 
@@ -49,12 +49,12 @@ end
 namespace :java do
   desc 'Remove everything generated and compiled from Java code'
   task :clean do
-    sh *%w[./gradlew clean]
+    sh *%w[./gradlew clean --stacktrace]
   end
 
   desc 'Compile Java sources'
   task :compile do
-    sh *%w[./gradlew build -x test]
+    sh *%w[./gradlew build --stacktrace -x test]
   end
 
   desc 'Open cucumber-jvm report'
@@ -65,7 +65,7 @@ namespace :java do
   desc 'Run all tests on Java code'
   task :test do
     #Cucumber options: https://github.com/cucumber/cucumber-java-skeleton#overriding-options
-    sh *%w[./gradlew build]
+    sh *%w[./gradlew build --stacktrace]
   end
 end
 
