@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-  format = { "pretty", "html:target/cucumber", "rerun:target/rerun.txt" },
+  format = { "pretty", "html:build/reports/cucumber", "rerun:build/cucumber-jvm-rerun.txt" },
   strict = true,
   tags = { "~@wip" })
 public final class FeatureTest { }
