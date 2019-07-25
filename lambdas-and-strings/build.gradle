@@ -15,4 +15,12 @@ subprojects {
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
     }
+
+    test {
+        if(System.env['CI'] != null) {
+            testLogging {
+                events "passed", "skipped", "failed", "standardOut", "standardError"
+            }
+        }
+    }
 }

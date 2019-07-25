@@ -107,7 +107,14 @@ main `script` stage, just like in the [Java image][travis-java].
 
 Use `rake travis:lint` to run a linter on any changes to `.travis.yml`.
 
+The build is modified slightly on the CI environment, which is detected with one of the variables
+that [Travis sets][travis-environment]:
 
+* Gradle runs with a `plain` console, so that it doesn't garble the output.
+* Gradle `testLogging` shows some events, so there's a record of which tests ran and what their
+  results were.
+
+[travis-environment]: https://docs.travis-ci.com/user/environment-variables/#default-environment-variables
 [travis-generic]: https://docs.travis-ci.com/user/languages/minimal-and-generic/#generic
 [travis-java]: https://docs.travis-ci.com/user/languages/java/#gradle-dependency-management 
 [travis-javaspec]: https://travis-ci.org/kkrull/javaspec
