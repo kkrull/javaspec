@@ -1,3 +1,5 @@
+apply plugin: 'java-library'
+
 dependencies {
     testImplementation 'de.bechte.junit:junit-hierarchicalcontextrunner:4.11.3'
     testImplementation 'junit:junit:4.11'
