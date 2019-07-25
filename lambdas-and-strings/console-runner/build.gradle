@@ -1,3 +1,5 @@
+apply plugin: 'application'
+
 dependencies {
     implementation project(':lambda-api')
     testImplementation 'de.bechte.junit:junit-hierarchicalcontextrunner:4.11.3'
@@ -8,4 +10,4 @@ dependencies {
 
 description = 'JavaSpec: Console Runner'
 
-//TODO KDK: Add jar section to specify main class, to show up in the Manifest
+mainClassName = 'info.javaspec.console.Main'
