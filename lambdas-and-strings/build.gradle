@@ -4,7 +4,20 @@ allprojects {
 }
 
 subprojects {
+    apply plugin: 'checkstyle'
     apply plugin: 'java'
+
+    checkstyle {
+        checkstyleMain {
+            configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+            source = sourceSets.main.allSource
+        }
+
+        checkstyleTest {
+            configFile = file("${project.rootDir}/config/checkstyle/checkstyle-test.xml")
+            source = sourceSets.test.allSource
+        }
+    }
 
     repositories {
         jcenter()
