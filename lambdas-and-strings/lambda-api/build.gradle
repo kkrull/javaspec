@@ -1,4 +1,17 @@
+apply plugin: 'checkstyle'
 apply plugin: 'java-library'
+
+checkstyle {
+    checkstyleMain {
+        configFile = file("${project.rootDir}/checkstyle-main.xml")
+        source = sourceSets.main.allSource
+    }
+
+    checkstyleTest {
+        configFile = file("${project.rootDir}/checkstyle-test.xml")
+        source = sourceSets.test.allSource
+    }
+}
 
 dependencies {
     testImplementation 'de.bechte.junit:junit-hierarchicalcontextrunner:4.11.3'
