@@ -9,7 +9,6 @@ allprojects {
 
 subprojects {
     apply plugin: 'java'
-    apply plugin: 'maven-publish'
 
     repositories {
         mavenLocal()
@@ -19,14 +18,6 @@ subprojects {
     }
 
     sourceCompatibility = '1.8'
-
-    publishing {
-        publications {
-            maven(MavenPublication) {
-                from(components.java)
-            }
-        }
-    }
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
