@@ -34,11 +34,8 @@ Mocha-like syntax that:
 
 ### Technical debt
 
-* Consider switching to [Gradle](https://docs.gradle.org/5.0/userguide/java_library_plugin.html).
 * Release automation: `rake` or otherwise.
 * Find a new home for artifacts, such as [Bintray OSS](https://bintray.com/signup/oss).
-* Put the Java artifacts on independent version numbers.  There really isn't any 2.x development on
-  the artifacts that have already been released.
 * Switch to whatever license JUnit is using, to remove a potential blocker of adoption.
 * Enable others to contribute:
   * Identify good first commits

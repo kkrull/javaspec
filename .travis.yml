@@ -1,10 +1,12 @@
 dist: trusty
 language: generic
 
+before_install: cd lambdas-and-strings
+
 install:
 - bundle --version
 - rake --version
 - bundle install
-- mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+- ./gradlew assemble --console=plain --stacktrace
 
 script: rake

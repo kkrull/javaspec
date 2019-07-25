@@ -1,0 +1,39 @@
+allprojects {
+    group = 'info.javaspec'
+    version = '2.0.0-SNAPSHOT'
+}
+
+subprojects {
+    apply plugin: 'checkstyle'
+    apply plugin: 'java'
+
+    checkstyle {
+        checkstyleMain {
+            configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+            source = sourceSets.main.allSource
+        }
+
+        checkstyleTest {
+            configFile = file("${project.rootDir}/config/checkstyle/checkstyle-test.xml")
+            source = sourceSets.test.allSource
+        }
+    }
+
+    repositories {
+        jcenter()
+    }
+
+    sourceCompatibility = '1.8'
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    test {
+        if(System.env['CI'] != null) {
+            testLogging {
+                events "passed", "skipped", "failed", "standardOut", "standardError"
+            }
+        }
+    }
+}

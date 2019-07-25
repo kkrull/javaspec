@@ -1,0 +1,9 @@
+apply plugin: 'java'
+
+dependencies {
+    compile project(':lambda-api')
+}
+
+description = 'JavaSpec: Examples'
+
+jar.enabled = false
