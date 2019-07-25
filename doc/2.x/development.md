@@ -74,12 +74,13 @@ tree:
 There are a number of different testing tools that are used for testing, and tests are written in a
 [variety of scopes][fowler-test-pyramid], or levels of abstraction.
 
-* Run `rake java:junit` to run JUnit tests on Java sources, using the familiar `./gradlew test`
-  workflow.  These offer immediate feedback on JavaSpec classes, from inside the same process.
-* Run `rake java:test` to run all those tests, plus [Cucumber-jvm][cucumber-jvm] tests in
-  `info.javaspecfeature`.  This runs acceptance tests for high-level - but less immediate - feedback
-  on JavaSpec as a whole.  The test code still runs in the same process as the production code being
-  tested, so this leaves some possible gaps for things like runtime dependencies and class-loading.
+* Tests in most source sets are plain JUnit tests, and they run during `./gradlew build` or `rake
+  java:test`.  These offer immediate feedback on JavaSpec classes, from inside the same process.
+* The same tasks also run tests in `console-runner-features`, that are written in
+  [Cucumber-jvm][cucumber-jvm].  This runs acceptance tests for high-level - but less immediate -
+  feedback on JavaSpec as a whole.  The test code still runs in the same process as the production
+  code being tested, so this leaves some possible gaps for things like runtime dependencies and
+  class-loading.
 * Run `rake cucumber` or `rake cucumber:focus` to run (focused) Cucumber Ruby tests.
   These tests focus on JavaSpec's behavior when run as an external process, so it covers things like
   exit codes and console output.  Note that the `cucumber-docker` tasks can be used to run build a
