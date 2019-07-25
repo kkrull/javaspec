@@ -83,18 +83,18 @@ end
 namespace :java do
   desc 'Remove everything generated and compiled from Java code'
   task :clean do
-    sh *%w[mvn clean]
+    sh *%w[./gradlew clean]
   end
 
   desc 'Compile Java sources'
   task :compile do
-    sh *%w[mvn compile]
+    sh *%w[./gradlew build -x test]
   end
 
   desc 'Run all tests on Java code'
   task :test do
     #Cucumber options: https://github.com/cucumber/cucumber-java-skeleton#overriding-options
-    sh *%w[mvn test]
+    sh *%w[./gradlew build]
   end
 end
 
