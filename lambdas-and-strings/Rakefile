@@ -1,7 +1,7 @@
 require 'cucumber'
 require 'cucumber/rake/task'
 
-console_runner_class_dir = File.join File.dirname(__FILE__), 'console-runner/target/classes'
+console_runner_class_dir = File.join File.dirname(__FILE__), 'console-runner/build/classes/java/main'
 features_dir = File.join File.dirname(__FILE__), 'features'
 
 desc 'Compile, run all tests, and run checkstyle'

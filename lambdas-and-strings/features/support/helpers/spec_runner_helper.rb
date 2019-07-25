@@ -75,11 +75,11 @@ class SpecRunnerContext
   end
 
   def api_class_dir
-    File.expand_path '../../../../lambda-api/target/classes', __FILE__
+    File.expand_path '../../../../lambda-api/build/classes/java/main', __FILE__
   end
 
   def runner_class_dir
-    File.expand_path '../../../../console-runner/target/classes', __FILE__
+    File.expand_path '../../../../console-runner/build/classes/java/main', __FILE__
   end
 
   def runner_class_file
@@ -87,7 +87,7 @@ class SpecRunnerContext
   end
 
   def spec_class_dir
-    File.expand_path '../../../../examples/target/classes', __FILE__
+    File.expand_path '../../../../examples/build/classes/java/main', __FILE__
   end
 
   def spec_class_file(class_file)
