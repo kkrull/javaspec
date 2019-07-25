@@ -46,40 +46,6 @@ namespace :cucumber do
 end
 
 
-namespace 'cucumber-docker' do
-  desc 'Build the image used to run Cucumber tests'
-  task :build do
-    sh *%w[docker build -t javaspec/cucumber-tests .]
-  end
-
-  desc 'Run an interactive session in the Cucumber container'
-  task :interactive do
-    cmd = [
-      'docker run',
-      '--entrypoint bash',
-      '--rm',
-      '-it',
-      "-v #{console_runner_class_dir}:/usr/src/app/console-runner/target/classes",
-      "-v #{features_dir}:/usr/src/app/features",
-      'javaspec/cucumber-tests'
-    ].join(' ')
-    sh cmd
-  end
-
-  desc 'Run Cucumber scenarios in a Docker container'
-  task :run do
-    cmd = [
-      'docker run',
-      '--rm',
-      "-v #{console_runner_class_dir}:/usr/src/app/console-runner/target/classes",
-      "-v #{features_dir}:/usr/src/app/features",
-      'javaspec/cucumber-tests'
-    ].join(' ')
-    sh cmd
-  end
-end
-
-
 namespace :java do
   desc 'Remove everything generated and compiled from Java code'
   task :clean do
