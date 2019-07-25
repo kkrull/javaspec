@@ -1,3 +1,5 @@
+apply plugin: 'java'
+
 dependencies {
     testImplementation 'info.cukes:cucumber-java:1.1.8'
     testImplementation 'info.cukes:cucumber-junit:1.1.8'
@@ -9,3 +11,5 @@ dependencies {
 }
 
 description = 'JavaSpec: Console Runner Feature Tests'
+
+jar.enabled = false
