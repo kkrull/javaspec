@@ -10,4 +10,14 @@ dependencies {
 
 description = 'JavaSpec: Console Runner'
 
+distributions {
+    main {
+        baseName = 'javaspec'
+    }
+}
+
 mainClassName = 'info.javaspec.console.Main'
+
+startScripts {
+    applicationName = 'javaspec'
+}
