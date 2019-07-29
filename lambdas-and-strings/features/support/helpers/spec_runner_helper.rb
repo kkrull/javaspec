@@ -2,11 +2,11 @@ require 'aruba/api'
 
 module SpecRunnerHelper
   def spec_runner_helper
-    @spec_runner_helper ||= SpecRunnerContext.new
+    @spec_runner_helper ||= JavaClassRunner.new
   end
 end
 
-class SpecRunnerContext
+class JavaClassRunner
   include Aruba::Api
   attr_accessor :runner_class, :spec_classes
 
