@@ -22,4 +22,6 @@ distributions {
 
 startScripts {
     applicationName = 'javaspec'
+    unixStartScriptGenerator.template = resources.text.fromFile('customUnixStartScript.txt')
+    windowsStartScriptGenerator.template = resources.text.fromFile('customWindowsStartScript.txt')
 }
