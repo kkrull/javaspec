@@ -1,5 +1,9 @@
 apply plugin: 'application'
 
+application {
+    mainClassName = 'info.javaspec.console.Main'
+}
+
 dependencies {
     implementation project(':lambda-api')
     testImplementation 'de.bechte.junit:junit-hierarchicalcontextrunner:4.11.3'
@@ -15,8 +19,6 @@ distributions {
         baseName = 'javaspec'
     }
 }
-
-mainClassName = 'info.javaspec.console.Main'
 
 startScripts {
     applicationName = 'javaspec'
