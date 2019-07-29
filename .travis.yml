@@ -7,6 +7,6 @@ install:
 - bundle --version
 - rake --version
 - bundle install
-- ./gradlew assemble installDist --console=plain --stacktrace
+- ./gradlew assemble --console=plain --stacktrace
 
 script: rake
