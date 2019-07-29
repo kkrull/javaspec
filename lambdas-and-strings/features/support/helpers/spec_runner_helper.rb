@@ -1,102 +1,12 @@
-require 'aruba/api'
+require_relative './runners/java_class_runner'
 
 module SpecRunnerHelper
   def spec_runner_helper
     @spec_runner_helper ||= JavaClassRunner.new
   end
-end
 
-class JavaClassRunner
-  include Aruba::Api
-  attr_accessor :runner_class, :spec_classes
-
-  def initialize
-    #https://relishapp.com/cucumber/aruba/v/0-11-0/docs/rspec/getting-started-with-rspec-and-aruba#simple-custom-integration
-    setup_aruba
-    self.spec_classes = []
-  end
-
-  def exit_status
-    last_command_stopped.exit_status
-  end
-
-  def exec_help!(logger, command)
-    exec! logger, args: ['help', command]
-  end
-
-  def exec_run!(logger, reporter: 'plaintext')
-    exec! logger,
-      args: ['run', "--reporter=#{reporter}", *spec_classes],
-      fail_on_error: false
-  end
-
-  def exec!(logger, args: [], fail_on_error: true)
-    verify_class_files_exist
-    command = "java -cp #{api_class_dir}:#{runner_class_dir}:#{spec_class_dir} #{runner_class} #{args.join(' ')}"
-    logger.command_starting command
-    run_simple command, fail_on_error: fail_on_error
-  end
-
-  def runner_output
-    last_command_stopped.stdout
-  end
-
-  def spec_error_verification(&block)
-    @error_assertion = block
-  end
-
-  def spec_result_verification(&block)
-    @result_assertion = block
-  end
-
-  def spec_run_verification(&block)
-    @run_assertion = block
-  end
-
-  def verify_specs_ran
-    @run_assertion.call runner_output
-  end
-
-  def verify_specs_reported_errors
-    @error_assertion.call runner_output
-  end
-
-  def verify_spec_results
-    @result_assertion.call runner_output
-  end
-
-  private
-
-  def verify_class_files_exist
-    expect(runner_class_file).to be_an_existing_file
-    spec_classes.each do |class_name|
-      expect(spec_class_file(class_name)).to be_an_existing_file
-    end
-  end
-
-  def api_class_dir
-    File.expand_path '../../../../lambda-api/build/classes/java/main', __FILE__
-  end
-
-  def runner_class_dir
-    File.expand_path '../../../../console-runner/build/classes/java/main', __FILE__
-  end
-
-  def runner_class_file
-    path_to_class runner_class, runner_class_dir
-  end
-
-  def spec_class_dir
-    File.expand_path '../../../../examples/build/classes/java/main', __FILE__
-  end
-
-  def spec_class_file(class_file)
-    path_to_class class_file, spec_class_dir
-  end
-
-  def path_to_class(class_name, class_path)
-    relative_path = "#{class_name.gsub '.', '/'}.class"
-    File.expand_path relative_path, class_path
+  def set_spec_runner_helper(helper)
+    @spec_runner_helper = helper
   end
 end
 
