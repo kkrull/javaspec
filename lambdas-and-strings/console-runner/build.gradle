@@ -20,13 +20,6 @@ distributions {
     }
 }
 
-jar {
-    manifest {
-        attributes 'Class-Path': './lambda-api-2.0.0-SNAPSHOT.jar'
-    }
-}
-
 startScripts {
     applicationName = 'javaspec'
-    classpath = files('console-runner-2.0.0-SNAPSHOT.jar')
 }
