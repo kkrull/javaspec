@@ -15,15 +15,23 @@ JavaSpec and its dependencies are available in the [Maven Central Repository][ma
 
 ### Java
 
-Java sources target Java 8 and are built with [Gradle][gradle-java-plugin], which handles the build,
-testing, and packaging of Java sources as is common for Java projects.
-
-These can be installed on Homebrew systems as follows:
+Java sources target Java 8, which can be installed on Homebrew systems as follows:
 
     brew tap caskroom/versions
     brew cask install java8
 
+
+### Gradle
+
+Java sources are built with [Gradle][gradle-java-plugin], which handles the build, testing, and
+packaging of Java sources as is common for Java projects.
+
+Use the included Gradle wrapper (`gradlew`) to run Gradle.  This will download the appropriate
+version of Gradle (the first time you run it) and then run the specified tasks.  There is no need to
+install Gradle separately.
+
 [gradle-java-plugin]: https://docs.gradle.org/current/userguide/java_plugin.html#java_plugin
+
 
 ### Ruby
 
@@ -36,7 +44,7 @@ Rake tasks and Cucumber Ruby code target the Ruby version listed in `.ruby-versi
 
 ## Development
 
-### Build Automation via Rake
+### Top-level Build Automation via Rake
 
 Gradle is pretty good at automating Java-related tasks, but there are also Cucumber tests in Ruby to
 consider, that test JavaSpec externally.
@@ -50,7 +58,7 @@ tasks attempt to be as orthogonal as possible, meaning:
 * Tasks can be run in any combination or sequence.
 
 So if you want to run Cucumber Ruby tests against freshly-compiled Java code, you run `rake
-java:compile cucumber`.  If your Java code is already compiled and you just want to run the Cucumber
+java:install cucumber`.  If your Java code is already compiled and you just want to run the Cucumber
 Ruby tests again, it's `rake cucumber`.
 
 [rake]: https://github.com/ruby/rake
@@ -58,13 +66,14 @@ Ruby tests again, it's `rake cucumber`.
 
 ### Style and Static Analysis (Checkstyle)
 
-[Checkstyle][checkstyle-config] is used to check the code format and style.  Run it with `rake
-checkstyle:run`.  Different configurations are used, depending upon where you are in the source
-tree:
+[Checkstyle][checkstyle-config] is used to check the code format and style.  Run it with `./gradlew
+check` `rake java:checkstyle`.  Different configurations are used, depending upon where you are in
+the source tree:
 
-* `src/main/java` code is checked with `checkstyle-main.xml`
-* `src/test/java` code is checked with `checkstyle-test.xml`.  A few of the rules are relaxed, so
-  that long descriptions of behavior can be written out as Java classes and method names.
+* `src/main/java` code is checked with `config/checkstyle/checkstyle-main.xml`.
+* `src/test/java` code is checked with `config/checkstyle/checkstyle-test.xml`.  A few of the rules
+  are relaxed, so that long descriptions of behavior can be written out as Java classes and method
+  names.
 
 [checkstyle-config]: http://checkstyle.sourceforge.net/config.html
 
@@ -83,9 +92,7 @@ There are a number of different testing tools that are used for testing, and tes
   class-loading.
 * Run `rake cucumber` or `rake cucumber:focus` to run (focused) Cucumber Ruby tests.
   These tests focus on JavaSpec's behavior when run as an external process, so it covers things like
-  exit codes and console output.  Note that the `cucumber-docker` tasks can be used to run build a
-  Docker image to run these tests, if an extra layer of isolation is desired.
-
+  exit codes and console output.
 
 Note that - while it is possible to write the last category of tests in Java - the author's
 experiences have been that it's rather laborious to launch, monitor, and scrape output from external
@@ -121,29 +128,9 @@ that [Travis sets][travis-environment]:
 [travis-javaspec]: https://travis-ci.org/kkrull/javaspec
 
 
-## Releasing
-
-Rake also has tasks to automate the process of building and uploading a release.  This was as
-semi-automated process at best, even in its first incarnation as Bash scripts, and it would benefit
-from further refinement.  Old notes guiding the process are in [the outdated release
-document](../1.0.1/release.md).
-
-It relies upon tools such as [GPG][gpg] which will need to be installed, configured, and documented
-here.
-
-It also attempts to deploy JavaSpec to [Sonatype OSS][sonatype], which may not even exist or offer
-free accounts anymore, as far as the author knows.
-
-[gpg]: https://gpgtools.org
-[sonatype]: https://www.sonatype.com
-
-
 ### Artifacts
 
 Speaking of artifacts: _which JARs get released?_
 
-That's a great question.  JavaSpec is currently under development to add an additional, Mocha-like
-syntax (while retaining the MSpec-inspired syntax from the 1.x series) as well as an external test
-runner.  This will likely result in more artifacts, that still need some further iteration before we
-can solve the problem of independent use without creating the problem of a mess of poorly-conceived
-JARs.
+That's a great question.  This version of JavaSpec is currently under development.  This will likely
+result in more artifacts.
