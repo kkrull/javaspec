@@ -31,3 +31,7 @@ Mocha-like syntax that:
 * Enable others to contribute:
   * Identify good first commits
   * Contributing guide, with coding principles and instructions for submitting a pull request
+* Consider using `URLClassLoader` to [dynamically load spec
+  classes](https://stackoverflow.com/questions/60764/how-should-i-load-jars-dynamically-at-runtime)
+  from Java code, instead of having the startup script update the classpath when starting the Java
+  process.

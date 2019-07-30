@@ -24,7 +24,6 @@ Feature: Run specs with plaintext reporter
   @distribution
   @focus @wip
   Scenario: Specs should be shown as a bulleted list under the subject
-  TODO KDK: Need a way to add spec_class_dir to the classpath
     Given I have a JavaSpec runner for the console
     And I have specs that describe a single subject
     When I run those specs with a plain text reporter

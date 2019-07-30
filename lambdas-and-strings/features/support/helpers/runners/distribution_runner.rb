@@ -20,12 +20,17 @@ class DistributionRunner
 
   def exec_run!(logger, reporter: 'plaintext')
     exec! logger,
-      args: ['run', "--reporter=#{reporter}", *spec_classes],
+      args: [
+        "--spec-classpath=#{spec_class_dir}",
+        'run',
+        "--reporter=#{reporter}",
+        *spec_classes
+      ],
       fail_on_error: false
   end
 
   def exec!(logger, args: [], fail_on_error: true)
-    verify_class_files_exist
+    verify_distribution_exists
     command = "#{start_script_file} #{args.join(' ')}"
     logger.command_starting command
     run_simple command, fail_on_error: fail_on_error
@@ -61,39 +66,15 @@ class DistributionRunner
 
   private
 
-  def verify_class_files_exist
-    expect(runner_class_file).to be_an_existing_file
-    spec_classes.each do |class_name|
-      expect(spec_class_file(class_name)).to be_an_existing_file
-    end
-  end
-
-  def api_class_dir
-    File.expand_path '../../../../../lambda-api/build/classes/java/main', __FILE__
-  end
-
-  def runner_class_dir
-    File.expand_path '../../../../../console-runner/build/classes/java/main', __FILE__
-  end
-
-  def runner_class_file
-    path_to_class runner_class, runner_class_dir
+  def verify_distribution_exists
+    expect(start_script_file).to be_an_existing_file
   end
 
   def spec_class_dir
     File.expand_path '../../../../../examples/build/classes/java/main', __FILE__
   end
 
-  def spec_class_file(class_file)
-    path_to_class class_file, spec_class_dir
-  end
-
   def start_script_file
     File.expand_path '../../../../../console-runner/build/install/javaspec/bin/javaspec', __FILE__
-  end
-
-  def path_to_class(class_name, class_path)
-    relative_path = "#{class_name.gsub '.', '/'}.class"
-    File.expand_path relative_path, class_path
   end
 end
