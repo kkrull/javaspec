@@ -20,12 +20,23 @@ public final class RunSpecsCommand implements Command {
     try {
       rootCollection = this.factory.declareSpecs();
     } catch(Exception e) {
-      //TODO KDK: Return the exception along with the error code
-//      e.printStackTrace();
       return 2;
     }
 
     rootCollection.runSpecs(this.observer);
     return this.observer.hasFailingSpecs() ? 1 : 0;
+  }
+
+  @Override
+  public Result runResult() {
+    SpecCollection rootCollection;
+    try {
+      rootCollection = this.factory.declareSpecs();
+    } catch(Exception e) {
+      return new Result(2, e);
+    }
+
+    rootCollection.runSpecs(this.observer);
+    return this.observer.hasFailingSpecs() ? new Result(1) : new Result(0);
   }
 }

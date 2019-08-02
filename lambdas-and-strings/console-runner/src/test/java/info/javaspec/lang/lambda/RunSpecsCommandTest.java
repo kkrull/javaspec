@@ -3,6 +3,7 @@ package info.javaspec.lang.lambda;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.RunObserver;
 import info.javaspec.SpecCollection;
+import info.javaspec.console.Command;
 import info.javaspec.lang.lambda.RunSpecsCommand;
 import info.javaspec.lang.lambda.SpecCollectionFactory;
 import org.junit.Before;
@@ -34,22 +35,22 @@ public class RunSpecsCommandTest {
     @Test
     public void declaresSpecs() throws Exception {
       subject = new RunSpecsCommand(factory, observer);
-      subject.run();
+      subject.runResult();
       Mockito.verify(factory).declareSpecs();
     }
 
     @Test
     public void runsTheReturnedCollection() throws Exception {
       subject = new RunSpecsCommand(factory, observer);
-      subject.run();
+      subject.runResult();
       Mockito.verify(collection).runSpecs(observer);
     }
 
     @Test
     public void returns0WhenThereAreNoFailingSpecs() throws Exception {
       subject = new RunSpecsCommand(factory, observer);
-      int statusCode = subject.run();
-      assertThat(statusCode, equalTo(0));
+      Command.Result result = subject.runResult();
+      assertThat(result.exitCode, equalTo(0));
     }
 
     @Test
@@ -57,18 +58,20 @@ public class RunSpecsCommandTest {
       Mockito.when(observer.hasFailingSpecs()).thenReturn(true);
 
       subject = new RunSpecsCommand(factory, observer);
-      int statusCode = subject.run();
-      assertThat(statusCode, equalTo(1));
+      Command.Result result = subject.runResult();
+      assertThat(result.exitCode, equalTo(1));
     }
 
     @Test
-    public void returns2WhenSpecDeclarationThrows() throws Exception {
+    public void returns2AndTheExceptionWhenSpecDeclarationThrows() throws Exception {
+      RuntimeException exception = new RuntimeException("bang!");
       Mockito.when(factory.declareSpecs())
-        .thenThrow(new RuntimeException("bang!"));
+        .thenThrow(exception);
 
       subject = new RunSpecsCommand(factory, observer);
-      int statusCode = subject.run();
-      assertThat(statusCode, equalTo(2));
+      Command.Result result = subject.runResult();
+      assertThat(result.exitCode, equalTo(2));
+      assertThat(result.exception, equalTo(exception));
     }
   }
 }

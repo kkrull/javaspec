@@ -29,25 +29,25 @@ public class DetailedHelpCommandTest {
 
     @Test
     public void returns0() throws Exception {
-      int status = subject.run();
-      assertThat(status, equalTo(0));
+      Command.Result result = subject.runResult();
+      assertThat(result.exitCode, equalTo(0));
     }
 
     @Test
     public void writestheGeneralForm() throws Exception {
-      subject.run();
+      subject.runResult();
       observer.writeMessageShouldHaveReceivedLine(startsWith("Usage:   javaspec run"));
     }
 
     @Test
     public void writesAnExample() throws Exception {
-      subject.run();
+      subject.runResult();
       observer.writeMessageShouldHaveReceivedLine(startsWith("Example: javaspec run"));
     }
 
     @Test
     public void listsEachOption() throws Exception {
-      subject.run();
+      subject.runResult();
       observer.writeMessageShouldHaveReceivedLine(startsWith("--reporter=[reporter]"));
       observer.writeMessageShouldHaveReceivedLine(containsString("plaintext"));
     }

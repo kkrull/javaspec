@@ -29,19 +29,19 @@ public class HelpCommandTest {
 
     @Test
     public void returns0() throws Exception {
-      int status = subject.run();
-      assertThat(status, equalTo(0));
+      Command.Result result = subject.runResult();
+      assertThat(result.exitCode, equalTo(0));
     }
 
     @Test
     public void writesGeneralForm() throws Exception {
-      subject.run();
+      subject.runResult();
       observer.writeMessageShouldHaveReceivedLine("Usage: javaspec <command> [<arguments>]");
     }
 
     @Test
     public void listsEachKnownCommand() throws Exception {
-      subject.run();
+      subject.runResult();
       observer.writeMessageShouldHaveReceivedCommand("help", "show a list of commands, or help on a specific command");
       observer.writeMessageShouldHaveReceivedCommand("run", "run specs in Java classes");
     }
