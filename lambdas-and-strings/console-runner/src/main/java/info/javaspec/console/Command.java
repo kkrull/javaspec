@@ -27,7 +27,7 @@ public interface Command {
       this.exception = exception;
     }
 
-    public void reportTo(Object any) {
+    public void reportTo(Reporter reporter) {
     }
 
     public String summary() {

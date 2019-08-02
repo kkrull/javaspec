@@ -114,4 +114,11 @@ public final class PlainTextReporter implements Reporter {
   private ReporterScope scopeForCurrentEvents() {
     return this.scopes.peekLast();
   }
+
+  /* Reporter */
+
+  @Override
+  public void commandFailed(Exception failure) {
+    throw new UnsupportedOperationException();
+  }
 }

@@ -74,4 +74,9 @@ public final class MockReporter implements Reporter {
 
   @Override
   public void endCollection(SpecCollection collection) { }
+
+  /* Reporter */
+
+  @Override
+  public void commandFailed(Exception failure) { }
 }
