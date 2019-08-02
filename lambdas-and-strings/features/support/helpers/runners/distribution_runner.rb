@@ -10,10 +10,6 @@ class DistributionRunner
     self.spec_classes = []
   end
 
-  def exit_status
-    last_command_stopped.exit_status
-  end
-
   def exec_help!(logger, command)
     exec! logger, args: ['help', command]
   end
@@ -34,6 +30,10 @@ class DistributionRunner
     command = "#{start_script_file} #{args.join(' ')}"
     logger.command_starting command
     run_simple command, fail_on_error: fail_on_error
+  end
+
+  def exit_status
+    last_command_stopped.exit_status
   end
 
   def runner_output
