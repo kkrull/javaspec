@@ -33,3 +33,15 @@ Feature: Run command (external process)
     And I have 2 or more Java classes that define lambda specs
     When I run the specs in those classes
     Then The runner should run the specs in each of those classes
+
+
+  ## Error conditions: How does a developer figure out what went wrong **and how to fix it**?
+
+  @distribution
+  @focus @wip
+  Scenario: The CLI should fail when it can't find a spec class
+    Given I have a JavaSpec runner for the console
+    And I have a Java class that defines a suite of passing lambda specs
+    When I run the specs with an incorrect classpath entry for that class
+    Then The runner should list which spec classes could not be loaded
+    And The runner should indicate that running specs failed

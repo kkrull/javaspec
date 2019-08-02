@@ -47,6 +47,10 @@ Then(/^The runner should indicate that 1 or more specs have failed$/) do
   expect(spec_runner_helper.runner_output).to include("[Testing complete] Passed: 0, Failed: 1, Total: 1")
 end
 
+Then(/^The runner should indicate that running specs failed$/) do
+  expect(spec_runner_helper.exit_status).to eq(1)
+end
+
 def collapse_stacktrace(output)
   translated = output.lines.map do |line|
     case line

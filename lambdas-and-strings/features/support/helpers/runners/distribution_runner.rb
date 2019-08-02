@@ -14,12 +14,12 @@ class DistributionRunner
     exec! logger, args: ['help', command]
   end
 
-  def exec_run!(logger, reporter: 'plaintext')
+  def exec_run!(logger, reporter: 'plaintext', spec_classpath: spec_class_dir)
     exec! logger,
       args: [
         'run',
         "--reporter=#{reporter}",
-        "--spec-classpath=#{spec_class_dir}",
+        "--spec-classpath=#{spec_classpath}",
         *spec_classes
       ],
       fail_on_error: false
@@ -37,7 +37,7 @@ class DistributionRunner
   end
 
   def runner_output
-    last_command_stopped.stdout
+    last_command_stopped.output
   end
 
   def spec_error_verification(&block)

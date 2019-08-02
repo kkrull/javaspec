@@ -46,8 +46,6 @@ Feature: JavaSpec CLI (external process)
     And the runner's exit status should be 0
 
 
-  @distribution
-  @focus @wip
   Scenario: The CLI should report all passing specs with its exit code
     Given I have a JavaSpec runner for the console
     And I have a Java class that defines a suite of passing lambda specs
