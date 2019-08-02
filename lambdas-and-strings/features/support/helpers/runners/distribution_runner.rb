@@ -21,9 +21,9 @@ class DistributionRunner
   def exec_run!(logger, reporter: 'plaintext')
     exec! logger,
       args: [
-        "--spec-classpath=#{spec_class_dir}",
         'run',
         "--reporter=#{reporter}",
+        "--spec-classpath=#{spec_class_dir}",
         *spec_classes
       ],
       fail_on_error: false
