@@ -20,6 +20,8 @@ public final class RunSpecsCommand implements Command {
     try {
       rootCollection = this.factory.declareSpecs();
     } catch(Exception e) {
+      //TODO KDK: Return the exception along with the error code
+//      e.printStackTrace();
       return 2;
     }
 
