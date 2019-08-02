@@ -4,7 +4,7 @@ package info.javaspec.console;
 public interface Command {
   Result run();
 
-  final class Result {
+  class Result {
     public final int exitCode;
     private final String summary;
     public final Exception exception;
@@ -25,6 +25,9 @@ public interface Command {
       this.exitCode = exitCode;
       this.summary = summary;
       this.exception = exception;
+    }
+
+    public void reportTo(Object any) {
     }
 
     public String summary() {

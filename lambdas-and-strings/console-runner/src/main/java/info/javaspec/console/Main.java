@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class Main {
+  private final Reporter reporter;
   private final ExitHandler system;
 
   public static void main(String... args) {
@@ -18,16 +19,18 @@ public final class Main {
 
   static void main(Reporter reporter, ExitHandler system, String... args) {
     CommandParser parser = new ArgumentParser(new StaticCommandFactory(), reporter);
-    Main cli = new Main(system);
+    Main cli = new Main(reporter, system);
     cli.runCommand(parser.parseCommand(Arrays.asList(args)));
   }
 
-  Main(ExitHandler system) {
+  Main(Reporter reporter, ExitHandler system) {
+    this.reporter = reporter;
     this.system = system;
   }
 
   void runCommand(Command command) {
     Command.Result result = command.run();
+    result.reportTo(this.reporter);
     this.system.exit(result.exitCode);
   }
 

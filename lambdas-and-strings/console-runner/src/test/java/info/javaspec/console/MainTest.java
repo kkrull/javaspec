@@ -10,13 +10,15 @@ import org.mockito.Mockito;
 public class MainTest {
   public class runCommand {
     private Main subject;
+    private Reporter reporter;
     private Main.ExitHandler system;
     private Command command;
 
     @Before
     public void setup() {
+      this.reporter = Mockito.mock(Reporter.class);
       this.system = Mockito.mock(Main.ExitHandler.class);
-      this.subject = new Main(this.system);
+      this.subject = new Main(this.reporter, this.system);
       this.command = Mockito.mock(Command.class);
     }
 
@@ -29,10 +31,18 @@ public class MainTest {
 
     @Test
     public void exitsWithTheExitCodeReturnedByTheCommand() throws Exception {
-      Command.Result failure = Command.Result.failure(42, new RuntimeException("bang!"));
+      Command.Result failure = Command.Result.failure(42, "...you're not going to like it.");
       Mockito.stub(this.command.run()).toReturn(failure);
       subject.runCommand(this.command);
       Mockito.verify(this.system, Mockito.times(1)).exit(42);
+    }
+
+    @Test
+    public void reportsTheResult() throws Exception {
+      Command.Result result = Mockito.mock(Command.Result.class);
+      Mockito.stub(this.command.run()).toReturn(result);
+      subject.runCommand(this.command);
+      Mockito.verify(result).reportTo(Mockito.same(this.reporter));
     }
   }
 }
