@@ -4,8 +4,6 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.RunObserver;
 import info.javaspec.SpecCollection;
 import info.javaspec.console.Command;
-import info.javaspec.lang.lambda.RunSpecsCommand;
-import info.javaspec.lang.lambda.SpecCollectionFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,21 +33,21 @@ public class RunSpecsCommandTest {
     @Test
     public void declaresSpecs() throws Exception {
       subject = new RunSpecsCommand(factory, observer);
-      subject.runResult();
+      subject.run();
       Mockito.verify(factory).declareSpecs();
     }
 
     @Test
     public void runsTheReturnedCollection() throws Exception {
       subject = new RunSpecsCommand(factory, observer);
-      subject.runResult();
+      subject.run();
       Mockito.verify(collection).runSpecs(observer);
     }
 
     @Test
     public void returns0WhenThereAreNoFailingSpecs() throws Exception {
       subject = new RunSpecsCommand(factory, observer);
-      Command.Result result = subject.runResult();
+      Command.Result result = subject.run();
       assertThat(result.exitCode, equalTo(0));
     }
 
@@ -58,7 +56,7 @@ public class RunSpecsCommandTest {
       Mockito.when(observer.hasFailingSpecs()).thenReturn(true);
 
       subject = new RunSpecsCommand(factory, observer);
-      Command.Result result = subject.runResult();
+      Command.Result result = subject.run();
       assertThat(result.exitCode, equalTo(1));
     }
 
@@ -69,7 +67,7 @@ public class RunSpecsCommandTest {
         .thenThrow(exception);
 
       subject = new RunSpecsCommand(factory, observer);
-      Command.Result result = subject.runResult();
+      Command.Result result = subject.run();
       assertThat(result.exitCode, equalTo(2));
       assertThat(result.exception, equalTo(exception));
     }

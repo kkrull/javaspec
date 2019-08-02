@@ -2,8 +2,6 @@ package info.javaspec.console.help;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.console.Command;
-import info.javaspec.console.help.HelpCommand;
-import info.javaspec.console.help.HelpObserver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,19 +27,19 @@ public class HelpCommandTest {
 
     @Test
     public void returns0() throws Exception {
-      Command.Result result = subject.runResult();
+      Command.Result result = subject.run();
       assertThat(result.exitCode, equalTo(0));
     }
 
     @Test
     public void writesGeneralForm() throws Exception {
-      subject.runResult();
+      subject.run();
       observer.writeMessageShouldHaveReceivedLine("Usage: javaspec <command> [<arguments>]");
     }
 
     @Test
     public void listsEachKnownCommand() throws Exception {
-      subject.runResult();
+      subject.run();
       observer.writeMessageShouldHaveReceivedCommand("help", "show a list of commands, or help on a specific command");
       observer.writeMessageShouldHaveReceivedCommand("run", "run specs in Java classes");
     }

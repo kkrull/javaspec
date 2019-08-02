@@ -12,21 +12,7 @@ public final class HelpCommand implements Command {
   }
 
   @Override
-  public int run() {
-    this.observer.writeMessage(Arrays.asList(
-      "Usage: javaspec <command> [<arguments>]",
-      "",
-      "## Commands ##",
-      "",
-      "help  show a list of commands, or help on a specific command",
-      "run   run specs in Java classes"
-    ));
-
-    return 0;
-  }
-
-  @Override
-  public Result runResult() {
+  public Result run() {
     this.observer.writeMessage(Arrays.asList(
       "Usage: javaspec <command> [<arguments>]",
       "",

@@ -15,20 +15,7 @@ public final class RunSpecsCommand implements Command {
   }
 
   @Override
-  public int run() {
-    SpecCollection rootCollection;
-    try {
-      rootCollection = this.factory.declareSpecs();
-    } catch(Exception e) {
-      return 2;
-    }
-
-    rootCollection.runSpecs(this.observer);
-    return this.observer.hasFailingSpecs() ? 1 : 0;
-  }
-
-  @Override
-  public Result runResult() {
+  public Result run() {
     SpecCollection rootCollection;
     try {
       rootCollection = this.factory.declareSpecs();

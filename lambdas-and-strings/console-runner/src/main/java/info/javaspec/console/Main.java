@@ -27,8 +27,8 @@ public final class Main {
   }
 
   void runCommand(Command command) {
-    int code = command.run();
-    this.system.exit(code);
+    Command.Result result = command.run();
+    this.system.exit(result.exitCode);
   }
 
   @FunctionalInterface
