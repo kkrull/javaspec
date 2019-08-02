@@ -22,14 +22,15 @@ public class MainTest {
 
     @Test
     public void runsTheCommand() throws Exception {
-      Mockito.stub(this.command.run()).toReturn(new Command.Result(0));
+      Mockito.stub(this.command.run()).toReturn(Command.Result.success());
       subject.runCommand(this.command);
       Mockito.verify(this.command, Mockito.times(1)).run();
     }
 
     @Test
     public void exitsWithTheExitCodeReturnedByTheCommand() throws Exception {
-      Mockito.stub(this.command.run()).toReturn(new Command.Result(42));
+      Command.Result failure = Command.Result.failure(42, new RuntimeException("bang!"));
+      Mockito.stub(this.command.run()).toReturn(failure);
       subject.runCommand(this.command);
       Mockito.verify(this.system, Mockito.times(1)).exit(42);
     }

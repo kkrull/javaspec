@@ -27,6 +27,6 @@ public final class DetailedHelpCommand implements Command {
       "              Useful for preventing garbled output on continuous integration servers."
     ));
 
-    return new Result(0);
+    return Result.success();
   }
 }

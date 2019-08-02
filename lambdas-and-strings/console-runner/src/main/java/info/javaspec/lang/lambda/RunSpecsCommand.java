@@ -20,10 +20,12 @@ public final class RunSpecsCommand implements Command {
     try {
       rootCollection = this.factory.declareSpecs();
     } catch(Exception e) {
-      return new Result(2, e);
+      return Result.failure(2, e);
     }
 
     rootCollection.runSpecs(this.observer);
-    return this.observer.hasFailingSpecs() ? new Result(1) : new Result(0);
+    return this.observer.hasFailingSpecs()
+      ? Result.failure(1, "Specs failed")
+      : Result.success();
   }
 }

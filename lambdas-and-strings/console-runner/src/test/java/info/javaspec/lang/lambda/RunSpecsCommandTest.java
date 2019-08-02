@@ -52,12 +52,13 @@ public class RunSpecsCommandTest {
     }
 
     @Test
-    public void returns1WhenAnySpecsFail() throws Exception {
+    public void returns1AndASummaryWhenAnySpecsFail() throws Exception {
       Mockito.when(observer.hasFailingSpecs()).thenReturn(true);
 
       subject = new RunSpecsCommand(factory, observer);
       Command.Result result = subject.run();
       assertThat(result.exitCode, equalTo(1));
+      assertThat(result.summary(), equalTo("Specs failed"));
     }
 
     @Test

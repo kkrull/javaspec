@@ -22,6 +22,6 @@ public final class HelpCommand implements Command {
       "run   run specs in Java classes"
     ));
 
-    return new Result(0);
+    return Result.success();
   }
 }
