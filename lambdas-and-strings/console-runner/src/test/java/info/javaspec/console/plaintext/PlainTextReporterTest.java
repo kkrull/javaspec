@@ -119,6 +119,15 @@ public class PlainTextReporterTest {
     }
   }
 
+  public class commandFailed {
+    @Test
+    public void printsAStackTraceToTheGivenWriter() throws Exception {
+      subject.commandFailed(new RuntimeException("bang!"));
+
+      output.shouldHavePrintedExactly(equalTo("bang!"));
+    }
+  }
+
   public class hasFailingSpecs {
     @Test
     public void returnsFalseWhenNoSpecsFailed() throws Exception {

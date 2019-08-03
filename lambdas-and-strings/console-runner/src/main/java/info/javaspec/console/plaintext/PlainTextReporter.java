@@ -119,6 +119,6 @@ public final class PlainTextReporter implements Reporter {
 
   @Override
   public void commandFailed(Exception failure) {
-    throw new UnsupportedOperationException();
+    this.output.println(failure.getMessage());
   }
 }

@@ -82,6 +82,5 @@ Then(/^the runner's output should not contain any ANSI escape sequences$/) do
 end
 
 Then(/^The runner should list which spec classes could not be loaded$/) do
-  expect(spec_runner_helper.runner_output).to include('Failed to load spec classes')
-  expect(spec_runner_helper.runner_output).to include('Class not found: info.javaspec.example.rb.AllPassSpecs')
+  expect(spec_runner_helper.runner_output).to include('Failed to load spec class: info.javaspec.example.rb.AllPassSpecs')
 end
