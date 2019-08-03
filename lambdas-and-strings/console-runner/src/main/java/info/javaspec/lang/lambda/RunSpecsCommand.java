@@ -3,6 +3,7 @@ package info.javaspec.lang.lambda;
 import info.javaspec.RunObserver;
 import info.javaspec.SpecCollection;
 import info.javaspec.console.Command;
+import info.javaspec.console.Result;
 
 public final class RunSpecsCommand implements Command {
   private final SpecCollectionFactory factory;

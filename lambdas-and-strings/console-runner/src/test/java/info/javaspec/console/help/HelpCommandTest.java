@@ -2,6 +2,7 @@ package info.javaspec.console.help;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.console.Command;
+import info.javaspec.console.Result;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +28,7 @@ public class HelpCommandTest {
 
     @Test
     public void returns0() throws Exception {
-      Command.Result result = subject.run();
+      Result result = subject.run();
       assertThat(result.exitCode, equalTo(0));
     }
 

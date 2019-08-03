@@ -1,6 +1,7 @@
 package info.javaspec.console.help;
 
 import info.javaspec.console.Command;
+import info.javaspec.console.Result;
 
 import java.util.Arrays;
 

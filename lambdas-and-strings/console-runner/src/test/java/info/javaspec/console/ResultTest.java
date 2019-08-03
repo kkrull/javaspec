@@ -8,7 +8,7 @@ import org.mockito.Mockito;
 
 @RunWith(HierarchicalContextRunner.class)
 public class ResultTest {
-  private Command.Result subject;
+  private Result subject;
 
   public class reportTo {
     private Reporter reporter;
@@ -20,9 +20,17 @@ public class ResultTest {
 
     @Test
     public void aResultWithOnlyAnExitCodeReportsNothing() throws Exception {
-      subject = Command.Result.success();
+      subject = Result.success();
       subject.reportTo(this.reporter);
-      Mockito.verify(reporter, Mockito.never()).commandFailed(Mockito.any(Exception.class));
+      Mockito.verifyNoMoreInteractions(reporter);
+    }
+
+    @Test
+    public void aResultWithAnExceptionReportsAFailureWithThatException() throws Exception {
+      RuntimeException failure = new RuntimeException("bang!");
+      subject = Result.failure(1, failure);
+      subject.reportTo(this.reporter);
+      Mockito.verify(reporter).commandFailed(Mockito.same(failure));
     }
   }
 }

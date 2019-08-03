@@ -29,7 +29,7 @@ public final class Main {
   }
 
   void runCommand(Command command) {
-    Command.Result result = command.run();
+    Result result = command.run();
     result.reportTo(this.reporter);
     this.system.exit(result.exitCode);
   }

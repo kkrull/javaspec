@@ -3,7 +3,7 @@ package info.javaspec.lang.lambda;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.RunObserver;
 import info.javaspec.SpecCollection;
-import info.javaspec.console.Command;
+import info.javaspec.console.Result;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,7 +47,7 @@ public class RunSpecsCommandTest {
     @Test
     public void returns0WhenThereAreNoFailingSpecs() throws Exception {
       subject = new RunSpecsCommand(factory, observer);
-      Command.Result result = subject.run();
+      Result result = subject.run();
       assertThat(result.exitCode, equalTo(0));
     }
 
@@ -56,7 +56,7 @@ public class RunSpecsCommandTest {
       Mockito.when(observer.hasFailingSpecs()).thenReturn(true);
 
       subject = new RunSpecsCommand(factory, observer);
-      Command.Result result = subject.run();
+      Result result = subject.run();
       assertThat(result.exitCode, equalTo(1));
       assertThat(result.summary(), equalTo("Specs failed"));
     }
@@ -68,7 +68,7 @@ public class RunSpecsCommandTest {
         .thenThrow(exception);
 
       subject = new RunSpecsCommand(factory, observer);
-      Command.Result result = subject.run();
+      Result result = subject.run();
       assertThat(result.exitCode, equalTo(2));
       assertThat(result.exception, equalTo(exception));
     }
