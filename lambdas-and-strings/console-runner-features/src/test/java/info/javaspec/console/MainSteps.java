@@ -34,7 +34,7 @@ public class MainSteps {
     this.execRunCommand = () -> {
       OneOfEachSpecs.reset();
       Main.main(
-        this.mockReporter,
+        () -> this.mockReporter,
         this.system,
         "run",
         "--reporter=plaintext",
@@ -52,7 +52,7 @@ public class MainSteps {
   @Given("^I have a Java class that defines a suite of passing lambda specs$")
   public void iHaveAJavaClassThatDefinesPassingLambdaSpecs() throws Exception {
     this.execRunCommand = () -> Main.main(
-      this.mockReporter,
+      () -> this.mockReporter,
       this.system,
       "run",
       "--reporter=plaintext",
@@ -63,7 +63,7 @@ public class MainSteps {
   @Given("^I have a Java class that defines a suite of 1 or more failing lambda specs$")
   public void iHaveAClassWithFailingSpecs() throws Exception {
     this.execRunCommand = () -> Main.main(
-      this.mockReporter,
+      () -> this.mockReporter,
       this.system,
       "run",
       "--reporter=plaintext",

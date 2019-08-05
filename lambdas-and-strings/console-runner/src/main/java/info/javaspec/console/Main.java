@@ -10,15 +10,16 @@ public final class Main {
   private final ExitHandler system;
 
   public static void main(String... args) {
+    PlainTextReporter singletonReporter = new PlainTextReporter(System.out);
     main(
-      new PlainTextReporter(System.out),
+      () -> singletonReporter,
       System::exit,
       args
     );
   }
 
-  static void main(Reporter reporter, ExitHandler system, String... args) {
-    CommandParser parser = new ArgumentParser(new StaticCommandFactory(), reporter);
+  static void main(ReporterFactory reporterFactory, ExitHandler system, String... args) {
+    CommandParser parser = new ArgumentParser(new StaticCommandFactory(), reporterFactory);
     Main cli = new Main(parser.reporter(), system);
     cli.runCommand(parser.parseCommand(Arrays.asList(args)));
   }

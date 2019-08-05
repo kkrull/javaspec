@@ -9,18 +9,19 @@ import info.javaspec.lang.lambda.RunArguments;
 import java.util.List;
 
 final class ArgumentParser implements Main.CommandParser {
-  private final CommandFactory factory;
-  private final Reporter reporter;
+  private final CommandFactory commandFactory;
+  private final ReporterFactory reporterFactory;
 
-  public ArgumentParser(CommandFactory factory, Reporter reporter) {
-    this.factory = factory;
-    this.reporter = reporter;
+  public ArgumentParser(CommandFactory commandFactory, ReporterFactory reporterFactory) {
+    this.commandFactory = commandFactory;
+    this.reporterFactory = reporterFactory;
   }
 
   @Override
   public Command parseCommand(List<String> commandThenArguments) {
+    Reporter reporter = this.reporterFactory.plainTextReporter();
     if(commandThenArguments.isEmpty())
-      return this.factory.helpCommand(this.reporter);
+      return this.commandFactory.helpCommand(reporter);
 
     String command = commandThenArguments.get(0);
     List<String> arguments = commandThenArguments.subList(1, commandThenArguments.size());
@@ -43,10 +44,11 @@ final class ArgumentParser implements Main.CommandParser {
       .build()
       .parse(stringArguments.toArray(new String[0]));
 
+    Reporter reporter = this.reporterFactory.plainTextReporter();
     if(helpArguments.hasCommandParameter())
-      return this.factory.helpCommand(this.reporter, helpArguments.forCommandNamed);
+      return this.commandFactory.helpCommand(reporter, helpArguments.forCommandNamed);
 
-    return this.factory.helpCommand(this.reporter);
+    return this.commandFactory.helpCommand(reporter);
   }
 
   private Command parseRunCommand(List<String> stringArguments) {
@@ -56,12 +58,13 @@ final class ArgumentParser implements Main.CommandParser {
       .build()
       .parse(stringArguments.toArray(new String[0]));
 
-    return this.factory.runSpecsCommand(this.reporter, runArguments.specClassNames());
+    Reporter reporter = this.reporterFactory.plainTextReporter();
+    return this.commandFactory.runSpecsCommand(reporter, runArguments.specClassNames());
   }
 
   @Override
   public Reporter reporter() {
-    return this.reporter;
+    return this.reporterFactory.plainTextReporter();
   }
 
   interface CommandFactory {

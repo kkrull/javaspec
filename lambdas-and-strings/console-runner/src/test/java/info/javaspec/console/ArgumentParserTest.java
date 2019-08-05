@@ -27,7 +27,7 @@ public class ArgumentParserTest {
   public void setup() throws Exception {
     factory = Mockito.mock(CommandFactory.class);
     reporter = Mockito.mock(Reporter.class);
-    subject = new ArgumentParser(factory, reporter);
+    subject = new ArgumentParser(factory, () -> reporter);
   }
 
   public class parseCommand {
