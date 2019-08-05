@@ -2,7 +2,6 @@ package info.javaspec.console;
 
 import com.beust.jcommander.JCommander;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.MockitoMatchers;
 import info.javaspec.RunObserver;
 import info.javaspec.console.ArgumentParser.CommandFactory;
 import info.javaspec.console.ArgumentParser.InvalidCommand;
@@ -110,14 +109,14 @@ public class ArgumentParserTest {
         Command runCommand = Mockito.mock(Command.class);
         Mockito.when(
           factory.runSpecsCommand(
-            MockitoMatchers.any(RunObserver.class),
-            MockitoMatchers.anyListOf(String.class))
+            Mockito.any(RunObserver.class),
+            Mockito.anyListOf(String.class))
         ).thenReturn(runCommand);
 
         Command returned = subject.parseCommand(Arrays.asList("run", "--reporter=plaintext"));
         Mockito.verify(factory).runSpecsCommand(
-          MockitoMatchers.same(reporter),
-          MockitoMatchers.eq(Collections.emptyList())
+          Mockito.same(reporter),
+          Mockito.eq(Collections.emptyList())
         );
         assertThat(returned, sameInstance(runCommand));
       }
@@ -129,14 +128,14 @@ public class ArgumentParserTest {
         Command runCommand = Mockito.mock(Command.class);
         Mockito.when(
           factory.runSpecsCommand(
-            MockitoMatchers.any(RunObserver.class),
-            MockitoMatchers.anyListOf(String.class))
+            Mockito.any(RunObserver.class),
+            Mockito.anyListOf(String.class))
         ).thenReturn(runCommand);
 
         Command returned = subject.parseCommand(Arrays.asList("run", "--reporter=plaintext", "one"));
         Mockito.verify(factory).runSpecsCommand(
-          MockitoMatchers.same(reporter),
-          MockitoMatchers.eq(Collections.singletonList("one"))
+          Mockito.same(reporter),
+          Mockito.eq(Collections.singletonList("one"))
         );
         assertThat(returned, sameInstance(runCommand));
       }
