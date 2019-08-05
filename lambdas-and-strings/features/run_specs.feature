@@ -38,7 +38,6 @@ Feature: Run command (external process)
   ## Error conditions: How does a developer figure out what went wrong **and how to fix it**?
 
   @distribution
-  @focus @wip
   Scenario: The CLI should fail when it can't find a spec class
     Given I have a JavaSpec runner for the console
     And I have a Java class that defines a suite of passing lambda specs

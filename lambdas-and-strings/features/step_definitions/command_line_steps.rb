@@ -48,7 +48,7 @@ Then(/^The runner should indicate that 1 or more specs have failed$/) do
 end
 
 Then(/^The runner should indicate that running specs failed$/) do
-  expect(spec_runner_helper.exit_status).to eq(1)
+  expect(spec_runner_helper.exit_status).to be > 0
 end
 
 def collapse_stacktrace(output)

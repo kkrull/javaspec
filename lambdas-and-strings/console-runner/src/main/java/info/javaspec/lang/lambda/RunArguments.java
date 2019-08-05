@@ -18,6 +18,9 @@ public final class RunArguments {
   )
   private String reporterName;
 
+  @Parameter(names = "--spec-classpath")
+  private String specClassPath;
+
   @Parameter
   private List<String> _specClassNames;
 
