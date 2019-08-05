@@ -1,13 +1,13 @@
 package info.javaspec.console;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
+import info.javaspec.MockitoMatchers;
 import info.javaspec.RunObserver;
 import info.javaspec.console.ArgumentParser.CommandFactory;
 import info.javaspec.console.ArgumentParser.InvalidCommand;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
@@ -89,14 +89,14 @@ public class ArgumentParserTest {
         Command runCommand = Mockito.mock(Command.class);
         Mockito.when(
           factory.runSpecsCommand(
-            Matchers.any(RunObserver.class),
-            Matchers.anyListOf(String.class))
+            MockitoMatchers.any(RunObserver.class),
+            MockitoMatchers.anyListOf(String.class))
         ).thenReturn(runCommand);
 
         Command returned = subject.parseCommand(Arrays.asList("run", "--reporter=plaintext"));
         Mockito.verify(factory).runSpecsCommand(
-          Matchers.same(reporter),
-          Matchers.eq(Collections.emptyList())
+          MockitoMatchers.same(reporter),
+          MockitoMatchers.eq(Collections.emptyList())
         );
         assertThat(returned, sameInstance(runCommand));
       }
@@ -108,14 +108,14 @@ public class ArgumentParserTest {
         Command runCommand = Mockito.mock(Command.class);
         Mockito.when(
           factory.runSpecsCommand(
-            Matchers.any(RunObserver.class),
-            Matchers.anyListOf(String.class))
+            MockitoMatchers.any(RunObserver.class),
+            MockitoMatchers.anyListOf(String.class))
         ).thenReturn(runCommand);
 
         Command returned = subject.parseCommand(Arrays.asList("run", "--reporter=plaintext", "one"));
         Mockito.verify(factory).runSpecsCommand(
-          Matchers.same(reporter),
-          Matchers.eq(Collections.singletonList("one"))
+          MockitoMatchers.same(reporter),
+          MockitoMatchers.eq(Collections.singletonList("one"))
         );
         assertThat(returned, sameInstance(runCommand));
       }
