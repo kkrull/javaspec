@@ -26,7 +26,7 @@ class JavaClassRunner
 
   def exec!(logger, args: [], fail_on_error: true)
     verify_class_files_exist
-    command = "java -cp #{api_class_dir}:#{runner_class_dir}:#{spec_class_dir} #{runner_class} #{args.join(' ')}"
+    command = "java -cp #{api_class_dir}:#{jcommander_jar}:#{runner_class_dir}:#{spec_class_dir} #{runner_class} #{args.join(' ')}"
     logger.command_starting command
     run_simple command, fail_on_error: fail_on_error
   end
@@ -70,6 +70,10 @@ class JavaClassRunner
 
   def api_class_dir
     File.expand_path '../../../../../lambda-api/build/classes/java/main', __FILE__
+  end
+
+  def jcommander_jar
+    File.join ENV['HOME'], '.gradle/caches/modules-2/files-2.1/com.beust/jcommander/1.74/6b4c0f6e034ee6ce26a72e786cffe6a9c78815d1/jcommander-1.74.jar'
   end
 
   def runner_class_dir

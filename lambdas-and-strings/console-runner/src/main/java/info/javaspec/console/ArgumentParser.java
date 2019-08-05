@@ -4,6 +4,7 @@ import com.beust.jcommander.JCommander;
 import info.javaspec.RunObserver;
 import info.javaspec.console.help.HelpArguments;
 import info.javaspec.console.help.HelpObserver;
+import info.javaspec.lang.lambda.RunArguments;
 
 import java.util.List;
 
@@ -48,14 +49,17 @@ final class ArgumentParser implements Main.CommandParser {
     return this.factory.helpCommand(this.reporter);
   }
 
-  private Command parseRunCommand(List<String> commandThenArguments, List<String> arguments) {
-    if(arguments.isEmpty())
-      throw InvalidCommand.noReporterDefined(commandThenArguments);
-    else if(!"--reporter=plaintext".equals(arguments.get(0)))
+  private Command parseRunCommand(List<String> commandThenArguments, List<String> stringArguments) {
+    RunArguments runArguments = new RunArguments();
+    JCommander.newBuilder()
+      .addObject(runArguments)
+      .build()
+      .parse(stringArguments.toArray(new String[0]));
+
+    if(!"plaintext".equals(runArguments.reporterName()))
       throw InvalidCommand.noReporterDefined(commandThenArguments);
 
-    List<String> classNames = arguments.subList(1, arguments.size());
-    return this.factory.runSpecsCommand(this.reporter, classNames);
+    return this.factory.runSpecsCommand(this.reporter, runArguments.specClassNames());
   }
 
   interface CommandFactory {

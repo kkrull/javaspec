@@ -1,11 +1,10 @@
 package info.javaspec.console;
 
-import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.RunObserver;
 import info.javaspec.console.ArgumentParser.CommandFactory;
 import info.javaspec.console.ArgumentParser.InvalidCommand;
-import info.javaspec.console.help.HelpArguments;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,27 +67,17 @@ public class ArgumentParserTest {
         assertThat(returned, sameInstance(helpCommand));
         Mockito.verify(factory).helpCommand(Mockito.same(reporter), Mockito.eq("run"));
       }
-
-      @Test
-      public void parsesRunCommandWithJCommander() throws Exception {
-        HelpArguments args = new HelpArguments();
-        JCommander parser = JCommander.newBuilder()
-          .addObject(args)
-          .build();
-        parser.parse("run");
-        assertThat(args.forCommandNamed, equalTo("run"));
-      }
     }
 
     public class givenRunWithNoArguments {
-      @Test(expected = InvalidCommand.class)
+      @Test(expected = ParameterException.class)
       public void throwsAnError() throws Exception {
         subject.parseCommand(Arrays.asList("run"));
       }
     }
 
     public class givenRunWithoutAReporterOption {
-      @Test(expected = InvalidCommand.class)
+      @Test(expected = ParameterException.class)
       public void throwsAnError() throws Exception {
         subject.parseCommand(Arrays.asList("run", "one"));
       }
