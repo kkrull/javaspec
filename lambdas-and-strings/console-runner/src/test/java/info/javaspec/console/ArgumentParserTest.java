@@ -5,6 +5,7 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.RunObserver;
 import info.javaspec.console.ArgumentParser.CommandFactory;
 import info.javaspec.console.ArgumentParser.InvalidCommand;
+import info.javaspec.console.help.HelpArguments;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -66,16 +67,6 @@ public class ArgumentParserTest {
         Command returned = subject.parseCommand(Arrays.asList("help", "run"));
         assertThat(returned, sameInstance(helpCommand));
         Mockito.verify(factory).helpCommand(Mockito.same(reporter), Mockito.eq("run"));
-      }
-
-      @Test
-      public void parsesNoCommandsWithJCommander() throws Exception {
-        HelpArguments args = new HelpArguments();
-        JCommander.newBuilder()
-          .addObject(args)
-          .build()
-          .parse();
-        assertThat(args.forCommandNamed, nullValue());
       }
 
       @Test

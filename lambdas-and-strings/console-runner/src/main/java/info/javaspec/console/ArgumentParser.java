@@ -1,6 +1,8 @@
 package info.javaspec.console;
 
+import com.beust.jcommander.JCommander;
 import info.javaspec.RunObserver;
+import info.javaspec.console.help.HelpArguments;
 import info.javaspec.console.help.HelpObserver;
 
 import java.util.List;
@@ -33,11 +35,17 @@ final class ArgumentParser implements Main.CommandParser {
     }
   }
 
-  private Command parseHelpCommand(List<String> arguments) {
-    if(arguments.isEmpty())
-      return this.factory.helpCommand(this.reporter);
+  private Command parseHelpCommand(List<String> stringArguments) {
+    HelpArguments helpArguments = new HelpArguments();
+    JCommander.newBuilder()
+      .addObject(helpArguments)
+      .build()
+      .parse(stringArguments.toArray(new String[0]));
 
-    return this.factory.helpCommand(this.reporter, arguments.get(0));
+    if(helpArguments.hasCommandParameter())
+      return this.factory.helpCommand(this.reporter, helpArguments.forCommandNamed);
+
+    return this.factory.helpCommand(this.reporter);
   }
 
   private Command parseRunCommand(List<String> commandThenArguments, List<String> arguments) {

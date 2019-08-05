@@ -28,6 +28,7 @@ Mocha-like syntax that:
 
 * Find a new home for artifacts, such as [Bintray OSS](https://bintray.com/signup/oss).
 * Switch to whatever license JUnit is using, to remove a potential blocker of adoption.
+* Do whatever is required for the jcommander library's license.  Attribution?  Reference?
 * Enable others to contribute:
   * Identify good first commits
   * Contributing guide, with coding principles and instructions for submitting a pull request
