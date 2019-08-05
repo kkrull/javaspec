@@ -23,23 +23,31 @@ final class ArgumentParser implements Main.CommandParser {
     List<String> arguments = commandThenArguments.subList(1, commandThenArguments.size());
     switch(command) {
       case "help":
-        if(arguments.isEmpty())
-          return this.factory.helpCommand(this.reporter);
-
-        return this.factory.helpCommand(this.reporter, arguments.get(0));
+        return parseHelpCommand(arguments);
 
       case "run":
-        if(arguments.isEmpty())
-          throw InvalidCommand.noReporterDefined(commandThenArguments);
-        else if(!"--reporter=plaintext".equals(arguments.get(0)))
-          throw InvalidCommand.noReporterDefined(commandThenArguments);
-
-        List<String> classNames = arguments.subList(1, arguments.size());
-        return this.factory.runSpecsCommand(this.reporter, classNames);
+        return parseRunCommand(commandThenArguments, arguments);
 
       default:
         throw InvalidCommand.noCommandNamed(command);
     }
+  }
+
+  private Command parseHelpCommand(List<String> arguments) {
+    if(arguments.isEmpty())
+      return this.factory.helpCommand(this.reporter);
+
+    return this.factory.helpCommand(this.reporter, arguments.get(0));
+  }
+
+  private Command parseRunCommand(List<String> commandThenArguments, List<String> arguments) {
+    if(arguments.isEmpty())
+      throw InvalidCommand.noReporterDefined(commandThenArguments);
+    else if(!"--reporter=plaintext".equals(arguments.get(0)))
+      throw InvalidCommand.noReporterDefined(commandThenArguments);
+
+    List<String> classNames = arguments.subList(1, arguments.size());
+    return this.factory.runSpecsCommand(this.reporter, classNames);
   }
 
   interface CommandFactory {
