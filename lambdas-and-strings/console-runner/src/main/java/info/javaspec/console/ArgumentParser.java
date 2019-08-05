@@ -29,7 +29,7 @@ final class ArgumentParser implements Main.CommandParser {
         return parseHelpCommand(arguments);
 
       case "run":
-        return parseRunCommand(commandThenArguments, arguments);
+        return parseRunCommand(arguments);
 
       default:
         throw InvalidCommand.noCommandNamed(command);
@@ -49,15 +49,12 @@ final class ArgumentParser implements Main.CommandParser {
     return this.factory.helpCommand(this.reporter);
   }
 
-  private Command parseRunCommand(List<String> commandThenArguments, List<String> stringArguments) {
+  private Command parseRunCommand(List<String> stringArguments) {
     RunArguments runArguments = new RunArguments();
     JCommander.newBuilder()
       .addObject(runArguments)
       .build()
       .parse(stringArguments.toArray(new String[0]));
-
-    if(!"plaintext".equals(runArguments.reporterName()))
-      throw InvalidCommand.noReporterDefined(commandThenArguments);
 
     return this.factory.runSpecsCommand(this.reporter, runArguments.specClassNames());
   }

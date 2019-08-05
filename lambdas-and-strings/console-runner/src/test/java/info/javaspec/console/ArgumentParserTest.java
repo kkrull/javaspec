@@ -15,6 +15,7 @@ import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.fail;
 
 @RunWith(HierarchicalContextRunner.class)
 public class ArgumentParserTest {
@@ -80,6 +81,20 @@ public class ArgumentParserTest {
       @Test(expected = ParameterException.class)
       public void throwsAnError() throws Exception {
         subject.parseCommand(Arrays.asList("run", "one"));
+      }
+    }
+
+    public class givenRunWithAnInvalidReporterOption {
+      @Test
+      public void throwsAnError() throws Exception {
+        try {
+          subject.parseCommand(Arrays.asList("run", "--reporter=bogus"));
+        } catch (ParameterException e) {
+          assertThat(e.getMessage(), equalTo("Unknown value for --reporter: bogus"));
+          return;
+        }
+
+        fail("Expected exception: " + ParameterException.class.getName());
       }
     }
 
