@@ -78,13 +78,6 @@ final class ArgumentParser implements Main.CommandParser {
       return new InvalidCommand(message);
     }
 
-    public static InvalidCommand noReporterDefined(List<String> args) {
-      String message = String.format(
-        "%s: No reporter specified.  Please use the --reporter option.",
-        String.join(" ", args));
-      return new InvalidCommand(message);
-    }
-
     private InvalidCommand(String message) {
       super(message);
     }
