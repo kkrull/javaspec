@@ -1,5 +1,6 @@
 package info.javaspec.console;
 
+import com.beust.jcommander.JCommander;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.MockitoMatchers;
 import info.javaspec.RunObserver;
@@ -14,7 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.sameInstance;
+import static org.hamcrest.Matchers.*;
 
 @RunWith(HierarchicalContextRunner.class)
 public class ArgumentParserTest {
@@ -66,6 +67,26 @@ public class ArgumentParserTest {
         Command returned = subject.parseCommand(Arrays.asList("help", "run"));
         assertThat(returned, sameInstance(helpCommand));
         Mockito.verify(factory).helpCommand(Mockito.same(reporter), Mockito.eq("run"));
+      }
+
+      @Test
+      public void parsesNoCommandsWithJCommander() throws Exception {
+        HelpArguments args = new HelpArguments();
+        JCommander.newBuilder()
+          .addObject(args)
+          .build()
+          .parse();
+        assertThat(args.forCommandNamed, nullValue());
+      }
+
+      @Test
+      public void parsesRunCommandWithJCommander() throws Exception {
+        HelpArguments args = new HelpArguments();
+        JCommander parser = JCommander.newBuilder()
+          .addObject(args)
+          .build();
+        parser.parse("run");
+        assertThat(args.forCommandNamed, equalTo("run"));
       }
     }
 

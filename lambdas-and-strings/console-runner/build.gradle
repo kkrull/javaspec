@@ -6,6 +6,7 @@ application {
 
 dependencies {
     implementation project(':lambda-api')
+    implementation 'com.beust:jcommander:1.74'
     testImplementation 'de.bechte.junit:junit-hierarchicalcontextrunner:4.11.3'
     testImplementation 'junit:junit:4.11'
     testImplementation 'org.hamcrest:hamcrest-library:1.3'
