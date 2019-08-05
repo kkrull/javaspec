@@ -59,6 +59,11 @@ final class ArgumentParser implements Main.CommandParser {
     return this.factory.runSpecsCommand(this.reporter, runArguments.specClassNames());
   }
 
+  @Override
+  public Reporter reporter() {
+    return this.reporter;
+  }
+
   interface CommandFactory {
     Command helpCommand(HelpObserver observer);
 

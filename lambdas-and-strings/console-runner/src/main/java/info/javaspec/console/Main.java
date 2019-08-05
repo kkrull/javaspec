@@ -19,7 +19,7 @@ public final class Main {
 
   static void main(Reporter reporter, ExitHandler system, String... args) {
     CommandParser parser = new ArgumentParser(new StaticCommandFactory(), reporter);
-    Main cli = new Main(reporter, system);
+    Main cli = new Main(parser.reporter(), system);
     cli.runCommand(parser.parseCommand(Arrays.asList(args)));
   }
 
@@ -34,9 +34,10 @@ public final class Main {
     this.system.exit(result.exitCode);
   }
 
-  @FunctionalInterface
   interface CommandParser {
     Command parseCommand(List<String> commandThenArguments);
+
+    Reporter reporter();
   }
 
   @FunctionalInterface
