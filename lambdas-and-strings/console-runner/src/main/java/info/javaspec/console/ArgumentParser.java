@@ -58,8 +58,11 @@ final class ArgumentParser implements Main.CommandParser {
       .build()
       .parse(stringArguments.toArray(new String[0]));
 
-    Reporter reporter = this.reporterFactory.plainTextReporter();
-    return this.commandFactory.runSpecsCommand(reporter, runArguments.specClassNames());
+    return this.commandFactory.runSpecsCommand(
+      this.reporterFactory.plainTextReporter(),
+      runArguments.specClassPath(),
+      runArguments.specClassNames()
+    );
   }
 
   interface CommandFactory {
@@ -68,6 +71,8 @@ final class ArgumentParser implements Main.CommandParser {
     Command helpCommand(HelpObserver observer, String forCommandNamed);
 
     Command runSpecsCommand(RunObserver observer, List<String> classNames);
+
+    Command runSpecsCommand(RunObserver observer, String specClassPath, List<String> classNames);
   }
 
   static final class InvalidCommand extends RuntimeException {

@@ -38,6 +38,7 @@ public class MainSteps {
         this.system,
         "run",
         "--reporter=plaintext",
+        "--spec-classpath=.",
         OneOfEachSpecs.class.getCanonicalName()
       );
     };
@@ -56,6 +57,7 @@ public class MainSteps {
       this.system,
       "run",
       "--reporter=plaintext",
+      "--spec-classpath=.",
       OnePassesSpecs.class.getCanonicalName()
     );
   }
@@ -67,6 +69,7 @@ public class MainSteps {
       this.system,
       "run",
       "--reporter=plaintext",
+      "--spec-classpath=.",
       OneFailsSpecs.class.getCanonicalName()
     );
   }

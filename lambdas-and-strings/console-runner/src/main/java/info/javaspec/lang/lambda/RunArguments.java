@@ -18,8 +18,11 @@ public final class RunArguments {
   )
   private String reporterName;
 
-  @Parameter(names = "--spec-classpath")
-  private String specClassPath;
+  @Parameter(
+    names = "--spec-classpath",
+    required = true
+  )
+  private String _specClassPath;
 
   @Parameter
   private List<String> _specClassNames;
@@ -27,6 +30,10 @@ public final class RunArguments {
   public List<String> specClassNames() {
     return Optional.ofNullable(this._specClassNames)
       .orElse(Collections.emptyList());
+  }
+
+  public String specClassPath() {
+    return this._specClassPath;
   }
 
   public static final class ReporterNameValidator implements IValueValidator<String> {

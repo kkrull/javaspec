@@ -35,12 +35,7 @@ public class ArgumentParserTest {
     public class givenNoArguments {
       @Test
       public void returnsHelpCommandWithTheReporter() throws Exception {
-        Command helpCommand = Mockito.mock(Command.class);
-        Mockito.when(factory.helpCommand(Mockito.any()))
-          .thenReturn(helpCommand);
-
-        Command returned = subject.parseCommand(Collections.emptyList());
-        assertThat(returned, sameInstance(helpCommand));
+        subject.parseCommand(Collections.emptyList());
         Mockito.verify(factory).helpCommand(Mockito.same(reporter));
       }
     }
@@ -48,12 +43,7 @@ public class ArgumentParserTest {
     public class givenHelpWithNoArguments {
       @Test
       public void returnsHelpCommandWithTheReporter() throws Exception {
-        Command helpCommand = Mockito.mock(Command.class);
-        Mockito.when(factory.helpCommand(Mockito.any()))
-          .thenReturn(helpCommand);
-
-        Command returned = subject.parseCommand(Collections.singletonList("help"));
-        assertThat(returned, sameInstance(helpCommand));
+        subject.parseCommand(Collections.singletonList("help"));
         Mockito.verify(factory).helpCommand(Mockito.same(reporter));
       }
     }
@@ -61,12 +51,7 @@ public class ArgumentParserTest {
     public class givenHelpWithACommand {
       @Test
       public void returnsHelpCommandForTheSpecifiedCommand() throws Exception {
-        Command helpCommand = Mockito.mock(Command.class);
-        Mockito.when(factory.helpCommand(Mockito.any(), Mockito.anyString()))
-          .thenReturn(helpCommand);
-
-        Command returned = subject.parseCommand(Arrays.asList("help", "run"));
-        assertThat(returned, sameInstance(helpCommand));
+        subject.parseCommand(Arrays.asList("help", "run"));
         Mockito.verify(factory).helpCommand(Mockito.same(reporter), Mockito.eq("run"));
       }
     }
@@ -90,7 +75,7 @@ public class ArgumentParserTest {
     }
 
     public class givenRunWithoutASpecClassPathOption {
-      @Test(expected = ParameterException.class) @Ignore
+      @Test(expected = ParameterException.class)
       public void throwsAnError() throws Exception {
         subject.parseCommand(Arrays.asList(
           "run",
@@ -118,40 +103,42 @@ public class ArgumentParserTest {
       }
     }
 
-    public class givenAValidRunCommandWithZeroOrMoreClassNames {
+    public class givenAValidRunCommand {
       @Test
-      public void createsRunSpecsCommandWithNoClassNames() throws Exception {
-        Command runCommand = Mockito.mock(Command.class);
-        Mockito.when(
-          factory.runSpecsCommand(
-            Mockito.any(RunObserver.class),
-            Mockito.anyListOf(String.class))
-        ).thenReturn(runCommand);
-
-        Command returned = subject.parseCommand(Arrays.asList(
+      public void passesTheSpecifiedSpecClassPathToCreateTheRunCommand() throws Exception {
+        subject.parseCommand(Arrays.asList(
           "run",
           "--reporter=plaintext",
           "--spec-classpath=specs.jar"
         ));
         Mockito.verify(factory).runSpecsCommand(
           Mockito.same(reporter),
+          Mockito.eq("specs.jar"),
+          Mockito.anyListOf(String.class)
+        );
+      }
+    }
+
+    public class givenAValidRunCommandAndZeroClassNames {
+      @Test
+      public void createsRunSpecsCommandWithNoClassNames() throws Exception {
+        subject.parseCommand(Arrays.asList(
+          "run",
+          "--reporter=plaintext",
+          "--spec-classpath=specs.jar"
+        ));
+        Mockito.verify(factory).runSpecsCommand(
+          Mockito.same(reporter),
+          Mockito.anyString(),
           Mockito.eq(Collections.emptyList())
         );
-        assertThat(returned, sameInstance(runCommand));
       }
     }
 
     public class givenAValidRunCommandAndOneOrMoreClassNames {
       @Test
       public void createsRunSpecsCommandWithTheRestOfTheArgsAsClassNames() throws Exception {
-        Command runCommand = Mockito.mock(Command.class);
-        Mockito.when(
-          factory.runSpecsCommand(
-            Mockito.any(RunObserver.class),
-            Mockito.anyListOf(String.class))
-        ).thenReturn(runCommand);
-
-        Command returned = subject.parseCommand(Arrays.asList(
+        subject.parseCommand(Arrays.asList(
           "run",
           "--reporter=plaintext",
           "--spec-classpath=specs.jar",
@@ -159,13 +146,13 @@ public class ArgumentParserTest {
         ));
         Mockito.verify(factory).runSpecsCommand(
           Mockito.same(reporter),
+          Mockito.anyString(),
           Mockito.eq(Collections.singletonList("one"))
         );
-        assertThat(returned, sameInstance(runCommand));
       }
     }
 
-    public class givenAnythingElse {
+    public class givenAnyOtherCommand {
       @Test(expected = InvalidCommand.class)
       public void throwsAnError() throws Exception {
         subject.parseCommand(Collections.singletonList("bogus"));
