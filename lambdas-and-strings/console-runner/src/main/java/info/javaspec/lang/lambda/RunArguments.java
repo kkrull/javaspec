@@ -1,6 +1,9 @@
 package info.javaspec.lang.lambda;
 
-import com.beust.jcommander.*;
+import com.beust.jcommander.IValueValidator;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.ParameterException;
+import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.BaseConverter;
 
 import java.io.File;
@@ -21,7 +24,7 @@ public final class RunArguments {
   private String reporterName;
 
   @Parameter(
-    converter = FileURLConverter.class,
+    converter = PathToFileUrl.class,
     names = "--spec-classpath",
     required = true
   )
@@ -39,8 +42,8 @@ public final class RunArguments {
     return this._specClassPath;
   }
 
-  public static final class FileURLConverter extends BaseConverter<URL> {
-    public FileURLConverter() {
+  public static final class PathToFileUrl extends BaseConverter<URL> {
+    public PathToFileUrl() {
       super("--spec-classpath");
     }
 
