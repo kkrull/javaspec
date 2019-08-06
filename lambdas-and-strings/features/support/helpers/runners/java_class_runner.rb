@@ -18,15 +18,20 @@ class JavaClassRunner
     exec! logger, args: ['help', command]
   end
 
-  def exec_run!(logger, reporter: 'plaintext')
+  def exec_run!(logger, reporter: 'plaintext', spec_classpath: spec_class_dir)
     exec! logger,
-      args: ['run', "--reporter=#{reporter}", *spec_classes],
+      args: [
+        'run',
+        "--reporter=#{reporter}",
+        "--spec-classpath=#{spec_classpath}",
+        *spec_classes
+      ],
       fail_on_error: false
   end
 
   def exec!(logger, args: [], fail_on_error: false)
     verify_class_files_exist
-    command = "java -cp #{api_class_dir}:#{jcommander_jar}:#{runner_class_dir}:#{spec_class_dir} #{runner_class} #{args.join(' ')}"
+    command = "java -cp #{api_class_dir}:#{jcommander_jar}:#{runner_class_dir} #{runner_class} #{args.join(' ')}"
     logger.command_starting command
     run_simple command, fail_on_error: fail_on_error
   end
