@@ -1,4 +1,3 @@
-@distribution
 @log_commands
 Feature: JavaSpec CLI (external process)
   As a developer who is working on some code that is covered by specs

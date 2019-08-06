@@ -1,4 +1,3 @@
-@distribution
 @log_commands
 Feature: Run command (external process)
   As a developer who is working on some code that is covered by specs
