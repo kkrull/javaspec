@@ -6,6 +6,7 @@ import info.javaspec.console.help.HelpArguments;
 import info.javaspec.console.help.HelpObserver;
 import info.javaspec.lang.lambda.RunArguments;
 
+import java.net.URL;
 import java.util.List;
 
 final class ArgumentParser implements Main.CommandParser {
@@ -70,7 +71,7 @@ final class ArgumentParser implements Main.CommandParser {
 
     Command helpCommand(HelpObserver observer, String forCommandNamed);
 
-    Command runSpecsCommand(RunObserver observer, String specClassPath, List<String> classNames);
+    Command runSpecsCommand(RunObserver observer, URL specClassPath, List<String> classNames);
   }
 
   static final class InvalidCommand extends RuntimeException {
