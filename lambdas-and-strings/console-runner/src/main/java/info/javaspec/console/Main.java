@@ -1,7 +1,5 @@
 package info.javaspec.console;
 
-import info.javaspec.console.plaintext.PlainTextReporter;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,9 +8,8 @@ public final class Main {
   private final ExitHandler system;
 
   public static void main(String... args) {
-    PlainTextReporter singletonReporter = new PlainTextReporter(System.out);
     main(
-      () -> singletonReporter,
+      new StaticReporterFactory(System.out),
       System::exit,
       args
     );
@@ -20,7 +17,7 @@ public final class Main {
 
   static void main(ReporterFactory reporterFactory, ExitHandler system, String... args) {
     CommandParser parser = new ArgumentParser(new StaticCommandFactory(), reporterFactory);
-    Main cli = new Main(parser.reporter(), system);
+    Main cli = new Main(reporterFactory.plainTextReporter(), system);
     cli.runCommand(parser.parseCommand(Arrays.asList(args)));
   }
 
@@ -35,10 +32,9 @@ public final class Main {
     this.system.exit(result.exitCode);
   }
 
+  @FunctionalInterface
   interface CommandParser {
     Command parseCommand(List<String> commandThenArguments);
-
-    Reporter reporter();
   }
 
   @FunctionalInterface
