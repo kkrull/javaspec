@@ -6,6 +6,7 @@ import info.javaspec.RunObserver;
 import info.javaspec.console.ArgumentParser.CommandFactory;
 import info.javaspec.console.ArgumentParser.InvalidCommand;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -80,7 +81,22 @@ public class ArgumentParserTest {
     public class givenRunWithoutAReporterOption {
       @Test(expected = ParameterException.class)
       public void throwsAnError() throws Exception {
-        subject.parseCommand(Arrays.asList("run", "one"));
+        subject.parseCommand(Arrays.asList(
+          "run",
+          "--spec-classpath=specs.jar",
+          "one"
+        ));
+      }
+    }
+
+    public class givenRunWithoutASpecClassPathOption {
+      @Test(expected = ParameterException.class) @Ignore
+      public void throwsAnError() throws Exception {
+        subject.parseCommand(Arrays.asList(
+          "run",
+          "--reporter=plaintext",
+          "one"
+        ));
       }
     }
 
@@ -88,8 +104,12 @@ public class ArgumentParserTest {
       @Test
       public void throwsAnError() throws Exception {
         try {
-          subject.parseCommand(Arrays.asList("run", "--reporter=bogus"));
-        } catch (ParameterException e) {
+          subject.parseCommand(Arrays.asList(
+            "run",
+            "--reporter=bogus",
+            "--spec-classpath=specs.jar"
+          ));
+        } catch(ParameterException e) {
           assertThat(e.getMessage(), equalTo("Unknown value for --reporter: bogus"));
           return;
         }
@@ -108,7 +128,11 @@ public class ArgumentParserTest {
             Mockito.anyListOf(String.class))
         ).thenReturn(runCommand);
 
-        Command returned = subject.parseCommand(Arrays.asList("run", "--reporter=plaintext"));
+        Command returned = subject.parseCommand(Arrays.asList(
+          "run",
+          "--reporter=plaintext",
+          "--spec-classpath=specs.jar"
+        ));
         Mockito.verify(factory).runSpecsCommand(
           Mockito.same(reporter),
           Mockito.eq(Collections.emptyList())
@@ -127,7 +151,12 @@ public class ArgumentParserTest {
             Mockito.anyListOf(String.class))
         ).thenReturn(runCommand);
 
-        Command returned = subject.parseCommand(Arrays.asList("run", "--reporter=plaintext", "one"));
+        Command returned = subject.parseCommand(Arrays.asList(
+          "run",
+          "--reporter=plaintext",
+          "--spec-classpath=specs.jar",
+          "one"
+        ));
         Mockito.verify(factory).runSpecsCommand(
           Mockito.same(reporter),
           Mockito.eq(Collections.singletonList("one"))
