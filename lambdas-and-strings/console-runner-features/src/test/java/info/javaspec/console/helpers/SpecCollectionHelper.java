@@ -29,11 +29,13 @@ public class SpecCollectionHelper {
   }
 
   public void loadSpecsFromClass() {
+    ClassLoader specClassLoader = getClass().getClassLoader();
     List<Class<?>> specClasses = Collections.singletonList(this.specHelper.getDeclaringClass());
     List<String> specClassNames = specClasses.stream()
       .map(Class::getName)
       .collect(Collectors.toList());
-    SpecCollectionFactory factory = new FunctionalDslFactory(specClassNames);
+
+    SpecCollectionFactory factory = new FunctionalDslFactory(specClassLoader, specClassNames);
     this.rootCollection = factory.declareSpecs();
   }
 

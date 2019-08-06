@@ -9,11 +9,6 @@ public class FunctionalDslFactory implements SpecCollectionFactory {
   private final ClassLoader loader;
   private final List<String> classNames;
 
-  public FunctionalDslFactory(List<String> classNames) {
-    this.classNames = classNames;
-    this.loader = FunctionalDslFactory.class.getClassLoader();
-  }
-
   public FunctionalDslFactory(ClassLoader loader, List<String> classNames) {
     this.loader = loader;
     this.classNames = classNames;

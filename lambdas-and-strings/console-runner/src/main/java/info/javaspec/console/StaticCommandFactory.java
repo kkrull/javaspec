@@ -22,6 +22,10 @@ public class StaticCommandFactory implements ArgumentParser.CommandFactory {
 
   @Override
   public Command runSpecsCommand(RunObserver observer, List<String> classNames) {
-    return new RunSpecsCommand(new FunctionalDslFactory(classNames), observer);
+    ClassLoader specClassLoader = FunctionalDslFactory.class.getClassLoader();
+    return new RunSpecsCommand(
+      new FunctionalDslFactory(specClassLoader, classNames),
+      observer
+    );
   }
 }

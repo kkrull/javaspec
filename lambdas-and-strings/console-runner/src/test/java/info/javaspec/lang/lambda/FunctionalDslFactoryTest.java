@@ -10,10 +10,12 @@ import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 
 @RunWith(HierarchicalContextRunner.class)
@@ -24,6 +26,18 @@ public class FunctionalDslFactoryTest {
     @Before
     public void setup() throws Exception {
       FunctionalDsl.reset();
+    }
+
+    @Test
+    public void triesToLoadTheSpecifiedSpecClassesFromTheGivenLoader() throws Exception {
+      SpyClassLoader loader = new SpyClassLoader();
+      subject = new FunctionalDslFactory(
+        loader,
+        Collections.singletonList("info.javaspec.lang.lambda.FunctionalDslFactoryTest$ClassLoadingSpy")
+      );
+
+      subject.declareSpecs();
+      loader.loadClassShouldHaveReceived("info.javaspec.lang.lambda.FunctionalDslFactoryTest$ClassLoadingSpy");
     }
 
     public class givenAClassLoaderThatHasTheSpecifiedClasses {
@@ -120,6 +134,8 @@ public class FunctionalDslFactoryTest {
     }
   }
 
+  public static class ClassLoadingSpy { }
+
   public static class DescribeSpy {
     private static BehaviorDeclaration _declaration;
 
@@ -150,6 +166,25 @@ public class FunctionalDslFactoryTest {
 
     public OneInstanceSpy() {
       _numTimesInstantiated++;
+    }
+  }
+
+  /* Class loaders */
+
+  private static final class SpyClassLoader extends ClassLoader {
+    private final List<String> loadClassGot = Collections.synchronizedList(new LinkedList<>());
+
+    @Override
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
+      this.loadClassGot.add(name);
+      return super.loadClass(name);
+    }
+
+    public void loadClassShouldHaveReceived(String name) {
+      //https://docs.oracle.com/javase/8/docs/api/java/util/Collections.html#synchronizedList-java.util.List-
+      synchronized(this.loadClassGot) {
+        assertThat(this.loadClassGot, contains(name));
+      }
     }
   }
 }
