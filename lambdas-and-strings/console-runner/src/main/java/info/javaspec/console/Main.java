@@ -1,34 +1,35 @@
 package info.javaspec.console;
 
-import info.javaspec.console.plaintext.PlainTextReporter;
-
 import java.util.Arrays;
 import java.util.List;
 
 public final class Main {
+  private final Reporter reporter;
   private final ExitHandler system;
 
   public static void main(String... args) {
     main(
-      new PlainTextReporter(System.out),
+      new StaticReporterFactory(System.out),
       System::exit,
       args
     );
   }
 
-  static void main(Reporter reporter, ExitHandler system, String... args) {
-    CommandParser parser = new ArgumentParser(new StaticCommandFactory(), reporter);
-    Main cli = new Main(system);
+  static void main(ReporterFactory reporterFactory, ExitHandler system, String... args) {
+    CommandParser parser = new ArgumentParser(new StaticCommandFactory(), reporterFactory);
+    Main cli = new Main(reporterFactory.plainTextReporter(), system);
     cli.runCommand(parser.parseCommand(Arrays.asList(args)));
   }
 
-  Main(ExitHandler system) {
+  Main(Reporter reporter, ExitHandler system) {
+    this.reporter = reporter;
     this.system = system;
   }
 
   void runCommand(Command command) {
-    int code = command.run();
-    this.system.exit(code);
+    Result result = command.run();
+    result.reportTo(this.reporter);
+    this.system.exit(result.exitCode);
   }
 
   @FunctionalInterface

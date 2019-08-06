@@ -5,7 +5,7 @@ console_runner_class_dir = File.join File.dirname(__FILE__), 'console-runner/bui
 features_dir = File.join File.dirname(__FILE__), 'features'
 
 desc 'Compile, run all tests, and run checkstyle'
-task default: %w[java:test cucumber java:checkstyle]
+task default: %w[java:test java:install cucumber java:checkstyle]
 
 
 desc 'Clean everything'
@@ -47,6 +47,12 @@ namespace :java do
   desc 'Open cucumber-jvm report'
   task 'cucumber-report' do
     sh *%w[open console-runner-features/build/reports/cucumber/index.html]
+  end
+
+  desc 'Package and install java distributions, locally'
+  task :install do
+    #Cucumber options: https://github.com/cucumber/cucumber-java-skeleton#overriding-options
+    gradle %w[--stacktrace installDist]
   end
 
   desc 'Run all tests on Java code'

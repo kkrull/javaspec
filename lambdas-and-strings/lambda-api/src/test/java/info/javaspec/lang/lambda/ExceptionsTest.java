@@ -37,7 +37,7 @@ public class ExceptionsTest {
       @Test
       public void saysWhichClassCanNotBeLoaded() throws Exception {
         Exception exception = SpecDeclarationFailed.whenLoading("a.Class", null);
-        assertThat(exception.getMessage(), equalTo("Failed to load class a.Class, to declare specs"));
+        assertThat(exception.getMessage(), equalTo("Failed to load spec class: a.Class"));
       }
 
       @Test

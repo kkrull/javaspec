@@ -2,8 +2,7 @@ package info.javaspec.console.help;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.console.Command;
-import info.javaspec.console.help.DetailedHelpCommand;
-import info.javaspec.console.help.HelpObserver;
+import info.javaspec.console.Result;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,8 +28,8 @@ public class DetailedHelpCommandTest {
 
     @Test
     public void returns0() throws Exception {
-      int status = subject.run();
-      assertThat(status, equalTo(0));
+      Result result = subject.run();
+      assertThat(result.exitCode, equalTo(0));
     }
 
     @Test

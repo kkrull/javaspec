@@ -1,6 +1,7 @@
 package info.javaspec.console.help;
 
 import info.javaspec.console.Command;
+import info.javaspec.console.Result;
 
 import java.util.Arrays;
 
@@ -14,7 +15,7 @@ public final class DetailedHelpCommand implements Command {
   }
 
   @Override
-  public int run() {
+  public Result run() {
     this.observer.writeMessage(Arrays.asList(
       "Usage:   javaspec run --reporter=plaintext <spec class> [spec class...]",
       "Example: javaspec run --reporter=plaintext com.acme.AnvilSpecs com.acme.SpringOperatedBoxingGloveSpecs",
@@ -27,6 +28,6 @@ public final class DetailedHelpCommand implements Command {
       "              Useful for preventing garbled output on continuous integration servers."
     ));
 
-    return 0;
+    return Result.success();
   }
 }

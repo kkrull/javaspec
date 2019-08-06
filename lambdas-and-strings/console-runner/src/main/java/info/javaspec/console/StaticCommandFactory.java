@@ -7,6 +7,8 @@ import info.javaspec.console.help.HelpObserver;
 import info.javaspec.lang.lambda.FunctionalDslFactory;
 import info.javaspec.lang.lambda.RunSpecsCommand;
 
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.List;
 
 public class StaticCommandFactory implements ArgumentParser.CommandFactory {
@@ -21,7 +23,11 @@ public class StaticCommandFactory implements ArgumentParser.CommandFactory {
   }
 
   @Override
-  public Command runSpecsCommand(RunObserver observer, List<String> classNames) {
-    return new RunSpecsCommand(new FunctionalDslFactory(classNames), observer);
+  public Command runSpecsCommand(RunObserver observer, URL specClassPath, List<String> classNames) {
+    ClassLoader specClassLoader = new URLClassLoader(new URL[]{ specClassPath });
+    return new RunSpecsCommand(
+      new FunctionalDslFactory(specClassLoader, classNames),
+      observer
+    );
   }
 }

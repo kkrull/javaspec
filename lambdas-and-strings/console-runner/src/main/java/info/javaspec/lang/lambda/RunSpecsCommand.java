@@ -3,7 +3,7 @@ package info.javaspec.lang.lambda;
 import info.javaspec.RunObserver;
 import info.javaspec.SpecCollection;
 import info.javaspec.console.Command;
-import info.javaspec.lang.lambda.SpecCollectionFactory;
+import info.javaspec.console.Result;
 
 public final class RunSpecsCommand implements Command {
   private final SpecCollectionFactory factory;
@@ -15,15 +15,17 @@ public final class RunSpecsCommand implements Command {
   }
 
   @Override
-  public int run() {
+  public Result run() {
     SpecCollection rootCollection;
     try {
       rootCollection = this.factory.declareSpecs();
     } catch(Exception e) {
-      return 2;
+      return Result.failure(2, e);
     }
 
     rootCollection.runSpecs(this.observer);
-    return this.observer.hasFailingSpecs() ? 1 : 0;
+    return this.observer.hasFailingSpecs()
+      ? Result.failure(1, "Specs failed")
+      : Result.success();
   }
 }

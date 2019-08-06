@@ -53,6 +53,10 @@ When(/^I run those specs with a plain text reporter$/) do
   spec_runner_helper.exec_run! logger, reporter: 'plaintext'
 end
 
+When(/^I run the specs with an incorrect classpath entry for that class$/) do
+  spec_runner_helper.exec_run! logger, spec_classpath: File.dirname(__FILE__)
+end
+
 Then(/^The runner should describe the subject being tested$/) do
   expect(spec_runner_helper.runner_output).to include('Illudium Q-36 Explosive Space Modulator')
 end
@@ -75,4 +79,8 @@ end
 
 Then(/^the runner's output should not contain any ANSI escape sequences$/) do
   expect(spec_runner_helper.runner_output).not_to include("\e")
+end
+
+Then(/^The runner should list which spec classes could not be loaded$/) do
+  expect(spec_runner_helper.runner_output).to include('Failed to load spec class: info.javaspec.example.rb.AllPassSpecs')
 end

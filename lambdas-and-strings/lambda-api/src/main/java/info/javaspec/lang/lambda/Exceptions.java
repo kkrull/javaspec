@@ -21,7 +21,7 @@ final class Exceptions {
   public static final class SpecDeclarationFailed extends RuntimeException {
     public static SpecDeclarationFailed whenLoading(String className, Throwable cause) {
       return new SpecDeclarationFailed(
-        String.format("Failed to load class %s, to declare specs", className),
+        String.format("Failed to load spec class: %s", className),
         cause
       );
     }

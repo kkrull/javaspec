@@ -1,6 +1,7 @@
 package info.javaspec.console.help;
 
 import info.javaspec.console.Command;
+import info.javaspec.console.Result;
 
 import java.util.Arrays;
 
@@ -12,7 +13,7 @@ public final class HelpCommand implements Command {
   }
 
   @Override
-  public int run() {
+  public Result run() {
     this.observer.writeMessage(Arrays.asList(
       "Usage: javaspec <command> [<arguments>]",
       "",
@@ -22,6 +23,6 @@ public final class HelpCommand implements Command {
       "run   run specs in Java classes"
     ));
 
-    return 0;
+    return Result.success();
   }
 }

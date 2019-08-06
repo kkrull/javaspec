@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
+import java.net.URL;
 import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -45,6 +46,7 @@ public class StaticCommandFactoryTest {
     public void returnsRunSpecsCommandWithTheGivenClasses() throws Exception {
       Command command = subject.runSpecsCommand(
         Mockito.mock(RunObserver.class),
+        new URL("file:/specs.jar"),
         Collections.emptyList()
       );
       assertThat(command, instanceOf(RunSpecsCommand.class));

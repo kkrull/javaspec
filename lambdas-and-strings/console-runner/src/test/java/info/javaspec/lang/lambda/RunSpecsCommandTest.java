@@ -3,8 +3,7 @@ package info.javaspec.lang.lambda;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.RunObserver;
 import info.javaspec.SpecCollection;
-import info.javaspec.lang.lambda.RunSpecsCommand;
-import info.javaspec.lang.lambda.SpecCollectionFactory;
+import info.javaspec.console.Result;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,27 +47,30 @@ public class RunSpecsCommandTest {
     @Test
     public void returns0WhenThereAreNoFailingSpecs() throws Exception {
       subject = new RunSpecsCommand(factory, observer);
-      int statusCode = subject.run();
-      assertThat(statusCode, equalTo(0));
+      Result result = subject.run();
+      assertThat(result.exitCode, equalTo(0));
     }
 
     @Test
-    public void returns1WhenAnySpecsFail() throws Exception {
+    public void returns1AndASummaryWhenAnySpecsFail() throws Exception {
       Mockito.when(observer.hasFailingSpecs()).thenReturn(true);
 
       subject = new RunSpecsCommand(factory, observer);
-      int statusCode = subject.run();
-      assertThat(statusCode, equalTo(1));
+      Result result = subject.run();
+      assertThat(result.exitCode, equalTo(1));
+      assertThat(result.summary(), equalTo("Specs failed"));
     }
 
     @Test
-    public void returns2WhenSpecDeclarationThrows() throws Exception {
+    public void returns2AndTheExceptionWhenSpecDeclarationThrows() throws Exception {
+      RuntimeException exception = new RuntimeException("bang!");
       Mockito.when(factory.declareSpecs())
-        .thenThrow(new RuntimeException("bang!"));
+        .thenThrow(exception);
 
       subject = new RunSpecsCommand(factory, observer);
-      int statusCode = subject.run();
-      assertThat(statusCode, equalTo(2));
+      Result result = subject.run();
+      assertThat(result.exitCode, equalTo(2));
+      assertThat(result.exception, equalTo(exception));
     }
   }
 }
