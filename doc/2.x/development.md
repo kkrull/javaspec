@@ -70,7 +70,7 @@ Ruby tests again, it's `rake cucumber`.
 check` `rake java:checkstyle`.  Different configurations are used, depending upon where you are in
 the source tree:
 
-* `src/main/java` code is checked with `config/checkstyle/checkstyle-main.xml`.
+* `src/main/java` code is checked with `config/checkstyle/checkstyle.xml`.
 * `src/test/java` code is checked with `config/checkstyle/checkstyle-test.xml`.  A few of the rules
   are relaxed, so that long descriptions of behavior can be written out as Java classes and method
   names.
