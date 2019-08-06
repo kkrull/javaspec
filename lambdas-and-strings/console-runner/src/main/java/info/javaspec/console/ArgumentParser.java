@@ -70,8 +70,6 @@ final class ArgumentParser implements Main.CommandParser {
 
     Command helpCommand(HelpObserver observer, String forCommandNamed);
 
-    Command runSpecsCommand(RunObserver observer, List<String> classNames);
-
     Command runSpecsCommand(RunObserver observer, String specClassPath, List<String> classNames);
   }
 
