@@ -24,7 +24,7 @@ class JavaClassRunner
       fail_on_error: false
   end
 
-  def exec!(logger, args: [], fail_on_error: true)
+  def exec!(logger, args: [], fail_on_error: false)
     verify_class_files_exist
     command = "java -cp #{api_class_dir}:#{jcommander_jar}:#{runner_class_dir}:#{spec_class_dir} #{runner_class} #{args.join(' ')}"
     logger.command_starting command
@@ -32,7 +32,7 @@ class JavaClassRunner
   end
 
   def runner_output
-    last_command_stopped.stdout
+    last_command_stopped.output
   end
 
   def spec_error_verification(&block)

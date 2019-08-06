@@ -25,7 +25,7 @@ class DistributionRunner
       fail_on_error: false
   end
 
-  def exec!(logger, args: [], fail_on_error: true)
+  def exec!(logger, args: [], fail_on_error: false)
     verify_distribution_exists
     command = "#{start_script_file} #{args.join(' ')}"
     logger.command_starting command
