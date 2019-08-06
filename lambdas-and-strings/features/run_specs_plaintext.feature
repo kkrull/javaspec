@@ -1,3 +1,4 @@
+@distribution
 @keep-ansi-escape-sequences
 @log_commands
 Feature: Run specs with plaintext reporter

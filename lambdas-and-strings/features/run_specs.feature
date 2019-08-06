@@ -1,3 +1,4 @@
+@distribution
 @log_commands
 Feature: Run command (external process)
   As a developer who is working on some code that is covered by specs
@@ -37,7 +38,6 @@ Feature: Run command (external process)
 
   ## Error conditions: How does a developer figure out what went wrong **and how to fix it**?
 
-  @distribution
   Scenario: The CLI should fail when it can't find a spec class
     Given I have a JavaSpec runner for the console
     And I have a Java class that defines a suite of passing lambda specs

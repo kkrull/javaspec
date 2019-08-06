@@ -1,3 +1,4 @@
+@distribution
 @log_commands
 Feature: JavaSpec CLI (external process)
   As a developer who is working on some code that is covered by specs
@@ -11,7 +12,6 @@ Feature: JavaSpec CLI (external process)
 
   ## Basic CLI behavior: What commands are available?  How does `javaspec` work, as a process?
   
-  @distribution
   Scenario: The CLI should offer to help when it's run without any arguments
     Given I have a JavaSpec runner for the console
     When I run the runner without any arguments
@@ -27,7 +27,6 @@ Feature: JavaSpec CLI (external process)
     And the runner's exit status should be 0
 
 
-  @distribution
   Scenario: The CLI should tell you how to use the run command
     Given I have a JavaSpec runner for the console
     When I ask for help on the run command
