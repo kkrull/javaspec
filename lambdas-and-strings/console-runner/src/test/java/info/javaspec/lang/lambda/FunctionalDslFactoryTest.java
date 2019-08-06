@@ -26,40 +26,42 @@ public class FunctionalDslFactoryTest {
       FunctionalDsl.reset();
     }
 
-    @Test
-    public void instantiatesEachSpecClass() throws Exception {
-      subject = new FunctionalDslFactory(
-        FunctionalDslFactory.class.getClassLoader(),
-        Arrays.asList(
-          OneInstanceSpy.class.getName(),
-          AnotherInstanceSpy.class.getName()
-        )
-      );
+    public class givenAClassLoaderThatHasTheSpecifiedClasses {
+      @Test
+      public void instantiatesEachSpecClass() throws Exception {
+        subject = new FunctionalDslFactory(
+          this.getClass().getClassLoader(),
+          Arrays.asList(
+            OneInstanceSpy.class.getName(),
+            AnotherInstanceSpy.class.getName()
+          )
+        );
 
-      subject.declareSpecs();
-      OneInstanceSpy.numTimesInstantiatedShouldBe(1);
-      AnotherInstanceSpy.numTimesInstantiatedShouldBe(1);
-    }
+        subject.declareSpecs();
+        OneInstanceSpy.numTimesInstantiatedShouldBe(1);
+        AnotherInstanceSpy.numTimesInstantiatedShouldBe(1);
+      }
 
-    @Test
-    public void returnsASubCollectionForEachSubjectDescribedWithTheDsl() throws Exception {
-      subject = new FunctionalDslFactory(
-        FunctionalDslFactory.class.getClassLoader(),
-        Collections.singletonList(DescribeSpy.class.getName())
-      );
-      SpecCollection returned = subject.declareSpecs();
-      DescribeSpy.declarationShouldHaveBeenInvoked();
+      @Test
+      public void returnsASubCollectionForEachSubjectDescribedWithTheDsl() throws Exception {
+        subject = new FunctionalDslFactory(
+          this.getClass().getClassLoader(),
+          Collections.singletonList(DescribeSpy.class.getName())
+        );
+        SpecCollection returned = subject.declareSpecs();
+        DescribeSpy.declarationShouldHaveBeenInvoked();
 
-      List<String> subjectsDescribed = returned.subCollections().stream()
-        .map(SpecCollection::description)
-        .collect(Collectors.toList());
-      assertThat(subjectsDescribed, equalTo(Collections.singletonList("DescribeSpy")));
+        List<String> subjectsDescribed = returned.subCollections().stream()
+          .map(SpecCollection::description)
+          .collect(Collectors.toList());
+        assertThat(subjectsDescribed, equalTo(Collections.singletonList("DescribeSpy")));
+      }
     }
 
     @Test(expected = SpecDeclarationFailed.class)
     public void throwsGivenAClassNameThatDoesNotExist() throws Exception {
       subject = new FunctionalDslFactory(
-        FunctionalDslFactory.class.getClassLoader(),
+        this.getClass().getClassLoader(),
         Collections.singletonList("com.bogus.Class")
       );
       subject.declareSpecs();
@@ -68,7 +70,7 @@ public class FunctionalDslFactoryTest {
     @Test(expected = SpecDeclarationFailed.class)
     public void throwsGivenAClassThatDoesNotLoad() throws Exception {
       subject = new FunctionalDslFactory(
-        FunctionalDslFactory.class.getClassLoader(),
+        this.getClass().getClassLoader(),
         Collections.singletonList("info.javaspec.lang.lambda.ExplodingStaticInitializer")
       );
       subject.declareSpecs();
@@ -77,7 +79,7 @@ public class FunctionalDslFactoryTest {
     @Test(expected = SpecDeclarationFailed.class)
     public void throwsGivenAClassThatCanNotBeInstantiated() throws Exception {
       subject = new FunctionalDslFactory(
-        FunctionalDslFactory.class.getClassLoader(),
+        this.getClass().getClassLoader(),
         Collections.singletonList("info.javaspec.lang.lambda.FunctionalDslFactoryTest$AbstractClass")
       );
       subject.declareSpecs();
@@ -86,7 +88,7 @@ public class FunctionalDslFactoryTest {
     @Test(expected = SpecDeclarationFailed.class)
     public void throwsGivenAClassThatFailsToInstantiate() throws Exception {
       subject = new FunctionalDslFactory(
-        FunctionalDslFactory.class.getClassLoader(),
+        this.getClass().getClassLoader(),
         Collections.singletonList("info.javaspec.lang.lambda.FunctionalDslFactoryTest$ExplodingConstructor")
       );
       subject.declareSpecs();
@@ -95,12 +97,14 @@ public class FunctionalDslFactoryTest {
     @Test(expected = SpecDeclarationFailed.class)
     public void throwsGivenAnInaccessibleClass() throws Exception {
       subject = new FunctionalDslFactory(
-        FunctionalDslFactory.class.getClassLoader(),
+        this.getClass().getClassLoader(),
         Collections.singletonList("info.javaspec.lang.lambda.FunctionalDslFactoryTest$HiddenClass")
       );
       subject.declareSpecs();
     }
   }
+
+  /* Spec classes that **must not be referenced anywhere else**, to avoid premature class loading */
 
   public abstract static class AbstractClass { }
 
