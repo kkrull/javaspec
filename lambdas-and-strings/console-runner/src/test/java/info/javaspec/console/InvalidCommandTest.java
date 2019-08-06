@@ -5,8 +5,6 @@ import info.javaspec.console.ArgumentParser.InvalidCommand;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Arrays;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
