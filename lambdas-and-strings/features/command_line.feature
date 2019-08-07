@@ -26,7 +26,7 @@ Feature: JavaSpec CLI (external process)
     And the runner's exit status should be 0
 
 
-  Scenario: The CLI should tell you how to use the run command
+  Scenario: The help command should tell you more about the run command
     Given I have a JavaSpec runner for the console
     When I ask for help on the run command
     Then the runner's output should be
