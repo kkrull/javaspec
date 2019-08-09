@@ -99,17 +99,23 @@ namespace :distribution do
 
   def untar(file, target_dir)
     Gem::Package::TarReader.new file do |tar|
-      tar.each do |tar_entry|
-        destination_file = File.join target_dir, tar_entry.full_name
-        extract_tar_entry! tar_entry, destination_file
-        chmod tar_entry.header.mode, destination_file
+      tar.each do |entry|
+        target_path = File.join target_dir, entry.full_name
+        extract_tar_entry! entry, target_path
+        chmod entry.header.mode, target_path
       end
     end
   end
 
   def extract_tar_entry!(tar_entry, target_path)
-    mkdir_p target_path if tar_entry.directory?
-    extract_tar_file! tar_entry, target_path if tar_entry.file?
+    case
+    when tar_entry.directory?
+      mkdir_p target_path
+    when tar_entry.file?
+      extract_tar_file! tar_entry, target_path if tar_entry.file?
+    else
+      raise IOError.new "Unknown type of tar file entry: #{tar_entry}"
+    end
   end
 
   def extract_tar_file!(tar_entry, target_path)
