@@ -26,53 +26,6 @@ namespace :cucumber do
 end
 
 
-namespace :java do
-  desc 'Perform static analysis on Java code'
-  task :checkstyle do
-    gradle %w[--stacktrace check]
-  end
-
-  desc 'Remove everything generated and compiled from Java code'
-  task :clean do
-    gradle %w[--stacktrace clean]
-  end
-
-  desc 'Compile Java sources'
-  task :compile do
-    gradle %w[--stacktrace build -x test]
-  end
-
-  desc 'Open cucumber-jvm report'
-  task 'cucumber-report' do
-    sh *%w[open console-runner-features/build/reports/cucumber/index.html]
-  end
-
-  desc 'Package and install java distributions, locally'
-  task :install do
-    #Cucumber options: https://github.com/cucumber/cucumber-java-skeleton#overriding-options
-    gradle %w[--stacktrace installDist]
-  end
-
-  desc 'Run all tests on Java code'
-  task :test do
-    #Cucumber options: https://github.com/cucumber/cucumber-java-skeleton#overriding-options
-    gradle %w[--stacktrace build]
-  end
-
-  def gradle(tasks)
-    gradle_command =
-      # https://docs.travis-ci.com/user/environment-variables/#default-environment-variables
-      if ENV['CI']
-        %w[./gradlew --console=plain]
-      else
-        %w[./gradlew]
-      end
-
-    sh *gradle_command + tasks
-  end
-end
-
-
 namespace :distribution do
   desc 'Install the distribution to /usr/local'
   task :install do
@@ -136,6 +89,53 @@ namespace :distribution do
 
   def target_dir
     '/usr/local/opt'
+  end
+end
+
+
+namespace :java do
+  desc 'Perform static analysis on Java code'
+  task :checkstyle do
+    gradle %w[--stacktrace check]
+  end
+
+  desc 'Remove everything generated and compiled from Java code'
+  task :clean do
+    gradle %w[--stacktrace clean]
+  end
+
+  desc 'Compile Java sources'
+  task :compile do
+    gradle %w[--stacktrace build -x test]
+  end
+
+  desc 'Open cucumber-jvm report'
+  task 'cucumber-report' do
+    sh *%w[open console-runner-features/build/reports/cucumber/index.html]
+  end
+
+  desc 'Package and install java distributions, locally'
+  task :install do
+    #Cucumber options: https://github.com/cucumber/cucumber-java-skeleton#overriding-options
+    gradle %w[--stacktrace installDist]
+  end
+
+  desc 'Run all tests on Java code'
+  task :test do
+    #Cucumber options: https://github.com/cucumber/cucumber-java-skeleton#overriding-options
+    gradle %w[--stacktrace build]
+  end
+
+  def gradle(tasks)
+    gradle_command =
+      # https://docs.travis-ci.com/user/environment-variables/#default-environment-variables
+      if ENV['CI']
+        %w[./gradlew --console=plain]
+      else
+        %w[./gradlew]
+      end
+
+    sh *gradle_command + tasks
   end
 end
 
