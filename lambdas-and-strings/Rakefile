@@ -80,14 +80,13 @@ namespace :distribution do
       Gem::Package::TarReader.new file do |tar|
         tar.each do |tarfile|
           destination_file = File.join install_base_dir, tarfile.full_name
-          puts destination_file
-
           extract_tar_entry! tarfile, destination_file
         end
       end
     end
 
     ln_s "#{install_dir}/bin/javaspec", link_file unless File.exist? link_file
+    chmod 0755, link_file
   end
 
   desc 'Remove the distribution from /usr/local'
@@ -106,14 +105,15 @@ namespace :distribution do
   def extract_tar_entry!(tarfile, destination_file)
     if tarfile.directory?
       mkdir_p destination_file
-      return
+    elsif tarfile.file?
+      destination_directory = File.dirname(destination_file)
+      mkdir_p destination_directory unless File.directory? destination_directory
+      File.open destination_file, 'wb' do |f|
+        f.write tarfile.read
+      end
     end
 
-    destination_directory = File.dirname(destination_file)
-    mkdir_p destination_directory unless File.directory? destination_directory
-    File.open destination_file, 'wb' do |f|
-      f.write tarfile.read
-    end
+    chmod tarfile.header.mode, destination_file
   end
 
   def install_dir
