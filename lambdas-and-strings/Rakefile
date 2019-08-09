@@ -1,5 +1,6 @@
 require 'cucumber'
 require 'cucumber/rake/task'
+require 'rubygems/package'
 
 desc 'Compile, run all tests, and run checkstyle'
 task default: %w[java:test java:install cucumber java:checkstyle]
@@ -73,6 +74,21 @@ end
 
 
 namespace :distribution do
+  desc 'Install the distribution to /usr/local'
+  task :install do
+    File.open distribution_file do |file|
+      Gem::Package::TarReader.new file do |tar|
+        tar.each do |tarfile|
+          destination_file = File.join install_base_dir, tarfile.full_name
+          puts destination_file
+
+          extract_tar_entry! tarfile, destination_file
+        end
+      end
+    end
+
+    ln_s "#{install_dir}/bin/javaspec", link_file unless File.exist? link_file
+  end
 
   desc 'Remove the distribution from /usr/local'
   task :uninstall do
@@ -83,8 +99,29 @@ namespace :distribution do
     raise IOError.new "Expected #{install_dir} to be removed.  Run with rvmsudo?" if File.exist? install_dir
   end
 
+  def distribution_file
+    'console-runner/build/distributions/javaspec-2.0.0-SNAPSHOT.tar'
+  end
+
+  def extract_tar_entry!(tarfile, destination_file)
+    if tarfile.directory?
+      mkdir_p destination_file
+      return
+    end
+
+    destination_directory = File.dirname(destination_file)
+    mkdir_p destination_directory unless File.directory? destination_directory
+    File.open destination_file, 'wb' do |f|
+      f.write tarfile.read
+    end
+  end
+
   def install_dir
-    '/usr/local/opt/javaspec-2.0.0-SNAPSHOT'
+    File.join install_base_dir, 'javaspec-2.0.0-SNAPSHOT'
+  end
+
+  def install_base_dir
+    '/usr/local/opt'
   end
 
   def link_file
