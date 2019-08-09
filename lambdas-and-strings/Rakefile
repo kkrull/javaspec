@@ -34,7 +34,6 @@ namespace :distribution do
     end
 
     ln_s "#{installed_dir}/bin/javaspec", installed_link unless File.exist? installed_link
-    chmod 0755, installed_link
   end
 
   desc 'Remove the distribution from /usr/local'
@@ -54,27 +53,26 @@ namespace :distribution do
     Gem::Package::TarReader.new file do |tar|
       tar.each do |entry|
         target_path = File.join target_dir, entry.full_name
-        extract_tar_entry! entry, target_path
-        chmod entry.header.mode, target_path
+        extract_tar_entry! entry, target_path, entry.header.mode
       end
     end
   end
 
-  def extract_tar_entry!(tar_entry, target_path)
+  def extract_tar_entry!(tar_entry, target_path, mode)
     case
     when tar_entry.directory?
-      mkdir_p target_path
+      mkdir_p target_path, mode: mode
     when tar_entry.file?
-      extract_tar_file! tar_entry, target_path if tar_entry.file?
+      extract_tar_file! tar_entry, target_path, mode
     else
       raise IOError.new "Unknown type of tar file entry: #{tar_entry}"
     end
   end
 
-  def extract_tar_file!(tar_entry, target_path)
+  def extract_tar_file!(tar_entry, target_path, mode)
     target_parent_directory = File.dirname target_path
     mkdir_p target_parent_directory unless File.directory? target_parent_directory
-    File.open target_path, 'wb' do |target_file|
+    File.open(target_path, 'wb', mode) do |target_file|
       target_file.write tar_entry.read
     end
   end
