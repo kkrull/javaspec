@@ -76,13 +76,19 @@ namespace :distribution do
 
   desc 'Remove the distribution from /usr/local'
   task :uninstall do
-    link_file = '/usr/local/bin/javaspec'
     rm link_file if File.exist? link_file
     raise IOError.new "Expected #{install_dir} to be removed.  Run with rvmsudo?" if File.exist? link_file
 
-    install_dir = '/usr/local/opt/javaspec-2.0.0-SNAPSHOT'
     rm_rf install_dir, secure: true, verbose: true
     raise IOError.new "Expected #{install_dir} to be removed.  Run with rvmsudo?" if File.exist? install_dir
+  end
+
+  def install_dir
+    '/usr/local/opt/javaspec-2.0.0-SNAPSHOT'
+  end
+
+  def link_file
+    '/usr/local/bin/javaspec'
   end
 end
 
