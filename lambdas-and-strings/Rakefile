@@ -1,9 +1,6 @@
 require 'cucumber'
 require 'cucumber/rake/task'
 
-console_runner_class_dir = File.join File.dirname(__FILE__), 'console-runner/build/classes/java/main'
-features_dir = File.join File.dirname(__FILE__), 'features'
-
 desc 'Compile, run all tests, and run checkstyle'
 task default: %w[java:test java:install cucumber java:checkstyle]
 
@@ -71,6 +68,21 @@ namespace :java do
       end
 
     sh *gradle_command + tasks
+  end
+end
+
+
+namespace :distribution do
+
+  desc 'Remove the distribution from /usr/local'
+  task :uninstall do
+    link_file = '/usr/local/bin/javaspec'
+    rm link_file if File.exist? link_file
+    raise IOError.new "Expected #{install_dir} to be removed.  Run with rvmsudo?" if File.exist? link_file
+
+    install_dir = '/usr/local/opt/javaspec-2.0.0-SNAPSHOT'
+    rm_rf install_dir, secure: true, verbose: true
+    raise IOError.new "Expected #{install_dir} to be removed.  Run with rvmsudo?" if File.exist? install_dir
   end
 end
 
