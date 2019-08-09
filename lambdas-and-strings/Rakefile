@@ -76,14 +76,8 @@ end
 namespace :distribution do
   desc 'Install the distribution to /usr/local'
   task :install do
-    File.open distribution_file do |file|
-      Gem::Package::TarReader.new file do |tar|
-        tar.each do |tar_entry|
-          destination_file = File.join target_dir, tar_entry.full_name
-          extract_tar_entry! tar_entry, destination_file
-          chmod tar_entry.header.mode, destination_file
-        end
-      end
+    File.open distribution_path do |file|
+      untar file, target_dir
     end
 
     ln_s "#{installed_dir}/bin/javaspec", installed_link unless File.exist? installed_link
@@ -99,19 +93,30 @@ namespace :distribution do
     raise IOError.new "Expected #{installed_dir} to be removed.  Run with rvmsudo?" if File.exist? installed_dir
   end
 
-  def distribution_file
+  def distribution_path
     'console-runner/build/distributions/javaspec-2.0.0-SNAPSHOT.tar'
   end
 
-  def extract_tar_entry!(tar_entry, target_path)
-    if tar_entry.directory?
-      mkdir_p target_path
-    elsif tar_entry.file?
-      target_parent_directory = File.dirname target_path
-      mkdir_p target_parent_directory unless File.directory? target_parent_directory
-      File.open target_path, 'wb' do |target_file|
-        target_file.write tar_entry.read
+  def untar(file, target_dir)
+    Gem::Package::TarReader.new file do |tar|
+      tar.each do |tar_entry|
+        destination_file = File.join target_dir, tar_entry.full_name
+        extract_tar_entry! tar_entry, destination_file
+        chmod tar_entry.header.mode, destination_file
       end
+    end
+  end
+
+  def extract_tar_entry!(tar_entry, target_path)
+    mkdir_p target_path if tar_entry.directory?
+    extract_tar_file! tar_entry, target_path if tar_entry.file?
+  end
+
+  def extract_tar_file!(tar_entry, target_path)
+    target_parent_directory = File.dirname target_path
+    mkdir_p target_parent_directory unless File.directory? target_parent_directory
+    File.open target_path, 'wb' do |target_file|
+      target_file.write tar_entry.read
     end
   end
 
