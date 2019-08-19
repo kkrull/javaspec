@@ -126,6 +126,34 @@ public class ArgumentParserTest {
       }
     }
 
+    public class givenRunWithAHelpOption {
+      @Test
+      public void returnsHelpCommandForTheRunCommand() throws Exception {
+        subject.parseCommand(Arrays.asList("run", "--help"));
+        Mockito.verify(factory).helpCommand(Mockito.same(reporter), Mockito.eq("run"));
+      }
+
+      @Test
+      public void allowsRepeatedHelpOptions() throws Exception {
+        subject.parseCommand(Arrays.asList(
+          "run",
+          "--help",
+          "--help"
+        ));
+        Mockito.verify(factory).helpCommand(Mockito.same(reporter), Mockito.eq("run"));
+      }
+
+      @Test
+      public void allowsOtherRunOptions() throws Exception {
+        subject.parseCommand(Arrays.asList(
+          "run",
+          "--reporter=plaintext",
+          "--help"
+        ));
+        Mockito.verify(factory).helpCommand(Mockito.same(reporter), Mockito.eq("run"));
+      }
+    }
+
     public class givenRunWithASpecClasspathThatHasNoValue {
       @Test
       public void throwsAnError() throws Exception {

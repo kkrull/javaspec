@@ -7,7 +7,10 @@ import info.javaspec.console.help.HelpObserver;
 import info.javaspec.lang.lambda.RunArguments;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 final class ArgumentParser implements Main.CommandParser {
   private final CommandFactory commandFactory;
@@ -26,6 +29,14 @@ final class ArgumentParser implements Main.CommandParser {
 
     String command = commandThenArguments.get(0);
     List<String> arguments = commandThenArguments.subList(1, commandThenArguments.size());
+    Optional<String> helpOption = arguments.stream()
+      .filter("--help"::equals)
+      .findFirst();
+
+    if(helpOption.isPresent()) {
+      return parseHelpCommand(Collections.singletonList(command));
+    }
+
     switch(command) {
       case "help":
         return parseHelpCommand(arguments);
