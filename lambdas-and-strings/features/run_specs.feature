@@ -12,7 +12,6 @@ Feature: Run command (external process)
   ## Run basics: What does executing the `run` command tell the developer?
 
   @focus
-  @wip
   Scenario: The run command should tell you more about itself
     Given I have a JavaSpec runner for the console
     When I ask for help from the run command

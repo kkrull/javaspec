@@ -29,12 +29,10 @@ final class ArgumentParser implements Main.CommandParser {
 
     String command = commandThenArguments.get(0);
     List<String> arguments = commandThenArguments.subList(1, commandThenArguments.size());
-    Optional<String> helpOption = arguments.stream()
-      .filter("--help"::equals)
-      .findFirst();
+    Optional<String> helpOnWhat = parseHelpOptionOnAnotherCommand(command, arguments);
 
-    if(helpOption.isPresent()) {
-      return parseHelpCommand(Collections.singletonList(command));
+    if(helpOnWhat.isPresent()) {
+      return parseHelpCommand(Collections.singletonList(helpOnWhat.get()));
     }
 
     switch(command) {
@@ -47,6 +45,14 @@ final class ArgumentParser implements Main.CommandParser {
       default:
         throw InvalidCommand.noCommandNamed(command);
     }
+  }
+
+  //TODO KDK: Maybe better to have a method that parses the total list into a command and a sub-list of arguments?
+  private Optional<String> parseHelpOptionOnAnotherCommand(String command, List<String> arguments) {
+    return arguments.stream()
+        .filter("--help"::equals)
+        .map(_x -> command)
+        .findFirst();
   }
 
   private Command parseHelpCommand(List<String> stringArguments) {
