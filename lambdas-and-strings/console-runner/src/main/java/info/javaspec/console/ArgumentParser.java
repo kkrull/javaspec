@@ -1,13 +1,9 @@
 package info.javaspec.console;
 
 import com.beust.jcommander.JCommander;
-import info.javaspec.RunObserver;
 import info.javaspec.console.help.HelpArguments;
-import info.javaspec.console.help.HelpObserver;
 import info.javaspec.lang.lambda.RunArguments;
 
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -81,14 +77,6 @@ final class ArgumentParser implements Main.CommandParser {
       runArguments.specClassPath(),
       runArguments.specClassNames()
     );
-  }
-
-  interface CommandFactory {
-    Command helpCommand(HelpObserver observer);
-
-    Command helpCommand(HelpObserver observer, String forCommandNamed);
-
-    Command runSpecsCommand(RunObserver observer, URL specClassPath, List<String> classNames);
   }
 
   static final class InvalidCommand extends RuntimeException {

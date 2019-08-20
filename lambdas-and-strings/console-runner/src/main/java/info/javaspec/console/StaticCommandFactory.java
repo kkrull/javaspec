@@ -11,7 +11,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
 
-public class StaticCommandFactory implements ArgumentParser.CommandFactory {
+public class StaticCommandFactory implements CommandFactory {
   @Override
   public Command helpCommand(HelpObserver observer) {
     return new HelpCommand(observer);

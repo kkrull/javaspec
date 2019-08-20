@@ -3,7 +3,6 @@ package info.javaspec.console;
 import com.beust.jcommander.ParameterException;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.RunObserver;
-import info.javaspec.console.ArgumentParser.CommandFactory;
 import info.javaspec.console.ArgumentParser.InvalidCommand;
 import info.javaspec.console.help.HelpObserver;
 import org.hamcrest.Matcher;
