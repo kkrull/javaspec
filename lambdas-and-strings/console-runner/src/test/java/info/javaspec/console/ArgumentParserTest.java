@@ -174,7 +174,7 @@ public class ArgumentParserTest {
     public class givenAValidRunCommand {
       @Test
       public void passesTheSpecifiedSpecClassPathToCreateTheRunCommand() throws Exception {
-        MockFactory factory = new MockFactory();
+        MockCommandFactory factory = new MockCommandFactory();
         subject = new ArgumentParser(factory, () -> reporter);
 
         subject.parseCommand(Arrays.asList(
@@ -231,7 +231,7 @@ public class ArgumentParserTest {
     }
   }
 
-  private static final class MockFactory implements CommandFactory {
+  private static final class MockCommandFactory implements CommandFactory {
     private RunObserver observer;
     private URL specClassPath;
     private List<String> classNames;

@@ -51,7 +51,7 @@ final class ArgumentParser implements Main.CommandParser {
   }
 
   private Command parseRunCommand(List<String> stringArguments) {
-    RunArguments runArguments = new RunArguments();
+    RunArguments runArguments = new RunArguments(this.commandFactory, this.reporterFactory);
     JCommander.newBuilder()
       .addObject(runArguments)
       .build()
