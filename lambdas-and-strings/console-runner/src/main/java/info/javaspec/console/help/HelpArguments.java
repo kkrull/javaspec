@@ -1,5 +1,6 @@
 package info.javaspec.console.help;
 
+import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import info.javaspec.console.Command;
 import info.javaspec.console.CommandFactory;
@@ -7,6 +8,7 @@ import info.javaspec.console.Reporter;
 import info.javaspec.console.ReporterFactory;
 
 import java.util.List;
+import java.util.Optional;
 
 public final class HelpArguments {
   private final CommandFactory commandFactory;
@@ -20,15 +22,15 @@ public final class HelpArguments {
     this.reporterFactory = reporterFactory;
   }
 
-  public boolean hasCommandParameter() {
-    return this.forCommandNamed != null;
-  }
-
   public Command parseCommand(List<String> stringArguments) {
-    Reporter reporter = this.reporterFactory.plainTextReporter();
-    if(stringArguments.isEmpty())
-      return this.commandFactory.helpCommand(reporter);
+    JCommander.newBuilder()
+      .addObject(this)
+      .build()
+      .parse(stringArguments.toArray(new String[0]));
 
-    return this.commandFactory.helpCommand(reporter, stringArguments.get(0));
+    Reporter reporter = this.reporterFactory.plainTextReporter();
+    return Optional.ofNullable(this.forCommandNamed)
+      .map(helpOnWhat -> this.commandFactory.helpCommand(reporter, helpOnWhat))
+      .orElseGet(() -> this.commandFactory.helpCommand(reporter));
   }
 }

@@ -19,21 +19,20 @@ final class ArgumentParser implements Main.CommandParser {
 
   @Override
   public Command parseCommand(List<String> commandThenArguments) {
-    Reporter reporter = this.reporterFactory.plainTextReporter();
+    HelpArguments helpArguments = new HelpArguments(this.commandFactory, this.reporterFactory);
     if(commandThenArguments.isEmpty())
-      return this.commandFactory.helpCommand(reporter);
+      return helpArguments.parseCommand(Collections.emptyList());
 
     String command = commandThenArguments.get(0);
     List<String> arguments = commandThenArguments.subList(1, commandThenArguments.size());
-    Optional<String> helpOnWhat = parseHelpOptionOnAnotherCommand(command, arguments);
 
-    if(helpOnWhat.isPresent()) {
-      return parseHelpCommand(Collections.singletonList(helpOnWhat.get()));
-    }
+    Optional<String> helpOnWhat = parseHelpOptionOnAnotherCommand(command, arguments);
+    if(helpOnWhat.isPresent())
+      return helpArguments.parseCommand(Collections.singletonList(helpOnWhat.get()));
 
     switch(command) {
       case "help":
-        return parseHelpCommand(arguments);
+        return helpArguments.parseCommand(arguments);
 
       case "run":
         return parseRunCommand(arguments);
@@ -49,20 +48,6 @@ final class ArgumentParser implements Main.CommandParser {
         .filter("--help"::equals)
         .map(_x -> command)
         .findFirst();
-  }
-
-  private Command parseHelpCommand(List<String> stringArguments) {
-    HelpArguments helpArguments = new HelpArguments(this.commandFactory, this.reporterFactory);
-    JCommander.newBuilder()
-      .addObject(helpArguments)
-      .build()
-      .parse(stringArguments.toArray(new String[0]));
-
-    Reporter reporter = this.reporterFactory.plainTextReporter();
-    if(helpArguments.hasCommandParameter())
-      return this.commandFactory.helpCommand(reporter, helpArguments.forCommandNamed);
-
-    return this.commandFactory.helpCommand(reporter);
   }
 
   private Command parseRunCommand(List<String> stringArguments) {
