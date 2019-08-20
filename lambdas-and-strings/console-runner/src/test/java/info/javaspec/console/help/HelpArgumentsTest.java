@@ -4,6 +4,7 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.console.Command;
 import info.javaspec.console.CommandFactory;
 import info.javaspec.console.Reporter;
+import info.javaspec.console.ReporterFactory;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -18,11 +19,13 @@ public class HelpArgumentsTest {
   public class parseCommand {
     private HelpArguments subject;
     private CommandFactory commandFactory;
+    private ReporterFactory reporterFactory;
 
     @Before
     public void setup() throws Exception {
       commandFactory = Mockito.mock(CommandFactory.class);
-      subject = new HelpArguments(commandFactory);
+      reporterFactory = Mockito.mock(ReporterFactory.class);
+      subject = new HelpArguments(commandFactory, reporterFactory);
     }
 
     public class givenNoArguments {
@@ -35,9 +38,12 @@ public class HelpArgumentsTest {
         assertThat(subject.parseCommand(), Matchers.sameInstance(toCreate));
       }
 
-      @Test @Ignore
+      @Test
       public void usesAPlaintextReporter() throws Exception {
         Reporter reporter = Mockito.mock(Reporter.class);
+        Mockito.when(reporterFactory.plainTextReporter())
+          .thenReturn(reporter);
+
         subject.parseCommand();
         Mockito.verify(commandFactory).helpCommand(Mockito.same(reporter));
       }
