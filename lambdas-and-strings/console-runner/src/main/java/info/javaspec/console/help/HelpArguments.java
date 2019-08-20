@@ -3,7 +3,10 @@ package info.javaspec.console.help;
 import com.beust.jcommander.Parameter;
 import info.javaspec.console.Command;
 import info.javaspec.console.CommandFactory;
+import info.javaspec.console.Reporter;
 import info.javaspec.console.ReporterFactory;
+
+import java.util.List;
 
 public final class HelpArguments {
   private final CommandFactory commandFactory;
@@ -21,7 +24,11 @@ public final class HelpArguments {
     return this.forCommandNamed != null;
   }
 
-  public Command parseCommand() {
-    return this.commandFactory.helpCommand(this.reporterFactory.plainTextReporter());
+  public Command parseCommand(List<String> stringArguments) {
+    Reporter reporter = this.reporterFactory.plainTextReporter();
+    if(stringArguments.isEmpty())
+      return this.commandFactory.helpCommand(reporter);
+
+    return this.commandFactory.helpCommand(reporter, stringArguments.get(0));
   }
 }
