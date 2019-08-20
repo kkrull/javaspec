@@ -52,7 +52,7 @@ final class ArgumentParser implements Main.CommandParser {
   }
 
   private Command parseHelpCommand(List<String> stringArguments) {
-    HelpArguments helpArguments = new HelpArguments();
+    HelpArguments helpArguments = new HelpArguments(this.commandFactory);
     JCommander.newBuilder()
       .addObject(helpArguments)
       .build()
