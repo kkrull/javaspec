@@ -8,6 +8,7 @@ import info.javaspec.console.help.HelpObserver;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -129,16 +130,6 @@ public class ArgumentParserTest {
       @Test
       public void returnsHelpCommandForTheRunCommand() throws Exception {
         subject.parseCommand(Arrays.asList("run", "--help"));
-        Mockito.verify(factory).helpCommand(Mockito.same(reporter), Mockito.eq("run"));
-      }
-
-      @Test
-      public void allowsRepeatedHelpOptions() throws Exception {
-        subject.parseCommand(Arrays.asList(
-          "run",
-          "--help",
-          "--help"
-        ));
         Mockito.verify(factory).helpCommand(Mockito.same(reporter), Mockito.eq("run"));
       }
 

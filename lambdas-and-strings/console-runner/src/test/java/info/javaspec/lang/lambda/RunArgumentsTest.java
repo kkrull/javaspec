@@ -7,6 +7,7 @@ import info.javaspec.console.Command;
 import info.javaspec.console.CommandFactory;
 import info.javaspec.console.Reporter;
 import info.javaspec.console.ReporterFactory;
+import info.javaspec.console.help.HelpObserver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -69,7 +70,7 @@ public class RunArgumentsTest {
       }
     }
 
-    public class givenOneNoClassNames {
+    public class givenNoClassNames {
       @Test
       public void usesEmptyClassNames() throws Exception {
         subject.parseCommand(runArgumentsWithClasses(Collections.emptyList()));
@@ -104,6 +105,17 @@ public class RunArgumentsTest {
           Mockito.same(toCreate),
           Mockito.any(URL.class),
           Mockito.anyListOf(String.class)
+        );
+      }
+    }
+
+    public class givenAHelpOption {
+      @Test
+      public void returnsADetailedHelpCommandForRun() throws Exception {
+        subject.parseCommand(Collections.singletonList("--help"));
+        Mockito.verify(commandFactory).helpCommand(
+          Mockito.any(HelpObserver.class),
+          Mockito.eq("run")
         );
       }
     }

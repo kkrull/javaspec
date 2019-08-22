@@ -1,12 +1,10 @@
 package info.javaspec.console;
 
-import com.beust.jcommander.JCommander;
 import info.javaspec.console.help.HelpArguments;
 import info.javaspec.lang.lambda.RunArguments;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 final class ArgumentParser implements Main.CommandParser {
   private final CommandFactory commandFactory;
@@ -26,10 +24,6 @@ final class ArgumentParser implements Main.CommandParser {
     String command = commandThenArguments.get(0);
     List<String> arguments = commandThenArguments.subList(1, commandThenArguments.size());
 
-    Optional<String> helpOnWhat = parseHelpOptionOnAnotherCommand(command, arguments);
-    if(helpOnWhat.isPresent())
-      return helpArguments.parseCommand(Collections.singletonList(helpOnWhat.get()));
-
     switch(command) {
       case "help":
         return helpArguments.parseCommand(arguments);
@@ -41,14 +35,6 @@ final class ArgumentParser implements Main.CommandParser {
       default:
         throw InvalidCommand.noCommandNamed(command);
     }
-  }
-
-  //TODO KDK: Maybe better to have a method that parses the total list into a command and a sub-list of arguments?
-  private Optional<String> parseHelpOptionOnAnotherCommand(String command, List<String> arguments) {
-    return arguments.stream()
-        .filter("--help"::equals)
-        .map(unused -> command)
-        .findFirst();
   }
 
   static final class InvalidCommand extends RuntimeException {

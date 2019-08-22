@@ -8,6 +8,7 @@ import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.BaseConverter;
 import info.javaspec.console.Command;
 import info.javaspec.console.CommandFactory;
+import info.javaspec.console.Reporter;
 import info.javaspec.console.ReporterFactory;
 
 import java.io.File;
@@ -22,6 +23,12 @@ import java.util.Optional;
 public final class RunArguments {
   private final CommandFactory commandFactory;
   private final ReporterFactory reporterFactory;
+
+  @Parameter(
+    names = "--help",
+    help = true
+  )
+  private boolean isAskingForHelp;
 
   @Parameter(
     names = "--reporter",
@@ -51,8 +58,12 @@ public final class RunArguments {
       .build()
       .parse(stringArguments.toArray(new String[0]));
 
+    Reporter reporter = this.reporterFactory.plainTextReporter();
+    if(this.isAskingForHelp)
+      return this.commandFactory.helpCommand(reporter, "run");
+
     return this.commandFactory.runSpecsCommand(
-      this.reporterFactory.plainTextReporter(),
+      reporter,
       specClassPath(),
       specClassNames()
     );
