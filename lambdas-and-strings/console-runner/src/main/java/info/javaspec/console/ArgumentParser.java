@@ -47,7 +47,7 @@ final class ArgumentParser implements Main.CommandParser {
   private Optional<String> parseHelpOptionOnAnotherCommand(String command, List<String> arguments) {
     return arguments.stream()
         .filter("--help"::equals)
-        .map(_x -> command)
+        .map(unused -> command)
         .findFirst();
   }
 

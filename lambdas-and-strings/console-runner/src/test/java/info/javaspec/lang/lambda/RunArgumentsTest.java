@@ -43,7 +43,7 @@ public class RunArgumentsTest {
 
     public class givenAllRequiredArguments {
       @Test
-      public void createsARunCommandWithAFileURLToTheSpecifiedJar() throws Exception {
+      public void createsARunCommandWithAFileUrlToTheSpecifiedJar() throws Exception {
         subject.parseCommand(runArgumentsWithSpecClasspath("my-specs.jar"));
         Mockito.verify(commandFactory).runSpecsCommand(
           Mockito.any(RunObserver.class),
@@ -124,11 +124,13 @@ public class RunArgumentsTest {
   }
 
   private List<String> runArgumentsWithClasses(List<String> classNames) {
-    return new LinkedList<String>(){{
-      this.add("--reporter=plaintext");
-      this.add("--spec-classpath=specs.jar");
-      this.addAll(classNames);
-    }};
+    return new LinkedList<String>() {
+      {
+        this.add("--reporter=plaintext");
+        this.add("--spec-classpath=specs.jar");
+        this.addAll(classNames);
+      }
+    };
   }
 
   private List<String> runArgumentsWithSpecClasspath(String specClasspath) {
