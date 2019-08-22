@@ -35,7 +35,8 @@ final class ArgumentParser implements Main.CommandParser {
         return helpArguments.parseCommand(arguments);
 
       case "run":
-        return parseRunCommand(arguments);
+        RunArguments runArguments = new RunArguments(this.commandFactory, this.reporterFactory);
+        return runArguments.parseCommand(arguments);
 
       default:
         throw InvalidCommand.noCommandNamed(command);
@@ -48,20 +49,6 @@ final class ArgumentParser implements Main.CommandParser {
         .filter("--help"::equals)
         .map(_x -> command)
         .findFirst();
-  }
-
-  private Command parseRunCommand(List<String> stringArguments) {
-    RunArguments runArguments = new RunArguments(this.commandFactory, this.reporterFactory);
-    JCommander.newBuilder()
-      .addObject(runArguments)
-      .build()
-      .parse(stringArguments.toArray(new String[0]));
-
-    return this.commandFactory.runSpecsCommand(
-      this.reporterFactory.plainTextReporter(),
-      runArguments.specClassPath(),
-      runArguments.specClassNames()
-    );
   }
 
   static final class InvalidCommand extends RuntimeException {

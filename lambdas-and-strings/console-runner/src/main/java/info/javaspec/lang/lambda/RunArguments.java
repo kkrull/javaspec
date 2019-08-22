@@ -55,12 +55,12 @@ public final class RunArguments {
     );
   }
 
-  public List<String> specClassNames() {
+  private List<String> specClassNames() {
     return Optional.ofNullable(this._specClassNames)
       .orElse(Collections.emptyList());
   }
 
-  public URL specClassPath() {
+  private URL specClassPath() {
     return this._specClassPath;
   }
 
