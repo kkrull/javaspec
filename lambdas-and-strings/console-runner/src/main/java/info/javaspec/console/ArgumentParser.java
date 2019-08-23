@@ -1,11 +1,10 @@
 package info.javaspec.console;
 
 import info.javaspec.console.help.HelpArguments;
+import info.javaspec.console.help.MainArguments;
 import info.javaspec.lang.lambda.RunArguments;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 final class ArgumentParser implements Main.CommandParser {
   private final CommandFactory commandFactory;
@@ -18,18 +17,9 @@ final class ArgumentParser implements Main.CommandParser {
 
   @Override
   public Command parseCommand(List<String> commandThenArguments) {
-    return parseMainCommand(commandThenArguments)
+    MainArguments mainArguments = new MainArguments(this.commandFactory, this.reporterFactory);
+    return mainArguments.parseCommand(commandThenArguments)
       .orElseGet(() -> parseSubCommand(commandThenArguments));
-  }
-
-  private Optional<Command> parseMainCommand(List<String> commandThenArguments) {
-    HelpArguments helpArguments = new HelpArguments(this.commandFactory, this.reporterFactory);
-    if(commandThenArguments.isEmpty())
-      return Optional.of(helpArguments.parseCommand(Collections.emptyList()));
-    else if(commandThenArguments.equals(Collections.singletonList("--help")))
-      return Optional.of(helpArguments.parseCommand(Collections.emptyList()));
-    else
-      return Optional.empty();
   }
 
   private Command parseSubCommand(List<String> commandThenArguments) {
