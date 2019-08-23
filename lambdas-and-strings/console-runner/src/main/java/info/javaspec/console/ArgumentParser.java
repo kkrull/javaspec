@@ -20,6 +20,8 @@ final class ArgumentParser implements Main.CommandParser {
     HelpArguments helpArguments = new HelpArguments(this.commandFactory, this.reporterFactory);
     if(commandThenArguments.isEmpty())
       return helpArguments.parseCommand(Collections.emptyList());
+    else if(commandThenArguments.equals(Collections.singletonList("--help")))
+      return helpArguments.parseCommand(Collections.emptyList());
 
     String command = commandThenArguments.get(0);
     List<String> arguments = commandThenArguments.subList(1, commandThenArguments.size());

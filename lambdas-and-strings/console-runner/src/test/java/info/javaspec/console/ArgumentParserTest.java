@@ -45,6 +45,14 @@ public class ArgumentParserTest {
       }
     }
 
+    public class givenAHelpOptionWithNoCommand {
+      @Test
+      public void returnsAHelpCommand() throws Exception {
+        subject.parseCommand(Collections.singletonList("--help"));
+        Mockito.verify(factory).helpCommand(Mockito.same(reporter));
+      }
+    }
+
     public class givenHelpWithNoArguments {
       @Test
       public void returnsHelpCommandWithTheReporter() throws Exception {
