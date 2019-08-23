@@ -34,6 +34,17 @@ public class ArgumentParserTest {
     factory = Mockito.mock(CommandFactory.class);
     reporter = Mockito.mock(Reporter.class);
     subject = new ArgumentParser(factory, () -> reporter);
+
+    Mockito.when(
+      factory.helpCommand(
+        Mockito.any(HelpObserver.class))
+    ).thenReturn(Mockito.mock(Command.class));
+
+    Mockito.when(
+      factory.helpCommand(
+        Mockito.any(HelpObserver.class),
+        Mockito.anyString())
+    ).thenReturn(Mockito.mock(Command.class));
   }
 
   public class parseCommand {

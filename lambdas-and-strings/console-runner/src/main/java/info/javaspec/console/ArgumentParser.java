@@ -5,6 +5,7 @@ import info.javaspec.lang.lambda.RunArguments;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 final class ArgumentParser implements Main.CommandParser {
   private final CommandFactory commandFactory;
@@ -17,17 +18,27 @@ final class ArgumentParser implements Main.CommandParser {
 
   @Override
   public Command parseCommand(List<String> commandThenArguments) {
+    return parseMainCommand(commandThenArguments)
+      .orElseGet(() -> parseSubCommand(commandThenArguments));
+  }
+
+  private Optional<Command> parseMainCommand(List<String> commandThenArguments) {
     HelpArguments helpArguments = new HelpArguments(this.commandFactory, this.reporterFactory);
     if(commandThenArguments.isEmpty())
-      return helpArguments.parseCommand(Collections.emptyList());
+      return Optional.of(helpArguments.parseCommand(Collections.emptyList()));
     else if(commandThenArguments.equals(Collections.singletonList("--help")))
-      return helpArguments.parseCommand(Collections.emptyList());
+      return Optional.of(helpArguments.parseCommand(Collections.emptyList()));
+    else
+      return Optional.empty();
+  }
 
+  private Command parseSubCommand(List<String> commandThenArguments) {
     String command = commandThenArguments.get(0);
     List<String> arguments = commandThenArguments.subList(1, commandThenArguments.size());
 
     switch(command) {
       case "help":
+        HelpArguments helpArguments = new HelpArguments(this.commandFactory, this.reporterFactory);
         return helpArguments.parseCommand(arguments);
 
       case "run":
