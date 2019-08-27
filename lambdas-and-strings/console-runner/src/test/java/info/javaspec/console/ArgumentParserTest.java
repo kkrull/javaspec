@@ -8,7 +8,6 @@ import info.javaspec.console.help.HelpObserver;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -25,29 +24,29 @@ import static org.junit.Assert.fail;
 
 @RunWith(HierarchicalContextRunner.class)
 public class ArgumentParserTest {
-  private Main.CommandParser subject;
-  private CommandFactory factory;
-  private Reporter reporter;
-
-  @Before
-  public void setup() throws Exception {
-    factory = Mockito.mock(CommandFactory.class);
-    reporter = Mockito.mock(Reporter.class);
-    subject = new ArgumentParser(factory, () -> reporter);
-
-    Mockito.when(
-      factory.helpCommand(
-        Mockito.any(HelpObserver.class))
-    ).thenReturn(Mockito.mock(Command.class));
-
-    Mockito.when(
-      factory.helpCommand(
-        Mockito.any(HelpObserver.class),
-        Mockito.anyString())
-    ).thenReturn(Mockito.mock(Command.class));
-  }
-
   public class parseCommand {
+    private Main.CommandParser subject;
+    private CommandFactory factory;
+    private Reporter reporter;
+
+    @Before
+    public void setup() throws Exception {
+      factory = Mockito.mock(CommandFactory.class);
+      reporter = Mockito.mock(Reporter.class);
+      subject = new ArgumentParser(factory, () -> reporter);
+
+      Mockito.when(
+        factory.helpCommand(
+          Mockito.any(HelpObserver.class))
+      ).thenReturn(Mockito.mock(Command.class));
+
+      Mockito.when(
+        factory.helpCommand(
+          Mockito.any(HelpObserver.class),
+          Mockito.anyString())
+      ).thenReturn(Mockito.mock(Command.class));
+    }
+
     public class givenNoArguments {
       @Test
       public void returnsHelpCommandWithTheReporter() throws Exception {

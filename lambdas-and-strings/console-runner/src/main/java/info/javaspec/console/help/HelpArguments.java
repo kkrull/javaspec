@@ -14,7 +14,7 @@ public final class HelpArguments {
   private final CommandFactory commandFactory;
   private final ReporterFactory reporterFactory;
 
-  @Parameter()
+  @Parameter
   public String forCommandNamed;
 
   public HelpArguments(CommandFactory commandFactory, ReporterFactory reporterFactory) {

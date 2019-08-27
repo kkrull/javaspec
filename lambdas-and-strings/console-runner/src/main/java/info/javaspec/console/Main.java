@@ -34,7 +34,7 @@ public final class Main {
 
   @FunctionalInterface
   interface CommandParser {
-    Command parseCommand(List<String> commandThenArguments);
+    Command parseCommand(List<String> arguments);
   }
 
   @FunctionalInterface
