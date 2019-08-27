@@ -1,7 +1,7 @@
 package info.javaspec.console;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
-import info.javaspec.console.ArgumentParser.InvalidCommand;
+import info.javaspec.console.StaticArgumentParser.InvalidCommand;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

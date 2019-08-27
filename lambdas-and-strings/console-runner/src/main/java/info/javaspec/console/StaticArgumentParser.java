@@ -6,11 +6,11 @@ import info.javaspec.lang.lambda.RunArguments;
 
 import java.util.List;
 
-final class ArgumentParser implements Main.CommandParser {
+final class StaticArgumentParser implements Main.ArgumentParser {
   private final CommandFactory commandFactory;
   private final ReporterFactory reporterFactory;
 
-  public ArgumentParser(CommandFactory commandFactory, ReporterFactory reporterFactory) {
+  public StaticArgumentParser(CommandFactory commandFactory, ReporterFactory reporterFactory) {
     this.commandFactory = commandFactory;
     this.reporterFactory = reporterFactory;
   }

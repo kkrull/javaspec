@@ -16,7 +16,7 @@ public final class Main {
   }
 
   static void main(ReporterFactory reporterFactory, ExitHandler system, String... args) {
-    CommandParser parser = new ArgumentParser(new StaticCommandFactory(), reporterFactory);
+    ArgumentParser parser = new StaticArgumentParser(new StaticCommandFactory(), reporterFactory);
     Main cli = new Main(reporterFactory.plainTextReporter(), system);
     cli.runCommand(parser.parseCommand(Arrays.asList(args)));
   }
@@ -33,7 +33,7 @@ public final class Main {
   }
 
   @FunctionalInterface
-  interface CommandParser {
+  interface ArgumentParser {
     Command parseCommand(List<String> arguments);
   }
 

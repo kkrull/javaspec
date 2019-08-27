@@ -3,7 +3,7 @@ package info.javaspec.console;
 import com.beust.jcommander.ParameterException;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.RunObserver;
-import info.javaspec.console.ArgumentParser.InvalidCommand;
+import info.javaspec.console.StaticArgumentParser.InvalidCommand;
 import info.javaspec.console.help.HelpObserver;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
@@ -23,9 +23,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.fail;
 
 @RunWith(HierarchicalContextRunner.class)
-public class ArgumentParserTest {
+public class StaticArgumentParserTest {
   public class parseCommand {
-    private Main.CommandParser subject;
+    private Main.ArgumentParser subject;
     private CommandFactory factory;
     private Reporter reporter;
 
@@ -33,7 +33,7 @@ public class ArgumentParserTest {
     public void setup() throws Exception {
       factory = Mockito.mock(CommandFactory.class);
       reporter = Mockito.mock(Reporter.class);
-      subject = new ArgumentParser(factory, () -> reporter);
+      subject = new StaticArgumentParser(factory, () -> reporter);
 
       Mockito.when(
         factory.helpCommand(
@@ -184,7 +184,7 @@ public class ArgumentParserTest {
       @Test
       public void passesTheSpecifiedSpecClassPathToCreateTheRunCommand() throws Exception {
         MockCommandFactory factory = new MockCommandFactory();
-        subject = new ArgumentParser(factory, () -> reporter);
+        subject = new StaticArgumentParser(factory, () -> reporter);
 
         subject.parseCommand(Arrays.asList(
           "run",
