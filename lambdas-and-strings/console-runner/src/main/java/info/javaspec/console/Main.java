@@ -32,6 +32,7 @@ public final class Main {
     this.system.exit(result.exitCode);
   }
 
+  //Parses an entire command line into an executable command
   @FunctionalInterface
   interface ArgumentParser {
     Command parseCommand(List<String> arguments);
