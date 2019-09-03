@@ -17,11 +17,26 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(HierarchicalContextRunner.class)
 public class MultiCommandParserTest {
-  public class parseCommand {
-    private MultiCommandParser subject;
-    private Command mainCommand = Mockito.mock(Command.class);
+  private MultiCommandParser subject;
+  private Command mainCommand = Mockito.mock(Command.class);
 
-    public class givenInvalidParametersForTheMainCommand {
+  public class addCliCommand {
+    public class givenArgumentsMatchingACliCommand {
+      private Command oneCommand = Mockito.mock(Command.class);
+
+      @Test
+      public void addsACliCommandWithTheGivenNameAndParameters() throws Exception {
+        subject = new MultiCommandParser(() -> mainCommand);
+        subject.addCliCommand("do-one-thing", () -> oneCommand);
+
+        Command returned = subject.parseCommand(Collections.singletonList("do-one-thing"));
+        assertThat(returned, Matchers.sameInstance(oneCommand));
+      }
+    }
+  }
+
+  public class parseCommand {
+    public class givenInvalidArgumentsForTheMainCommand {
       @Test(expected = ParameterException.class)
       public void throwsAnException() throws Exception {
         JCommanderParameters mainParamsWithNoOptions = () -> mainCommand;
@@ -30,7 +45,7 @@ public class MultiCommandParserTest {
       }
     }
 
-    public class givenACommandWithInvalidParameters {
+    public class givenInvalidArgumentsForANamedCommand {
       @Test(expected = ParameterException.class)
       public void throwsAnException() throws Exception {
         JCommanderParameters mainParamsWithNoOptions = () -> mainCommand;
@@ -40,7 +55,7 @@ public class MultiCommandParserTest {
       }
     }
 
-    public class givenOptionsMatchingTheMainCliCommand {
+    public class givenArgumentsMatchingAnyCliCommand {
       private ParametersWithValidOption mainParameters;
 
       @Before
@@ -50,28 +65,10 @@ public class MultiCommandParserTest {
       }
 
       @Test
-      public void parsesAllArgumentsAsMainArguments() throws Exception {
+      public void returnsTheExecutableCommandParsedFromTheSpecifiedParameters() throws Exception {
         Command returned = subject.parseCommand(Collections.singletonList("--valid-option"));
         assertThat(returned, Matchers.sameInstance(mainCommand));
         assertThat(mainParameters.validOption, Matchers.equalTo(true));
-      }
-    }
-
-    public class givenArgumentsMatchingACliCommand {
-      private Command oneCommand = Mockito.mock(Command.class);
-
-      @Before
-      public void setup() throws Exception {
-        JCommanderParameters main = () -> mainCommand;
-        JCommanderParameters one = () -> oneCommand;
-        subject = new MultiCommandParser(main);
-        subject.addCliCommand("do-one-thing", one);
-      }
-
-      @Test
-      public void parsesThatCommandAndItsArguments() throws Exception {
-        Command returned = subject.parseCommand(Collections.singletonList("do-one-thing"));
-        assertThat(returned, Matchers.sameInstance(oneCommand));
       }
     }
   }
