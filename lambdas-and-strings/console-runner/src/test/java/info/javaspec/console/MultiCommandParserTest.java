@@ -41,25 +41,19 @@ public class MultiCommandParserTest {
     }
 
     public class givenOptionsMatchingTheMainCliCommand {
+      private ParametersWithValidOption mainParameters;
+
       @Before
       public void setup() throws Exception {
-        JCommanderParameters mainParamsWithValidOption = new JCommanderParameters() {
-          @Parameter(names = "--valid-option")
-          public boolean validOption;
-
-          @Override
-          public Command toExecutableCommand() {
-            return mainCommand;
-          }
-        };
-
-        subject = new MultiCommandParser(mainParamsWithValidOption);
+        mainParameters = new ParametersWithValidOption(mainCommand);
+        subject = new MultiCommandParser(mainParameters);
       }
 
       @Test
       public void parsesAllArgumentsAsMainArguments() throws Exception {
         Command returned = subject.parseCommand(Collections.singletonList("--valid-option"));
         assertThat(returned, Matchers.sameInstance(mainCommand));
+        assertThat(mainParameters.validOption, Matchers.equalTo(true));
       }
     }
 
@@ -79,6 +73,22 @@ public class MultiCommandParserTest {
         Command returned = subject.parseCommand(Collections.singletonList("do-one-thing"));
         assertThat(returned, Matchers.sameInstance(oneCommand));
       }
+    }
+  }
+
+  private static final class ParametersWithValidOption implements JCommanderParameters {
+    private final Command command;
+
+    public ParametersWithValidOption(Command returningCommand) {
+      this.command = returningCommand;
+    }
+
+    @Parameter(names = "--valid-option")
+    public boolean validOption;
+
+    @Override
+    public Command toExecutableCommand() {
+      return this.command;
     }
   }
 }
