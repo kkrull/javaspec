@@ -7,33 +7,34 @@ import java.util.List;
 import java.util.Map;
 
 public class MultiCommandParser implements Main.ArgumentParser {
-  private final JCommander.Builder jCommanderBuilder;
-  private final JCommanderArguments main;
-  private final Map<String, JCommanderArguments> commandArgs;
+  private final JCommander.Builder jCommanderConfig;
+  private final JCommanderParameters mainParameters;
+  private final Map<String, JCommanderParameters> commandParameters;
 
-  public MultiCommandParser(JCommanderArguments main) {
-    this.main = main;
-    this.commandArgs = new LinkedHashMap<>();
-    this.jCommanderBuilder = JCommander.newBuilder()
-      .addObject(this.main);
+  public MultiCommandParser(JCommanderParameters mainParameters) {
+    this.mainParameters = mainParameters;
+    this.commandParameters = new LinkedHashMap<>();
+    this.jCommanderConfig = JCommander.newBuilder()
+      .addObject(this.mainParameters);
   }
 
-  public void addCliCommand(String command, JCommanderArguments jCommanderArgs) {
-    this.commandArgs.put(command, jCommanderArgs);
-    this.jCommanderBuilder.addCommand(command, jCommanderArgs);
+  public void addCliCommand(String command, JCommanderParameters parameters) {
+    this.commandParameters.put(command, parameters);
+    this.jCommanderConfig.addCommand(command, parameters);
   }
 
   @Override
   public Command parseCommand(List<String> arguments) {
-    JCommander jCommander = this.jCommanderBuilder.build();
-    jCommander.parse(arguments.toArray(new String[0]));
+    JCommander parser = this.jCommanderConfig.build();
+    parser.parse(arguments.toArray(new String[0]));
 
-    String selectedCommand = jCommander.getParsedCommand();
-    JCommanderArguments selectedArgs = this.commandArgs.getOrDefault(selectedCommand, this.main);
-    return selectedArgs.toExecutableCommand();
+    String selectedCommand = parser.getParsedCommand();
+    JCommanderParameters selectedParams = this.commandParameters.getOrDefault(selectedCommand, this.mainParameters);
+    return selectedParams.toExecutableCommand();
   }
 
-  public interface JCommanderArguments {
+  //Contains a JCommander @Parameter for each possible argument/option available to a CLI command
+  public interface JCommanderParameters {
     Command toExecutableCommand();
   }
 }
