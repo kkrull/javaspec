@@ -1,6 +1,7 @@
 package info.javaspec.console;
 
 import com.beust.jcommander.JCommander;
+import info.javaspec.console.Exceptions.CommandAlreadyAdded;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,6 +20,9 @@ public class MultiCommandParser implements Main.ArgumentParser {
   }
 
   public void addCliCommand(String command, JCommanderParameters parameters) {
+    if(this.commandParameters.containsKey(command))
+      throw CommandAlreadyAdded.named(command);
+
     this.commandParameters.put(command, parameters);
     this.jCommanderConfig.addCommand(command, parameters);
   }
@@ -37,4 +41,5 @@ public class MultiCommandParser implements Main.ArgumentParser {
   public interface JCommanderParameters {
     Command toExecutableCommand();
   }
+
 }

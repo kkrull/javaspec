@@ -3,9 +3,11 @@ package info.javaspec.console;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
+import info.javaspec.console.Exceptions.CommandAlreadyAdded;
 import info.javaspec.console.MultiCommandParser.JCommanderParameters;
 import org.hamcrest.Matchers;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -33,6 +35,15 @@ public class MultiCommandParserTest {
         assertThat(returned, Matchers.sameInstance(oneCommand));
       }
     }
+
+    @Test(expected = CommandAlreadyAdded.class)
+    public void throwsWhenAddingTheSameCommandTwice() throws Exception {
+      JCommanderParameters duplicateParameters = () -> Mockito.mock(Command.class);
+
+      subject = new MultiCommandParser(() -> mainCommand);
+      subject.addCliCommand("duplicate-command", duplicateParameters);
+      subject.addCliCommand("duplicate-command", duplicateParameters);
+    }
   }
 
   public class parseCommand {
@@ -43,6 +54,10 @@ public class MultiCommandParserTest {
         subject = new MultiCommandParser(mainParamsWithNoOptions);
         subject.parseCommand(Collections.singletonList("--unknown-option"));
       }
+
+      @Test @Ignore
+      public void identifiesTheInvalidUsage() throws Exception {
+      }
     }
 
     public class givenInvalidArgumentsForANamedCommand {
@@ -52,6 +67,14 @@ public class MultiCommandParserTest {
         subject = new MultiCommandParser(mainParamsWithNoOptions);
         subject.addCliCommand("valid-command", () -> Mockito.mock(Command.class));
         subject.parseCommand(Arrays.asList("valid-command", "--unknown-option"));
+      }
+
+      @Test @Ignore
+      public void identifiesTheInvalidUsage() throws Exception {
+      }
+
+      @Test @Ignore
+      public void identifiesTheAttemptedCliCommand() throws Exception {
       }
     }
 
