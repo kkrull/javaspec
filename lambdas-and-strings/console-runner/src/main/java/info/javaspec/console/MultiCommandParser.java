@@ -1,7 +1,9 @@
 package info.javaspec.console;
 
 import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
 import info.javaspec.console.Exceptions.CommandAlreadyAdded;
+import info.javaspec.console.Exceptions.InvalidArguments;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,7 +32,11 @@ public class MultiCommandParser implements Main.ArgumentParser {
   @Override
   public Command parseCommand(List<String> arguments) {
     JCommander parser = this.jCommanderConfig.build();
-    parser.parse(arguments.toArray(new String[0]));
+    try {
+      parser.parse(arguments.toArray(new String[0]));
+    } catch(ParameterException ex) {
+      throw InvalidArguments.dueTo(ex);
+    }
 
     String selectedCommand = parser.getParsedCommand();
     JCommanderParameters selectedParams = this.commandParameters.getOrDefault(selectedCommand, this.mainParameters);
@@ -41,5 +47,4 @@ public class MultiCommandParser implements Main.ArgumentParser {
   public interface JCommanderParameters {
     Command toExecutableCommand();
   }
-
 }

@@ -4,8 +4,8 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.console.Exceptions.CommandAlreadyAdded;
+import info.javaspec.console.Exceptions.InvalidArguments;
 import info.javaspec.console.MultiCommandParser.JCommanderParameters;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.fail;
 
 @RunWith(HierarchicalContextRunner.class)
 public class MultiCommandParserTest {
@@ -32,7 +34,7 @@ public class MultiCommandParserTest {
         subject.addCliCommand("do-one-thing", () -> oneCommand);
 
         Command returned = subject.parseCommand(Collections.singletonList("do-one-thing"));
-        assertThat(returned, Matchers.sameInstance(oneCommand));
+        assertThat(returned, sameInstance(oneCommand));
       }
     }
 
@@ -48,20 +50,30 @@ public class MultiCommandParserTest {
 
   public class parseCommand {
     public class givenInvalidArgumentsForTheMainCommand {
-      @Test(expected = ParameterException.class)
+      @Test(expected = InvalidArguments.class)
       public void throwsAnException() throws Exception {
         JCommanderParameters mainParamsWithNoOptions = () -> mainCommand;
         subject = new MultiCommandParser(mainParamsWithNoOptions);
         subject.parseCommand(Collections.singletonList("--unknown-option"));
       }
 
-      @Test @Ignore
+      @Test
       public void identifiesTheInvalidUsage() throws Exception {
+        try {
+          JCommanderParameters mainParamsWithNoOptions = () -> mainCommand;
+          subject = new MultiCommandParser(mainParamsWithNoOptions);
+          subject.parseCommand(Collections.singletonList("--unknown-option"));
+        } catch(InvalidArguments subject) {
+          assertThat(subject.getMessage(), containsString("--unknown-option"));
+          return;
+        }
+
+        fail("Expected InvalidArguments");
       }
     }
 
     public class givenInvalidArgumentsForANamedCommand {
-      @Test(expected = ParameterException.class)
+      @Test(expected = InvalidArguments.class)
       public void throwsAnException() throws Exception {
         JCommanderParameters mainParamsWithNoOptions = () -> mainCommand;
         subject = new MultiCommandParser(mainParamsWithNoOptions);
@@ -69,8 +81,19 @@ public class MultiCommandParserTest {
         subject.parseCommand(Arrays.asList("valid-command", "--unknown-option"));
       }
 
-      @Test @Ignore
+      @Test
       public void identifiesTheInvalidUsage() throws Exception {
+        try {
+          JCommanderParameters mainParamsWithNoOptions = () -> mainCommand;
+          subject = new MultiCommandParser(mainParamsWithNoOptions);
+          subject.addCliCommand("valid-command", () -> Mockito.mock(Command.class));
+          subject.parseCommand(Arrays.asList("valid-command", "--unknown-option"));
+        } catch(InvalidArguments subject) {
+          assertThat(subject.getMessage(), containsString("--unknown-option"));
+          return;
+        }
+
+        fail("Expected InvalidArguments");
       }
 
       @Test @Ignore
@@ -90,8 +113,8 @@ public class MultiCommandParserTest {
       @Test
       public void returnsTheExecutableCommandParsedFromTheSpecifiedParameters() throws Exception {
         Command returned = subject.parseCommand(Collections.singletonList("--valid-option"));
-        assertThat(returned, Matchers.sameInstance(mainCommand));
-        assertThat(mainParameters.validOption, Matchers.equalTo(true));
+        assertThat(returned, sameInstance(mainCommand));
+        assertThat(mainParameters.validOption, equalTo(true));
       }
     }
   }
