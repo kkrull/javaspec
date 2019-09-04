@@ -1,19 +1,18 @@
 package info.javaspec.console;
 
 import com.beust.jcommander.Parameter;
-import com.beust.jcommander.ParameterException;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.console.Exceptions.CommandAlreadyAdded;
 import info.javaspec.console.Exceptions.InvalidArguments;
 import info.javaspec.console.MultiCommandParser.JCommanderParameters;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -83,21 +82,29 @@ public class MultiCommandParserTest {
 
       @Test
       public void identifiesTheInvalidUsage() throws Exception {
+        InvalidArguments subject = tryInvalidCommand()
+          .orElseThrow(() -> new AssertionError("Expected exception"));
+        assertThat(subject.getMessage(), containsString("--unknown-option"));
+      }
+
+      @Test
+      public void identifiesTheAttemptedCliCommand() throws Exception {
+        InvalidArguments subject = tryInvalidCommand()
+          .orElseThrow(() -> new AssertionError("Expected exception"));
+        assertThat(subject.getMessage(), containsString("valid-command"));
+      }
+
+      private Optional<InvalidArguments> tryInvalidCommand() {
         try {
           JCommanderParameters mainParamsWithNoOptions = () -> mainCommand;
           subject = new MultiCommandParser(mainParamsWithNoOptions);
           subject.addCliCommand("valid-command", () -> Mockito.mock(Command.class));
           subject.parseCommand(Arrays.asList("valid-command", "--unknown-option"));
         } catch(InvalidArguments subject) {
-          assertThat(subject.getMessage(), containsString("--unknown-option"));
-          return;
+          return Optional.of(subject);
         }
 
-        fail("Expected InvalidArguments");
-      }
-
-      @Test @Ignore
-      public void identifiesTheAttemptedCliCommand() throws Exception {
+        return Optional.empty();
       }
     }
 

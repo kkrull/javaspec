@@ -15,11 +15,15 @@ final class Exceptions {
 
   static final class InvalidArguments extends RuntimeException {
     public static InvalidArguments dueTo(ParameterException cause) {
-      return new InvalidArguments(cause.getMessage());
+      return new InvalidArguments(cause.getMessage(), cause);
     }
 
-    private InvalidArguments(String message) {
-      super(message);
+    public static InvalidArguments forCommand(String command, ParameterException cause) {
+      return new InvalidArguments(command + ": " + cause.getMessage(), cause);
+    }
+
+    private InvalidArguments(String message, ParameterException cause) {
+      super(message, cause);
     }
   }
 }

@@ -8,6 +8,7 @@ import info.javaspec.console.Exceptions.InvalidArguments;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class MultiCommandParser implements Main.ArgumentParser {
   private final JCommander.Builder jCommanderConfig;
@@ -35,7 +36,9 @@ public class MultiCommandParser implements Main.ArgumentParser {
     try {
       parser.parse(arguments.toArray(new String[0]));
     } catch(ParameterException ex) {
-      throw InvalidArguments.dueTo(ex);
+      throw Optional.ofNullable(parser.getParsedCommand())
+        .map(command -> InvalidArguments.forCommand(command, ex))
+        .orElse(InvalidArguments.dueTo(ex));
     }
 
     String selectedCommand = parser.getParsedCommand();
