@@ -1,5 +1,9 @@
 package info.javaspec.console;
 
+import info.javaspec.console.help.HelpArguments;
+import info.javaspec.console.help.MainArguments;
+import info.javaspec.lang.lambda.RunArguments;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,9 +20,17 @@ public final class Main {
   }
 
   static void main(ReporterFactory reporterFactory, ExitHandler system, String... args) {
-    ArgumentParser parser = new StaticArgumentParser(new StaticCommandFactory(), reporterFactory);
+    ArgumentParser cliParser = cliArgumentParser(new StaticCommandFactory(), reporterFactory);
     Main cli = new Main(reporterFactory.plainTextReporter(), system);
-    cli.runCommand(parser.parseCommand(Arrays.asList(args)));
+    cli.runCommand(cliParser.parseCommand(Arrays.asList(args)));
+  }
+
+  //TODO KDK: Test
+  private static ArgumentParser cliArgumentParser(CommandFactory commandFactory, ReporterFactory reporterFactory) {
+    MainArguments mainParameters = new MainArguments(commandFactory, reporterFactory);
+    return new MultiCommandParser(mainParameters)
+      .addCliCommand("help", new HelpArguments(commandFactory, reporterFactory))
+      .addCliCommand("run", new RunArguments(commandFactory, reporterFactory));
   }
 
   Main(Reporter reporter, ExitHandler system) {

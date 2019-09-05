@@ -8,6 +8,7 @@ import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.BaseConverter;
 import info.javaspec.console.Command;
 import info.javaspec.console.CommandFactory;
+import info.javaspec.console.MultiCommandParser;
 import info.javaspec.console.Reporter;
 import info.javaspec.console.ReporterFactory;
 
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Parameters(separators = "=")
-public final class RunArguments {
+public final class RunArguments implements MultiCommandParser.JCommanderParameters {
   private final CommandFactory commandFactory;
   private final ReporterFactory reporterFactory;
 
@@ -58,6 +59,19 @@ public final class RunArguments {
       .build()
       .parse(stringArguments.toArray(new String[0]));
 
+    Reporter reporter = this.reporterFactory.plainTextReporter();
+    if(this.isAskingForHelp)
+      return this.commandFactory.helpCommand(reporter, "run");
+
+    return this.commandFactory.runSpecsCommand(
+      reporter,
+      specClassPath(),
+      specClassNames()
+    );
+  }
+
+  @Override
+  public Command toExecutableCommand() { //TODO KDK: Test
     Reporter reporter = this.reporterFactory.plainTextReporter();
     if(this.isAskingForHelp)
       return this.commandFactory.helpCommand(reporter, "run");

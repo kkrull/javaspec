@@ -4,13 +4,14 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import info.javaspec.console.Command;
 import info.javaspec.console.CommandFactory;
+import info.javaspec.console.MultiCommandParser;
 import info.javaspec.console.Reporter;
 import info.javaspec.console.ReporterFactory;
 
 import java.util.List;
 import java.util.Optional;
 
-public final class HelpArguments {
+public final class HelpArguments implements MultiCommandParser.JCommanderParameters {
   private final CommandFactory commandFactory;
   private final ReporterFactory reporterFactory;
 
@@ -28,6 +29,14 @@ public final class HelpArguments {
       .build()
       .parse(stringArguments.toArray(new String[0]));
 
+    Reporter reporter = this.reporterFactory.plainTextReporter();
+    return Optional.ofNullable(this.forCommandNamed)
+      .map(helpOnWhat -> this.commandFactory.helpCommand(reporter, helpOnWhat))
+      .orElseGet(() -> this.commandFactory.helpCommand(reporter));
+  }
+
+  @Override
+  public Command toExecutableCommand() { //TODO KDK: Test
     Reporter reporter = this.reporterFactory.plainTextReporter();
     return Optional.ofNullable(this.forCommandNamed)
       .map(helpOnWhat -> this.commandFactory.helpCommand(reporter, helpOnWhat))

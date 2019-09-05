@@ -22,12 +22,13 @@ public class MultiCommandParser implements Main.ArgumentParser {
       .addObject(this.mainParameters);
   }
 
-  public void addCliCommand(String command, JCommanderParameters parameters) {
+  public MultiCommandParser addCliCommand(String command, JCommanderParameters parameters) {
     if(this.commandParameters.containsKey(command))
       throw CommandAlreadyAdded.named(command);
 
     this.commandParameters.put(command, parameters);
     this.jCommanderConfig.addCommand(command, parameters);
+    return this; //TODO KDK: Test
   }
 
   @Override
