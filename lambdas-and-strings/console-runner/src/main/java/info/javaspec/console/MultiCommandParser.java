@@ -28,7 +28,7 @@ public class MultiCommandParser implements Main.ArgumentParser {
 
     this.commandParameters.put(command, parameters);
     this.jCommanderConfig.addCommand(command, parameters);
-    return this; //TODO KDK: Test
+    return this;
   }
 
   @Override

@@ -24,17 +24,13 @@ public class MultiCommandParserTest {
   private Command mainCommand = Mockito.mock(Command.class);
 
   public class addCliCommand {
-    public class givenArgumentsMatchingACliCommand {
-      private Command oneCommand = Mockito.mock(Command.class);
-
-      @Test
-      public void addsACliCommandWithTheGivenNameAndParameters() throws Exception {
-        subject = new MultiCommandParser(() -> mainCommand);
-        subject.addCliCommand("do-one-thing", () -> oneCommand);
-
-        Command returned = subject.parseCommand(Collections.singletonList("do-one-thing"));
-        assertThat(returned, sameInstance(oneCommand));
-      }
+    @Test
+    public void returnsItselfForUseInABuilderPattern() throws Exception {
+      subject = new MultiCommandParser(() -> mainCommand);
+      assertThat(
+        subject.addCliCommand("anyName", () -> Mockito.mock(Command.class)),
+        sameInstance(subject)
+      );
     }
 
     @Test(expected = CommandAlreadyAdded.class)
@@ -108,7 +104,7 @@ public class MultiCommandParserTest {
       }
     }
 
-    public class givenArgumentsMatchingAnyCliCommand {
+    public class givenArgumentsMatchingTheMainCommand {
       private ParametersWithValidOption mainParameters;
 
       @Before
@@ -118,10 +114,23 @@ public class MultiCommandParserTest {
       }
 
       @Test
-      public void returnsTheExecutableCommandParsedFromTheSpecifiedParameters() throws Exception {
+      public void returnsTheCommandParsedFromTheMainCommandParameters() throws Exception {
         Command returned = subject.parseCommand(Collections.singletonList("--valid-option"));
         assertThat(returned, sameInstance(mainCommand));
         assertThat(mainParameters.validOption, equalTo(true));
+      }
+    }
+
+    public class givenArgumentsMatchingANamedCommand {
+      private Command oneCommand = Mockito.mock(Command.class);
+
+      @Test
+      public void returnsTheCommandParsedFromTheNamedCommandParameters() throws Exception {
+        subject = new MultiCommandParser(() -> mainCommand);
+        subject.addCliCommand("do-one-thing", () -> oneCommand);
+
+        Command returned = subject.parseCommand(Collections.singletonList("do-one-thing"));
+        assertThat(returned, sameInstance(oneCommand));
       }
     }
   }

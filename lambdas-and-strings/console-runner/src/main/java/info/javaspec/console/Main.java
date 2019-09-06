@@ -25,7 +25,6 @@ public final class Main {
     cli.runCommand(cliParser.parseCommand(Arrays.asList(args)));
   }
 
-  //TODO KDK: Test
   private static ArgumentParser cliArgumentParser(CommandFactory commandFactory, ReporterFactory reporterFactory) {
     MainArguments mainParameters = new MainArguments(commandFactory, reporterFactory);
     return new MultiCommandParser(mainParameters)
