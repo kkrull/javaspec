@@ -1,17 +1,13 @@
-package info.javaspec.console.help;
+package info.javaspec.console;
 
 import com.beust.jcommander.Parameter;
-import info.javaspec.console.Command;
-import info.javaspec.console.CommandFactory;
-import info.javaspec.console.MultiCommandParser;
-import info.javaspec.console.Reporter;
-import info.javaspec.console.ReporterFactory;
+import info.javaspec.console.help.HelpArguments;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public final class MainArguments implements MultiCommandParser.JCommanderParameters {
+public final class MainParameters implements MultiCommandParser.JCommanderParameters {
   private final CommandFactory commandFactory;
   private final ReporterFactory reporterFactory;
 
@@ -21,7 +17,7 @@ public final class MainArguments implements MultiCommandParser.JCommanderParamet
   )
   private boolean isAskingForHelp; //TODO KDK: Test
 
-  public MainArguments(CommandFactory commandFactory, ReporterFactory reporterFactory) {
+  public MainParameters(CommandFactory commandFactory, ReporterFactory reporterFactory) {
     this.commandFactory = commandFactory;
     this.reporterFactory = reporterFactory;
   }

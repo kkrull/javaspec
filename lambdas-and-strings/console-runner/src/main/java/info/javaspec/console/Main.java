@@ -1,7 +1,6 @@
 package info.javaspec.console;
 
 import info.javaspec.console.help.HelpArguments;
-import info.javaspec.console.help.MainArguments;
 import info.javaspec.lang.lambda.RunArguments;
 
 import java.util.Arrays;
@@ -26,7 +25,7 @@ public final class Main {
   }
 
   private static ArgumentParser cliArgumentParser(CommandFactory commandFactory, ReporterFactory reporterFactory) {
-    MainArguments mainParameters = new MainArguments(commandFactory, reporterFactory);
+    MainParameters mainParameters = new MainParameters(commandFactory, reporterFactory);
     return new MultiCommandParser(mainParameters)
       .addCliCommand("help", new HelpArguments(commandFactory, reporterFactory))
       .addCliCommand("run", new RunArguments(commandFactory, reporterFactory));

@@ -1,7 +1,6 @@
 package info.javaspec.console;
 
 import info.javaspec.console.help.HelpArguments;
-import info.javaspec.console.help.MainArguments;
 import info.javaspec.lang.lambda.RunArguments;
 
 import java.util.List;
@@ -17,8 +16,8 @@ final class StaticArgumentParser implements Main.ArgumentParser {
 
   @Override
   public Command parseCommand(List<String> commandThenArguments) {
-    MainArguments mainArguments = new MainArguments(this.commandFactory, this.reporterFactory);
-    return mainArguments.parseCommand(commandThenArguments)
+    MainParameters mainParameters = new MainParameters(this.commandFactory, this.reporterFactory);
+    return mainParameters.parseCommand(commandThenArguments)
       .orElseGet(() -> parseSubCommand(commandThenArguments));
   }
 
