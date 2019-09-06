@@ -1,7 +1,6 @@
 package info.javaspec.lang.lambda;
 
 import com.beust.jcommander.IValueValidator;
-import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
@@ -51,23 +50,6 @@ public final class RunParameters implements MultiCommandParser.JCommanderParamet
   public RunParameters(CommandFactory commandFactory, ReporterFactory reporterFactory) {
     this.commandFactory = commandFactory;
     this.reporterFactory = reporterFactory;
-  }
-
-  public Command parseCommand(List<String> stringArguments) {
-    JCommander.newBuilder()
-      .addObject(this)
-      .build()
-      .parse(stringArguments.toArray(new String[0]));
-
-    Reporter reporter = this.reporterFactory.plainTextReporter();
-    if(this.isAskingForHelp)
-      return this.commandFactory.helpCommand(reporter, "run");
-
-    return this.commandFactory.runSpecsCommand(
-      reporter,
-      specClassPath(),
-      specClassNames()
-    );
   }
 
   @Override

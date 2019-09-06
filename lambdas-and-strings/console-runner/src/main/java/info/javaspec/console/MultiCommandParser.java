@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class MultiCommandParser implements Main.ArgumentParser {
+public final class MultiCommandParser implements Main.ArgumentParser {
   private final JCommander.Builder jCommanderConfig;
   private final JCommanderParameters mainParameters;
   private final Map<String, JCommanderParameters> commandParameters;
