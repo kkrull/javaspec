@@ -11,15 +11,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
-import java.util.Collections;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.sameInstance;
 
 @RunWith(HierarchicalContextRunner.class)
-public class HelpArgumentsTest {
+public class HelpParametersTest {
   public class parseCommand {
-    private HelpArguments subject;
+    private HelpParameters subject;
     private CommandFactory commandFactory;
     private ReporterFactory reporterFactory;
 
@@ -28,7 +26,7 @@ public class HelpArgumentsTest {
       public void setup() throws Exception {
         commandFactory = Mockito.mock(CommandFactory.class);
         reporterFactory = Mockito.mock(ReporterFactory.class);
-        subject = new HelpArguments(commandFactory, reporterFactory);
+        subject = new HelpParameters(commandFactory, reporterFactory);
 
         JCommanderHelpers.parseCommandArgs(subject, "help");
       }
@@ -58,7 +56,7 @@ public class HelpArgumentsTest {
       public void setup() throws Exception {
         commandFactory = Mockito.mock(CommandFactory.class);
         reporterFactory = Mockito.mock(ReporterFactory.class);
-        subject = new HelpArguments(commandFactory, reporterFactory);
+        subject = new HelpParameters(commandFactory, reporterFactory);
 
         JCommanderHelpers.parseCommandArgs(subject, "help", "world-peace");
       }

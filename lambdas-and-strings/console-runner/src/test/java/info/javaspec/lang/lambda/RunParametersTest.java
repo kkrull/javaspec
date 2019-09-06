@@ -27,9 +27,9 @@ import static org.hamcrest.Matchers.sameInstance;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 @RunWith(HierarchicalContextRunner.class)
-public class RunArgumentsTest {
+public class RunParametersTest {
   public class parseCommand {
-    private RunArguments subject;
+    private RunParameters subject;
     private CommandFactory commandFactory;
     private ReporterFactory reporterFactory;
 
@@ -40,7 +40,7 @@ public class RunArgumentsTest {
       runCommandUrl = ArgumentCaptor.forClass(URL.class);
       commandFactory = Mockito.mock(CommandFactory.class);
       reporterFactory = Mockito.mock(ReporterFactory.class);
-      subject = new RunArguments(commandFactory, reporterFactory);
+      subject = new RunParameters(commandFactory, reporterFactory);
     }
 
     public class givenAllRequiredArguments {

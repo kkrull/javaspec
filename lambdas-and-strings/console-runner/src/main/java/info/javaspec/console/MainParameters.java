@@ -1,7 +1,7 @@
 package info.javaspec.console;
 
 import com.beust.jcommander.Parameter;
-import info.javaspec.console.help.HelpArguments;
+import info.javaspec.console.help.HelpParameters;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,11 +23,11 @@ public final class MainParameters implements MultiCommandParser.JCommanderParame
   }
 
   public Optional<Command> parseCommand(List<String> allArguments) {
-    HelpArguments helpArguments = new HelpArguments(this.commandFactory, this.reporterFactory);
+    HelpParameters helpParameters = new HelpParameters(this.commandFactory, this.reporterFactory);
     if(allArguments.isEmpty())
-      return Optional.of(helpArguments.parseCommand(Collections.emptyList()));
+      return Optional.of(helpParameters.parseCommand(Collections.emptyList()));
     else if(allArguments.equals(Collections.singletonList("--help")))
-      return Optional.of(helpArguments.parseCommand(Collections.emptyList()));
+      return Optional.of(helpParameters.parseCommand(Collections.emptyList()));
     else
       return Optional.empty();
   }

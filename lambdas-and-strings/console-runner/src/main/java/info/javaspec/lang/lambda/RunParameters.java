@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Parameters(separators = "=")
-public final class RunArguments implements MultiCommandParser.JCommanderParameters {
+public final class RunParameters implements MultiCommandParser.JCommanderParameters {
   private final CommandFactory commandFactory;
   private final ReporterFactory reporterFactory;
 
@@ -48,7 +48,7 @@ public final class RunArguments implements MultiCommandParser.JCommanderParamete
   @Parameter
   private List<String> _specClassNames;
 
-  public RunArguments(CommandFactory commandFactory, ReporterFactory reporterFactory) {
+  public RunParameters(CommandFactory commandFactory, ReporterFactory reporterFactory) {
     this.commandFactory = commandFactory;
     this.reporterFactory = reporterFactory;
   }

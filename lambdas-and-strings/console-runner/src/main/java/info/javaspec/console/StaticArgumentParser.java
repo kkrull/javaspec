@@ -1,7 +1,7 @@
 package info.javaspec.console;
 
-import info.javaspec.console.help.HelpArguments;
-import info.javaspec.lang.lambda.RunArguments;
+import info.javaspec.console.help.HelpParameters;
+import info.javaspec.lang.lambda.RunParameters;
 
 import java.util.List;
 
@@ -27,12 +27,12 @@ final class StaticArgumentParser implements Main.ArgumentParser {
 
     switch(command) {
       case "help":
-        HelpArguments helpArguments = new HelpArguments(this.commandFactory, this.reporterFactory);
-        return helpArguments.parseCommand(arguments);
+        HelpParameters helpParameters = new HelpParameters(this.commandFactory, this.reporterFactory);
+        return helpParameters.parseCommand(arguments);
 
       case "run":
-        RunArguments runArguments = new RunArguments(this.commandFactory, this.reporterFactory);
-        return runArguments.parseCommand(arguments);
+        RunParameters runParameters = new RunParameters(this.commandFactory, this.reporterFactory);
+        return runParameters.parseCommand(arguments);
 
       default:
         throw InvalidCommand.noCommandNamed(command);

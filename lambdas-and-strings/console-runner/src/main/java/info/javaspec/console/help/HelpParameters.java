@@ -11,14 +11,14 @@ import info.javaspec.console.ReporterFactory;
 import java.util.List;
 import java.util.Optional;
 
-public final class HelpArguments implements MultiCommandParser.JCommanderParameters {
+public final class HelpParameters implements MultiCommandParser.JCommanderParameters {
   private final CommandFactory commandFactory;
   private final ReporterFactory reporterFactory;
 
   @Parameter
   public String forCommandNamed;
 
-  public HelpArguments(CommandFactory commandFactory, ReporterFactory reporterFactory) {
+  public HelpParameters(CommandFactory commandFactory, ReporterFactory reporterFactory) {
     this.commandFactory = commandFactory;
     this.reporterFactory = reporterFactory;
   }
