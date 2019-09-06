@@ -5,7 +5,6 @@ import info.javaspec.console.Command;
 import info.javaspec.console.CommandFactory;
 import info.javaspec.console.Reporter;
 import info.javaspec.console.ReporterFactory;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +13,7 @@ import org.mockito.Mockito;
 import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.sameInstance;
 
 @RunWith(HierarchicalContextRunner.class)
 public class HelpArgumentsTest {
@@ -36,7 +36,7 @@ public class HelpArgumentsTest {
         Mockito.when(commandFactory.helpCommand(Mockito.any()))
           .thenReturn(toCreate);
 
-        assertThat(subject.parseCommand(Collections.emptyList()), Matchers.sameInstance(toCreate));
+        assertThat(subject.parseCommand(Collections.emptyList()), sameInstance(toCreate));
       }
 
       @Test
@@ -60,7 +60,7 @@ public class HelpArgumentsTest {
 
         assertThat(
           subject.parseCommand(Collections.singletonList("world-peace")),
-          Matchers.sameInstance(toCreate)
+          sameInstance(toCreate)
         );
       }
 
