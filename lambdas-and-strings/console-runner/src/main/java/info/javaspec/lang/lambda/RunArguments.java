@@ -71,7 +71,7 @@ public final class RunArguments implements MultiCommandParser.JCommanderParamete
   }
 
   @Override
-  public Command toExecutableCommand() { //TODO KDK: Test
+  public Command toExecutableCommand() {
     Reporter reporter = this.reporterFactory.plainTextReporter();
     if(this.isAskingForHelp)
       return this.commandFactory.helpCommand(reporter, "run");

@@ -5,6 +5,7 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.RunObserver;
 import info.javaspec.console.Command;
 import info.javaspec.console.CommandFactory;
+import info.javaspec.console.JCommanderHelpers;
 import info.javaspec.console.Reporter;
 import info.javaspec.console.ReporterFactory;
 import info.javaspec.console.help.HelpObserver;
@@ -45,7 +46,9 @@ public class RunArgumentsTest {
     public class givenAllRequiredArguments {
       @Test
       public void createsARunCommandWithAFileUrlToTheSpecifiedJar() throws Exception {
-        subject.parseCommand(runArgumentsWithSpecClasspath("my-specs.jar"));
+        JCommanderHelpers.parseCommandArgs(subject, "run", runArgumentsWithSpecClasspath("my-specs.jar"));
+        subject.toExecutableCommand();
+
         Mockito.verify(commandFactory).runSpecsCommand(
           Mockito.any(RunObserver.class),
           runCommandUrl.capture(),
@@ -66,14 +69,16 @@ public class RunArgumentsTest {
           Mockito.anyListOf(String.class)
         )).toReturn(toCreate);
 
-        assertThat(subject.parseCommand(runArguments()), sameInstance(toCreate));
+        JCommanderHelpers.parseCommandArgs(subject, "run", runArguments());
+        assertThat(subject.toExecutableCommand(), sameInstance(toCreate));
       }
     }
 
     public class givenNoClassNames {
       @Test
       public void usesEmptyClassNames() throws Exception {
-        subject.parseCommand(runArgumentsWithClasses(Collections.emptyList()));
+        JCommanderHelpers.parseCommandArgs(subject, "run", runArgumentsWithClasses(Collections.emptyList()));
+        subject.toExecutableCommand();
         Mockito.verify(commandFactory).runSpecsCommand(
           Mockito.any(RunObserver.class),
           Mockito.any(URL.class),
@@ -85,7 +90,8 @@ public class RunArgumentsTest {
     public class givenOneOrMoreClassNames {
       @Test
       public void usesThoseClassNames() throws Exception {
-        subject.parseCommand(runArgumentsWithClasses(Arrays.asList("one", "two")));
+        JCommanderHelpers.parseCommandArgs(subject, "run", runArgumentsWithClasses(Arrays.asList("one", "two")));
+        subject.toExecutableCommand();
         Mockito.verify(commandFactory).runSpecsCommand(
           Mockito.any(RunObserver.class),
           Mockito.any(URL.class),
@@ -100,7 +106,8 @@ public class RunArgumentsTest {
         Reporter toCreate = Mockito.mock(Reporter.class);
         Mockito.stub(reporterFactory.plainTextReporter()).toReturn(toCreate);
 
-        subject.parseCommand(runArgumentsWithReporter("plaintext"));
+        JCommanderHelpers.parseCommandArgs(subject, "run", runArgumentsWithReporter("plaintext"));
+        subject.toExecutableCommand();
         Mockito.verify(commandFactory).runSpecsCommand(
           Mockito.same(toCreate),
           Mockito.any(URL.class),
@@ -112,7 +119,8 @@ public class RunArgumentsTest {
     public class givenAHelpOption {
       @Test
       public void returnsADetailedHelpCommandForRun() throws Exception {
-        subject.parseCommand(Collections.singletonList("--help"));
+        JCommanderHelpers.parseCommandArgs(subject, "run", Collections.singletonList("--help"));
+        subject.toExecutableCommand();
         Mockito.verify(commandFactory).helpCommand(
           Mockito.any(HelpObserver.class),
           Mockito.eq("run")
@@ -123,7 +131,7 @@ public class RunArgumentsTest {
     public class givenAnyOtherReporterOption {
       @Test(expected = ParameterException.class)
       public void throwsAnException() throws Exception {
-        subject.parseCommand(runArgumentsWithReporter("bogus"));
+        JCommanderHelpers.parseCommandArgs(subject, "run", runArgumentsWithReporter("bogus"));
       }
     }
   }
