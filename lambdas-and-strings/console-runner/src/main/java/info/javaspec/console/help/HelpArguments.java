@@ -36,7 +36,7 @@ public final class HelpArguments implements MultiCommandParser.JCommanderParamet
   }
 
   @Override
-  public Command toExecutableCommand() { //TODO KDK: Test
+  public Command toExecutableCommand() {
     Reporter reporter = this.reporterFactory.plainTextReporter();
     return Optional.ofNullable(this.forCommandNamed)
       .map(helpOnWhat -> this.commandFactory.helpCommand(reporter, helpOnWhat))

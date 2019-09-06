@@ -32,7 +32,7 @@ public class MainParametersTest {
 
     @Test
     public void usesAPlainTextReporter() throws Exception {
-      JCommanderHelpers.parseArgs(subject);
+      JCommanderHelpers.parseMainArgs(subject);
       returned = subject.toExecutableCommand();
       Mockito.verify(commandFactory).helpCommand(Mockito.same(plainTextReporter));
     }
@@ -40,7 +40,7 @@ public class MainParametersTest {
     public class givenNoOptions {
       @Test
       public void returnsAHelpCommand() throws Exception {
-        JCommanderHelpers.parseArgs(subject);
+        JCommanderHelpers.parseMainArgs(subject);
         returned = subject.toExecutableCommand();
         assertThat(returned, Matchers.sameInstance(helpCommand));
       }
@@ -49,7 +49,7 @@ public class MainParametersTest {
     public class givenAHelpOption {
       @Test
       public void returnsAHelpCommand() throws Exception {
-        JCommanderHelpers.parseArgs(subject, "--help");
+        JCommanderHelpers.parseMainArgs(subject, "--help");
         returned = subject.toExecutableCommand();
         assertThat(returned, Matchers.sameInstance(helpCommand));
       }
