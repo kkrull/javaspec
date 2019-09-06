@@ -15,7 +15,7 @@ public final class MainParameters implements MultiCommandParser.JCommanderParame
     names = "--help",
     help = true
   )
-  private boolean isAskingForHelp; //TODO KDK: Test
+  private boolean isAskingForHelp;
 
   public MainParameters(CommandFactory commandFactory, ReporterFactory reporterFactory) {
     this.commandFactory = commandFactory;
@@ -33,11 +33,8 @@ public final class MainParameters implements MultiCommandParser.JCommanderParame
   }
 
   @Override
-  public Command toExecutableCommand() { //TODO KDK: Test
+  public Command toExecutableCommand() {
     Reporter reporter = this.reporterFactory.plainTextReporter();
-    if(this.isAskingForHelp)
-      return this.commandFactory.helpCommand(reporter);
-    else
-      return this.commandFactory.helpCommand(reporter);
+    return this.commandFactory.helpCommand(reporter);
   }
 }
