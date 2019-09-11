@@ -1,5 +1,6 @@
 package info.javaspec.console.help;
 
+import com.beust.jcommander.JCommander;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.console.Command;
 import info.javaspec.console.Result;
@@ -16,7 +17,7 @@ import static org.hamcrest.Matchers.*;
 
 @RunWith(HierarchicalContextRunner.class)
 public class HelpCommandTest {
-  private Command subject;
+  private HelpCommand subject;
   private MockHelpObserver observer;
 
   public class run {
@@ -43,6 +44,28 @@ public class HelpCommandTest {
       subject.run();
       observer.writeMessageShouldHaveReceivedCommand("help", "show a list of commands, or help on a specific command");
       observer.writeMessageShouldHaveReceivedCommand("run", "run specs in Java classes");
+    }
+  }
+
+  public class runWithJCommander {
+    @Test
+    public void returnsASuccessfulResult() throws Exception {
+      observer = new MockHelpObserver();
+      JCommander jCommander = JCommander.newBuilder().build();
+      subject = new HelpCommand(observer);
+
+      Result result = subject.run(jCommander);
+      assertThat(result.exitCode, equalTo(0));
+    }
+
+    @Test
+    public void printsUsageFromJCommander() throws Exception {
+      observer = new MockHelpObserver();
+      JCommander jCommander = JCommander.newBuilder().programName("javaspec").build();
+      subject = new HelpCommand(observer);
+
+      subject.run(jCommander);
+      observer.writeMessageShouldHaveReceivedLine("Usage: javaspec\n");
     }
   }
 
