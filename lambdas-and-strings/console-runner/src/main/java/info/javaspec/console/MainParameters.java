@@ -1,5 +1,6 @@
 package info.javaspec.console;
 
+import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
 public final class MainParameters implements MultiCommandParser.JCommanderParameters {
@@ -18,7 +19,7 @@ public final class MainParameters implements MultiCommandParser.JCommanderParame
   }
 
   @Override
-  public Command toExecutableCommand() {
+  public Command toExecutableCommand(JCommander parser) {
     Reporter reporter = this.reporterFactory.plainTextReporter();
     return this.commandFactory.helpCommand(reporter);
   }

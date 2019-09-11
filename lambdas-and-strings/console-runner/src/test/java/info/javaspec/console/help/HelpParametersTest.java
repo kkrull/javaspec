@@ -1,5 +1,6 @@
 package info.javaspec.console.help;
 
+import com.beust.jcommander.JCommander;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.console.Command;
 import info.javaspec.console.CommandFactory;
@@ -37,7 +38,7 @@ public class HelpParametersTest {
         Mockito.when(commandFactory.helpCommand(Mockito.any()))
           .thenReturn(toCreate);
 
-        assertThat(subject.toExecutableCommand(), sameInstance(toCreate));
+        assertThat(subject.toExecutableCommand(anyJCommander()), sameInstance(toCreate));
       }
 
       @Test
@@ -46,7 +47,7 @@ public class HelpParametersTest {
         Mockito.when(reporterFactory.plainTextReporter())
           .thenReturn(reporter);
 
-        subject.toExecutableCommand();
+        subject.toExecutableCommand(anyJCommander());
         Mockito.verify(commandFactory).helpCommand(Mockito.same(reporter));
       }
     }
@@ -70,7 +71,7 @@ public class HelpParametersTest {
             Mockito.eq("world-peace"))
         ).thenReturn(toCreate);
 
-        assertThat(subject.toExecutableCommand(), sameInstance(toCreate));
+        assertThat(subject.toExecutableCommand(anyJCommander()), sameInstance(toCreate));
       }
 
       @Test
@@ -79,12 +80,16 @@ public class HelpParametersTest {
         Mockito.when(reporterFactory.plainTextReporter())
           .thenReturn(reporter);
 
-        subject.toExecutableCommand();
+        subject.toExecutableCommand(anyJCommander());
         Mockito.verify(commandFactory).helpCommand(
           Mockito.same(reporter),
           Mockito.anyString()
         );
       }
     }
+  }
+
+  private JCommander anyJCommander() {
+    return Mockito.mock(JCommander.class);
   }
 }

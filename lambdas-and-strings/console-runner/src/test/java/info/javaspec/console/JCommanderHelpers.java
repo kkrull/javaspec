@@ -32,7 +32,7 @@ public final class JCommanderHelpers {
   }
 
   private static JCommanderParameters emptyMainParameters(String expectedCommand) {
-    return () -> {
+    return jCommander -> {
       String message = String.format("Expected command named %s to be parsed, not the main command", expectedCommand);
       throw new AssertionError(message);
     };

@@ -1,5 +1,6 @@
 package info.javaspec.console.help;
 
+import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import info.javaspec.console.Command;
 import info.javaspec.console.CommandFactory;
@@ -22,7 +23,7 @@ public final class HelpParameters implements MultiCommandParser.JCommanderParame
   }
 
   @Override
-  public Command toExecutableCommand() {
+  public Command toExecutableCommand(JCommander parser) {
     Reporter reporter = this.reporterFactory.plainTextReporter();
     return Optional.ofNullable(this.forCommandNamed)
       .map(helpOnWhat -> this.commandFactory.helpCommand(reporter, helpOnWhat))

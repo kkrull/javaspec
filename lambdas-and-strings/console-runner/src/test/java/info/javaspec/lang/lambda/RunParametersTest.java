@@ -1,5 +1,6 @@
 package info.javaspec.lang.lambda;
 
+import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.RunObserver;
@@ -47,7 +48,7 @@ public class RunParametersTest {
       @Test
       public void createsARunCommandWithAFileUrlToTheSpecifiedJar() throws Exception {
         JCommanderHelpers.parseCommandArgs(subject, "run", runArgumentsWithSpecClasspath("my-specs.jar"));
-        subject.toExecutableCommand();
+        subject.toExecutableCommand(anyJCommander());
 
         Mockito.verify(commandFactory).runSpecsCommand(
           Mockito.any(RunObserver.class),
@@ -70,7 +71,7 @@ public class RunParametersTest {
         )).toReturn(toCreate);
 
         JCommanderHelpers.parseCommandArgs(subject, "run", runArguments());
-        assertThat(subject.toExecutableCommand(), sameInstance(toCreate));
+        assertThat(subject.toExecutableCommand(anyJCommander()), sameInstance(toCreate));
       }
     }
 
@@ -78,7 +79,7 @@ public class RunParametersTest {
       @Test
       public void usesEmptyClassNames() throws Exception {
         JCommanderHelpers.parseCommandArgs(subject, "run", runArgumentsWithClasses(Collections.emptyList()));
-        subject.toExecutableCommand();
+        subject.toExecutableCommand(anyJCommander());
         Mockito.verify(commandFactory).runSpecsCommand(
           Mockito.any(RunObserver.class),
           Mockito.any(URL.class),
@@ -91,7 +92,7 @@ public class RunParametersTest {
       @Test
       public void usesThoseClassNames() throws Exception {
         JCommanderHelpers.parseCommandArgs(subject, "run", runArgumentsWithClasses(Arrays.asList("one", "two")));
-        subject.toExecutableCommand();
+        subject.toExecutableCommand(anyJCommander());
         Mockito.verify(commandFactory).runSpecsCommand(
           Mockito.any(RunObserver.class),
           Mockito.any(URL.class),
@@ -107,7 +108,7 @@ public class RunParametersTest {
         Mockito.stub(reporterFactory.plainTextReporter()).toReturn(toCreate);
 
         JCommanderHelpers.parseCommandArgs(subject, "run", runArgumentsWithReporter("plaintext"));
-        subject.toExecutableCommand();
+        subject.toExecutableCommand(anyJCommander());
         Mockito.verify(commandFactory).runSpecsCommand(
           Mockito.same(toCreate),
           Mockito.any(URL.class),
@@ -120,7 +121,7 @@ public class RunParametersTest {
       @Test
       public void returnsADetailedHelpCommandForRun() throws Exception {
         JCommanderHelpers.parseCommandArgs(subject, "run", Collections.singletonList("--help"));
-        subject.toExecutableCommand();
+        subject.toExecutableCommand(anyJCommander());
         Mockito.verify(commandFactory).helpCommand(
           Mockito.any(HelpObserver.class),
           Mockito.eq("run")
@@ -134,6 +135,10 @@ public class RunParametersTest {
         JCommanderHelpers.parseCommandArgs(subject, "run", runArgumentsWithReporter("bogus"));
       }
     }
+  }
+
+  private JCommander anyJCommander() {
+    return Mockito.mock(JCommander.class);
   }
 
   private List<String> runArgumentsWithReporter(String reporterName) {

@@ -1,11 +1,11 @@
 package info.javaspec.console;
 
+import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.console.Exceptions.CommandAlreadyAdded;
 import info.javaspec.console.Exceptions.InvalidArguments;
 import info.javaspec.console.MultiCommandParser.JCommanderParameters;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -107,17 +107,23 @@ public class MultiCommandParserTest {
     public class givenArgumentsMatchingTheMainCommand {
       private ParametersWithValidOption mainParameters;
 
-      @Before
-      public void setup() throws Exception {
-        mainParameters = new ParametersWithValidOption(mainCommand);
-        subject = new MultiCommandParser(mainParameters);
-      }
-
       @Test
       public void returnsTheCommandParsedFromTheMainCommandParameters() throws Exception {
+        mainParameters = new ParametersWithValidOption(mainCommand);
+        subject = new MultiCommandParser(mainParameters);
+
         Command returned = subject.parseCommand(Collections.singletonList("--valid-option"));
         assertThat(returned, sameInstance(mainCommand));
         assertThat(mainParameters.validOption, equalTo(true));
+      }
+
+      @Test
+      public void passesTheJCommanderObject() throws Exception {
+        JCommanderParameters mainParameters = Mockito.mock(JCommanderParameters.class);
+        subject = new MultiCommandParser(mainParameters);
+
+        subject.parseCommand(Collections.emptyList());
+        Mockito.verify(mainParameters).toExecutableCommand(Mockito.notNull(JCommander.class));
       }
     }
 
@@ -136,12 +142,7 @@ public class MultiCommandParserTest {
   }
 
   private JCommanderParameters parametersReturning(Command command) {
-    return new JCommanderParameters() {
-      @Override
-      public Command toExecutableCommand() {
-        return command;
-      }
-    };
+    return parser -> command;
   }
 
   private static final class ParametersWithValidOption implements JCommanderParameters {
@@ -155,7 +156,7 @@ public class MultiCommandParserTest {
     public boolean validOption;
 
     @Override
-    public Command toExecutableCommand() {
+    public Command toExecutableCommand(JCommander jCommander) {
       return this.command;
     }
   }

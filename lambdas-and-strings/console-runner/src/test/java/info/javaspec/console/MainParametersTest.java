@@ -1,5 +1,6 @@
 package info.javaspec.console;
 
+import com.beust.jcommander.JCommander;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.console.help.HelpObserver;
 import org.hamcrest.Matchers;
@@ -33,7 +34,7 @@ public class MainParametersTest {
     @Test
     public void usesAPlainTextReporter() throws Exception {
       JCommanderHelpers.parseMainArgs(subject);
-      returned = subject.toExecutableCommand();
+      returned = subject.toExecutableCommand(anyJCommander());
       Mockito.verify(commandFactory).helpCommand(Mockito.same(plainTextReporter));
     }
 
@@ -41,7 +42,7 @@ public class MainParametersTest {
       @Test
       public void returnsAHelpCommand() throws Exception {
         JCommanderHelpers.parseMainArgs(subject);
-        returned = subject.toExecutableCommand();
+        returned = subject.toExecutableCommand(anyJCommander());
         assertThat(returned, Matchers.sameInstance(helpCommand));
       }
     }
@@ -50,9 +51,13 @@ public class MainParametersTest {
       @Test
       public void returnsAHelpCommand() throws Exception {
         JCommanderHelpers.parseMainArgs(subject, "--help");
-        returned = subject.toExecutableCommand();
+        returned = subject.toExecutableCommand(anyJCommander());
         assertThat(returned, Matchers.sameInstance(helpCommand));
       }
     }
+  }
+
+  private JCommander anyJCommander() {
+    return Mockito.mock(JCommander.class);
   }
 }

@@ -42,13 +42,13 @@ public final class MultiCommandParser implements Main.ArgumentParser {
         .orElse(InvalidArguments.dueTo(ex));
     }
 
-    String selectedCommand = parser.getParsedCommand();
-    JCommanderParameters selectedParams = this.commandParameters.getOrDefault(selectedCommand, this.mainParameters);
-    return selectedParams.toExecutableCommand();
+    String namedCommand = parser.getParsedCommand();
+    JCommanderParameters selectedParams = this.commandParameters.getOrDefault(namedCommand, this.mainParameters);
+    return selectedParams.toExecutableCommand(parser);
   }
 
   //Contains a JCommander @Parameter for each possible argument/option available to a CLI command
   public interface JCommanderParameters {
-    Command toExecutableCommand();
+    Command toExecutableCommand(JCommander parser);
   }
 }

@@ -1,6 +1,7 @@
 package info.javaspec.lang.lambda;
 
 import com.beust.jcommander.IValueValidator;
+import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
@@ -53,7 +54,7 @@ public final class RunParameters implements MultiCommandParser.JCommanderParamet
   }
 
   @Override
-  public Command toExecutableCommand() {
+  public Command toExecutableCommand(JCommander parser) {
     Reporter reporter = this.reporterFactory.plainTextReporter();
     if(this.isAskingForHelp)
       return this.commandFactory.helpCommand(reporter, "run");
