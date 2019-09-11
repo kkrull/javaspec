@@ -1,12 +1,14 @@
 package info.javaspec.console.help;
 
 import com.beust.jcommander.JCommander;
+import com.beust.jcommander.internal.Console;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.console.Command;
 import info.javaspec.console.Result;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -49,6 +51,30 @@ public class HelpCommandTest {
 
   public class runWithJCommander {
     @Test
+    public void printsUsageFromJCommander() throws Exception {
+      observer = new MockHelpObserver();
+      JCommander jCommander = JCommander.newBuilder()
+        .programName("javaspec")
+        .build();
+      subject = new HelpCommand(observer);
+
+      subject.run(jCommander);
+      observer.writeMessageShouldHaveReceivedLine("Usage: javaspec\n");
+    }
+
+    @Test
+    public void restoresJCommanderToItsOriginalState() throws Exception {
+      Console originalConsole = Mockito.mock(Console.class);
+      JCommander jCommander = JCommander.newBuilder()
+        .console(originalConsole)
+        .build();
+
+      subject = new HelpCommand(Mockito.mock(HelpObserver.class));
+      subject.run(jCommander);
+      assertThat(jCommander.getConsole(), sameInstance(originalConsole));
+    }
+
+    @Test
     public void returnsASuccessfulResult() throws Exception {
       observer = new MockHelpObserver();
       JCommander jCommander = JCommander.newBuilder().build();
@@ -56,16 +82,6 @@ public class HelpCommandTest {
 
       Result result = subject.run(jCommander);
       assertThat(result.exitCode, equalTo(0));
-    }
-
-    @Test
-    public void printsUsageFromJCommander() throws Exception {
-      observer = new MockHelpObserver();
-      JCommander jCommander = JCommander.newBuilder().programName("javaspec").build();
-      subject = new HelpCommand(observer);
-
-      subject.run(jCommander);
-      observer.writeMessageShouldHaveReceivedLine("Usage: javaspec\n");
     }
   }
 

@@ -105,11 +105,9 @@ public class MultiCommandParserTest {
     }
 
     public class givenArgumentsMatchingTheMainCommand {
-      private ParametersWithValidOption mainParameters;
-
       @Test
       public void returnsTheCommandParsedFromTheMainCommandParameters() throws Exception {
-        mainParameters = new ParametersWithValidOption(mainCommand);
+        ParametersWithValidOption mainParameters = new ParametersWithValidOption(mainCommand);
         subject = new MultiCommandParser(mainParameters);
 
         Command returned = subject.parseCommand(Collections.singletonList("--valid-option"));

@@ -30,20 +30,33 @@ public final class HelpCommand implements Command {
   }
 
   public Result run(JCommander jCommander) {
-    jCommander.setConsole(new Console() {
-      @Override public void print(String msg) {
-      }
-
-      @Override public void println(String msg) {
-        observer.writeMessage(Collections.singletonList(msg));
-      }
-
-      @Override public char[] readPassword(boolean echoInput) {
-        return new char[0];
-      }
-    });
-
+    Console originalConsole = jCommander.getConsole();
+    jCommander.setConsole(new ConsoleToHelpObserverAdapter(observer));
     jCommander.usage();
+    jCommander.setConsole(originalConsole);
     return Result.success();
+  }
+
+  private static final class ConsoleToHelpObserverAdapter implements Console {
+    private final HelpObserver observer;
+
+    public ConsoleToHelpObserverAdapter(HelpObserver observer) {
+      this.observer = observer;
+    }
+
+    @Override
+    public void print(String msg) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void println(String msg) {
+      this.observer.writeMessage(Collections.singletonList(msg));
+    }
+
+    @Override
+    public char[] readPassword(boolean echoInput) {
+      throw new UnsupportedOperationException("This Console is only used to print usage");
+    }
   }
 }
