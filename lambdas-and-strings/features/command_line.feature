@@ -11,18 +11,29 @@ Feature: JavaSpec CLI (external process)
 
   ## Basic CLI behavior: What commands are available?  How does `javaspec` work, as a process?
 
-  @focus
+  @focus @wip
   Scenario: The CLI should offer to help when it's run without any arguments
     Given I have a JavaSpec runner for the console
     When I run the runner without any arguments
     Then the runner's output should be
     """
-    Usage: javaspec <command> [<arguments>]
+    Usage: javaspec [options] [command] [command options]
+      Options:
+        --help
+          Show help
+      Commands:
+        help      List commands, or show help for a specific command
+          Usage: help
 
-    ## Commands ##
-
-    help  show a list of commands, or help on a specific command
-    run   run specs in Java classes
+        run      Run specs
+          Usage: run [options]
+            Options:
+            * --reporter
+                Choose how specs are reported to the console: { plaintext }
+                Default: plaintext
+            * --spec-classpath
+                The classpath from which to load spec classes: either a directory
+                of .class files or a .jar file.
     """
     And the runner's exit status should be 0
 
