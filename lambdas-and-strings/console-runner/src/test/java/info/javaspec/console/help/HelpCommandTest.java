@@ -23,33 +23,6 @@ public class HelpCommandTest {
   private MockHelpObserver observer;
 
   public class run {
-    @Before
-    public void setup() throws Exception {
-      observer = new MockHelpObserver();
-      subject = new HelpCommand(observer, anyJCommander());
-    }
-
-    @Test
-    public void returns0() throws Exception {
-      Result result = subject.run();
-      assertThat(result.exitCode, equalTo(0));
-    }
-
-    @Test
-    public void writesGeneralForm() throws Exception {
-      subject.run();
-      observer.writeMessageShouldHaveReceivedLine("Usage: javaspec <command> [<arguments>]");
-    }
-
-    @Test
-    public void listsEachKnownCommand() throws Exception {
-      subject.run();
-      observer.writeMessageShouldHaveReceivedCommand("help", "show a list of commands, or help on a specific command");
-      observer.writeMessageShouldHaveReceivedCommand("run", "run specs in Java classes");
-    }
-  }
-
-  public class runWithJCommander {
     @Test
     public void printsUsageFromJCommander() throws Exception {
       observer = new MockHelpObserver();
@@ -58,7 +31,7 @@ public class HelpCommandTest {
         .build();
       subject = new HelpCommand(observer, jCommander);
 
-      subject.run(jCommander);
+      subject.run();
       observer.writeMessageShouldHaveReceivedLine("Usage: javaspec\n");
     }
 
@@ -70,7 +43,7 @@ public class HelpCommandTest {
         .build();
 
       subject = new HelpCommand(Mockito.mock(HelpObserver.class), jCommander);
-      subject.run(jCommander);
+      subject.run();
       assertThat(jCommander.getConsole(), sameInstance(originalConsole));
     }
 
@@ -80,7 +53,7 @@ public class HelpCommandTest {
       JCommander jCommander = anyJCommander();
       subject = new HelpCommand(observer, jCommander);
 
-      Result result = subject.run(jCommander);
+      Result result = subject.run();
       assertThat(result.exitCode, equalTo(0));
     }
   }

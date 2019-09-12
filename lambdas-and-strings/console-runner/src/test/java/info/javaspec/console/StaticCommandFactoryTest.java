@@ -35,6 +35,7 @@ public class StaticCommandFactoryTest {
         Mockito.mock(JCommander.class)
       );
       assertThat(command, instanceOf(HelpCommand.class));
+      command.run();
     }
 
     @Test

@@ -21,8 +21,7 @@ public final class HelpCommand implements Command {
     this.jCommander = jCommander;
   }
 
-  @Override
-  public Result run() {
+  public Result runOld() {
     this.observer.writeMessage(Arrays.asList(
       "Usage: javaspec <command> [<arguments>]",
       "",
@@ -35,7 +34,8 @@ public final class HelpCommand implements Command {
     return Result.success();
   }
 
-  public Result run(JCommander jCommander) {
+  @Override
+  public Result run() {
     Console originalConsole = this.jCommander.getConsole();
     this.jCommander.setConsole(new ConsoleToHelpObserverAdapter(observer));
     this.jCommander.usage();

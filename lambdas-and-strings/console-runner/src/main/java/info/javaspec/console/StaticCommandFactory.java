@@ -15,7 +15,7 @@ import java.util.List;
 public class StaticCommandFactory implements CommandFactory {
   @Override
   public Command helpCommand(HelpObserver observer, JCommander jCommander) {
-    return new HelpCommand(observer);
+    return new HelpCommand(observer, jCommander);
   }
 
   @Override
