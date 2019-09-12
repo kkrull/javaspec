@@ -1,5 +1,6 @@
 package info.javaspec.console;
 
+import com.beust.jcommander.JCommander;
 import info.javaspec.RunObserver;
 import info.javaspec.console.help.DetailedHelpCommand;
 import info.javaspec.console.help.HelpCommand;
@@ -13,7 +14,7 @@ import java.util.List;
 
 public class StaticCommandFactory implements CommandFactory {
   @Override
-  public Command helpCommand(HelpObserver observer) {
+  public Command helpCommand(HelpObserver observer, JCommander jCommander) {
     return new HelpCommand(observer);
   }
 

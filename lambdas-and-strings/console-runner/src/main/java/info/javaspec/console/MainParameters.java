@@ -21,6 +21,6 @@ public final class MainParameters implements MultiCommandParser.JCommanderParame
   @Override
   public Command toExecutableCommand(JCommander parser) {
     Reporter reporter = this.reporterFactory.plainTextReporter();
-    return this.commandFactory.helpCommand(reporter);
+    return this.commandFactory.helpCommand(reporter, parser);
   }
 }

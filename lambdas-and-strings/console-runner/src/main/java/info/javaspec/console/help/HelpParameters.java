@@ -26,6 +26,6 @@ public final class HelpParameters implements MultiCommandParser.JCommanderParame
     HelpObserver observer = this.reporterFactory.plainTextReporter();
     return Optional.ofNullable(this.forCommandNamed)
       .map(helpOnWhat -> this.commandFactory.helpCommand(observer, helpOnWhat))
-      .orElseGet(() -> this.commandFactory.helpCommand(observer));
+      .orElseGet(() -> this.commandFactory.helpCommand(observer, parser));
   }
 }

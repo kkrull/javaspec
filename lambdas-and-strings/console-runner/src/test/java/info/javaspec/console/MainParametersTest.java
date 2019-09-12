@@ -25,17 +25,24 @@ public class MainParametersTest {
     @Before
     public void setup() throws Exception {
       subject = new MainParameters(commandFactory, reporterFactory);
-      Mockito.stub(commandFactory.helpCommand(Mockito.any(HelpObserver.class)))
-        .toReturn(helpCommand);
+      Mockito.stub(commandFactory.helpCommand(
+        Mockito.any(HelpObserver.class),
+        Mockito.any(JCommander.class))
+      ).toReturn(helpCommand);
       Mockito.stub(reporterFactory.plainTextReporter())
         .toReturn(plainTextReporter);
     }
 
     @Test
-    public void usesAPlainTextReporter() throws Exception {
+    public void usesAPlainTextReporterAndTheProvidedJCommander() throws Exception {
+      JCommander parser = anyJCommander();
       JCommanderHelpers.parseMainArgs(subject);
-      returned = subject.toExecutableCommand(anyJCommander());
-      Mockito.verify(commandFactory).helpCommand(Mockito.same(plainTextReporter));
+      returned = subject.toExecutableCommand(parser);
+
+      Mockito.verify(commandFactory).helpCommand(
+        Mockito.same(plainTextReporter),
+        Mockito.same(parser)
+      );
     }
 
     public class givenNoOptions {

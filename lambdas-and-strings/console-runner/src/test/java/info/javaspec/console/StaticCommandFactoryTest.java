@@ -1,5 +1,6 @@
 package info.javaspec.console;
 
+import com.beust.jcommander.JCommander;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.RunObserver;
 import info.javaspec.console.help.DetailedHelpCommand;
@@ -29,7 +30,10 @@ public class StaticCommandFactoryTest {
   public class helpCommand {
     @Test
     public void returnsHelpCommandForNoSpecificCommand() throws Exception {
-      Command command = subject.helpCommand(Mockito.mock(HelpObserver.class));
+      Command command = subject.helpCommand(
+        Mockito.mock(HelpObserver.class),
+        Mockito.mock(JCommander.class)
+      );
       assertThat(command, instanceOf(HelpCommand.class));
     }
 

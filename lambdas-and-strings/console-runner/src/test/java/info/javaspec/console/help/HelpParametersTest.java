@@ -35,20 +35,26 @@ public class HelpParametersTest {
       @Test
       public void returnsATopLevelHelpCommand() throws Exception {
         Command toCreate = Mockito.mock(Command.class);
-        Mockito.when(commandFactory.helpCommand(Mockito.any()))
-          .thenReturn(toCreate);
+        Mockito.when(commandFactory.helpCommand(
+          Mockito.any(),
+          Mockito.any(JCommander.class))
+        ).thenReturn(toCreate);
 
         assertThat(subject.toExecutableCommand(anyJCommander()), sameInstance(toCreate));
       }
 
       @Test
-      public void usesAPlaintextReporter() throws Exception {
+      public void usesAPlaintextReporterAndTheGivenJCommander() throws Exception {
         Reporter reporter = Mockito.mock(Reporter.class);
         Mockito.when(reporterFactory.plainTextReporter())
           .thenReturn(reporter);
 
-        subject.toExecutableCommand(anyJCommander());
-        Mockito.verify(commandFactory).helpCommand(Mockito.same(reporter));
+        JCommander jCommander = anyJCommander();
+        subject.toExecutableCommand(jCommander);
+        Mockito.verify(commandFactory).helpCommand(
+          Mockito.same(reporter),
+          Mockito.same(jCommander)
+        );
       }
     }
 
