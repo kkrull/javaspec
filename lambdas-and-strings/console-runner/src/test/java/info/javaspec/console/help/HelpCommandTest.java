@@ -26,7 +26,7 @@ public class HelpCommandTest {
     @Before
     public void setup() throws Exception {
       observer = new MockHelpObserver();
-      subject = new HelpCommand(observer);
+      subject = new HelpCommand(observer, anyJCommander());
     }
 
     @Test
@@ -56,7 +56,7 @@ public class HelpCommandTest {
       JCommander jCommander = JCommander.newBuilder()
         .programName("javaspec")
         .build();
-      subject = new HelpCommand(observer);
+      subject = new HelpCommand(observer, jCommander);
 
       subject.run(jCommander);
       observer.writeMessageShouldHaveReceivedLine("Usage: javaspec\n");
@@ -69,7 +69,7 @@ public class HelpCommandTest {
         .console(originalConsole)
         .build();
 
-      subject = new HelpCommand(Mockito.mock(HelpObserver.class));
+      subject = new HelpCommand(Mockito.mock(HelpObserver.class), jCommander);
       subject.run(jCommander);
       assertThat(jCommander.getConsole(), sameInstance(originalConsole));
     }
@@ -77,12 +77,16 @@ public class HelpCommandTest {
     @Test
     public void returnsASuccessfulResult() throws Exception {
       observer = new MockHelpObserver();
-      JCommander jCommander = JCommander.newBuilder().build();
-      subject = new HelpCommand(observer);
+      JCommander jCommander = anyJCommander();
+      subject = new HelpCommand(observer, jCommander);
 
       Result result = subject.run(jCommander);
       assertThat(result.exitCode, equalTo(0));
     }
+  }
+
+  private JCommander anyJCommander() {
+    return JCommander.newBuilder().build();
   }
 
   private static final class MockHelpObserver implements HelpObserver {

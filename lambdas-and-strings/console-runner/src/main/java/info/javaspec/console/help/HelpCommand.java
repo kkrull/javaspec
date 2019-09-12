@@ -10,9 +10,15 @@ import java.util.Collections;
 
 public final class HelpCommand implements Command {
   private final HelpObserver observer;
+  private JCommander jCommander;
 
   public HelpCommand(HelpObserver observer) {
     this.observer = observer;
+  }
+
+  public HelpCommand(HelpObserver observer, JCommander jCommander) {
+    this.observer = observer;
+    this.jCommander = jCommander;
   }
 
   @Override
@@ -30,10 +36,10 @@ public final class HelpCommand implements Command {
   }
 
   public Result run(JCommander jCommander) {
-    Console originalConsole = jCommander.getConsole();
-    jCommander.setConsole(new ConsoleToHelpObserverAdapter(observer));
-    jCommander.usage();
-    jCommander.setConsole(originalConsole);
+    Console originalConsole = this.jCommander.getConsole();
+    this.jCommander.setConsole(new ConsoleToHelpObserverAdapter(observer));
+    this.jCommander.usage();
+    this.jCommander.setConsole(originalConsole);
     return Result.success();
   }
 
