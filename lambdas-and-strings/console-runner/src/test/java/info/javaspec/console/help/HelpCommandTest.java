@@ -70,15 +70,6 @@ public class HelpCommandTest {
       this.writeMessageReceived.addAll(lines);
     }
 
-    public void writeMessageShouldHaveReceivedCommand(String command, String description) {
-      Optional<String> matchingLine = this.writeMessageReceived.stream()
-        .filter(line -> line.startsWith(command))
-        .findFirst();
-
-      assertThat(matchingLine.isPresent(), is(true));
-      assertThat(matchingLine.get(), endsWith(description));
-    }
-
     public void writeMessageShouldHaveReceivedLine(String line) {
       assertThat(this.writeMessageReceived, hasItem(equalTo(line)));
     }

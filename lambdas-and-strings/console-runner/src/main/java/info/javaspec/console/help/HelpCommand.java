@@ -5,33 +5,15 @@ import com.beust.jcommander.internal.Console;
 import info.javaspec.console.Command;
 import info.javaspec.console.Result;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 public final class HelpCommand implements Command {
   private final HelpObserver observer;
   private JCommander jCommander;
 
-  public HelpCommand(HelpObserver observer) {
-    this.observer = observer;
-  }
-
   public HelpCommand(HelpObserver observer, JCommander jCommander) {
     this.observer = observer;
     this.jCommander = jCommander;
-  }
-
-  public Result runOld() {
-    this.observer.writeMessage(Arrays.asList(
-      "Usage: javaspec <command> [<arguments>]",
-      "",
-      "## Commands ##",
-      "",
-      "help  show a list of commands, or help on a specific command",
-      "run   run specs in Java classes"
-    ));
-
-    return Result.success();
   }
 
   @Override
