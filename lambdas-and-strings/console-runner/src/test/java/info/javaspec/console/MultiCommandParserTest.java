@@ -26,7 +26,7 @@ public class MultiCommandParserTest {
   public class addCliCommand {
     @Test
     public void returnsItselfForUseInABuilderPattern() throws Exception {
-      subject = new MultiCommandParser(parametersReturning(mainCommand));
+      subject = new MultiCommandParser(anyExecutableName(), parametersReturning(mainCommand));
       assertThat(
         subject.addCliCommand("anyName", parametersReturning(Mockito.mock(Command.class))),
         sameInstance(subject)
@@ -37,7 +37,7 @@ public class MultiCommandParserTest {
     public void throwsWhenAddingTheSameCommandTwice() throws Exception {
       JCommanderParameters duplicateParameters = parametersReturning(Mockito.mock(Command.class));
 
-      subject = new MultiCommandParser(parametersReturning(mainCommand));
+      subject = new MultiCommandParser(anyExecutableName(), parametersReturning(mainCommand));
       subject.addCliCommand("duplicate-command", duplicateParameters);
       subject.addCliCommand("duplicate-command", duplicateParameters);
     }
@@ -48,7 +48,7 @@ public class MultiCommandParserTest {
       @Test(expected = InvalidArguments.class)
       public void throwsAnException() throws Exception {
         JCommanderParameters mainParamsWithNoOptions = parametersReturning(mainCommand);
-        subject = new MultiCommandParser(mainParamsWithNoOptions);
+        subject = new MultiCommandParser(anyExecutableName(), mainParamsWithNoOptions);
         subject.parseCommand(Collections.singletonList("--unknown-option"));
       }
 
@@ -56,7 +56,7 @@ public class MultiCommandParserTest {
       public void identifiesTheInvalidUsage() throws Exception {
         try {
           JCommanderParameters mainParamsWithNoOptions = parametersReturning(mainCommand);
-          subject = new MultiCommandParser(mainParamsWithNoOptions);
+          subject = new MultiCommandParser(anyExecutableName(), mainParamsWithNoOptions);
           subject.parseCommand(Collections.singletonList("--unknown-option"));
         } catch(InvalidArguments subject) {
           assertThat(subject.getMessage(), containsString("--unknown-option"));
@@ -71,7 +71,7 @@ public class MultiCommandParserTest {
       @Test(expected = InvalidArguments.class)
       public void throwsAnException() throws Exception {
         JCommanderParameters mainParamsWithNoOptions = parametersReturning(mainCommand);
-        subject = new MultiCommandParser(mainParamsWithNoOptions);
+        subject = new MultiCommandParser(anyExecutableName(), mainParamsWithNoOptions);
         subject.addCliCommand("valid-command", parametersReturning(Mockito.mock(Command.class)));
         subject.parseCommand(Arrays.asList("valid-command", "--unknown-option"));
       }
@@ -93,7 +93,7 @@ public class MultiCommandParserTest {
       private Optional<InvalidArguments> tryInvalidCommand() {
         try {
           JCommanderParameters mainParamsWithNoOptions = parametersReturning(mainCommand);
-          subject = new MultiCommandParser(mainParamsWithNoOptions);
+          subject = new MultiCommandParser(anyExecutableName(), mainParamsWithNoOptions);
           subject.addCliCommand("valid-command", parametersReturning(Mockito.mock(Command.class)));
           subject.parseCommand(Arrays.asList("valid-command", "--unknown-option"));
         } catch(InvalidArguments subject) {
@@ -108,7 +108,7 @@ public class MultiCommandParserTest {
       @Test
       public void returnsTheCommandParsedFromTheMainCommandParameters() throws Exception {
         ParametersWithValidOption mainParameters = new ParametersWithValidOption(mainCommand);
-        subject = new MultiCommandParser(mainParameters);
+        subject = new MultiCommandParser(anyExecutableName(), mainParameters);
 
         Command returned = subject.parseCommand(Collections.singletonList("--valid-option"));
         assertThat(returned, sameInstance(mainCommand));
@@ -118,7 +118,7 @@ public class MultiCommandParserTest {
       @Test
       public void passesTheJCommanderObject() throws Exception {
         JCommanderParameters mainParameters = Mockito.mock(JCommanderParameters.class);
-        subject = new MultiCommandParser(mainParameters);
+        subject = new MultiCommandParser(anyExecutableName(), mainParameters);
 
         subject.parseCommand(Collections.emptyList());
         Mockito.verify(mainParameters).toExecutableCommand(Mockito.notNull(JCommander.class));
@@ -130,13 +130,17 @@ public class MultiCommandParserTest {
 
       @Test
       public void returnsTheCommandParsedFromTheNamedCommandParameters() throws Exception {
-        subject = new MultiCommandParser(parametersReturning(mainCommand));
+        subject = new MultiCommandParser(anyExecutableName(), parametersReturning(mainCommand));
         subject.addCliCommand("do-one-thing", parametersReturning(oneCommand));
 
         Command returned = subject.parseCommand(Collections.singletonList("do-one-thing"));
         assertThat(returned, sameInstance(oneCommand));
       }
     }
+  }
+
+  private String anyExecutableName() {
+    return "";
   }
 
   private JCommanderParameters parametersReturning(Command command) {

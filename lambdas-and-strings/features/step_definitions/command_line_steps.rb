@@ -29,7 +29,8 @@ Then(/^the runner's exit status should be 0$/) do
 end
 
 Then(/^the runner's output should be$/) do |expected_text|
-  expect_text_like_docstring expected_text, spec_runner_helper.runner_output
+  # expect_text_like_docstring expected_text, spec_runner_helper.runner_output
+  expect_text expected_text, spec_runner_helper.runner_output
 end
 
 Then(/^the runner's de-tracified output should be$/) do |expected_text|
@@ -79,4 +80,18 @@ end
 def expect_text_like_docstring(expected_text, actual_text)
   # Somehow the Gherkin docstring doesn't end in a newline, even though it's there
   expect(actual_text).to eq(expected_text + "\n")
+end
+
+def expect_text(expected_raw, actual_raw)
+  expected_lines = expected_raw.lines.map do |line|
+    line.rstrip
+  end
+
+  actual_lines = actual_raw.lines.map do |line|
+    line.rstrip
+  end
+
+  #TODO KDK: Get it to show a formatted listing of the expected/actual lines
+  # Isn't there a DocString#diff! ?
+  expect(actual_lines).to eq(expected_lines)
 end

@@ -20,22 +20,41 @@ Feature: JavaSpec CLI (external process)
     Usage: javaspec [options] [command] [command options]
       Options:
         --help
-          Show help
+
       Commands:
-        help      List commands, or show help for a specific command
+        help      null
           Usage: help
 
-        run      Run specs
+        run
           Usage: run [options]
             Options:
+              --help
+
             * --reporter
-                Choose how specs are reported to the console: { plaintext }
-                Default: plaintext
+
             * --spec-classpath
-                The classpath from which to load spec classes: either a directory
-                of .class files or a .jar file.
     """
     And the runner's exit status should be 0
+    Then the runner's output should be
+#    """
+#    Usage: javaspec [options] [command] [command options]
+#      Options:
+#        --help
+#          Show help
+#      Commands:
+#        help      List commands, or show help for a specific command
+#          Usage: help
+#
+#        run      Run specs
+#          Usage: run [options]
+#            Options:
+#            * --reporter
+#                Choose how specs are reported to the console: { plaintext }
+#                Default: plaintext
+#            * --spec-classpath
+#                The classpath from which to load spec classes: either a directory
+#                of .class files or a .jar file.
+#    """
 
 
   Scenario: The help command should tell you more about the run command

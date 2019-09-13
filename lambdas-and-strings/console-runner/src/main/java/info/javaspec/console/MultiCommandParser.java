@@ -15,10 +15,11 @@ public final class MultiCommandParser implements Main.ArgumentParser {
   private final JCommanderParameters mainParameters;
   private final Map<String, JCommanderParameters> commandParameters;
 
-  public MultiCommandParser(JCommanderParameters mainParameters) {
+  public MultiCommandParser(String executableName, JCommanderParameters mainParameters) {
     this.mainParameters = mainParameters;
     this.commandParameters = new LinkedHashMap<>();
     this.jCommanderConfig = JCommander.newBuilder()
+      .programName(executableName)
       .addObject(this.mainParameters);
   }
 

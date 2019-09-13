@@ -26,7 +26,7 @@ public final class Main {
 
   private static ArgumentParser cliArgumentParser(CommandFactory commandFactory, ReporterFactory reporterFactory) {
     MainParameters mainParameters = new MainParameters(commandFactory, reporterFactory);
-    return new MultiCommandParser(mainParameters)
+    return new MultiCommandParser("javaspec", mainParameters)
       .addCliCommand("help", new HelpParameters(commandFactory, reporterFactory))
       .addCliCommand("run", new RunParameters(commandFactory, reporterFactory));
   }
