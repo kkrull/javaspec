@@ -33,6 +33,8 @@ Feature: JavaSpec CLI (external process)
             * --reporter
 
             * --spec-classpath
+
+
     """
     And the runner's exit status should be 0
     Then the runner's output should be
