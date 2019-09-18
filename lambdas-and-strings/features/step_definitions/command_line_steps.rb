@@ -107,7 +107,9 @@ RSpec::Matchers.define :visibly_match do |expected_string|
   end
 
   def meaningful_lines(text)
-    text.strip.lines
+    text.strip.lines.map do |line|
+      line.rstrip
+    end
   end
 
   def inspect_lines(lines)
@@ -124,8 +126,8 @@ RSpec::Matchers.define :visibly_match do |expected_string|
   end
 
   def format_line(line)
-    line_showing_boundaries = "^#{line.sub("\n", '$')}"
-    line_showing_boundaries + "\n"
+    line_showing_boundaries = "^#{line.sub("\n", '')}"
+    line_showing_boundaries + "$\n"
   end
 
   def rjust_number(number, num_digits)

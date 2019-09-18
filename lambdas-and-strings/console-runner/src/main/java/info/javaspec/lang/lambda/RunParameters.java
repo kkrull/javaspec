@@ -20,26 +20,29 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@Parameters(separators = "=")
+@Parameters(commandDescription = "Run specs", separators = "=")
 public final class RunParameters implements MultiCommandParser.JCommanderParameters {
   private final CommandFactory commandFactory;
   private final ReporterFactory reporterFactory;
 
   @Parameter(
+    hidden = true,
     names = "--help",
     help = true
   )
   private boolean isAskingForHelp;
 
   @Parameter(
+    description = "Choose how specs are reported to the console: { plaintext }",
     names = "--reporter",
     required = true,
     validateValueWith = ReporterNameValidator.class
   )
-  private String reporterName;
+  private String reporterName = "plaintext";
 
   @Parameter(
     converter = PathToFileUrl.class,
+    description = "The classpath from which to load spec classes: either a directory of .class files or a .jar file.",
     names = "--spec-classpath",
     required = true
   )
