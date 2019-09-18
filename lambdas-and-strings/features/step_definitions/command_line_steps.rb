@@ -89,13 +89,25 @@ RSpec::Matchers.define :visibly_match do |expected_string|
   end
 
   failure_message do |actual_string|
-    "expected: #{inspect_lines(expected_string.lines)}\ngot: #{inspect_lines(actual_string.lines)}"
+    message = <<~EOF
+      expected (raw): #{inspect_lines(expected_string.lines)}
+      got (raw): #{inspect_lines(actual_string.lines)}
+
+      expected (compared): #{inspect_lines meaningful_lines(expected_string)}
+      got (compared): #{inspect_lines meaningful_lines(actual_string)}
+    EOF
+
+    message
   end
 
   match do |actual_string|
-    expected_lines = expected_string.lines
-    actual_lines = actual_string.lines
-    actual_lines.size == expected_lines.size
+    expected_lines = meaningful_lines expected_string
+    actual_lines = meaningful_lines actual_string
+    actual_lines == expected_lines
+  end
+
+  def meaningful_lines(text)
+    text.strip.lines
   end
 
   def inspect_lines(lines)

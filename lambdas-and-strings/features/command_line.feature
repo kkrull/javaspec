@@ -33,11 +33,9 @@ Feature: JavaSpec CLI (external process)
             * --reporter
 
             * --spec-classpath
-
-
     """
     And the runner's exit status should be 0
-    Then the runner's output should be
+#    Then the runner's output should be
 #    """
 #    Usage: javaspec [options] [command] [command options]
 #      Options:
