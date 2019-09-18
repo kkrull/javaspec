@@ -20,7 +20,7 @@ Feature: JavaSpec CLI (external process)
     Usage: javaspec [options] [command] [command options]
       Options:
         --help
-
+          Show help
       Commands:
         help      null
           Usage: help
@@ -37,10 +37,6 @@ Feature: JavaSpec CLI (external process)
     And the runner's exit status should be 0
 #    Then the runner's output should be
 #    """
-#    Usage: javaspec [options] [command] [command options]
-#      Options:
-#        --help
-#          Show help
 #      Commands:
 #        help      List commands, or show help for a specific command
 #          Usage: help

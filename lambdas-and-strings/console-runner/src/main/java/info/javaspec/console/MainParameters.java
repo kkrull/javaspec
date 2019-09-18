@@ -8,6 +8,7 @@ public final class MainParameters implements MultiCommandParser.JCommanderParame
   private final ReporterFactory reporterFactory;
 
   @Parameter(
+    description = "Show help",
     names = "--help",
     help = true
   )
