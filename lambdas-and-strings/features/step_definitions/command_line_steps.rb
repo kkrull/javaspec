@@ -90,8 +90,8 @@ RSpec::Matchers.define :visibly_match do |expected_string|
 
   failure_message do |actual_string|
     message = <<~EOF
-      expected (raw): #{inspect_lines(expected_string.lines)}
-      got (raw): #{inspect_lines(actual_string.lines)}
+      expected (raw): #{inspect_lines expected_string.lines}
+      got (raw): #{inspect_lines actual_string.lines}
 
       expected (compared): #{inspect_lines meaningful_lines(expected_string)}
       got (compared): #{inspect_lines meaningful_lines(actual_string)}
@@ -118,7 +118,7 @@ RSpec::Matchers.define :visibly_match do |expected_string|
     output = "#{lines.size} lines\n"
     lines.each do |line|
       output << rjust_number(line_number, number_of_digits)
-      output << ": #{format_line(line)}"
+      output << ": #{format_line line}"
       line_number = line_number + 1
     end
 
@@ -126,11 +126,11 @@ RSpec::Matchers.define :visibly_match do |expected_string|
   end
 
   def format_line(line)
-    line_showing_boundaries = "^#{line.sub("\n", '')}"
+    line_showing_boundaries = "^#{line.sub "\n", ''}"
     line_showing_boundaries + "$\n"
   end
 
   def rjust_number(number, num_digits)
-    "#{number}".rjust(num_digits)
+    "#{number}".rjust num_digits
   end
 end
