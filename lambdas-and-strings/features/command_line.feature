@@ -42,7 +42,7 @@ Feature: JavaSpec CLI (external process)
   @wip
   Scenario: The CLI should not show a stack trace for simple parsing errors
     Given I have a JavaSpec runner for the console
-    When I try to run a non-existent command
+    When I try to run a non-existent command "bogus"
     Then the runner's output should be
     """
     Invalid command: bogus

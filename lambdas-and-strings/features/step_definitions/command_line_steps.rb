@@ -22,6 +22,10 @@ When(/^I run the specs in that class$/) do
   spec_runner_helper.exec_run! logger
 end
 
+When(/^I try to run a non\-existent command "([^"]*)"$/) do |name|
+  spec_runner_helper.exec! logger, args: [name]
+end
+
 Then(/^the runner's exit status should be 0$/) do
   expect(spec_runner_helper.exit_status).to eq(0)
 end
