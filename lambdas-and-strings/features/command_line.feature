@@ -22,7 +22,7 @@ Feature: JavaSpec CLI (external process)
         --help
           Show help
       Commands:
-        help      List commands, or show help for a specific command
+        help      List commands and how to use them
           Usage: help
 
         run      Run specs
@@ -38,21 +38,11 @@ Feature: JavaSpec CLI (external process)
     And the runner's exit status should be 0
 
 
-  @focus @wip
-  Scenario: The help command should tell you more about the run command
-    Given I have a JavaSpec runner for the console
-    When I ask for help on the run command
-    Then the runner's output should be
-    """
-    TODO KDK: Get rid of this feature
-    """
-    And the runner's exit status should be 0
-
-
+  @focus
   @wip
   Scenario: The CLI should not show a stack trace for simple parsing errors
     Given I have a JavaSpec runner for the console
-    When I run a non-existent command
+    When I try to run a non-existent command
     Then the runner's output should be
     """
     Invalid command: bogus

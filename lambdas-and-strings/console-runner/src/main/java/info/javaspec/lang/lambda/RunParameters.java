@@ -60,7 +60,7 @@ public final class RunParameters implements MultiCommandParser.JCommanderParamet
   public Command toExecutableCommand(JCommander parser) {
     Reporter reporter = this.reporterFactory.plainTextReporter();
     if(this.isAskingForHelp)
-      return this.commandFactory.helpCommand(reporter, "run");
+      return this.commandFactory.helpCommand(reporter, parser);
 
     return this.commandFactory.runSpecsCommand(
       reporter,

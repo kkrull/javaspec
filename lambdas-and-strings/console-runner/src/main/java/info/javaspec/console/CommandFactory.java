@@ -10,7 +10,5 @@ import java.util.List;
 public interface CommandFactory {
   Command helpCommand(HelpObserver observer, JCommander jCommander);
 
-  Command helpCommand(HelpObserver observer, String forCommandNamed);
-
   Command runSpecsCommand(RunObserver observer, URL specClassPath, List<String> classNames);
 }

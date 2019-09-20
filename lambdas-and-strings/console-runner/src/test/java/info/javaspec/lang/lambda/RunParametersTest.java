@@ -121,10 +121,11 @@ public class RunParametersTest {
       @Test
       public void returnsADetailedHelpCommandForRun() throws Exception {
         JCommanderHelpers.parseCommandArgs(subject, "run", Collections.singletonList("--help"));
-        subject.toExecutableCommand(anyJCommander());
+        JCommander parser = anyJCommander();
+        subject.toExecutableCommand(parser);
         Mockito.verify(commandFactory).helpCommand(
           Mockito.any(HelpObserver.class),
-          Mockito.eq("run")
+          Mockito.same(parser)
         );
       }
     }

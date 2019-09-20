@@ -8,9 +8,7 @@ import info.javaspec.console.CommandFactory;
 import info.javaspec.console.MultiCommandParser;
 import info.javaspec.console.ReporterFactory;
 
-import java.util.Optional;
-
-@Parameters(commandDescription = "List commands, or show help for a specific command")
+@Parameters(commandDescription = "List commands and how to use them")
 public final class HelpParameters implements MultiCommandParser.JCommanderParameters {
   private final CommandFactory commandFactory;
   private final ReporterFactory reporterFactory;
@@ -26,8 +24,6 @@ public final class HelpParameters implements MultiCommandParser.JCommanderParame
   @Override
   public Command toExecutableCommand(JCommander parser) {
     HelpObserver observer = this.reporterFactory.plainTextReporter();
-    return Optional.ofNullable(this.forCommandNamed)
-      .map(helpOnWhat -> this.commandFactory.helpCommand(observer, helpOnWhat))
-      .orElseGet(() -> this.commandFactory.helpCommand(observer, parser));
+    return this.commandFactory.helpCommand(observer, parser);
   }
 }

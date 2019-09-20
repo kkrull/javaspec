@@ -45,10 +45,6 @@ Given(/^I have 2 or more spec collections with a variety of results$/) do
   spec_runner_helper.spec_classes = %w[info.javaspec.example.rb.BeepBeepSpecs]
 end
 
-When(/^I ask for help from the run command$/) do
-  spec_runner_helper.exec! logger, args: %w[run --help]
-end
-
 When(/^I run the specs in those classes$/) do
   spec_runner_helper.exec_run! logger
 end

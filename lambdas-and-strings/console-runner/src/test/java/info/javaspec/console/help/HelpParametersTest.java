@@ -57,42 +57,6 @@ public class HelpParametersTest {
         );
       }
     }
-
-    public class givenTheNameOfAnotherCommand {
-      @Before
-      public void setup() throws Exception {
-        commandFactory = Mockito.mock(CommandFactory.class);
-        reporterFactory = Mockito.mock(ReporterFactory.class);
-        subject = new HelpParameters(commandFactory, reporterFactory);
-
-        JCommanderHelpers.parseCommandArgs(subject, "help", "world-peace");
-      }
-
-      @Test
-      public void returnsAHelpCommandForTheSpecifiedCommand() throws Exception {
-        Command toCreate = Mockito.mock(Command.class);
-        Mockito.when(
-          commandFactory.helpCommand(
-            Mockito.any(),
-            Mockito.eq("world-peace"))
-        ).thenReturn(toCreate);
-
-        assertThat(subject.toExecutableCommand(anyJCommander()), sameInstance(toCreate));
-      }
-
-      @Test
-      public void usesAPlaintextReporter() throws Exception {
-        Reporter reporter = Mockito.mock(Reporter.class);
-        Mockito.when(reporterFactory.plainTextReporter())
-          .thenReturn(reporter);
-
-        subject.toExecutableCommand(anyJCommander());
-        Mockito.verify(commandFactory).helpCommand(
-          Mockito.same(reporter),
-          Mockito.anyString()
-        );
-      }
-    }
   }
 
   private JCommander anyJCommander() {

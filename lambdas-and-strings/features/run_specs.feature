@@ -11,24 +11,6 @@ Feature: Run command (external process)
 
   ## Run basics: What does executing the `run` command tell the developer?
 
-  Scenario: The run command should tell you more about itself
-    Given I have a JavaSpec runner for the console
-    When I ask for help from the run command
-    Then the runner's output should be
-    """
-    Usage:   javaspec run --reporter=plaintext <spec class> [spec class...]
-    Example: javaspec run --reporter=plaintext com.acme.AnvilSpecs com.acme.SpringOperatedBoxingGloveSpecs
-
-    ## Options ##
-
-    --reporter=[reporter]   How you want to find out which spec is running and what their results are
-
-      plaintext   Plain-text output without any colors or other escape sequences.
-                  Useful for preventing garbled output on continuous integration servers.
-    """
-    And the runner's exit status should be 0
-
-
   Scenario: The run command should run specs and tell you what happened
     Given I have a JavaSpec runner for the console
     And I have a Java class with specs that pass, as well as specs that fail
