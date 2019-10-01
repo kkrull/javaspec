@@ -26,9 +26,9 @@ public final class RunParameters implements MultiCommandParser.JCommanderParamet
   private final ReporterFactory reporterFactory;
 
   @Parameter(
+    help = true,
     hidden = true,
-    names = "--help",
-    help = true
+    names = "--help"
   )
   private boolean isAskingForHelp;
 

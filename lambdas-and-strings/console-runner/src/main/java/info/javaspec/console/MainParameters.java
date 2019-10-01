@@ -9,8 +9,8 @@ public final class MainParameters implements MultiCommandParser.JCommanderParame
 
   @Parameter(
     description = "Show help",
-    names = "--help",
-    help = true
+    help = true,
+    names = "--help"
   )
   private boolean isAskingForHelp;
 
