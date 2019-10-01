@@ -11,7 +11,6 @@ Feature: JavaSpec CLI (external process)
 
   ## Basic CLI behavior: What commands are available?  How does `javaspec` work, as a process?
 
-  @focus
   Scenario: The CLI should offer to help when it's run without any arguments
     Given I have a JavaSpec runner for the console
     When I run the runner without any arguments
@@ -37,17 +36,6 @@ Feature: JavaSpec CLI (external process)
     """
     And the runner's exit status should be 0
 
-
-  @focus
-  @wip
-  Scenario: The CLI should not show a stack trace for simple parsing errors
-    Given I have a JavaSpec runner for the console
-    When I try to run a non-existent command "bogus"
-    Then the runner's output should be
-    """
-    Invalid command: bogus
-    """
-  
 
   Scenario: The CLI should report all passing specs with its exit code
     Given I have a JavaSpec runner for the console
