@@ -1,8 +1,6 @@
 require 'cucumber'
 require 'cucumber/rake/task'
-
-console_runner_class_dir = File.join File.dirname(__FILE__), 'console-runner/build/classes/java/main'
-features_dir = File.join File.dirname(__FILE__), 'features'
+require 'rubygems/package'
 
 desc 'Compile, run all tests, and run checkstyle'
 task default: %w[java:test java:install cucumber java:checkstyle]
@@ -24,6 +22,71 @@ namespace :cucumber do
   desc 'Run Cucumber scenarios tagged with @focus'
   task :focus do
     sh *%w[cucumber -t @focus]
+  end
+end
+
+
+namespace :distribution do
+  desc 'Install the distribution to /usr/local'
+  task :install do
+    File.open distribution_path do |file|
+      untar file, target_dir
+    end
+
+    ln_s "#{installed_dir}/bin/javaspec", installed_link unless File.exist? installed_link
+  end
+
+  desc 'Remove the distribution from /usr/local'
+  task :uninstall do
+    rm installed_link if File.exist? installed_link
+    raise IOError.new "Expected #{installed_dir} to be removed.  Run with rvmsudo?" if File.exist? installed_link
+
+    rm_rf installed_dir, secure: true, verbose: true
+    raise IOError.new "Expected #{installed_dir} to be removed.  Run with rvmsudo?" if File.exist? installed_dir
+  end
+
+  def distribution_path
+    'console-runner/build/distributions/javaspec-2.0.0-SNAPSHOT.tar'
+  end
+
+  def untar(file, target_dir)
+    Gem::Package::TarReader.new file do |tar|
+      tar.each do |entry|
+        target_path = File.join target_dir, entry.full_name
+        extract_tar_entry! entry, target_path, entry.header.mode
+      end
+    end
+  end
+
+  def extract_tar_entry!(tar_entry, target_path, mode)
+    case
+    when tar_entry.directory?
+      mkdir_p target_path, mode: mode
+    when tar_entry.file?
+      extract_tar_file! tar_entry, target_path, mode
+    else
+      raise IOError.new "Unknown type of tar file entry: #{tar_entry}"
+    end
+  end
+
+  def extract_tar_file!(tar_entry, target_path, mode)
+    target_parent_directory = File.dirname target_path
+    mkdir_p target_parent_directory unless File.directory? target_parent_directory
+    File.open(target_path, 'wb', mode) do |target_file|
+      target_file.write tar_entry.read
+    end
+  end
+
+  def installed_dir
+    File.join target_dir, 'javaspec-2.0.0-SNAPSHOT'
+  end
+
+  def installed_link
+    '/usr/local/bin/javaspec'
+  end
+
+  def target_dir
+    '/usr/local/opt'
   end
 end
 

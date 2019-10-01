@@ -1,5 +1,5 @@
 package info.javaspec.console;
 
-interface ReporterFactory {
+public interface ReporterFactory {
   Reporter plainTextReporter();
 }
