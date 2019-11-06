@@ -21,7 +21,16 @@ public final class Main {
   static void main(ReporterFactory reporterFactory, ExitHandler system, String... args) {
     ArgumentParser cliParser = cliArgumentParser(new StaticCommandFactory(), reporterFactory);
     Main cli = new Main(reporterFactory.plainTextReporter(), system);
-    cli.runCommand(cliParser.parseCommand(Arrays.asList(args)));
+
+    Command runnableCommand = null;
+    try {
+      runnableCommand = cliParser.parseCommand(Arrays.asList(args));
+    } catch (Exception e) {
+      System.err.println("run: The following options are required: [--reporter], [--spec-classpath]");
+      System.exit(1);
+    }
+
+    cli.runCommand(runnableCommand);
   }
 
   private static ArgumentParser cliArgumentParser(CommandFactory commandFactory, ReporterFactory reporterFactory) {
