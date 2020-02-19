@@ -6,20 +6,56 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
+import java.util.List;
+
 @RunWith(HierarchicalContextRunner.class)
 public class MainTest {
+  private Main.ArgumentParser cliParser;
+  private Command command;
+
+  private ReporterFactory reporterFactory;
+  private Reporter reporter;
+
+  private Main.ExitHandler system;
+
+  public class main {
+    @Before
+    public void setup() {
+      cliParser = Mockito.mock(Main.ArgumentParser.class);
+      command = Mockito.mock(Command.class);
+      Mockito.stub(cliParser.parseCommand(matchAnyArguments()))
+        .toReturn(command);
+      Mockito.stub(command.run()).toReturn(anyResult());
+
+      reporterFactory = Mockito.mock(ReporterFactory.class);
+      reporter = Mockito.mock(Reporter.class);
+
+      system = Mockito.mock(Main.ExitHandler.class);
+    }
+
+    @Test
+    public void runs() throws Exception {
+      Main.main(cliParser, reporterFactory, system);
+    }
+
+    @Test
+    public void shouldCallTheSystemInterfaceWhenItBombs() throws Exception {
+      Mockito.doThrow(new RuntimeException("bang!"))
+        .when(cliParser).parseCommand(matchAnyArguments());
+      Main.main(cliParser, reporterFactory, system); //bombs
+      Mockito.verify(system).exit(1);
+    }
+  }
+
   public class runCommand {
     private Main subject;
-    private Reporter reporter;
-    private Main.ExitHandler system;
-    private Command command;
 
     @Before
     public void setup() {
-      this.reporter = Mockito.mock(Reporter.class);
-      this.system = Mockito.mock(Main.ExitHandler.class);
-      this.subject = new Main(reporter, system);
-      this.command = Mockito.mock(Command.class);
+      reporter = Mockito.mock(Reporter.class);
+      system = Mockito.mock(Main.ExitHandler.class);
+      subject = new Main(reporter, system);
+      command = Mockito.mock(Command.class);
     }
 
     @Test
@@ -44,5 +80,13 @@ public class MainTest {
       subject.runCommand(command);
       Mockito.verify(result).reportTo(Mockito.same(reporter));
     }
+  }
+
+  private Result anyResult() {
+    return Result.success();
+  }
+
+  private List<String> matchAnyArguments() {
+    return Mockito.anyListOf(String.class);
   }
 }

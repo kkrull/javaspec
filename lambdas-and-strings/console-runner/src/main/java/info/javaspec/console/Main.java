@@ -11,17 +11,18 @@ public final class Main {
   private final ExitHandler system;
 
   public static void main(String... args) {
+    //Just wire things up with concrete classes.  Delegate all action, to make it testable.
+    ReporterFactory reporterFactory = new StaticReporterFactory(System.out);
     main(
-      new StaticReporterFactory(System.out),
+      cliArgumentParser(new StaticCommandFactory(), reporterFactory),
+      reporterFactory,
       System::exit,
       args
     );
   }
 
-  static void main(ReporterFactory reporterFactory, ExitHandler system, String... args) {
-    ArgumentParser cliParser = cliArgumentParser(new StaticCommandFactory(), reporterFactory);
-    Main cli = new Main(reporterFactory.plainTextReporter(), system);
-
+  static void main(ArgumentParser cliParser, ReporterFactory reporterFactory, ExitHandler system, String... args) {
+    //Enable testing with doubles by doing all logic (even if messy) via interfaces
     Command runnableCommand = null;
     try {
       runnableCommand = cliParser.parseCommand(Arrays.asList(args));
@@ -30,6 +31,7 @@ public final class Main {
       System.exit(1);
     }
 
+    Main cli = new Main(reporterFactory.plainTextReporter(), system);
     cli.runCommand(runnableCommand);
   }
 
