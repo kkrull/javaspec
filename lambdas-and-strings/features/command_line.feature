@@ -51,7 +51,6 @@ Feature: JavaSpec CLI (external process)
     Then The runner should indicate that 1 or more specs have failed
 
 
-  @focus
   Scenario: The CLI should suppress stack traces for an invalid command
     Given I have a JavaSpec runner for the console
     When I run the runner with an incomplete run command

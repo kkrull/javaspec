@@ -1,8 +1,6 @@
 package info.javaspec.console;
 
 import info.javaspec.console.Exceptions.InvalidArguments;
-import info.javaspec.console.help.HelpParameters;
-import info.javaspec.lang.lambda.RunParameters;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +13,7 @@ public final class Main {
     //Responsible just for wiring things up with concrete classes.  Delegates all behavior, to make it testable.
     ReporterFactory reporterFactory = new StaticReporterFactory(System.out);
     main(
-      cliArgumentParser(new StaticCommandFactory(), reporterFactory),
+      ArgumentParserFactory.forConsole(new StaticCommandFactory(), reporterFactory),
       reporterFactory,
       System::exit,
       args
@@ -35,13 +33,6 @@ public final class Main {
 
     Main cli = new Main(reporterFactory.plainTextReporter(), system);
     cli.runCommand(runnableCommand);
-  }
-
-  static ArgumentParser cliArgumentParser(CommandFactory commandFactory, ReporterFactory reporterFactory) {
-    MainParameters mainParameters = new MainParameters(commandFactory, reporterFactory);
-    return new MultiCommandParser("javaspec", mainParameters)
-      .addCliCommand("help", new HelpParameters(commandFactory, reporterFactory))
-      .addCliCommand("run", new RunParameters(commandFactory, reporterFactory));
   }
 
   private Main(Reporter reporter, ExitHandler system) {
