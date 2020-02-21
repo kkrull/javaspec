@@ -41,6 +41,18 @@ public class MainTest {
       public void doesNotExplode_whichIsAlwaysAPlus() throws Exception {
         Main.main(cliParser, reporterFactory, system);
       }
+
+      @Test @Ignore
+      public void runsTheCommand() throws Exception {
+      }
+
+      @Test @Ignore
+      public void reportsTheResult() throws Exception {
+      }
+
+      @Test @Ignore
+      public void exitsWithWhateverResultCodeIsReturned() throws Exception {
+      }
     }
 
     public class givenInvalidArguments {
