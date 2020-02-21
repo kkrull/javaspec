@@ -11,7 +11,7 @@ public final class Main {
   private final ExitHandler system;
 
   public static void main(String... args) {
-    //Just wire things up with concrete classes.  Delegate all action, to make it testable.
+    //Responsible just for wiring things up with concrete classes.  Delegates all behavior, to make it testable.
     ReporterFactory reporterFactory = new StaticReporterFactory(System.out);
     main(
       cliArgumentParser(new StaticCommandFactory(), reporterFactory),
@@ -22,7 +22,7 @@ public final class Main {
   }
 
   static void main(ArgumentParser cliParser, ReporterFactory reporterFactory, ExitHandler system, String... args) {
-    //Enable testing with doubles by doing all logic (even if messy) via interfaces
+    //Responsible for enabling testing with doubles by doing all logic (even if messy) via interfaces
     Command runnableCommand = null;
     try {
       runnableCommand = cliParser.parseCommand(Arrays.asList(args));
@@ -43,12 +43,12 @@ public final class Main {
       .addCliCommand("run", new RunParameters(commandFactory, reporterFactory));
   }
 
-  Main(Reporter reporter, ExitHandler system) {
+  private Main(Reporter reporter, ExitHandler system) {
     this.reporter = reporter;
     this.system = system;
   }
 
-  void runCommand(Command command) {
+  private void runCommand(Command command) {
     Result result = command.run();
     result.reportTo(this.reporter);
     this.system.exit(result.exitCode);

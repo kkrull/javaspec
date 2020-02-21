@@ -33,6 +33,8 @@ public class MainTest {
 
         reporterFactory = Mockito.mock(ReporterFactory.class);
         reporter = Mockito.mock(Reporter.class);
+        Mockito.stub(reporterFactory.plainTextReporter())
+          .toReturn(reporter);
 
         system = Mockito.mock(Main.ExitHandler.class);
       }
@@ -42,16 +44,27 @@ public class MainTest {
         Main.main(cliParser, reporterFactory, system);
       }
 
-      @Test @Ignore
+      @Test
       public void runsTheCommand() throws Exception {
+        Mockito.stub(command.run()).toReturn(Result.success());
+        Main.main(cliParser, reporterFactory, system);
+        Mockito.verify(command, Mockito.times(1)).run();
       }
 
-      @Test @Ignore
+      @Test
+      public void exitsWithTheExitCodeReturnedByTheCommand() throws Exception {
+        Result failure = Result.failure(42, "...you're not going to like it.");
+        Mockito.stub(command.run()).toReturn(failure);
+        Main.main(cliParser, reporterFactory, system);
+        Mockito.verify(system, Mockito.times(1)).exit(42);
+      }
+
+      @Test
       public void reportsTheResult() throws Exception {
-      }
-
-      @Test @Ignore
-      public void exitsWithWhateverResultCodeIsReturned() throws Exception {
+        Result result = Mockito.mock(Result.class);
+        Mockito.stub(command.run()).toReturn(result);
+        Main.main(cliParser, reporterFactory, system);
+        Mockito.verify(result).reportTo(Mockito.same(reporter));
       }
     }
 
@@ -71,18 +84,6 @@ public class MainTest {
         system = Mockito.mock(Main.ExitHandler.class);
       }
 
-      @Test @Ignore
-      public void shouldReportAnErrorMessage() throws Exception {
-      }
-
-      @Test
-      public void shouldCallTheSystemInterfaceWhenItBombs() throws Exception {
-        Mockito.doThrow(new RuntimeException("bang!"))
-          .when(cliParser).parseCommand(matchAnyArguments());
-        Main.main(cliParser, reporterFactory, system);
-        Mockito.verify(system).exit(1);
-      }
-
       @Test
       public void shouldNotRunTheCommand() throws Exception {
         Mockito.doThrow(new RuntimeException("bang!"))
@@ -90,41 +91,18 @@ public class MainTest {
         Main.main(cliParser, reporterFactory, system);
         Mockito.verifyZeroInteractions(command);
       }
-    }
-  }
 
-  public class runCommand {
-    private Main subject;
+      @Test @Ignore
+      public void shouldReportAnErrorMessage() throws Exception {
+      }
 
-    @Before
-    public void setup() {
-      reporter = Mockito.mock(Reporter.class);
-      system = Mockito.mock(Main.ExitHandler.class);
-      subject = new Main(reporter, system);
-      command = Mockito.mock(Command.class);
-    }
-
-    @Test
-    public void runsTheCommand() throws Exception {
-      Mockito.stub(command.run()).toReturn(Result.success());
-      subject.runCommand(command);
-      Mockito.verify(command, Mockito.times(1)).run();
-    }
-
-    @Test
-    public void exitsWithTheExitCodeReturnedByTheCommand() throws Exception {
-      Result failure = Result.failure(42, "...you're not going to like it.");
-      Mockito.stub(command.run()).toReturn(failure);
-      subject.runCommand(command);
-      Mockito.verify(system, Mockito.times(1)).exit(42);
-    }
-
-    @Test
-    public void reportsTheResult() throws Exception {
-      Result result = Mockito.mock(Result.class);
-      Mockito.stub(command.run()).toReturn(result);
-      subject.runCommand(command);
-      Mockito.verify(result).reportTo(Mockito.same(reporter));
+      @Test
+      public void shouldExitWithTheProvidedSystemInterface() throws Exception {
+        Mockito.doThrow(new RuntimeException("bang!"))
+          .when(cliParser).parseCommand(matchAnyArguments());
+        Main.main(cliParser, reporterFactory, system);
+        Mockito.verify(system).exit(1);
+      }
     }
   }
 
