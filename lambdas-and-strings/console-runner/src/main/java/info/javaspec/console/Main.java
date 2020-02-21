@@ -28,14 +28,15 @@ public final class Main {
       runnableCommand = cliParser.parseCommand(Arrays.asList(args));
     } catch (Exception e) {
       System.err.println("run: The following options are required: [--reporter], [--spec-classpath]");
-      System.exit(1);
+      system.exit(1);
+      return; //Runs during a test, but not during production (suggesting that Result be passed upwards)
     }
 
     Main cli = new Main(reporterFactory.plainTextReporter(), system);
     cli.runCommand(runnableCommand);
   }
 
-  private static ArgumentParser cliArgumentParser(CommandFactory commandFactory, ReporterFactory reporterFactory) {
+  static ArgumentParser cliArgumentParser(CommandFactory commandFactory, ReporterFactory reporterFactory) {
     MainParameters mainParameters = new MainParameters(commandFactory, reporterFactory);
     return new MultiCommandParser("javaspec", mainParameters)
       .addCliCommand("help", new HelpParameters(commandFactory, reporterFactory))

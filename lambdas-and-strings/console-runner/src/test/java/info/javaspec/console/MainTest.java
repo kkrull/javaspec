@@ -2,6 +2,7 @@ package info.javaspec.console;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -12,6 +13,7 @@ import java.util.List;
 public class MainTest {
   private Main.ArgumentParser cliParser;
   private Command command;
+  private Result result;
 
   private ReporterFactory reporterFactory;
   private Reporter reporter;
@@ -19,31 +21,63 @@ public class MainTest {
   private Main.ExitHandler system;
 
   public class main {
-    @Before
-    public void setup() {
-      cliParser = Mockito.mock(Main.ArgumentParser.class);
-      command = Mockito.mock(Command.class);
-      Mockito.stub(cliParser.parseCommand(matchAnyArguments()))
-        .toReturn(command);
-      Mockito.stub(command.run()).toReturn(anyResult());
+    public class givenValidArguments {
+      @Before
+      public void setup() {
+        cliParser = Mockito.mock(Main.ArgumentParser.class);
+        command = Mockito.mock(Command.class);
+        result = Mockito.mock(Result.class);
+        Mockito.stub(cliParser.parseCommand(matchAnyArguments()))
+          .toReturn(command);
+        Mockito.stub(command.run()).toReturn(result);
 
-      reporterFactory = Mockito.mock(ReporterFactory.class);
-      reporter = Mockito.mock(Reporter.class);
+        reporterFactory = Mockito.mock(ReporterFactory.class);
+        reporter = Mockito.mock(Reporter.class);
 
-      system = Mockito.mock(Main.ExitHandler.class);
+        system = Mockito.mock(Main.ExitHandler.class);
+      }
+
+      @Test
+      public void doesNotExplode_whichIsAlwaysAPlus() throws Exception {
+        Main.main(cliParser, reporterFactory, system);
+      }
     }
 
-    @Test
-    public void runs() throws Exception {
-      Main.main(cliParser, reporterFactory, system);
-    }
+    public class givenInvalidArguments {
+      @Before
+      public void setup() {
+        cliParser = Mockito.mock(Main.ArgumentParser.class);
+        command = Mockito.mock(Command.class);
+        result = Mockito.mock(Result.class);
+        Mockito.stub(cliParser.parseCommand(matchAnyArguments()))
+          .toReturn(command);
+        Mockito.stub(command.run()).toReturn(result);
 
-    @Test
-    public void shouldCallTheSystemInterfaceWhenItBombs() throws Exception {
-      Mockito.doThrow(new RuntimeException("bang!"))
-        .when(cliParser).parseCommand(matchAnyArguments());
-      Main.main(cliParser, reporterFactory, system); //bombs
-      Mockito.verify(system).exit(1);
+        reporterFactory = Mockito.mock(ReporterFactory.class);
+        reporter = Mockito.mock(Reporter.class);
+
+        system = Mockito.mock(Main.ExitHandler.class);
+      }
+
+      @Test @Ignore
+      public void shouldReportAnErrorMessage() throws Exception {
+      }
+
+      @Test
+      public void shouldCallTheSystemInterfaceWhenItBombs() throws Exception {
+        Mockito.doThrow(new RuntimeException("bang!"))
+          .when(cliParser).parseCommand(matchAnyArguments());
+        Main.main(cliParser, reporterFactory, system);
+        Mockito.verify(system).exit(1);
+      }
+
+      @Test
+      public void shouldNotRunTheCommand() throws Exception {
+        Mockito.doThrow(new RuntimeException("bang!"))
+          .when(cliParser).parseCommand(matchAnyArguments());
+        Main.main(cliParser, reporterFactory, system);
+        Mockito.verifyZeroInteractions(command);
+      }
     }
   }
 
