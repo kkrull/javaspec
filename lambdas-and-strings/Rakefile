@@ -36,6 +36,17 @@ namespace :distribution do
     ln_s "#{installed_dir}/bin/javaspec", installed_link unless File.exist? installed_link
   end
 
+  desc 'Run the distribution on a known spec class'
+  task :run do
+    sh *%W[
+        javaspec
+        run
+        --reporter=plaintext
+        --spec-classpath=#{spec_classpath}
+        info.javaspec.example.rb.SpringOperatedBoxingGloveSpecs
+      ]
+  end
+
   desc 'Remove the distribution from /usr/local'
   task :uninstall do
     rm installed_link if File.exist? installed_link
@@ -47,6 +58,10 @@ namespace :distribution do
 
   def distribution_path
     'console-runner/build/distributions/javaspec-2.0.0-SNAPSHOT.tar'
+  end
+
+  def spec_classpath
+    'examples/build/classes/java/main'
   end
 
   def untar(file, target_dir)
