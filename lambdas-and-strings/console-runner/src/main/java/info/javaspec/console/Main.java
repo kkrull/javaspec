@@ -1,5 +1,6 @@
 package info.javaspec.console;
 
+import info.javaspec.console.Exceptions.InvalidArguments;
 import info.javaspec.console.help.HelpParameters;
 import info.javaspec.lang.lambda.RunParameters;
 
@@ -26,8 +27,8 @@ public final class Main {
     Command runnableCommand = null;
     try {
       runnableCommand = cliParser.parseCommand(Arrays.asList(args));
-    } catch (Exception e) {
-      System.err.println("run: The following options are required: [--reporter], [--spec-classpath]");
+    } catch (InvalidArguments e) {
+      reporterFactory.plainTextReporter().invalidArguments(e);
       system.exit(1);
       return; //Runs during a test, but not during production (suggesting that Result be passed upwards)
     }
