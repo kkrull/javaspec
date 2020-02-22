@@ -1,8 +1,10 @@
 package info.javaspec.console.plaintext;
 
+import com.beust.jcommander.ParameterException;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
+import info.javaspec.console.Exceptions;
 import info.javaspec.console.Reporter;
 import org.hamcrest.Matcher;
 import org.junit.Before;
@@ -121,8 +123,17 @@ public class PlainTextReporterTest {
 
   public class commandFailed {
     @Test
-    public void printsAStackTraceToTheGivenWriter() throws Exception {
+    public void printsJustTheErrorMessageToTheGivenWriter() throws Exception {
       subject.commandFailed(new RuntimeException("bang!"));
+
+      output.shouldHavePrintedExactly(equalTo("bang!"));
+    }
+  }
+
+  public class invalidArguments {
+    @Test
+    public void printsJustTheErrorMessageToTheGivenWriter() throws Exception {
+      subject.invalidArguments(Exceptions.InvalidArguments.dueTo(new ParameterException("bang!")));
 
       output.shouldHavePrintedExactly(equalTo("bang!"));
     }

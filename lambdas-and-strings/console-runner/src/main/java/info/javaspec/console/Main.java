@@ -1,7 +1,6 @@
 package info.javaspec.console;
 
-import info.javaspec.console.help.HelpParameters;
-import info.javaspec.lang.lambda.RunParameters;
+import info.javaspec.console.Exceptions.InvalidArguments;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,32 +10,37 @@ public final class Main {
   private final ExitHandler system;
 
   public static void main(String... args) {
+    //Responsible just for wiring things up with concrete classes.  Delegates all behavior, to make it testable.
+    ReporterFactory reporterFactory = new StaticReporterFactory(System.out);
     main(
-      new StaticReporterFactory(System.out),
+      ArgumentParserFactory.forConsole(new StaticCommandFactory(), reporterFactory),
+      reporterFactory,
       System::exit,
       args
     );
   }
 
-  static void main(ReporterFactory reporterFactory, ExitHandler system, String... args) {
-    ArgumentParser cliParser = cliArgumentParser(new StaticCommandFactory(), reporterFactory);
+  static void main(ArgumentParser cliParser, ReporterFactory reporterFactory, ExitHandler system, String... args) {
+    //Responsible for enabling testing with doubles by doing all logic (even if messy) via interfaces
+    Command runnableCommand = null;
+    try {
+      runnableCommand = cliParser.parseCommand(Arrays.asList(args));
+    } catch (InvalidArguments e) {
+      reporterFactory.plainTextReporter().invalidArguments(e);
+      system.exit(1);
+      return; //Runs during a test, but not during production (suggesting that Result be passed upwards)
+    }
+
     Main cli = new Main(reporterFactory.plainTextReporter(), system);
-    cli.runCommand(cliParser.parseCommand(Arrays.asList(args)));
+    cli.runCommand(runnableCommand);
   }
 
-  private static ArgumentParser cliArgumentParser(CommandFactory commandFactory, ReporterFactory reporterFactory) {
-    MainParameters mainParameters = new MainParameters(commandFactory, reporterFactory);
-    return new MultiCommandParser("javaspec", mainParameters)
-      .addCliCommand("help", new HelpParameters(commandFactory, reporterFactory))
-      .addCliCommand("run", new RunParameters(commandFactory, reporterFactory));
-  }
-
-  Main(Reporter reporter, ExitHandler system) {
+  private Main(Reporter reporter, ExitHandler system) {
     this.reporter = reporter;
     this.system = system;
   }
 
-  void runCommand(Command command) {
+  private void runCommand(Command command) {
     Result result = command.run();
     result.reportTo(this.reporter);
     this.system.exit(result.exitCode);

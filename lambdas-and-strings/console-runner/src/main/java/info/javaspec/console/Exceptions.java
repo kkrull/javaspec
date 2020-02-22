@@ -2,7 +2,7 @@ package info.javaspec.console;
 
 import com.beust.jcommander.ParameterException;
 
-final class Exceptions {
+public final class Exceptions {
   static final class CommandAlreadyAdded extends RuntimeException {
     public static CommandAlreadyAdded named(String command) {
       return new CommandAlreadyAdded(String.format("Command has already been added: %s", command));
@@ -13,7 +13,7 @@ final class Exceptions {
     }
   }
 
-  static final class InvalidArguments extends RuntimeException {
+  public static final class InvalidArguments extends RuntimeException {
     public static InvalidArguments dueTo(ParameterException cause) {
       return new InvalidArguments(cause.getMessage(), cause);
     }

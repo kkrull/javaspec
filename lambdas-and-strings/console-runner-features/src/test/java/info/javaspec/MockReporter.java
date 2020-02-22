@@ -1,5 +1,6 @@
 package info.javaspec;
 
+import info.javaspec.console.Exceptions.InvalidArguments;
 import info.javaspec.console.Reporter;
 
 import java.util.LinkedList;
@@ -79,4 +80,7 @@ public final class MockReporter implements Reporter {
 
   @Override
   public void commandFailed(Exception failure) { }
+
+  @Override
+  public void invalidArguments(InvalidArguments failure) { }
 }

@@ -2,6 +2,7 @@ package info.javaspec.console.plaintext;
 
 import info.javaspec.Spec;
 import info.javaspec.SpecCollection;
+import info.javaspec.console.Exceptions.InvalidArguments;
 import info.javaspec.console.Reporter;
 
 import java.io.PrintStream;
@@ -119,6 +120,11 @@ public final class PlainTextReporter implements Reporter {
 
   @Override
   public void commandFailed(Exception failure) {
+    this.output.println(failure.getMessage());
+  }
+
+  @Override
+  public void invalidArguments(InvalidArguments failure) {
     this.output.println(failure.getMessage());
   }
 }

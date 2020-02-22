@@ -49,3 +49,13 @@ Feature: JavaSpec CLI (external process)
     And I have a Java class that defines a suite of 1 or more failing lambda specs
     When I run the specs in that class
     Then The runner should indicate that 1 or more specs have failed
+
+
+  Scenario: The CLI should suppress stack traces for an invalid command
+    Given I have a JavaSpec runner for the console
+    When I run the runner with an incomplete run command
+    Then the runner's output should be
+    """
+    run: The following options are required: [--reporter], [--spec-classpath]
+    """
+    And the runner's exit status should be 1
