@@ -27,6 +27,9 @@ end
 
 
 namespace :distribution do
+  desc 'Force build, package, and install'
+  task 'force-install' => %w[java:compile java:install distribution:install]
+
   desc 'Install the distribution to /usr/local'
   task :install do
     File.open distribution_path do |file|
