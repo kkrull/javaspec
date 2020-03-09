@@ -12,6 +12,12 @@ Given(/^I have a Java class that defines a suite of 1 or more failing lambda spe
   spec_runner_helper.spec_classes = ['info.javaspec.example.rb.OneFailsSpecs']
 end
 
+Given("I have a Java class with specs that depend upon external classes") do
+  spec_runner_helper.spec_classes = ['info.javaspec.example.rb.HamcrestSpecs']
+  pending
+	spec_runner_helper.add_maven_dependency '.m2/repository/org/hamcrest/hamcrest/2.2/hamcrest-2.2.jar'
+end
+
 When(/^I run the runner with an incomplete run command$/) do
   spec_runner_helper.exec! logger, args: %w[run]
 end
