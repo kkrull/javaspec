@@ -2,12 +2,17 @@ require 'aruba/api'
 
 class JavaClassRunner
   include Aruba::Api
-  attr_accessor :runner_class, :spec_classes
+  attr_accessor :runner_class, :spec_classes, :spec_classpath
 
   def initialize
     #https://relishapp.com/cucumber/aruba/v/0-11-0/docs/rspec/getting-started-with-rspec-and-aruba#simple-custom-integration
     setup_aruba
     self.spec_classes = []
+    self.spec_classpath = []
+  end
+
+  def add_spec_dependency(classpath_entry)
+    @spec_classpath << classpath_entry
   end
 
   def exit_status
@@ -18,7 +23,7 @@ class JavaClassRunner
     exec! logger, args: ['help', command]
   end
 
-  def exec_run!(logger, reporter: 'plaintext', spec_classpath: spec_class_dir)
+  def exec_run!(logger, reporter: 'plaintext', spec_classpath: default_spec_classpath)
     exec! logger,
       args: [
         'run',
@@ -87,6 +92,11 @@ class JavaClassRunner
 
   def runner_class_file
     path_to_class runner_class, runner_class_dir
+  end
+
+  def default_spec_classpath
+    classpath = @spec_classpath.prepend spec_class_dir
+    classpath.join(File::PATH_SEPARATOR)
   end
 
   def spec_class_dir

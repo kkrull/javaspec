@@ -2,7 +2,7 @@
 
 Given("I have a Java class with specs that depend upon external classes") do
   spec_runner_helper.spec_classes = ['info.javaspec.example.rb.HamcrestSpecs']
-  # spec_runner_helper.add_spec_dependency '.m2/repository/org/hamcrest/hamcrest/2.2/hamcrest-2.2.jar'
+  spec_runner_helper.add_spec_dependency maven_path('org/hamcrest/hamcrest/2.2/hamcrest-2.2.jar')
 end
 
 Given(/^I have a Java class with specs that pass, as well as specs that fail$/) do
@@ -93,4 +93,8 @@ end
 
 Then(/^The runner should list which spec classes could not be loaded$/) do
   expect(spec_runner_helper.runner_output).to include('Failed to load spec class: info.javaspec.example.rb.AllPassSpecs')
+end
+
+def maven_path(dependency_path)
+  File.join Dir.home, '.m2/repository', dependency_path
 end

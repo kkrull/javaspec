@@ -2,12 +2,17 @@ require 'aruba/api'
 
 class DistributionRunner
   include Aruba::Api
-  attr_accessor :runner_class, :spec_classes
+  attr_accessor :runner_class, :spec_classes, :spec_classpath
 
   def initialize
     #https://relishapp.com/cucumber/aruba/v/0-11-0/docs/rspec/getting-started-with-rspec-and-aruba#simple-custom-integration
     setup_aruba
     self.spec_classes = []
+    self.spec_classpath = []
+  end
+
+  def add_spec_dependency(classpath_entry)
+    @spec_classpath << classpath_entry
   end
 
   def exec_help!(logger, command)
@@ -71,7 +76,8 @@ class DistributionRunner
   end
 
   def default_spec_classpath
-    spec_class_dir
+    classpath = @spec_classpath.prepend spec_class_dir
+    classpath.join(File::PATH_SEPARATOR)
   end
 
   def spec_class_dir
