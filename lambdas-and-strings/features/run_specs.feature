@@ -40,7 +40,7 @@ Feature: Run command (external process)
   Scenario: The run command should load spec classes with external dependencies
     Given I have a JavaSpec runner for the console
     And I have a Java class with specs that depend upon external classes
-    When I run the specs in that class, adding those dependencies to the classpath
+    When I run the specs in that class
     Then The runner should indicate that all specs passed
     And The runner should run the specs defined in that class
 
