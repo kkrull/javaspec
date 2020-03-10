@@ -37,11 +37,11 @@ Feature: Run command (external process)
   @focus
   @wip
   Scenario: The run command should load spec classes with external dependencies
-    #javaspec run --reporter=plaintext --spec-classpath=out/production/kata:/Users/kkrull/.m2/repository/org/hamcrest/hamcrest/2.2/hamcrest-2.2.jar FizzBuzzSpecs
     Given I have a JavaSpec runner for the console
     And I have a Java class with specs that depend upon external classes
-    When I run the specs in that class and load dependencies from the classpath
-    Then The runner should run the specs defined in that class
+    When I run the specs in that class, adding those dependencies to the classpath
+    Then The runner should indicate that all specs passed
+    And The runner should run the specs defined in that class
 
   ## Error conditions: How does a developer figure out what went wrong **and how to fix it**?
 

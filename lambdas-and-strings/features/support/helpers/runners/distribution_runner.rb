@@ -14,7 +14,7 @@ class DistributionRunner
     exec! logger, args: ['help', command]
   end
 
-  def exec_run!(logger, reporter: 'plaintext', spec_classpath: spec_class_dir)
+  def exec_run!(logger, reporter: 'plaintext', spec_classpath: default_spec_classpath)
     exec! logger,
       args: [
         'run',
@@ -68,6 +68,10 @@ class DistributionRunner
 
   def verify_distribution_exists
     expect(start_script_file).to be_an_existing_file
+  end
+
+  def default_spec_classpath
+    spec_class_dir
   end
 
   def spec_class_dir

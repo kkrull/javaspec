@@ -1,5 +1,10 @@
 ## Steps focused on how JavaSpec runs specs
 
+Given("I have a Java class with specs that depend upon external classes") do
+  spec_runner_helper.spec_classes = ['info.javaspec.example.rb.HamcrestSpecs']
+  # spec_runner_helper.add_spec_dependency '.m2/repository/org/hamcrest/hamcrest/2.2/hamcrest-2.2.jar'
+end
+
 Given(/^I have a Java class with specs that pass, as well as specs that fail$/) do
   spec_runner_helper.spec_classes = ['info.javaspec.example.rb.OneOfEachResultSpecs']
 
@@ -43,6 +48,11 @@ end
 
 Given(/^I have 2 or more spec collections with a variety of results$/) do
   spec_runner_helper.spec_classes = %w[info.javaspec.example.rb.BeepBeepSpecs]
+end
+
+When("I run the specs in that class, adding those dependencies to the classpath") do
+  #javaspec run --reporter=plaintext --spec-classpath=out/production/kata:/Users/kkrull/.m2/repository/org/hamcrest/hamcrest/2.2/hamcrest-2.2.jar FizzBuzzSpecs
+  spec_runner_helper.exec_run! logger
 end
 
 When(/^I run the specs in those classes$/) do
