@@ -51,7 +51,6 @@ Given(/^I have 2 or more spec collections with a variety of results$/) do
 end
 
 When("I run the specs in that class, adding those dependencies to the classpath") do
-  #javaspec run --reporter=plaintext --spec-classpath=out/production/kata:/Users/kkrull/.m2/repository/org/hamcrest/hamcrest/2.2/hamcrest-2.2.jar FizzBuzzSpecs
   spec_runner_helper.exec_run! logger
 end
 
