@@ -11,6 +11,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class StaticCommandFactory implements CommandFactory {
   @Override
@@ -24,11 +25,11 @@ public class StaticCommandFactory implements CommandFactory {
   }
 
   public Command runSpecsCommand(RunObserver observer, List<URL> specClassPath, List<String> classNames) {
-    URL[] specClassPathArray = specClassPath.toArray(new URL[0]);
-    ClassLoader specClassLoader = new URLClassLoader(specClassPathArray);
-    return new RunSpecsCommand(
-      new FunctionalDslFactory(specClassLoader, classNames),
-      observer
-    );
+    return Optional.of(specClassPath)
+      .map(classPathAsList -> classPathAsList.toArray(new URL[0]))
+      .map(URLClassLoader::new)
+      .map(specClassLoader -> new FunctionalDslFactory(specClassLoader, classNames))
+      .map(specFactory -> new RunSpecsCommand(specFactory, observer))
+      .get();
   }
 }
