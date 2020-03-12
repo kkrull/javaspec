@@ -76,7 +76,7 @@ class DistributionRunner
   end
 
   def default_spec_classpath
-    classpath = [spec_class_dir] + @spec_classpath.prepend
+    classpath = [spec_class_dir] + @spec_classpath
     classpath.join(File::PATH_SEPARATOR)
   end
 
