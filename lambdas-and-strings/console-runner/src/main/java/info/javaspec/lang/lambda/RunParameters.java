@@ -74,8 +74,8 @@ public final class RunParameters implements MultiCommandParser.JCommanderParamet
       .orElse(Collections.emptyList());
   }
 
-  private URL specClassPath() {
-    return this._specClassPath;
+  private List<URL> specClassPath() {
+    return Collections.singletonList(this._specClassPath);
   }
 
   public static final class PathToFileUrl extends BaseConverter<URL> {
@@ -87,7 +87,7 @@ public final class RunParameters implements MultiCommandParser.JCommanderParamet
     public URL convert(String pathToFileOrDirectory) {
       if(pathToFileOrDirectory.isEmpty()) {
         throw new ParameterException(String.format("%s: path may not be empty, but was <%s>",
-          this.getOptionName(),
+          getOptionName(),
           pathToFileOrDirectory)
         );
       }

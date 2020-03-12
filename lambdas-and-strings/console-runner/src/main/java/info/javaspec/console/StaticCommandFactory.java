@@ -24,6 +24,7 @@ public class StaticCommandFactory implements CommandFactory {
     return this.runSpecsCommand(observer, Collections.singletonList(specClassPath), classNames);
   }
 
+  @Override
   public Command runSpecsCommand(RunObserver observer, List<URL> specClassPath, List<String> classNames) {
     return Optional.of(specClassPath)
       .map(classPathAsList -> classPathAsList.toArray(new URL[0]))

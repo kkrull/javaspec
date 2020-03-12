@@ -11,4 +11,6 @@ public interface CommandFactory {
   Command helpCommand(HelpObserver observer, JCommander jCommander);
 
   Command runSpecsCommand(RunObserver observer, URL specClassPath, List<String> classNames);
+
+  Command runSpecsCommand(RunObserver observer, List<URL> specClassPath, List<String> classNames);
 }

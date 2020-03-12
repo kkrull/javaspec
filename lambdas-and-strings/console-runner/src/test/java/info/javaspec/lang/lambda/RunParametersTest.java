@@ -34,11 +34,11 @@ public class RunParametersTest {
     private CommandFactory commandFactory;
     private ReporterFactory reporterFactory;
 
-    private ArgumentCaptor<URL> runCommandUrl;
+    private ArgumentCaptor<List> runCommandUrls;
 
     @Before
     public void setup() throws Exception {
-      runCommandUrl = ArgumentCaptor.forClass(URL.class);
+      runCommandUrls = ArgumentCaptor.forClass(List.class);
       commandFactory = Mockito.mock(CommandFactory.class);
       reporterFactory = Mockito.mock(ReporterFactory.class);
       subject = new RunParameters(commandFactory, reporterFactory);
@@ -52,13 +52,13 @@ public class RunParametersTest {
 
         Mockito.verify(commandFactory).runSpecsCommand(
           Mockito.any(RunObserver.class),
-          runCommandUrl.capture(),
+          runCommandUrls.capture(), //TODO KDK: Wrap in its own class, and ignore this checkstyle warning.  How?
           Mockito.anyListOf(String.class)
         );
 
-        URL specsUrl = runCommandUrl.getValue();
-        assertThat(specsUrl.getProtocol(), equalTo("file"));
-        assertThat(specsUrl.getPath(), endsWith("/my-specs.jar"));
+        List<URL> specsUrls = runCommandUrls.getValue();
+        assertThat(specsUrls.get(0).getProtocol(), equalTo("file"));
+        assertThat(specsUrls.get(0).getPath(), endsWith("/my-specs.jar"));
       }
 
       @Test
@@ -66,7 +66,7 @@ public class RunParametersTest {
         Command toCreate = Mockito.mock(Command.class);
         Mockito.stub(commandFactory.runSpecsCommand(
           Mockito.any(RunObserver.class),
-          Mockito.any(URL.class),
+          Mockito.anyListOf(URL.class),
           Mockito.anyListOf(String.class)
         )).toReturn(toCreate);
 
@@ -82,7 +82,7 @@ public class RunParametersTest {
         subject.toExecutableCommand(anyJCommander());
         Mockito.verify(commandFactory).runSpecsCommand(
           Mockito.any(RunObserver.class),
-          Mockito.any(URL.class),
+          Mockito.anyListOf(URL.class),
           Mockito.eq(Collections.emptyList())
         );
       }
@@ -95,7 +95,7 @@ public class RunParametersTest {
         subject.toExecutableCommand(anyJCommander());
         Mockito.verify(commandFactory).runSpecsCommand(
           Mockito.any(RunObserver.class),
-          Mockito.any(URL.class),
+          Mockito.anyListOf(URL.class),
           Mockito.eq(Arrays.asList("one", "two"))
         );
       }
@@ -111,7 +111,7 @@ public class RunParametersTest {
         subject.toExecutableCommand(anyJCommander());
         Mockito.verify(commandFactory).runSpecsCommand(
           Mockito.same(toCreate),
-          Mockito.any(URL.class),
+          Mockito.anyListOf(URL.class),
           Mockito.anyListOf(String.class)
         );
       }
