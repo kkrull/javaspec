@@ -95,7 +95,7 @@ class JavaClassRunner
   end
 
   def default_spec_classpath
-    classpath = @spec_classpath.prepend spec_class_dir
+    classpath = [spec_class_dir] + @spec_classpath.prepend
     classpath.join(File::PATH_SEPARATOR)
   end
 
