@@ -130,7 +130,7 @@ namespace :java do
     sh *%w[open console-runner-features/build/reports/cucumber/index.html]
   end
 
-  desc 'Package and install java distributions, locally'
+  desc 'Package and install java distributions to console-runner/build/install'
   task :install do
     #Cucumber options: https://github.com/cucumber/cucumber-java-skeleton#overriding-options
     gradle %w[--stacktrace installDist]
