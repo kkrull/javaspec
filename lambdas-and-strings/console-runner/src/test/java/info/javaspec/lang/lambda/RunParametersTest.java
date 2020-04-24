@@ -47,7 +47,11 @@ public class RunParametersTest {
     public class givenAllRequiredArguments {
       @Test
       public void createsARunCommandWithAFileUrlToTheSpecifiedJar() throws Exception {
-        JCommanderHelpers.parseCommandArgs(subject, "run", runArgumentsWithSpecClasspath("my-specs.jar"));
+        JCommanderHelpers.parseCommandArgs(
+          subject,
+          "run",
+          runArgumentsWithSpecClasspath("my-specs.jar", "spec-dependency.jar")
+        );
         subject.toExecutableCommand(anyJCommander());
 
         Mockito.verify(commandFactory).runSpecsCommand(
@@ -59,6 +63,7 @@ public class RunParametersTest {
         List<URL> specsUrls = runCommandUrls.getValue();
         assertThat(specsUrls.get(0).getProtocol(), equalTo("file"));
         assertThat(specsUrls.get(0).getPath(), endsWith("/my-specs.jar"));
+        assertThat(specsUrls.get(1).getPath(), endsWith("/spec-dependency.jar"));
       }
 
       @Test
@@ -159,10 +164,10 @@ public class RunParametersTest {
     };
   }
 
-  private List<String> runArgumentsWithSpecClasspath(String specClasspath) {
+  private List<String> runArgumentsWithSpecClasspath(String... specClasspath) {
     return Arrays.asList(
       "--reporter=plaintext",
-      "--spec-classpath=" + specClasspath
+      "--spec-classpath=" + String.join(":", specClasspath)
     );
   }
 

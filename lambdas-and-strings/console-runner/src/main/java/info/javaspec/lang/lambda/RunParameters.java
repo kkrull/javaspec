@@ -16,9 +16,12 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Parameters(commandDescription = "Run specs", separators = "=")
 public final class RunParameters implements MultiCommandParser.JCommanderParameters {
@@ -41,12 +44,12 @@ public final class RunParameters implements MultiCommandParser.JCommanderParamet
   private String reporterName = "plaintext";
 
   @Parameter(
-    converter = PathToFileUrl.class,
     description = "The classpath from which to load spec classes: either a directory of .class files or a .jar file.",
+    listConverter = PathToFileUrl.class,
     names = "--spec-classpath",
     required = true
   )
-  private URL _specClassPath;
+  private List<URL> _specClassPath;
 
   @Parameter
   private List<String> _specClassNames;
@@ -75,16 +78,16 @@ public final class RunParameters implements MultiCommandParser.JCommanderParamet
   }
 
   private List<URL> specClassPath() {
-    return Collections.singletonList(this._specClassPath);
+    return new ArrayList<>(this._specClassPath);
   }
 
-  public static final class PathToFileUrl extends BaseConverter<URL> {
+  public static final class PathToFileUrl extends BaseConverter<List<URL>> {
     public PathToFileUrl() {
       super("--spec-classpath");
     }
 
     @Override
-    public URL convert(String pathToFileOrDirectory) {
+    public List<URL> convert(String pathToFileOrDirectory) {
       if(pathToFileOrDirectory.isEmpty()) {
         throw new ParameterException(String.format("%s: path may not be empty, but was <%s>",
           getOptionName(),
@@ -92,6 +95,12 @@ public final class RunParameters implements MultiCommandParser.JCommanderParamet
         );
       }
 
+      return Arrays.stream(pathToFileOrDirectory.split(":"))
+        .map(this::parseUrl)
+        .collect(Collectors.toList());
+    }
+
+    private URL parseUrl(String pathToFileOrDirectory) {
       URI uri = new File(pathToFileOrDirectory).toURI();
       try {
         return uri.toURL();

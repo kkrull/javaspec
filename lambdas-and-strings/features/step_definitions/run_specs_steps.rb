@@ -3,6 +3,8 @@
 Given("I have a Java class with specs that depend upon external classes") do
   spec_runner_helper.spec_classes = ['info.javaspec.example.rb.HamcrestSpecs']
   spec_runner_helper.add_spec_dependency maven_path('org/hamcrest/hamcrest/2.2/hamcrest-2.2.jar')
+
+  #TODO KDK: Add verification method here
 end
 
 Given(/^I have a Java class with specs that pass, as well as specs that fail$/) do
@@ -71,7 +73,7 @@ Then(/^The runner should describe what went wrong with each failing spec$/) do
 end
 
 Then(/^The runner should run the specs defined in that class$/) do
-  spec_runner_helper.verify_specs_ran
+  spec_runner_helper.verify_specs_ran #TODO KDK: Add verification method for @focus scenario
 end
 
 Then(/^The runner should run the specs in each of those classes$/) do
