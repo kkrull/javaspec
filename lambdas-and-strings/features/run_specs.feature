@@ -34,6 +34,12 @@ Feature: Run command (external process)
     When I run the specs in those classes
     Then The runner should run the specs in each of those classes
 
+  Scenario: The run command should load spec classes with external dependencies
+    Given I have a JavaSpec runner for the console
+    And I have a Java class with specs that depend upon external classes
+    When I run the specs in that class
+    Then The runner should indicate that all specs passed
+    And The runner should run the specs defined in that class
 
   ## Error conditions: How does a developer figure out what went wrong **and how to fix it**?
 

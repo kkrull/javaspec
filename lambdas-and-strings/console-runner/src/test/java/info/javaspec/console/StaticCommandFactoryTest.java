@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.instanceOf;
 
 @RunWith(HierarchicalContextRunner.class)
 public class StaticCommandFactoryTest {
-  private CommandFactory subject;
+  private StaticCommandFactory subject;
 
   @Before
   public void setup() throws Exception {
@@ -40,10 +40,10 @@ public class StaticCommandFactoryTest {
 
   public class runSpecsCommand {
     @Test
-    public void returnsRunSpecsCommandWithTheGivenClasses() throws Exception {
+    public void returnsRunSpecsCommandWithTheGivenClassesFromTheGivenSources() throws Exception {
       Command command = subject.runSpecsCommand(
         Mockito.mock(RunObserver.class),
-        new URL("file:/specs.jar"),
+        Collections.singletonList(new URL("file:/specs.jar")),
         Collections.emptyList()
       );
       assertThat(command, instanceOf(RunSpecsCommand.class));

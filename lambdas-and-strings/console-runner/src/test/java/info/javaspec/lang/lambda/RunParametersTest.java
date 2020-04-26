@@ -14,7 +14,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -34,31 +36,41 @@ public class RunParametersTest {
     private CommandFactory commandFactory;
     private ReporterFactory reporterFactory;
 
-    private ArgumentCaptor<URL> runCommandUrl;
-
     @Before
     public void setup() throws Exception {
-      runCommandUrl = ArgumentCaptor.forClass(URL.class);
       commandFactory = Mockito.mock(CommandFactory.class);
       reporterFactory = Mockito.mock(ReporterFactory.class);
       subject = new RunParameters(commandFactory, reporterFactory);
     }
 
     public class givenAllRequiredArguments {
+      @Captor
+      private ArgumentCaptor<List<URL>> runCommandUrls;
+
+      @Before
+      public void setup() throws Exception {
+        MockitoAnnotations.initMocks(this);
+      }
+
       @Test
       public void createsARunCommandWithAFileUrlToTheSpecifiedJar() throws Exception {
-        JCommanderHelpers.parseCommandArgs(subject, "run", runArgumentsWithSpecClasspath("my-specs.jar"));
+        JCommanderHelpers.parseCommandArgs(
+          subject,
+          "run",
+          runArgumentsWithSpecClasspath("my-specs.jar", "spec-dependency.jar")
+        );
         subject.toExecutableCommand(anyJCommander());
 
         Mockito.verify(commandFactory).runSpecsCommand(
           Mockito.any(RunObserver.class),
-          runCommandUrl.capture(),
+          runCommandUrls.capture(),
           Mockito.anyListOf(String.class)
         );
 
-        URL specsUrl = runCommandUrl.getValue();
-        assertThat(specsUrl.getProtocol(), equalTo("file"));
-        assertThat(specsUrl.getPath(), endsWith("/my-specs.jar"));
+        List<URL> specsUrls = runCommandUrls.getValue();
+        assertThat(specsUrls.get(0).getProtocol(), equalTo("file"));
+        assertThat(specsUrls.get(0).getPath(), endsWith("/my-specs.jar"));
+        assertThat(specsUrls.get(1).getPath(), endsWith("/spec-dependency.jar"));
       }
 
       @Test
@@ -66,7 +78,7 @@ public class RunParametersTest {
         Command toCreate = Mockito.mock(Command.class);
         Mockito.stub(commandFactory.runSpecsCommand(
           Mockito.any(RunObserver.class),
-          Mockito.any(URL.class),
+          Mockito.anyListOf(URL.class),
           Mockito.anyListOf(String.class)
         )).toReturn(toCreate);
 
@@ -82,7 +94,7 @@ public class RunParametersTest {
         subject.toExecutableCommand(anyJCommander());
         Mockito.verify(commandFactory).runSpecsCommand(
           Mockito.any(RunObserver.class),
-          Mockito.any(URL.class),
+          Mockito.anyListOf(URL.class),
           Mockito.eq(Collections.emptyList())
         );
       }
@@ -95,7 +107,7 @@ public class RunParametersTest {
         subject.toExecutableCommand(anyJCommander());
         Mockito.verify(commandFactory).runSpecsCommand(
           Mockito.any(RunObserver.class),
-          Mockito.any(URL.class),
+          Mockito.anyListOf(URL.class),
           Mockito.eq(Arrays.asList("one", "two"))
         );
       }
@@ -111,7 +123,7 @@ public class RunParametersTest {
         subject.toExecutableCommand(anyJCommander());
         Mockito.verify(commandFactory).runSpecsCommand(
           Mockito.same(toCreate),
-          Mockito.any(URL.class),
+          Mockito.anyListOf(URL.class),
           Mockito.anyListOf(String.class)
         );
       }
@@ -159,10 +171,10 @@ public class RunParametersTest {
     };
   }
 
-  private List<String> runArgumentsWithSpecClasspath(String specClasspath) {
+  private List<String> runArgumentsWithSpecClasspath(String... specClasspath) {
     return Arrays.asList(
       "--reporter=plaintext",
-      "--spec-classpath=" + specClasspath
+      "--spec-classpath=" + String.join(":", specClasspath)
     );
   }
 

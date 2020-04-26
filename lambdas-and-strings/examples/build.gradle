@@ -1,9 +1,24 @@
 apply plugin: 'java'
 
+configurations {
+    //Create a configuration for the dependencies needed to run the specs in this project
+    //https://docs.gradle.org/current/userguide/viewing_debugging_dependencies.html#sec:listing_dependencies
+    hamcrest
+}
+
 dependencies {
     compile project(':lambda-api')
+    implementation 'org.hamcrest:hamcrest-library:1.3'
+
+    hamcrest 'org.hamcrest:hamcrest-library:1.3'
 }
 
 description = 'JavaSpec: Examples'
 
 jar.enabled = false
+
+task findHamcrestJars() {
+    println ''
+    println 'Hamcrest jars'
+    println configurations.hamcrest.asPath
+}

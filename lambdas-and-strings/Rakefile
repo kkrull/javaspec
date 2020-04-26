@@ -11,6 +11,7 @@ task :clean => 'java:clean'
 
 
 Cucumber::Rake::Task.new do |task|
+  #Cucumber options: https://github.com/cucumber/cucumber-java-skeleton#overriding-options
   task.cucumber_opts = %w[
     --quiet
     --strict
@@ -21,12 +22,15 @@ end
 namespace :cucumber do
   desc 'Run Cucumber scenarios tagged with @focus'
   task :focus do
-    sh *%w[cucumber -t @focus]
+    sh *%w[cucumber --tags @focus]
   end
 end
 
 
 namespace :distribution do
+  desc 'Force build, package, and install'
+  task 'force-install' => %w[java:compile java:install distribution:install]
+
   desc 'Install the distribution to /usr/local'
   task :install do
     File.open distribution_path do |file|
@@ -127,16 +131,14 @@ namespace :java do
     sh *%w[open console-runner-features/build/reports/cucumber/index.html]
   end
 
-  desc 'Package and install java distributions, locally'
+  desc 'Package and install java distributions to console-runner/build/install'
   task :install do
-    #Cucumber options: https://github.com/cucumber/cucumber-java-skeleton#overriding-options
     gradle %w[--stacktrace installDist]
   end
 
   desc 'Run all tests on Java code'
   task :test do
-    #Cucumber options: https://github.com/cucumber/cucumber-java-skeleton#overriding-options
-    gradle %w[--stacktrace build]
+    gradle %w[--stacktrace build examples:findHamcrestJars]
   end
 
   def gradle(tasks)
