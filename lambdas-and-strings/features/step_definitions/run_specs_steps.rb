@@ -4,7 +4,8 @@ Given("I have a Java class with specs that depend upon external classes") do
   #TODO KDK: Using ~/.m2/repository does not work.  Tab completion would be required to expand the ~ to $HOME in bash.
   #Java could handle this case for the user's own home directory, but not for other users: https://stackoverflow.com/questions/7163364/how-to-handle-in-file-paths
   spec_runner_helper.spec_classes = ['info.javaspec.example.rb.HamcrestSpecs']
-  spec_runner_helper.add_spec_dependency maven_path('org/hamcrest/hamcrest/2.2/hamcrest-2.2.jar')
+  spec_runner_helper.add_spec_dependency maven_path('org/hamcrest/hamcrest-library/1.3/hamcrest-library-1.3.jar')
+  spec_runner_helper.add_spec_dependency maven_path('org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar')
 
   spec_runner_helper.spec_run_verification do |output|
     expect(output).to match(/Hamcrest/)
