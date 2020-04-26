@@ -14,7 +14,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -34,17 +36,22 @@ public class RunParametersTest {
     private CommandFactory commandFactory;
     private ReporterFactory reporterFactory;
 
-    private ArgumentCaptor<List> runCommandUrls;
-
     @Before
     public void setup() throws Exception {
-      runCommandUrls = ArgumentCaptor.forClass(List.class);
       commandFactory = Mockito.mock(CommandFactory.class);
       reporterFactory = Mockito.mock(ReporterFactory.class);
       subject = new RunParameters(commandFactory, reporterFactory);
     }
 
     public class givenAllRequiredArguments {
+      @Captor
+      private ArgumentCaptor<List<URL>> runCommandUrls;
+
+      @Before
+      public void setup() throws Exception {
+        MockitoAnnotations.initMocks(this);
+      }
+
       @Test
       public void createsARunCommandWithAFileUrlToTheSpecifiedJar() throws Exception {
         JCommanderHelpers.parseCommandArgs(
@@ -56,7 +63,7 @@ public class RunParametersTest {
 
         Mockito.verify(commandFactory).runSpecsCommand(
           Mockito.any(RunObserver.class),
-          runCommandUrls.capture(), //TODO KDK: Wrap in its own class, and ignore this checkstyle warning.  How?
+          runCommandUrls.capture(),
           Mockito.anyListOf(String.class)
         );
 
