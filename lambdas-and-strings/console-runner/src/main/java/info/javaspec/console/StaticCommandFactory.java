@@ -9,7 +9,6 @@ import info.javaspec.lang.lambda.RunSpecsCommand;
 
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,11 +16,6 @@ public class StaticCommandFactory implements CommandFactory {
   @Override
   public Command helpCommand(HelpObserver observer, JCommander jCommander) {
     return new HelpCommand(observer, jCommander);
-  }
-
-  @Override
-  public Command runSpecsCommand(RunObserver observer, URL specClassPath, List<String> classNames) {
-    return this.runSpecsCommand(observer, Collections.singletonList(specClassPath), classNames);
   }
 
   @Override

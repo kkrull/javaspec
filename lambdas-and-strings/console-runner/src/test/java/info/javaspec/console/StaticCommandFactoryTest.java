@@ -40,16 +40,6 @@ public class StaticCommandFactoryTest {
 
   public class runSpecsCommand {
     @Test
-    public void returnsRunSpecsCommandWithTheGivenClasses() throws Exception {
-      Command command = subject.runSpecsCommand(
-        Mockito.mock(RunObserver.class),
-        new URL("file:/specs.jar"),
-        Collections.emptyList()
-      );
-      assertThat(command, instanceOf(RunSpecsCommand.class));
-    }
-
-    @Test
     public void returnsRunSpecsCommandWithTheGivenClassesFromTheGivenSources() throws Exception {
       Command command = subject.runSpecsCommand(
         Mockito.mock(RunObserver.class),
