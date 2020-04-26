@@ -35,8 +35,6 @@ Feature: Run command (external process)
     Then The runner should run the specs in each of those classes
 
   @focus
-  @wip
-  @java_class_runner
   Scenario: The run command should load spec classes with external dependencies
     Given I have a JavaSpec runner for the console
     And I have a Java class with specs that depend upon external classes

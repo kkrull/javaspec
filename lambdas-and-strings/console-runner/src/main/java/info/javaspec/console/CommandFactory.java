@@ -10,6 +10,7 @@ import java.util.List;
 public interface CommandFactory {
   Command helpCommand(HelpObserver observer, JCommander jCommander);
 
+  //TODO KDK: Remove single version
   Command runSpecsCommand(RunObserver observer, URL specClassPath, List<String> classNames);
 
   Command runSpecsCommand(RunObserver observer, List<URL> specClassPath, List<String> classNames);

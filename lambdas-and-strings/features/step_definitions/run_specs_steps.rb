@@ -4,13 +4,17 @@ Given("I have a Java class with specs that depend upon external classes") do
   spec_runner_helper.spec_classes = ['info.javaspec.example.rb.HamcrestSpecs']
   spec_runner_helper.add_spec_dependency maven_path('org/hamcrest/hamcrest/2.2/hamcrest-2.2.jar')
 
-  #TODO KDK: Add verification method here
+  spec_runner_helper.spec_run_verification do |output|
+    expect(output).to match(/Hamcrest/)
+    expect(output).to match(/passes/)
+  end
 end
 
 Given(/^I have a Java class with specs that pass, as well as specs that fail$/) do
   spec_runner_helper.spec_classes = ['info.javaspec.example.rb.OneOfEachResultSpecs']
 
   spec_runner_helper.spec_run_verification do |output|
+    expect(output).to match(/OneOfEachResult/)
     expect(output).to match(/passes/)
     expect(output).to match(/fails/)
   end
@@ -29,6 +33,7 @@ Given(/^I have a Java class containing specs that describe a subject$/) do
   spec_runner_helper.spec_classes = ['info.javaspec.example.rb.DescribeTwoSpecs']
 
   spec_runner_helper.spec_run_verification do |output|
+    expect(output).to match(/Illudium Q-36 Explosive Space Modulator/)
     expect(output).to match(/discombobulates/)
     expect(output).to match(/explodes/)
   end
@@ -50,6 +55,11 @@ end
 
 Given(/^I have 2 or more spec collections with a variety of results$/) do
   spec_runner_helper.spec_classes = %w[info.javaspec.example.rb.BeepBeepSpecs]
+
+  spec_runner_helper.spec_run_verification do |output|
+    expect(output).to match(/Spring-operated boxing glove/)
+    expect(output).to match(/Tightrope/)
+  end
 end
 
 When(/^I run the specs in those classes$/) do
@@ -73,7 +83,7 @@ Then(/^The runner should describe what went wrong with each failing spec$/) do
 end
 
 Then(/^The runner should run the specs defined in that class$/) do
-  spec_runner_helper.verify_specs_ran #TODO KDK: Add verification method for @focus scenario
+  spec_runner_helper.verify_specs_ran
 end
 
 Then(/^The runner should run the specs in each of those classes$/) do
