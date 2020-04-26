@@ -138,7 +138,7 @@ namespace :java do
 
   desc 'Run all tests on Java code'
   task :test do
-    gradle %w[--stacktrace build examples:findHamcrestJar]
+    gradle %w[--stacktrace build examples:findHamcrestJars]
   end
 
   def gradle(tasks)
