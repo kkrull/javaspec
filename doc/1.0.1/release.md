@@ -1,6 +1,6 @@
 ## Make a release branch
 
-* Make a release branch: `git checkout master && git checkout -b release-v<number>`
+* Make a release branch: `git checkout main && git checkout -b release-v<number>`
 * Bump the artifact version number in the POM: `rake java:bump-version`
 * Bump the expected, reportable version number in `CommandLineInterfaceSteps`
 * Bump the version in the installation instructions in `README.md`
@@ -23,13 +23,13 @@
 
 ### Git
 
-* Merge release branch into `master` **`no-ff`**.
-* Tag `master` with new version number.
+* Merge release branch into `main` **`no-ff`**.
+* Tag `main` with new version number.
 * Push tags and branches.
 * Delete release branch.
 
 
-    git checkout master && git merge --no-ff <release_branch>
+    git checkout main && git merge --no-ff <release_branch>
     git tag <version_number>
 
 

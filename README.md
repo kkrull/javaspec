@@ -3,7 +3,7 @@
 Behavior-Driven Development testing for Java using lambdas.  Inspired by [RSpec](http://rspec.info) and
 [Machine.Specifications](https://github.com/machine/machine.specifications).
 
-[![Build Status](https://travis-ci.org/kkrull/javaspec.svg?branch=master)](https://travis-ci.org/kkrull/javaspec)
+[![Build Status](https://travis-ci.org/kkrull/javaspec.svg?branch=main)](https://travis-ci.org/kkrull/javaspec)
 
 
 ## Why
@@ -161,7 +161,7 @@ In short:
 Hopefully JavaSpec works like you think it does.
 
 For times when it doesn't, start by looking at the tests on
-[`JavaSpecRunner`](https://github.com/kkrull/javaspec/blob/master/src/test/java/info/javaspec/runner/JavaSpecRunnerTest.java)
+[`JavaSpecRunner`](https://github.com/kkrull/javaspec/blob/main/src/test/java/info/javaspec/runner/JavaSpecRunnerTest.java)
 and related classes.
 
 If that still doesn't do the trick, feel free to [post an issue](https://github.com/kkrull/javaspec/issues) or submit a
