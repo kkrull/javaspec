@@ -7,14 +7,30 @@ import org.junit.jupiter.api.function.Executable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GreeterTest {
-  @TestFactory
-  DynamicTest makeSingleTest() {
-    JupiterSpec spec = new JupiterSpec("greets the world", () -> {
+  {
+    JavaSpec.it("greets the world", () -> {
       Greeter subject = new Greeter();
       assertEquals("Hello world!", subject.makeGreeting());
     });
+  }
 
-    return spec.toDynamicTest();
+  //TODO KDK: Look for a way to turn this into a programmatic extension that invokes whatever method / instance initializer that calls JavaSpec::it
+  @TestFactory
+  DynamicTest makeSingleTest() {
+    System.out.println("[DynamicTest#makeSingleTest]");
+    return JavaSpec.getSpec().toDynamicTest();
+  }
+
+  static class JavaSpec {
+    private static JupiterSpec _spec;
+
+    public static JupiterSpec getSpec() {
+      return _spec;
+    }
+
+    public static void it(String behavior, Executable verification) {
+      _spec = new JupiterSpec(behavior, verification);
+    }
   }
 
   static class JupiterSpec {
