@@ -11,6 +11,8 @@ JUnit Jupiter tests.
 
 ### Writing Specs
 
+TODO KDK: Pick one of these problems and start prototyping a solution.
+
 1. Syntax for defining specs:
   * Description of what is being tested
   * Descriptions of expected behavior(s)

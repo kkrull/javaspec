@@ -6,7 +6,8 @@ import org.junit.jupiter.api.function.Executable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GreeterTest {
+//Explores how to use a @TestFactory method to declare a dynamic test
+public class TestFactoryMethodTest {
   {
     JavaSpec.it("greets the world", () -> {
       Greeter subject = new Greeter();
@@ -14,7 +15,6 @@ public class GreeterTest {
     });
   }
 
-  //TODO KDK: Look for a way to turn this into a programmatic extension that invokes whatever method / instance initializer that calls JavaSpec::it
   @TestFactory
   DynamicTest makeSingleTest() {
     System.out.println("[DynamicTest#makeSingleTest]");
