@@ -1,7 +1,11 @@
 package info.javaspec.jupiter;
 
 public class Greeter {
-  String makeGreeting() {
+  public String makeGreeting() {
     return "Hello world!";
+  }
+
+  public String makeGreeting(String name) {
+    return String.format("Hello %s!", name);
   }
 }

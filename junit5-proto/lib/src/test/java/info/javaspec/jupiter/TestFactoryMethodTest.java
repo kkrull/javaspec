@@ -17,11 +17,10 @@ public class TestFactoryMethodTest {
 
   @TestFactory
   DynamicTest makeSingleTest() {
-    System.out.println("[DynamicTest#makeSingleTest]");
     return JavaSpec.getSpec().toDynamicTest();
   }
 
-  static class JavaSpec {
+  private static class JavaSpec {
     private static JupiterSpec _spec;
 
     public static JupiterSpec getSpec() {
@@ -33,7 +32,7 @@ public class TestFactoryMethodTest {
     }
   }
 
-  static class JupiterSpec {
+  private static class JupiterSpec {
     private final String behavior;
     private final Executable verification;
 
