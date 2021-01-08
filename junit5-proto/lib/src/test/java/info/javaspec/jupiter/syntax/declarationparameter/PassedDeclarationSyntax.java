@@ -1,10 +1,10 @@
-package info.javaspec.jupiter.syntax;
+package info.javaspec.jupiter.syntax.declarationparameter;
 
 import info.javaspec.jupiter.Greeter;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
 
-import static info.javaspec.jupiter.syntax.JavaSpec.*;
+import static info.javaspec.jupiter.syntax.declarationparameter.JavaSpec.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class PassedDeclarationSyntax {
   @TestFactory
   DynamicNode generateTests() {
-    //TODO KDK: Can describe and it be passed as parameters, instead of the declaration object?
     //Can users just say it("", ..." instead of declare.it("", ...)?
     return describe("Greeter", (declare) -> {
       declare.it("exists", () -> assertNotNull(new Greeter()));

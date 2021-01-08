@@ -1,4 +1,4 @@
-package info.javaspec.jupiter.syntax;
+package info.javaspec.jupiter.syntax.declarationparameter;
 
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
