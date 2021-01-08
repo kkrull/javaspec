@@ -8,19 +8,22 @@ import static info.javaspec.jupiter.syntax.JavaSpec.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class SpecSyntax {
+//Shows how to pass a declaration context to lambdas, to get nested describe+it syntax
+class PassedDeclarationSyntax {
   @TestFactory
   DynamicNode generateTests() {
-    return describe("Greeter", () -> {
-      it("exists", () -> assertNotNull(new Greeter()));
+    //TODO KDK: Can describe and it be passed as parameters, instead of the declaration object?
+    //Can users just say it("", ..." instead of declare.it("", ...)?
+    return describe("Greeter", (declare) -> {
+      declare.it("exists", () -> assertNotNull(new Greeter()));
 
-      it("greets the world", () -> {
+      declare.it("greets the world", () -> {
         Greeter subject = new Greeter();
         assertEquals("Hello world!", subject.makeGreeting());
       });
 
-      describe("given a name", () -> {
-        it("greets that person, by name", () -> {
+      declare.describe("given a name", (givenAName) -> {
+        givenAName.it("greets that person, by name", () -> {
           Greeter subject = new Greeter();
           assertEquals("Hello George!", subject.makeGreeting("George"));
         });
