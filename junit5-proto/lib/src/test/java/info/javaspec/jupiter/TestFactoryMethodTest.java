@@ -6,7 +6,7 @@ import org.junit.jupiter.api.function.Executable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-//Explores how to use a @TestFactory method to declare a dynamic test
+//Shows how to use a @TestFactory method to declare a dynamic test
 public class TestFactoryMethodTest {
   {
     JavaSpec.it("greets the world", () -> {

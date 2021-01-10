@@ -7,12 +7,14 @@ import org.junit.jupiter.api.TestFactory;
 import static info.javaspec.jupiter.syntax.componentparameters.JavaSpec.describe;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+//Shows how to pass `it` to describe lambdas, as a parameter.
 public class PassedComponentSyntax {
   @TestFactory
   DynamicNode generateTests() {
     return describe("Greeter", (it) -> {
-      //TODO KDK: Is there a way to avoid saying `it.declare` instead of `it`?
+      //Negative: The parameter is always an object, never a first-class function.
       it.declare("greets the world", () -> {
+        //Positive: `it` is always scoped to the `describe` that provides it.
         Greeter subject = new Greeter();
         assertEquals("Hello world!", subject.makeGreeting());
       });
