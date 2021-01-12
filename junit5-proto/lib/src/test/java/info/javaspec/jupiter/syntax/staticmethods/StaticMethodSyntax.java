@@ -34,7 +34,7 @@ class StaticMethodSyntax {
     });
   }
 
-  @TestFactory @Disabled
+  @TestFactory
   DynamicNode describeMethodInClass() {
     return describe("Greeter", () -> {
       describe("#makeGreeting", () -> {

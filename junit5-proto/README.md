@@ -12,10 +12,10 @@ of the default "Gradle", in order to show `@DisplayName` properly, from JUnit Ju
 
 Syntax for defining specs:
 
-* [ ] Description of what is being tested: class and method
-* [ ] Descriptions of expected behavior(s)
+* [x] Description of what is being tested: class and method (`StaticMethodSyntax`)
+* [x] Descriptions of expected behavior(s) (`StaticMethodSyntax`)
 * [ ] Description of any particular circumstances, during which those expectations apply
-* [ ] Procedures to verify those expectations
+* [x] Procedures to verify those expectations (`StaticMethodSyntax`)
 
 
 Where in a spec class to use this syntax, to declare specs:

@@ -9,16 +9,26 @@ import java.util.LinkedList;
 import java.util.Stack;
 
 final class JavaSpec {
-  private static final Stack<DynamicTestList> _containers = new Stack<>();
+  private static final Stack<DynamicNodeList> _containers = new Stack<>();
 
   static {
-    _containers.push(new NoDynamicTests());
+    _containers.push(new RootNodeList());
   }
 
+  //Unknown: Could nodes be added to the wrong container, if jupiter-engine runs tests in parallel?
   public static DynamicNode describe(String actor, DescribeBlock block) {
-    _containers.push(new DynamicTestList());
+    //Push a fresh node list onto the stack and append declarations to that
+    _containers.push(new DynamicNodeList());
     block.declare();
-    return DynamicContainer.dynamicContainer(actor, _containers.pop());
+
+    //Create this child container entirely, then add it to any parent container
+    DynamicNodeList childNodes = _containers.pop();
+    DynamicContainer thisChildContainer = DynamicContainer.dynamicContainer(actor, childNodes);
+    DynamicNodeList parentContainer = _containers.peek();
+    parentContainer.add(thisChildContainer);
+
+    //Negative: Exposes DynamicContainer to developers, who might mutate it in a way that's incompatible with JavaSpec.
+    return thisChildContainer;
   }
 
   public static DynamicTest it(String behavior, Executable verification) {
@@ -33,13 +43,13 @@ final class JavaSpec {
   }
 
   //Null object so there's always something on the stack, even if it's not a test container
-  private static final class NoDynamicTests extends DynamicTestList {
+  private static final class RootNodeList extends DynamicNodeList {
     @Override
-    public boolean add(DynamicTest test) {
-      System.out.printf("[NoDynamicTests#add] No container to add test to: %s%n", test.getDisplayName());
+    public boolean add(DynamicNode node) {
+      System.out.printf("[RootNodeList#add] No container to add node to: %s%n", node.getDisplayName());
       return false;
     }
   }
 
-  private static class DynamicTestList extends LinkedList<DynamicTest> { }
+  private static class DynamicNodeList extends LinkedList<DynamicNode> { }
 }
