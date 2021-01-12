@@ -6,22 +6,24 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.Executable;
 
 import java.util.LinkedList;
+import java.util.Stack;
 
 final class JavaSpec {
-  private static DynamicTestList _currentTests = new NoDynamicTests();
+  private static final Stack<DynamicTestList> _containers = new Stack<>();
+
+  static {
+    _containers.push(new NoDynamicTests());
+  }
 
   public static DynamicNode describe(String actor, DescribeBlock block) {
-    _currentTests = new DynamicTestList();
+    _containers.push(new DynamicTestList());
     block.declare();
-
-    DynamicContainer container = DynamicContainer.dynamicContainer(actor, _currentTests);
-    _currentTests = new NoDynamicTests();
-    return container;
+    return DynamicContainer.dynamicContainer(actor, _containers.pop());
   }
 
   public static DynamicTest it(String behavior, Executable verification) {
     DynamicTest test = DynamicTest.dynamicTest(behavior, verification);
-    _currentTests.add(test);
+    _containers.peek().add(test);
     return test;
   }
 
@@ -30,6 +32,7 @@ final class JavaSpec {
     void declare();
   }
 
+  //Null object so there's always something on the stack, even if it's not a test container
   private static final class NoDynamicTests extends DynamicTestList {
     @Override
     public boolean add(DynamicTest test) {
