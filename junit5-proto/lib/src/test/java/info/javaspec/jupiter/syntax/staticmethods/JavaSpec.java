@@ -6,25 +6,22 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.Executable;
 
 import java.util.LinkedList;
-import java.util.List;
 
 final class JavaSpec {
-  private static List<DynamicTest> currentTests;
+  private static DynamicTestList _currentTests = new NoDynamicTests();
 
   public static DynamicNode describe(String actor, DescribeBlock block) {
-    currentTests = new LinkedList<>();
+    _currentTests = new DynamicTestList();
     block.declare();
 
-    DynamicContainer container = DynamicContainer.dynamicContainer(actor, currentTests);
-    currentTests = null;
+    DynamicContainer container = DynamicContainer.dynamicContainer(actor, _currentTests);
+    _currentTests = new NoDynamicTests();
     return container;
   }
 
   public static DynamicTest it(String behavior, Executable verification) {
     DynamicTest test = DynamicTest.dynamicTest(behavior, verification);
-    if(currentTests != null)
-      currentTests.add(test);
-
+    _currentTests.add(test);
     return test;
   }
 
@@ -32,4 +29,14 @@ final class JavaSpec {
   public interface DescribeBlock {
     void declare();
   }
+
+  private static final class NoDynamicTests extends DynamicTestList {
+    @Override
+    public boolean add(DynamicTest test) {
+      System.out.printf("[NoDynamicTests#add] No container to add test to: %s%n", test.getDisplayName());
+      return false;
+    }
+  }
+
+  private static class DynamicTestList extends LinkedList<DynamicTest> { }
 }
