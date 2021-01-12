@@ -12,7 +12,7 @@ of the default "Gradle", in order to show `@DisplayName` properly, from JUnit Ju
 
 Syntax for defining specs:
 
-* [ ] Description of what is being tested
+* [ ] Description of what is being tested: class and method
 * [ ] Descriptions of expected behavior(s)
 * [ ] Description of any particular circumstances, during which those expectations apply
 * [ ] Procedures to verify those expectations

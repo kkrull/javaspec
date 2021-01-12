@@ -20,8 +20,12 @@ final class JavaSpec {
     return container;
   }
 
-  public static void it(String behavior, Executable verification) {
-    currentTests.add(DynamicTest.dynamicTest(behavior, verification));
+  public static DynamicTest it(String behavior, Executable verification) {
+    DynamicTest test = DynamicTest.dynamicTest(behavior, verification);
+    if(currentTests != null)
+      currentTests.add(test);
+
+    return test;
   }
 
   @FunctionalInterface
