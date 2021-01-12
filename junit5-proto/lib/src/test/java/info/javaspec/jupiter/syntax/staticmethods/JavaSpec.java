@@ -15,6 +15,10 @@ final class JavaSpec {
     _containers.push(new RootNodeList());
   }
 
+  public static void context(String condition, DescribeBlock block) {
+    describe(condition, block);
+  }
+
   //Unknown: Could nodes be added to the wrong container, if jupiter-engine runs tests in parallel?
   public static DynamicNode describe(String actor, DescribeBlock block) {
     //Push a fresh node list onto the stack and append declarations to that

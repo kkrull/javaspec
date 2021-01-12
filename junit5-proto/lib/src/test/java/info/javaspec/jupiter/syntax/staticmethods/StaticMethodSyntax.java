@@ -1,13 +1,10 @@
 package info.javaspec.jupiter.syntax.staticmethods;
 
 import info.javaspec.jupiter.Greeter;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DynamicNode;
-import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import static info.javaspec.jupiter.syntax.staticmethods.JavaSpec.describe;
-import static info.javaspec.jupiter.syntax.staticmethods.JavaSpec.it;
+import static info.javaspec.jupiter.syntax.staticmethods.JavaSpec.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -41,6 +38,25 @@ class StaticMethodSyntax {
         it("greets the world", () -> {
           Greeter subject = new Greeter();
           assertEquals("Hello world!", subject.makeGreeting());
+        });
+      });
+    });
+  }
+
+  @TestFactory
+  DynamicNode describeFunctionWithContext() {
+    return describe("makeGreeting", () -> {
+      context("given no name", () -> {
+        it("greets the world", () -> {
+          Greeter subject = new Greeter();
+          assertEquals("Hello world!", subject.makeGreeting());
+        });
+      });
+
+      context("given a name", () -> {
+        it("greets that person by name", () -> {
+          Greeter subject = new Greeter();
+          assertEquals("Hello George!", subject.makeGreeting("George"));
         });
       });
     });
