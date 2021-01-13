@@ -1,5 +1,6 @@
 package info.javaspec.jupiter.syntax.staticmethods;
 
+import info.javaspec.jupiter.syntax.staticmethods.Minimax.GameState;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
 
@@ -12,19 +13,37 @@ class MinimaxWithStaticMethodSyntaxSpecs {
     return describe("Minimax", () -> {
       describe("#score", () -> {
         it("scores a game ending in a draw as 0", () -> {
-          Minimax subject = new Minimax();
-          Minimax.GameState game = new GameWithKnownState(true);
+          Minimax subject = new Minimax("Max", "Min");
+          GameState game = new GameWithKnownState(true);
           assertEquals(0, subject.score(game));
+        });
+
+        it("scores a game won by the maximizing player as +1", () -> {
+          Minimax subject = new Minimax("Max", "Min");
+          GameState game = new GameWithKnownState(true, "Max");
+          assertEquals(1, subject.score(game));
         });
       });
     });
   }
 
-  private static final class GameWithKnownState implements Minimax.GameState {
+  private static final class GameWithKnownState implements GameState {
     private final boolean _isOver;
+    private final String _winner;
 
     public GameWithKnownState(boolean isOver) {
       this._isOver = isOver;
+      this._winner = null;
+    }
+
+    public GameWithKnownState(boolean isOver, String winner) {
+      this._isOver = isOver;
+      this._winner = winner;
+    }
+
+    @Override
+    public String findWinner() {
+      return this._winner;
     }
 
     @Override
