@@ -19,6 +19,10 @@ final class JavaSpec {
     describe(condition, block);
   }
 
+  public static DynamicNode describe(Class<?> actor, DescribeBlock block) {
+    return describe(actor.getSimpleName(), block);
+  }
+
   //Unknown: Could nodes be added to the wrong container, if jupiter-engine runs tests in parallel?
   public static DynamicNode describe(String actor, DescribeBlock block) {
     //Push a fresh node list onto the stack and append declarations to that
@@ -50,7 +54,6 @@ final class JavaSpec {
   private static final class RootNodeList extends DynamicNodeList {
     @Override
     public boolean add(DynamicNode node) {
-      System.out.printf("[RootNodeList#add] No container to add node to: %s%n", node.getDisplayName());
       return false;
     }
   }

@@ -9,15 +9,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 //Shows how to use static imports for spec syntax.
-//TODO KDK: Identify pros and cons, in relation to the other syntax prototypes.
 class StaticMethodSyntax {
   @TestFactory
-  DynamicNode standaloneIt() {
+  DynamicNode itStandsAlone() {
     return it("does a thing, whatever it is", () -> assertEquals(2, 1+1));
   }
 
   @TestFactory
-  DynamicNode describeClass() {
+  DynamicNode describeClassWithObject() {
+    return describe(Greeter.class, () -> {
+      it("exists", () -> assertNotNull(new Greeter()));
+    });
+  }
+
+  @TestFactory
+  DynamicNode describeClassWithString() {
+    //Positive: Declaration functions can be called as plain functions, instead of as methods on objects.
     return describe("Greeter", () -> {
       it("exists", () -> {
         Greeter subject = new Greeter();

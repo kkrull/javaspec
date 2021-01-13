@@ -14,7 +14,7 @@ Syntax for defining specs:
 
 * [x] Description of what is being tested: class and method (`StaticMethodSyntax`)
 * [x] Descriptions of expected behavior(s) (`StaticMethodSyntax`)
-* [x] Description of any particular circumstances, during which those expectations apply
+* [x] Description of any particular circumstances, during which those expectations apply (`StaticMethodSyntax`)
 * [x] Procedures to verify those expectations (`StaticMethodSyntax`)
 
 
