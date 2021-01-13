@@ -12,16 +12,22 @@ class MinimaxWithStaticMethodSyntaxSpecs {
   @TestFactory DynamicNode makeSpecs() {
     return describe("Minimax", () -> {
       describe("#score", () -> {
+        //Negative: Initialization like this runs at declaration time; bad for stateful objects.
+        Minimax subject = new Minimax("Max", "Min");
+
         it("scores a game ending in a draw as 0", () -> {
-          Minimax subject = new Minimax("Max", "Min");
           GameState game = new GameWithKnownState(true);
           assertEquals(0, subject.score(game));
         });
 
         it("scores a game won by the maximizing player as +1", () -> {
-          Minimax subject = new Minimax("Max", "Min");
           GameState game = new GameWithKnownState(true, "Max");
-          assertEquals(1, subject.score(game));
+          assertEquals(+1, subject.score(game));
+        });
+
+        it("scores a game won by the minimizing player as -1", () -> {
+          GameState game = new GameWithKnownState(true, "Min");
+          assertEquals(-1, subject.score(game));
         });
       });
     });

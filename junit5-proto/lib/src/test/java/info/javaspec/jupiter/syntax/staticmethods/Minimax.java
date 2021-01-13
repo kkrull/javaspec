@@ -12,6 +12,8 @@ final class Minimax {
   public int score(GameState game) {
     if(this.maximizer.equals(game.findWinner()))
       return +1;
+    else if(this.minimizer.equals(game.findWinner()))
+      return -1;
     else if(game.isOver())
       return 0;
 
