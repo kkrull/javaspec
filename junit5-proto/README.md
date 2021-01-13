@@ -17,6 +17,7 @@ Syntax for defining specs:
 * [x] Description of any particular circumstances, during which those expectations apply (`StaticMethodSyntax`)
 * [x] Procedures to verify those expectations (`StaticMethodSyntax`)
 
+TODO KDK: Hop to a section in running specs for finding exceptions that happen in the production code and exceptions that happen in the test code, and tracing back from the stack trace to both.
 
 Where in a spec class to use this syntax, to declare specs:
 
