@@ -14,26 +14,29 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MinimaxWithStaticMethodSyntaxSpecs {
   @TestFactory DynamicNode makeSpecs() {
+    //Positive: Works, while being much more concise than plain JUnit.
     return describe("Minimax", () -> {
       describe("#score", () -> {
         //Negative: Initialization like this runs at declaration time; bad for stateful objects.
-        Minimax subject = new Minimax("Max", "Min");
+        final String max = "Max";
+        final String min = "Min";
+        final Minimax subject = new Minimax(max, min);
 
         context("when the game is already over", () -> {
           it("scores a game ending in a draw as 0", () -> {
             //Negative: Have to keep re-declaring the variable in each spec, instead of putting a field above
             GameWithKnownStates game = new GameWithKnownStates(true);
-            assertEquals(0, subject.score(game, "Max"));
+            assertEquals(0, subject.score(game, max));
           });
 
           it("scores a game won by the maximizing player as +1", () -> {
-            GameWithKnownStates game = new GameWithKnownStates(true, "Max");
-            assertEquals(+1, subject.score(game, "Max"));
+            GameWithKnownStates game = new GameWithKnownStates(true, max);
+            assertEquals(+1, subject.score(game, max));
           });
 
           it("scores a game won by the minimizing player as -1", () -> {
-            GameWithKnownStates game = new GameWithKnownStates(true, "Min");
-            assertEquals(-1, subject.score(game, "Max"));
+            GameWithKnownStates game = new GameWithKnownStates(true, min);
+            assertEquals(-1, subject.score(game, max));
           });
         });
 
@@ -42,27 +45,27 @@ class MinimaxWithStaticMethodSyntaxSpecs {
           it("the maximizer picks the move with the highest score", () -> {
             GameWithKnownStates game = new GameWithKnownStates(false);
             game.addKnownState("ThenDraw", new GameWithKnownStates(true));
-            game.addKnownState("ThenMaxWins", new GameWithKnownStates(true, "Max"));
-            assertEquals(+1, subject.score(game, "Max"));
+            game.addKnownState("ThenMaxWins", new GameWithKnownStates(true, max));
+            assertEquals(+1, subject.score(game, max));
           });
 
           it("the minimizer picks the move with the lowest score", () -> {
             GameWithKnownStates game = new GameWithKnownStates(false);
             game.addKnownState("ThenDraw", new GameWithKnownStates(true));
-            game.addKnownState("ThenMaxLoses", new GameWithKnownStates(true, "Min"));
-            assertEquals(-1, subject.score(game, "Min"));
+            game.addKnownState("ThenMaxLoses", new GameWithKnownStates(true, min));
+            assertEquals(-1, subject.score(game, min));
           });
         });
 
         context("when the game has 2 or more moves left", () -> {
           it("the maximizer assumes the minimizer picks the lowest score", () -> {
             GameWithKnownStates game = gameWithTwoMovesLeft();
-            assertEquals(0, subject.score(game, "Max"));
+            assertEquals(0, subject.score(game, max));
           });
 
           it("the minimizer assumes the maximizer picks the highest score", () -> {
             GameWithKnownStates game = gameWithTwoMovesLeft();
-            assertEquals(0, subject.score(game, "Min"));
+            assertEquals(0, subject.score(game, min));
           });
         });
       });
