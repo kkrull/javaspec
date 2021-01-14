@@ -22,17 +22,17 @@ class MinimaxWithStaticMethodSyntaxSpecs {
         context("when the game is already over", () -> {
           it("scores a game ending in a draw as 0", () -> {
             //Negative: Have to keep re-declaring the variable in each spec, instead of putting a field above
-            GameWithKnownState game = new GameWithKnownState(true);
+            GameWithKnownStates game = new GameWithKnownStates(true);
             assertEquals(0, subject.score(game, "Max"));
           });
 
           it("scores a game won by the maximizing player as +1", () -> {
-            GameWithKnownState game = new GameWithKnownState(true, "Max");
+            GameWithKnownStates game = new GameWithKnownStates(true, "Max");
             assertEquals(+1, subject.score(game, "Max"));
           });
 
           it("scores a game won by the minimizing player as -1", () -> {
-            GameWithKnownState game = new GameWithKnownState(true, "Min");
+            GameWithKnownStates game = new GameWithKnownStates(true, "Min");
             assertEquals(-1, subject.score(game, "Max"));
           });
         });
@@ -40,32 +40,32 @@ class MinimaxWithStaticMethodSyntaxSpecs {
         context("when the game is not over yet", () -> {
           //Negative: No way to skip just one test, without commenting it out (which won't survive refactoring)
           it("the maximizer picks the move with the highest score", () -> {
-            GameWithKnownState game = new GameWithKnownState(false);
-            game.addKnownState("ThenDraw", new GameWithKnownState(true));
-            game.addKnownState("ThenMaxWins", new GameWithKnownState(true, "Max"));
+            GameWithKnownStates game = new GameWithKnownStates(false);
+            game.addKnownState("ThenDraw", new GameWithKnownStates(true));
+            game.addKnownState("ThenMaxWins", new GameWithKnownStates(true, "Max"));
             assertEquals(+1, subject.score(game, "Max"));
           });
 
           it("the minimizer picks the move with the lowest score", () -> {
-            GameWithKnownState game = new GameWithKnownState(false);
-            game.addKnownState("ThenDraw", new GameWithKnownState(true));
-            game.addKnownState("ThenMaxLoses", new GameWithKnownState(true, "Min"));
+            GameWithKnownStates game = new GameWithKnownStates(false);
+            game.addKnownState("ThenDraw", new GameWithKnownStates(true));
+            game.addKnownState("ThenMaxLoses", new GameWithKnownStates(true, "Min"));
             assertEquals(-1, subject.score(game, "Min"));
           });
         });
 
         context("when the game has 2 or more moves left", () -> {
           it("the maximizer assumes the minimizer picks the lowest score", () -> {
-            GameWithKnownState game = new GameWithKnownState(false);
-            GameWithKnownState leftTree = new GameWithKnownState(false);
+            GameWithKnownStates game = new GameWithKnownStates(false);
+            GameWithKnownStates leftTree = new GameWithKnownStates(false);
             game.addKnownState("Left", leftTree);
-            leftTree.addKnownState("Draw", new GameWithKnownState(true));
-            leftTree.addKnownState("ThenMaxWins", new GameWithKnownState(true, "Max"));
+            leftTree.addKnownState("Draw", new GameWithKnownStates(true));
+            leftTree.addKnownState("ThenMaxWins", new GameWithKnownStates(true, "Max"));
 
-            GameWithKnownState rightTree = new GameWithKnownState(false);
+            GameWithKnownStates rightTree = new GameWithKnownStates(false);
             game.addKnownState("Right", rightTree);
-            rightTree.addKnownState("Draw", new GameWithKnownState(true));
-            rightTree.addKnownState("ThenMaxLoses", new GameWithKnownState(true, "Min"));
+            rightTree.addKnownState("Draw", new GameWithKnownStates(true));
+            rightTree.addKnownState("ThenMaxLoses", new GameWithKnownStates(true, "Min"));
 
             assertEquals(0, subject.score(game, "Max"));
           });
@@ -74,24 +74,24 @@ class MinimaxWithStaticMethodSyntaxSpecs {
     });
   }
 
-  private static final class GameWithKnownState implements GameState {
+  private static final class GameWithKnownStates implements GameState {
     private final boolean _isOver;
     private final String winner;
-    private final Map<String, GameWithKnownState> moveToGameState;
+    private final Map<String, GameWithKnownStates> moveToGameState;
 
-    public GameWithKnownState(boolean isOver) {
+    public GameWithKnownStates(boolean isOver) {
       this._isOver = isOver;
       this.winner = null;
       this.moveToGameState = new LinkedHashMap<>();
     }
 
-    public GameWithKnownState(boolean isOver, String winner) {
+    public GameWithKnownStates(boolean isOver, String winner) {
       this._isOver = isOver;
       this.winner = winner;
       this.moveToGameState = new LinkedHashMap<>();
     }
 
-    public void addKnownState(String nextMove, GameWithKnownState nextGame) {
+    public void addKnownState(String nextMove, GameWithKnownStates nextGame) {
       this.moveToGameState.put(nextMove, nextGame);
     }
 
