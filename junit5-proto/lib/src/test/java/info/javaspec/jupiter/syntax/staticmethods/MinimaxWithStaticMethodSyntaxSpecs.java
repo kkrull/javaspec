@@ -56,22 +56,32 @@ class MinimaxWithStaticMethodSyntaxSpecs {
 
         context("when the game has 2 or more moves left", () -> {
           it("the maximizer assumes the minimizer picks the lowest score", () -> {
-            GameWithKnownStates game = new GameWithKnownStates(false);
-            GameWithKnownStates leftTree = new GameWithKnownStates(false);
-            game.addKnownState("Left", leftTree);
-            leftTree.addKnownState("Draw", new GameWithKnownStates(true));
-            leftTree.addKnownState("ThenMaxWins", new GameWithKnownStates(true, "Max"));
-
-            GameWithKnownStates rightTree = new GameWithKnownStates(false);
-            game.addKnownState("Right", rightTree);
-            rightTree.addKnownState("Draw", new GameWithKnownStates(true));
-            rightTree.addKnownState("ThenMaxLoses", new GameWithKnownStates(true, "Min"));
-
+            GameWithKnownStates game = gameWithTwoMovesLeft();
             assertEquals(0, subject.score(game, "Max"));
+          });
+
+          it("the minimizer assumes the maximizer picks the highest score", () -> {
+            GameWithKnownStates game = gameWithTwoMovesLeft();
+            assertEquals(0, subject.score(game, "Min"));
           });
         });
       });
     });
+  }
+
+  private static GameWithKnownStates gameWithTwoMovesLeft() {
+    GameWithKnownStates game = new GameWithKnownStates(false);
+    GameWithKnownStates leftTree = new GameWithKnownStates(false);
+    game.addKnownState("Left", leftTree);
+    leftTree.addKnownState("Draw", new GameWithKnownStates(true));
+    leftTree.addKnownState("ThenMaxWins", new GameWithKnownStates(true, "Max"));
+
+    GameWithKnownStates rightTree = new GameWithKnownStates(false);
+    game.addKnownState("Right", rightTree);
+    rightTree.addKnownState("Draw", new GameWithKnownStates(true));
+    rightTree.addKnownState("ThenMaxLoses", new GameWithKnownStates(true, "Min"));
+
+    return game;
   }
 
   private static final class GameWithKnownStates implements GameState {
