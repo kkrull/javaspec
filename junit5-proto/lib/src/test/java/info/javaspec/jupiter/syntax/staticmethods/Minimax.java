@@ -19,16 +19,31 @@ final class Minimax {
     else if(game.isOver())
       return 0;
 
-    int bestScore = -100;
-    for(String nextMove : game.availableMoves()) {
-      GameState nextGame = game.move(nextMove);
-      int nextScore = score(nextGame, this.minimizer);
-      if(nextScore > bestScore) {
-        bestScore = nextScore;
+    if(this.maximizer.equals(player)) {
+      int maxScore = -100;
+      for(String nextMove : game.availableMoves()) {
+        GameState nextGame = game.move(nextMove);
+        int nextScore = score(nextGame, this.minimizer);
+        if(nextScore > maxScore) {
+          maxScore = nextScore;
+        }
       }
-    }
 
-    return bestScore;
+      return maxScore;
+    } else if(this.minimizer.equals(player)) {
+      int minScore = +100;
+      for(String nextMove : game.availableMoves()) {
+        GameState nextGame = game.move(nextMove);
+        int nextScore = score(nextGame, this.maximizer);
+        if(nextScore < minScore) {
+          minScore = nextScore;
+        }
+      }
+
+      return minScore;
+    } else {
+      return 999;
+    }
   }
 
   interface GameState {

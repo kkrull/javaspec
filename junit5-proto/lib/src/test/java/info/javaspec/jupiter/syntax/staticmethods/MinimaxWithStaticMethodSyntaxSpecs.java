@@ -43,6 +43,13 @@ class MinimaxWithStaticMethodSyntaxSpecs {
           game.addKnownState("ThenMaxWins", new GameWithKnownState(true, "Max"));
           assertEquals(+1, subject.score(game, "Max"));
         });
+
+        it("scores the minimum possible score for the minimizing player, in an unfinished game", () -> {
+          GameWithKnownState game = new GameWithKnownState(false);
+          game.addKnownState("ThenDraw", new GameWithKnownState(true));
+          game.addKnownState("ThenMaxLoses", new GameWithKnownState(true, "Min"));
+          assertEquals(-1, subject.score(game, "Min"));
+        });
       });
     });
   }
