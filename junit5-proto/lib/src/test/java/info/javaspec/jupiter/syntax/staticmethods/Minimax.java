@@ -12,38 +12,30 @@ final class Minimax {
   }
 
   public int score(GameState game, String player) {
+    if(this.maximizer.equals(player))
+      return negamax(game, 1);
+    else
+      return -negamax(game, -1);
+  }
+
+  private int negamax(GameState game, int polarity) {
     if(this.maximizer.equals(game.findWinner()))
-      return +1;
+      return polarity;
     else if(this.minimizer.equals(game.findWinner()))
-      return -1;
+      return -1 * polarity;
     else if(game.isOver())
       return 0;
 
-    if(this.maximizer.equals(player)) {
-      int maxScore = -100;
-      for(String nextMove : game.availableMoves()) {
-        GameState nextGame = game.move(nextMove);
-        int nextScore = score(nextGame, this.minimizer);
-        if(nextScore > maxScore) {
-          maxScore = nextScore;
-        }
+    int maxScore = -100;
+    for(String nextMove : game.availableMoves()) {
+      GameState nextGame = game.move(nextMove);
+      int nextScore = -1 * negamax(nextGame, -1*polarity);
+      if(nextScore > maxScore) {
+        maxScore = nextScore;
       }
-
-      return maxScore;
-    } else if(this.minimizer.equals(player)) {
-      int minScore = +100;
-      for(String nextMove : game.availableMoves()) {
-        GameState nextGame = game.move(nextMove);
-        int nextScore = score(nextGame, this.maximizer);
-        if(nextScore < minScore) {
-          minScore = nextScore;
-        }
-      }
-
-      return minScore;
-    } else {
-      return 999;
     }
+
+    return maxScore;
   }
 
   interface GameState {
