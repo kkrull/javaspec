@@ -53,6 +53,23 @@ class MinimaxWithStaticMethodSyntaxSpecs {
             assertEquals(-1, subject.score(game, "Min"));
           });
         });
+
+        context("when the game has 2 or more moves left", () -> {
+          it("the maximizer assumes the minimizer picks the lowest score", () -> {
+            GameWithKnownState game = new GameWithKnownState(false);
+            GameWithKnownState leftTree = new GameWithKnownState(false);
+            game.addKnownState("Left", leftTree);
+            leftTree.addKnownState("Draw", new GameWithKnownState(true));
+            leftTree.addKnownState("ThenMaxWins", new GameWithKnownState(true, "Max"));
+
+            GameWithKnownState rightTree = new GameWithKnownState(false);
+            game.addKnownState("Right", rightTree);
+            rightTree.addKnownState("Draw", new GameWithKnownState(true));
+            rightTree.addKnownState("ThenMaxLoses", new GameWithKnownState(true, "Min"));
+
+            assertEquals(0, subject.score(game, "Max"));
+          });
+        });
       });
     });
   }
