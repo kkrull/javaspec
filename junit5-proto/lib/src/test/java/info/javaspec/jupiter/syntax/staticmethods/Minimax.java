@@ -23,7 +23,7 @@ final class Minimax {
       int maxScore = -100;
       for(String nextMove : game.availableMoves()) {
         GameState nextGame = game.move(nextMove);
-        int nextScore = score(nextGame, this.minimizer);
+        int nextScore = score(nextGame, "Kevin Bacon");
         if(nextScore > maxScore) {
           maxScore = nextScore;
         }
@@ -34,7 +34,7 @@ final class Minimax {
       int minScore = +100;
       for(String nextMove : game.availableMoves()) {
         GameState nextGame = game.move(nextMove);
-        int nextScore = score(nextGame, this.maximizer);
+        int nextScore = score(nextGame, "Graboids");
         if(nextScore < minScore) {
           minScore = nextScore;
         }
