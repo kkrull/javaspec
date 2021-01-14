@@ -9,8 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static info.javaspec.jupiter.syntax.staticmethods.JavaSpec.describe;
-import static info.javaspec.jupiter.syntax.staticmethods.JavaSpec.it;
+import static info.javaspec.jupiter.syntax.staticmethods.JavaSpec.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MinimaxWithStaticMethodSyntaxSpecs {
@@ -20,35 +19,39 @@ class MinimaxWithStaticMethodSyntaxSpecs {
         //Negative: Initialization like this runs at declaration time; bad for stateful objects.
         Minimax subject = new Minimax("Max", "Min");
 
-        it("scores a game ending in a draw as 0", () -> {
-          //Negative: Have to keep re-declaring the variable in each spec, instead of putting a field above
-          GameWithKnownState game = new GameWithKnownState(true);
-          assertEquals(0, subject.score(game, "Max"));
+        context("when the game is already over", () -> {
+          it("scores a game ending in a draw as 0", () -> {
+            //Negative: Have to keep re-declaring the variable in each spec, instead of putting a field above
+            GameWithKnownState game = new GameWithKnownState(true);
+            assertEquals(0, subject.score(game, "Max"));
+          });
+
+          it("scores a game won by the maximizing player as +1", () -> {
+            GameWithKnownState game = new GameWithKnownState(true, "Max");
+            assertEquals(+1, subject.score(game, "Max"));
+          });
+
+          it("scores a game won by the minimizing player as -1", () -> {
+            GameWithKnownState game = new GameWithKnownState(true, "Min");
+            assertEquals(-1, subject.score(game, "Max"));
+          });
         });
 
-        it("scores a game won by the maximizing player as +1", () -> {
-          GameWithKnownState game = new GameWithKnownState(true, "Max");
-          assertEquals(+1, subject.score(game, "Max"));
-        });
+        context("when the game is not over yet", () -> {
+          //Negative: No way to skip just one test, without commenting it out (which won't survive refactoring)
+          it("the maximizer picks the move with the highest score", () -> {
+            GameWithKnownState game = new GameWithKnownState(false);
+            game.addKnownState("ThenDraw", new GameWithKnownState(true));
+            game.addKnownState("ThenMaxWins", new GameWithKnownState(true, "Max"));
+            assertEquals(+1, subject.score(game, "Max"));
+          });
 
-        it("scores a game won by the minimizing player as -1", () -> {
-          GameWithKnownState game = new GameWithKnownState(true, "Min");
-          assertEquals(-1, subject.score(game, "Max"));
-        });
-
-        //Negative: No way to skip just one test, without commenting it out (which won't survive refactoring)
-        it("scores the maximum possible score for the maximizing player, in an unfinished game", () -> {
-          GameWithKnownState game = new GameWithKnownState(false);
-          game.addKnownState("ThenDraw", new GameWithKnownState(true));
-          game.addKnownState("ThenMaxWins", new GameWithKnownState(true, "Max"));
-          assertEquals(+1, subject.score(game, "Max"));
-        });
-
-        it("scores the minimum possible score for the minimizing player, in an unfinished game", () -> {
-          GameWithKnownState game = new GameWithKnownState(false);
-          game.addKnownState("ThenDraw", new GameWithKnownState(true));
-          game.addKnownState("ThenMaxLoses", new GameWithKnownState(true, "Min"));
-          assertEquals(-1, subject.score(game, "Min"));
+          it("the minimizer picks the move with the lowest score", () -> {
+            GameWithKnownState game = new GameWithKnownState(false);
+            game.addKnownState("ThenDraw", new GameWithKnownState(true));
+            game.addKnownState("ThenMaxLoses", new GameWithKnownState(true, "Min"));
+            assertEquals(-1, subject.score(game, "Min"));
+          });
         });
       });
     });
