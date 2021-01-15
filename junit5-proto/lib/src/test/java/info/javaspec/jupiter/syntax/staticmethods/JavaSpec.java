@@ -14,6 +14,8 @@ final class JavaSpec {
   private static final Stack<DynamicNodeList> _containers = new Stack<>();
 
   static {
+    //Push a null object onto the bottom of the stack, so there's always a parent list to add nodes to.
+    //Unlike all other entries on the stack, the root node list does not get turned into a DynamicContainer.
     _containers.push(new RootNodeList());
   }
 
