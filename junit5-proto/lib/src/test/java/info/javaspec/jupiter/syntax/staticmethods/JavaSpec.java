@@ -19,7 +19,7 @@ final class JavaSpec {
     _containers.push(new RootNodeList());
   }
 
-  public static void context(String condition, DescribeBlock block) {
+  public static void context(String condition, ContextBlock block) {
     declareContainer(condition, block);
   }
 
@@ -66,7 +66,7 @@ final class JavaSpec {
     _containers.peek().add(testOrContainer);
   }
 
-  private static DynamicContainer declareContainer(String whatOrWhen, DescribeBlock block) {
+  private static DynamicContainer declareContainer(String whatOrWhen, DeclarationBlock block) {
     //Push a fresh node list onto the stack and append declarations to that
     _containers.push(new DynamicNodeList());
     block.declare();
@@ -87,7 +87,13 @@ final class JavaSpec {
   }
 
   @FunctionalInterface
-  public interface DescribeBlock {
+  public interface ContextBlock extends DeclarationBlock { }
+
+  @FunctionalInterface
+  public interface DescribeBlock extends DeclarationBlock { }
+
+  @FunctionalInterface
+  private interface DeclarationBlock {
     void declare();
   }
 
