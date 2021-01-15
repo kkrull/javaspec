@@ -33,13 +33,11 @@ final class JavaSpec {
   }
 
   public static DynamicNode disable(String intendedBehavior, Executable brokenVerification) {
-    DynamicTest test = DynamicTest.dynamicTest(intendedBehavior, () -> {
-      //Positive: It adds the spec to the test plan, and it doesn't actually run the execution.
-      //Negative: It shows a misleading and distracting stack trace, due to the unmet assumption.
-      //Source: https://github.com/junit-team/junit5/issues/1439
-      String description = String.format("Disabled: %s.  This is not a failed assumption in the spec; it's just how JavaSpec disables a spec.", intendedBehavior);
-      assumeTrue(false, description);
-    });
+    //Positive: It adds the spec to the test plan, and it marks it as skipped without running the verification.
+    DynamicTest test = makeSkippedTest(
+      intendedBehavior,
+      String.format("Disabled: %s.  This is not a failed assumption in the spec; it's just how JavaSpec disables a spec.", intendedBehavior)
+    );
 
     addToCurrentContainer(test);
     return test;
@@ -52,13 +50,11 @@ final class JavaSpec {
   }
 
   public static DynamicNode pending(String pendingBehavior) {
-    DynamicTest test = DynamicTest.dynamicTest(pendingBehavior, () -> {
-      //Positive: It adds the spec to the test plan, and it marks it as skipped.
-      //Negative: It shows a misleading and distracting stack trace, due to the unmet assumption.
-      //Source: https://github.com/junit-team/junit5/issues/1439
-      String description = String.format("Pending: %s.  This is not a failed assumption in the spec; it's just how JavaSpec skips a pending a spec.", pendingBehavior);
-      assumeTrue(false, description);
-    });
+    //Positive: It adds the spec to the test plan, and it marks it as skipped.
+    DynamicTest test = makeSkippedTest(
+      pendingBehavior,
+      String.format("Pending: %s.  This is not a failed assumption in the spec; it's just how JavaSpec skips a pending a spec.", pendingBehavior)
+    );
 
     addToCurrentContainer(test);
     return test;
@@ -78,6 +74,14 @@ final class JavaSpec {
     DynamicContainer childContainer = DynamicContainer.dynamicContainer(whatOrWhen, childNodes);
     addToCurrentContainer(childContainer);
     return childContainer;
+  }
+
+  private static DynamicTest makeSkippedTest(String intendedBehavior, String explanation) {
+    return DynamicTest.dynamicTest(intendedBehavior, () -> {
+      //Negative: It shows a misleading and distracting stack trace, due to the unmet assumption.
+      //Source: https://github.com/junit-team/junit5/issues/1439
+      assumeTrue(false, explanation);
+    });
   }
 
   @FunctionalInterface
