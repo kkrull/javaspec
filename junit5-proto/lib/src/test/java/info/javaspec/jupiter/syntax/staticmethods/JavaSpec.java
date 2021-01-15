@@ -54,7 +54,18 @@ final class JavaSpec {
       //Source: https://github.com/junit-team/junit5/issues/1439
       String description = String.format("Disabled: %s.  This is not a failed assumption in the spec; it's just how JavaSpec disables a spec.", intendedBehavior);
       assumeTrue(false, description);
-//      brokenVerification.execute();
+    });
+    _containers.peek().add(test);
+    return test;
+  }
+
+  public static DynamicNode pending(String pendingBehavior) {
+    DynamicTest test = DynamicTest.dynamicTest(pendingBehavior, () -> {
+      //Positive: It adds the spec to the test plan, and it marks it as skipped.
+      //Negative: It shows a misleading and distracting stack trace, due to the unmet assumption.
+      //Source: https://github.com/junit-team/junit5/issues/1439
+      String description = String.format("Pending: %s.  This is not a failed assumption in the spec; it's just how JavaSpec skips a pending a spec.", pendingBehavior);
+      assumeTrue(false, description);
     });
     _containers.peek().add(test);
     return test;

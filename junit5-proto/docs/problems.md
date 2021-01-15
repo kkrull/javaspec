@@ -7,8 +7,8 @@
 * [x] Procedures to verify those expectations `it`.
 * [x] Description of what (class, method, or function) is being tested: `describe`.
 * [x] Description of any particular circumstances, during which those expectations apply: `context`.
-* [x] Disabled spec, that should not be run. `disabled`.
-* [ ] Pending spec, that lacks a verification.
+* [x] Disabled spec, that should not be run: `disabled`.
+* [x] Pending spec, that lacks a verification: `pending`.
 
 `StaticMethodSyntax` shows concise JavaSpec syntax by using static imports for JavaSpec methods.  It's more concise–and
 there are fewer opportunities to mix up scope–than with passing scope/context parameters back to the lambdas.
