@@ -1,6 +1,5 @@
 package info.javaspec.jupiter.syntax.staticmethods;
 
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
@@ -53,7 +52,7 @@ final class JavaSpec {
       //Positive: It adds the spec to the test plan, and it doesn't actually run the execution.
       //Negative: It shows a misleading and distracting stack trace, due to the unmet assumption.
       //Source: https://github.com/junit-team/junit5/issues/1439
-      String description = String.format("Disabled: %s (not a failed assumption; this is just how JavaSpec works)", intendedBehavior);
+      String description = String.format("Disabled: %s.  This is not a failed assumption in the spec; it's just how JavaSpec disables a spec.", intendedBehavior);
       assumeTrue(false, description);
 //      brokenVerification.execute();
     });

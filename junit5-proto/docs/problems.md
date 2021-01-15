@@ -10,9 +10,11 @@
 * [x] Disabled spec, that should not be run. `disabled`.
 * [ ] Pending spec, that lacks a verification.
 
-Using static methods for each syntax form (demonstrated in `StaticMethodSyntax`) is the most concise, and it reduces friction in passing and calling methods on context/scope objects.
+`StaticMethodSyntax` shows concise JavaSpec syntax by using static imports for JavaSpec methods.  It's more concise–and
+there are fewer opportunities to mix up scope–than with passing scope/context parameters back to the lambdas.
 
-The syntax for `disabled` is nice to write, but running it is quite misleading.
+The syntax for `disabled` is nice to write, but running it is quite misleading.  Could JavaSpec create the 
+`DyanmicTest` as always, but also add a `TestFilter` to ignore it?
 
 
 ### Where in a spec class to use this syntax, to declare specs
@@ -45,7 +47,8 @@ The syntax for `disabled` is nice to write, but running it is quite misleading.
 
 ### How to report results
 
-* [ ] Finding exceptions that happen in the production code and exceptions that happen in the test code, and tracing back from the stack trace to both.
+* [ ] Finding exceptions that happen in the production code and exceptions that happen in the test code, and tracing 
+  back from the stack trace to both.
 * [ ] On the command-line: The Jupiter standalone jar would be best
 * [ ] When running on the command-line, during CI
 * [ ] When running in Gradle: Uhh...use the built-in test reporter?  Compatible with custom reporters? Write our own
