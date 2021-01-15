@@ -18,33 +18,18 @@ final class JavaSpec {
   }
 
   public static void context(String condition, DescribeBlock block) {
-    describe(condition, block);
+    declareContainer(condition, block);
   }
 
   public static DynamicNode describe(Class<?> actor, DescribeBlock block) {
-    return describe(actor.getSimpleName(), block);
+    //Negative: Could the exposed DynamicContainer be mutated in a way JavaSpec does not support?
+    return declareContainer(actor.getSimpleName(), block);
   }
 
   //Unknown: Could nodes be added to the wrong container, if jupiter-engine runs tests in parallel?
-  public static DynamicNode describe(String actor, DescribeBlock block) {
-    //Push a fresh node list onto the stack and append declarations to that
-    _containers.push(new DynamicNodeList());
-    block.declare();
-
-    //Create this child container entirely, then add it to any parent container
-    DynamicNodeList childNodes = _containers.pop();
-    DynamicContainer thisChildContainer = DynamicContainer.dynamicContainer(actor, childNodes);
-    DynamicNodeList parentContainer = _containers.peek();
-    parentContainer.add(thisChildContainer);
-
-    //Negative: Exposes DynamicContainer to developers, who might mutate it in a way that's incompatible with JavaSpec.
-    return thisChildContainer;
-  }
-
-  public static DynamicTest it(String behavior, Executable verification) {
-    DynamicTest test = DynamicTest.dynamicTest(behavior, verification);
-    _containers.peek().add(test);
-    return test;
+  public static DynamicNode describe(String functionOrGenericActor, DescribeBlock block) {
+    //Negative: Could the exposed DynamicContainer be mutated in a way JavaSpec does not support?
+    return declareContainer(functionOrGenericActor, block);
   }
 
   public static DynamicNode disable(String intendedBehavior, Executable brokenVerification) {
@@ -55,7 +40,14 @@ final class JavaSpec {
       String description = String.format("Disabled: %s.  This is not a failed assumption in the spec; it's just how JavaSpec disables a spec.", intendedBehavior);
       assumeTrue(false, description);
     });
-    _containers.peek().add(test);
+
+    addToCurrentContainer(test);
+    return test;
+  }
+
+  public static DynamicTest it(String behavior, Executable verification) {
+    DynamicTest test = DynamicTest.dynamicTest(behavior, verification);
+    addToCurrentContainer(test);
     return test;
   }
 
@@ -67,8 +59,25 @@ final class JavaSpec {
       String description = String.format("Pending: %s.  This is not a failed assumption in the spec; it's just how JavaSpec skips a pending a spec.", pendingBehavior);
       assumeTrue(false, description);
     });
-    _containers.peek().add(test);
+
+    addToCurrentContainer(test);
     return test;
+  }
+
+  private static void addToCurrentContainer(DynamicNode testOrContainer) {
+    _containers.peek().add(testOrContainer);
+  }
+
+  private static DynamicContainer declareContainer(String whatOrWhen, DescribeBlock block) {
+    //Push a fresh node list onto the stack and append declarations to that
+    _containers.push(new DynamicNodeList());
+    block.declare();
+
+    //Create and link this container, now that all specs and/or sub-containers have been declared
+    DynamicNodeList childNodes = _containers.pop();
+    DynamicContainer childContainer = DynamicContainer.dynamicContainer(whatOrWhen, childNodes);
+    addToCurrentContainer(childContainer);
+    return childContainer;
   }
 
   @FunctionalInterface
