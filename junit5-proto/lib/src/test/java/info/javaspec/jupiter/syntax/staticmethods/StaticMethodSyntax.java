@@ -68,4 +68,9 @@ class StaticMethodSyntax {
       });
     });
   }
+
+  @TestFactory
+  DynamicNode disableASpec() {
+    return JavaSpec.disable("verification that needs to be updated", () -> assertEquals(1, 2));
+  }
 }

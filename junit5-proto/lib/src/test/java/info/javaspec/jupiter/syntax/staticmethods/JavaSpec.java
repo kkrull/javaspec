@@ -1,5 +1,6 @@
 package info.javaspec.jupiter.syntax.staticmethods;
 
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
@@ -7,6 +8,8 @@ import org.junit.jupiter.api.function.Executable;
 
 import java.util.LinkedList;
 import java.util.Stack;
+
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 final class JavaSpec {
   private static final Stack<DynamicNodeList> _containers = new Stack<>();
@@ -41,6 +44,19 @@ final class JavaSpec {
 
   public static DynamicTest it(String behavior, Executable verification) {
     DynamicTest test = DynamicTest.dynamicTest(behavior, verification);
+    _containers.peek().add(test);
+    return test;
+  }
+
+  public static DynamicNode disable(String intendedBehavior, Executable brokenVerification) {
+    DynamicTest test = DynamicTest.dynamicTest(intendedBehavior, () -> {
+      //Positive: It adds the spec to the test plan, and it doesn't actually run the execution.
+      //Negative: It shows a misleading and distracting stack trace, due to the unmet assumption.
+      //Source: https://github.com/junit-team/junit5/issues/1439
+      String description = String.format("Disabled: %s (not a failed assumption; this is just how JavaSpec works)", intendedBehavior);
+      assumeTrue(false, description);
+//      brokenVerification.execute();
+    });
     _containers.peek().add(test);
     return test;
   }

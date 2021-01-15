@@ -7,10 +7,12 @@
 * [x] Procedures to verify those expectations `it`.
 * [x] Description of what (class, method, or function) is being tested: `describe`.
 * [x] Description of any particular circumstances, during which those expectations apply: `context`.
-* [ ] Disabled spec, that should not be run.
+* [x] Disabled spec, that should not be run. `disabled`.
 * [ ] Pending spec, that lacks a verification.
 
 Using static methods for each syntax form (demonstrated in `StaticMethodSyntax`) is the most concise, and it reduces friction in passing and calling methods on context/scope objects.
+
+The syntax for `disabled` is nice to write, but running it is quite misleading.
 
 
 ### Where in a spec class to use this syntax, to declare specs
