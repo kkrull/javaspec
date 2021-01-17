@@ -1,0 +1,26 @@
+//Prototypes for integration with JUnit Jupiter.
+//Reference: https://docs.gradle.org/6.7.1/userguide/building_java_projects.html
+
+plugins {
+  id 'java-library' //Separates API from implementation
+  id 'com.adarshr.test-logger' version '2.1.1' //Test logging
+}
+
+repositories {
+  jcenter()
+}
+
+dependencies {
+  //JUnit Jupiter API + engine for testing
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+tasks.named('test') {
+  useJUnitPlatform()
+}
+
+//https://github.com/radarsh/gradle-test-logger-plugin
+testlogger {
+  theme 'mocha'
+}
