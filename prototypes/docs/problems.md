@@ -19,6 +19,20 @@ there are fewer opportunities to mix up scope–than with passing scope/context 
 The syntax for `disabled` is nice to write, but running it is quite misleading.  Could JavaSpec create the `DyanmicTest`
 as always, but also add a `TestFilter` to ignore it?
 
+How could a type-safe subject be instantiated in each spec?
+
+1. Extend a base class `JavaSpecs<S>` that has parameterized subject methods: `SubjectFromBaseClassSpecs`.
+1. Immutable objects can just be declared once in a `describe` block and shared at runtime.
+1. Don't make it typesafe - pass in the `.class` you want and cast it before returning.
+1. Extendable syntax for static methods?
+
+    ```java
+    //I don't think static methods can be extended (with new parameters)
+    class GreeterSpecs extends JavaSpec<Greeter> { ... }
+    class JavaSpec<S extends Object> { ... }
+    ```
+1. Same, but use an instance of `JavaSpec` instead of static methods.
+
 
 ### Where in a spec class to use this syntax, to declare specs
 
