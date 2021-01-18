@@ -1,6 +1,6 @@
 package info.javaspec.jupiter.syntax.subject;
 
-abstract class JavaSpec<S> {
+abstract class SubjectFieldBaseClass<S> {
   private S subject;
 
   protected S getSubject() {
