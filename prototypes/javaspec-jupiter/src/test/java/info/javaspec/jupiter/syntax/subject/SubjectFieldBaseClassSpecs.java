@@ -7,14 +7,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
 //Positive: There's a type-safe way to get/set the subject.
-//Positive: Subject methods can be called from anywhere.  Even lambdas?
+//Positive: Subject methods can be called from anywhere, even lambdas.
 //Negative: Specs have to extend that one base class, to work with subjects.
+@DisplayName("Store subjects in a field in a base class")
 class SubjectFieldInBaseClassSpecs extends SubjectFieldBaseClass<List<String>> {
   //Negative: Re-initializes subject per TestFactory (not per spec), making it unsuited for stateful subjects.
   @BeforeEach
