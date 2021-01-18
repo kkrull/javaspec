@@ -7,7 +7,10 @@ import info.javaspec.jupiter.Greeter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.DisplayName;
+
 //Shows how to use a @TestFactory method to declare a dynamic test
+@DisplayName("Test creation: TestFactory method")
 class TestFactoryMethodTest {
   {
     JavaSpec.it("greets the world", () -> {

@@ -1,6 +1,8 @@
 package info.javaspec.jupiter.syntax.staticmethods;
 
 import info.javaspec.jupiter.syntax.staticmethods.Minimax.GameState;
+
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
 
@@ -12,6 +14,7 @@ import java.util.Map;
 import static info.javaspec.jupiter.syntax.staticmethods.JavaSpec.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisplayName("Declaration syntax: Try Minimax")
 class MinimaxWithStaticMethodSyntaxSpecs {
   @TestFactory DynamicNode makeSpecs() {
     //Positive: Works, while being much more concise than plain JUnit.

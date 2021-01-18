@@ -14,7 +14,7 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
 //Negative: Specs have to extend that one base class, to work with subjects.
-@DisplayName("Generate subjects in a base class")
+@DisplayName("Subject syntax: Generate subjects in a base class")
 class SubjectGeneratorBaseClassSpecs extends SubjectGeneratorBaseClass<List<String>> {
   @BeforeEach
   void setup() {

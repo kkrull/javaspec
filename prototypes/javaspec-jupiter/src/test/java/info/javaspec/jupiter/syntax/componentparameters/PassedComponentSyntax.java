@@ -7,7 +7,10 @@ import org.junit.jupiter.api.TestFactory;
 import static info.javaspec.jupiter.syntax.componentparameters.JavaSpec.describe;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.DisplayName;
+
 //Shows how to pass `it` to describe lambdas, as a parameter.
+@DisplayName("Declaration syntax: Pass distinct declaration objects to lambdas")
 public class PassedComponentSyntax {
   @TestFactory
   DynamicNode generateTests() {

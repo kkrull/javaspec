@@ -10,8 +10,9 @@
 * [x] Disabled spec, that should not be run: `disabled`.
 * [x] Pending spec, that lacks a verification: `pending`.
 * [ ] Declaration of reused variables.
-* [ ] Reusing common setup code that runs before each spec in a container.
-* [ ] Reusing common teardown code that runs after each spec in a container.
+* [ ] Common instance/factory for generating the test subject.
+* [ ] Reusing common setup procedure that runs before each spec in a container.
+* [ ] Reusing common teardown procedure that runs after each spec in a container.
 
 `StaticMethodSyntax` shows concise JavaSpec syntax by using static imports for JavaSpec methods.  It's more concise–and
 there are fewer opportunities to mix up scope–than with passing scope/context parameters back to the lambdas.
@@ -21,8 +22,6 @@ as always, but also add a `TestFilter` to ignore it?
 
 How could a type-safe subject be instantiated in each spec?
 
-1. Extend a base class `JavaSpecs<S>` that has parameterized subject methods: `SubjectFromBaseClassSpecs`.
-1. Immutable objects can just be declared once in a `describe` block and shared at runtime.
 1. Don't make it typesafe - pass in the `.class` you want and cast it before returning.
 1. Extendable syntax for static methods?
 

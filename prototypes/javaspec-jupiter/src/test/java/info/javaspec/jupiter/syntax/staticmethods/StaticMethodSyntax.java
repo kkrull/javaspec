@@ -8,7 +8,10 @@ import static info.javaspec.jupiter.syntax.staticmethods.JavaSpec.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import org.junit.jupiter.api.DisplayName;
+
 //Shows how to use static imports for spec syntax.
+@DisplayName("Declaration syntax: Static methods")
 class StaticMethodSyntax {
   @TestFactory
   DynamicNode itStandsAlone() {
