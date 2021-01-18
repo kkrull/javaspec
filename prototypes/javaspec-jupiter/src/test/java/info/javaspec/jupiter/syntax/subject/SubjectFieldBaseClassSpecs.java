@@ -17,7 +17,7 @@ import org.junit.jupiter.api.TestFactory;
 //Positive: Subject methods can be called from anywhere, even lambdas.
 //Negative: Specs have to extend that one base class, to work with subjects.
 @DisplayName("Subject syntax: Store subjects in a field in a base class")
-class SubjectFieldInBaseClassSpecs extends SubjectFieldBaseClass<List<String>> {
+class SubjectFieldBaseClassSpecs extends SubjectFieldBaseClass<List<String>> {
   //Negative: Re-initializes subject per TestFactory (not per spec), making it unsuited for stateful subjects.
   @BeforeEach
   void setup() {
