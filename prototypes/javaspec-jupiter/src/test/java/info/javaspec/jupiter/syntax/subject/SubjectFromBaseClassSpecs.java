@@ -3,7 +3,9 @@ package info.javaspec.jupiter.syntax.subject;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 
 import info.javaspec.jupiter.Greeter;
 
@@ -16,15 +18,19 @@ class SubjectFromBaseClassSpecs extends JavaSpec<Greeter> {
     setSubject(new Greeter());
   }
 
-  @Test
-  void greetsTheWorld() {
-    Greeter subject = getSubject();
-    assertEquals("Hello world!", subject.makeGreeting());
+  @TestFactory
+  DynamicNode greetsTheWorld() {
+    return DynamicTest.dynamicTest("Greets the world", () -> {
+      Greeter subject = getSubject();
+      assertEquals("Hello world!", subject.makeGreeting());
+    });
   }
 
-  @Test
-  void greetsThePerson() {
-    Greeter subject = getSubject();
-    assertEquals("Hello George!", subject.makeGreeting("George"));
+  @TestFactory
+  DynamicNode greetsThePerson() {
+    return DynamicTest.dynamicTest("Greets a person", () -> {
+      Greeter subject = getSubject();
+      assertEquals("Hello George!", subject.makeGreeting("George"));
+    });
   }
 }
