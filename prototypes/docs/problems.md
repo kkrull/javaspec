@@ -22,7 +22,9 @@ as always, but also add a `TestFilter` to ignore it?
 
 How could a type-safe subject be instantiated in each spec?
 
-1. Don't make it typesafe - pass in the `.class` you want and cast it before returning.
+1. Don't have any subject syntax at all.  `beforeEach` et al don't need to interact with any test-specific types.
+1. Don't make it typesafe.  Use a static `JavaSpec.subject` method and pass in the `.class` you want and cast it before
+   returning.
 1. Extendable syntax for static methods?
 
     ```java
@@ -31,6 +33,26 @@ How could a type-safe subject be instantiated in each spec?
     class JavaSpec<S extends Object> { ... }
     ```
 1. Same, but use an instance of `JavaSpec` instead of static methods.
+
+    ```java
+    class GreeterSpecs {
+      {
+        //Positive: Might be able to make type-safe set/get methods that abstract the atomic reference and can be called anytime.
+        //Positive: There's only 1 javaspec object to interact with, so there's less chance of mixing up multiple context objects.
+        //Negative: All use of JavaSpec happens on an object, and that could add to clutter.
+        Subject<Greeter> specs = JavaSpec.forSubject(Greeter.class);
+        specs.describe("#makeGreeting", () -> {
+          specs.it("geneates on-demand", () -> {
+            assertNotNull(specs.makeSubject());
+          });
+
+          specs.it("passes a subject parameter", (subject) -> {
+            assertNotNull(subject.makeGreeting());
+          });
+        });
+      }
+    }
+    ```
 
 
 ### Where in a spec class to use this syntax, to declare specs
