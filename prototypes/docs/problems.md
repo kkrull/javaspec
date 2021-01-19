@@ -25,13 +25,6 @@ How could a type-safe subject be instantiated in each spec?
 1. Don't have any subject syntax at all.  `beforeEach` et al don't need to interact with any test-specific types.
 1. Don't make it typesafe.  Use a static `JavaSpec.subject` method and pass in the `.class` you want and cast it before
    returning.
-1. Extendable syntax for static methods?
-
-    ```java
-    //I don't think static methods can be extended (with new parameters)
-    class GreeterSpecs extends JavaSpec<Greeter> { ... }
-    class JavaSpec<S extends Object> { ... }
-    ```
 1. Same, but use an instance of `JavaSpec` instead of static methods.
 
     ```java

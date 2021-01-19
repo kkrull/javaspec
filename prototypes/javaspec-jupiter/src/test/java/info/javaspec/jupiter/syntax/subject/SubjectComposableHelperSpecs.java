@@ -22,7 +22,7 @@ class SubjectComposableHelperSpecs {
   @BeforeEach
   void setup() {
     //Negative: Referencing non-final constructor parameters requires AtomicReference?
-    this.subject = new Subject<List<String>>(() -> new LinkedList<>());
+    this.subject = new Subject<>(() -> new LinkedList<>());
   }
 
   @TestFactory
