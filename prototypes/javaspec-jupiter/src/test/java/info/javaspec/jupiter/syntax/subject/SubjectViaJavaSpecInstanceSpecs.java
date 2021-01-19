@@ -16,19 +16,21 @@ class SubjectViaJavaSpecInstanceSpecs {
   DynamicNode makeTests() {
     JavaSpec<List<String>> javaspec = new JavaSpec<>();
     return javaspec.describe("List", () -> {
-      javaspec.subject(LinkedList::new);
+      javaspec.subject(() -> {
+        LinkedList<String> list = new LinkedList<>();
+        list.add("existing");
+        return list;
+      });
 
       javaspec.it("appends to the tail", () -> {
         List<String> list = javaspec.subject();
-        list.add("append-a");
-        list.add("append-b");
-        assertEquals(Arrays.asList("append-a", "append-b"), list);
+        list.add("appended");
+        assertEquals(Arrays.asList("existing", "appended"), list);
       });
       javaspec.it("prepends to the head", () -> {
         List<String> list = javaspec.subject();
-        list.add(0, "prepend-a");
-        list.add(0, "prepend-b");
-        assertEquals(Arrays.asList("prepend-b", "prepend-a"), list);
+        list.add(0, "prepended");
+        assertEquals(Arrays.asList("prepended", "existing"), list);
       });
     });
   }

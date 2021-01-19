@@ -54,9 +54,6 @@ final class JavaSpec<S> {
   }
 
   @FunctionalInterface
-  public interface ContextBlock extends DeclarationBlock { }
-
-  @FunctionalInterface
   public interface DescribeBlock extends DeclarationBlock { }
 
   @FunctionalInterface
