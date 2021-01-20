@@ -17,19 +17,22 @@ class MinimaxWithSubjectSpecs {
       String min = "Min";
       javaspec.subject(() -> new Minimax(max, min));
 
-      javaspec.it("scores a game ending in a draw as 0", () -> {
-        GameWithKnownStates game = new GameWithKnownStates(true);
-        assertEquals(0, javaspec.subject().score(game, max));
-      });
+      //Negative: The description in the context does not show up in the gradle test reporter I'm using
+      javaspec.context("when the game is already over", () -> {
+        javaspec.it("scores a game ending in a draw as 0", () -> {
+          GameWithKnownStates game = new GameWithKnownStates(true);
+          assertEquals(0, javaspec.subject().score(game, max));
+        });
 
-      javaspec.it("scores a game won by the maximizing player as +1", () -> {
-        GameWithKnownStates game = new GameWithKnownStates(true, max);
-        assertEquals(+1, javaspec.subject().score(game, max));
-      });
+        javaspec.it("scores a game won by the maximizing player as +1", () -> {
+          GameWithKnownStates game = new GameWithKnownStates(true, max);
+          assertEquals(+1, javaspec.subject().score(game, max));
+        });
 
-      javaspec.it("scores a game won by the minmizing player as -1", () -> {
-        GameWithKnownStates game = new GameWithKnownStates(true, min);
-        assertEquals(-1, javaspec.subject().score(game, max));
+        javaspec.it("scores a game won by the minmizing player as -1", () -> {
+          GameWithKnownStates game = new GameWithKnownStates(true, min);
+          assertEquals(-1, javaspec.subject().score(game, max));
+        });
       });
     });
   }
