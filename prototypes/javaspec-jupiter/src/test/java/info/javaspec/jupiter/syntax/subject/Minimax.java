@@ -10,13 +10,16 @@ final class Minimax {
   }
 
   public int score(GameState game, String player) {
-    if (game.isOver())
+    if (player.equals(game.findWinner()))
+      return +1;
+    else if (game.isOver())
       return 0;
 
     return 999;
   }
 
   public interface GameState {
+    String findWinner();
     boolean isOver();
   }
 }
