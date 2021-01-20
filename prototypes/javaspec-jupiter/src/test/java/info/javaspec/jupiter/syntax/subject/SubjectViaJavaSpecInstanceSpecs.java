@@ -10,7 +10,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-//TODO KDK: This isn't as annoying as I expected it to be.  Try driving Minimax.
 @DisplayName("Subject syntax: Type-safe generic methods")
 class SubjectViaJavaSpecInstanceSpecs {
   @TestFactory
