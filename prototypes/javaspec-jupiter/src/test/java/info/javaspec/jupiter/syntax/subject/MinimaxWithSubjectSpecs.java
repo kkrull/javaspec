@@ -49,6 +49,13 @@ class MinimaxWithSubjectSpecs {
           game.addKnownState("ThenMaxWins", new GameWithKnownStates(true, max));
           assertEquals(+1, javaspec.subject().score(game, max));
         });
+
+        javaspec.it("the minimizer picks the move with the lowest score", () -> {
+          GameWithKnownStates game = new GameWithKnownStates(false);
+          game.addKnownState("ThenDraw", new GameWithKnownStates(true));
+          game.addKnownState("ThenMaxLoses", new GameWithKnownStates(true, min));
+          assertEquals(-1, javaspec.subject().score(game, min));
+        });
       });
     });
   }
@@ -75,6 +82,11 @@ class MinimaxWithSubjectSpecs {
     }
 
     @Override
+    public List<String> availableMoves() {
+      return new ArrayList<>(this.moveToGameState.keySet());
+    }
+
+    @Override
     public String findWinner() {
       return this.winner;
     }
@@ -82,11 +94,6 @@ class MinimaxWithSubjectSpecs {
     @Override
     public boolean isOver() {
       return this.isOver;
-    }
-
-    @Override
-    public List<String> availableMoves() {
-      return new ArrayList<>(this.moveToGameState.keySet());
     }
 
     @Override

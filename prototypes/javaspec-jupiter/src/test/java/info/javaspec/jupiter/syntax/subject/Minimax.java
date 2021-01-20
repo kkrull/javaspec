@@ -30,6 +30,17 @@ final class Minimax {
       }
 
       return bestScore;
+    } else if(this.minimizer.equals(player)) {
+      int bestScore = +100;
+      for(String nextMove : game.availableMoves()) {
+        GameState nextGame = game.move(nextMove);
+        int nextScore = score(nextGame, "Minnie Mouse");
+        if(nextScore < bestScore) {
+          bestScore = nextScore;
+        }
+      }
+
+      return bestScore;
     }
 
     return 999;
