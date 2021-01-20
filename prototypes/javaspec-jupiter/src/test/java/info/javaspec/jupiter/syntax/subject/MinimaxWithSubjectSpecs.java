@@ -15,12 +15,14 @@ import info.javaspec.jupiter.syntax.subject.Minimax.GameState;
 
 @DisplayName("Subject syntax: Try Minimax")
 class MinimaxWithSubjectSpecs {
+  //Negative: Supporting data had to be moved up here, somewhat away from the Minimax#score scope, to reach the helpers.
+  String max = "Max";
+  String min = "Min";
+
   @TestFactory
   DynamicNode makeSpecs() {
     JavaSpec<Minimax> javaspec = new JavaSpec<>();
     return javaspec.describe(Minimax.class, () -> {
-      String max = "Max";
-      String min = "Min";
       javaspec.subject(() -> new Minimax(max, min));
 
       // Negative: The description in the context does not show up in the gradle test
@@ -60,37 +62,31 @@ class MinimaxWithSubjectSpecs {
 
       javaspec.context("when the game will end in 2 or more moves", () -> {
         javaspec.it("the maximizer assumes the minimizer will pick the lowest score", () -> {
-          GameWithKnownStates game = new GameWithKnownStates(false);
-          GameWithKnownStates leftTree = new GameWithKnownStates(false);
-          game.addKnownState("Left", leftTree);
-          leftTree.addKnownState("Draw", new GameWithKnownStates(true));
-          leftTree.addKnownState("ThenMaxWins", new GameWithKnownStates(true, max));
-
-          GameWithKnownStates rightTree = new GameWithKnownStates(false);
-          game.addKnownState("Right", rightTree);
-          rightTree.addKnownState("Draw", new GameWithKnownStates(true));
-          rightTree.addKnownState("ThenMaxLoses", new GameWithKnownStates(true, min));
-
+          GameWithKnownStates game = gameWithTwoMovesLeft();
           assertEquals(0, javaspec.subject().score(game, max));
         });
 
         javaspec.it("the minimizer assumes the maximizer will pick the highest score", () -> {
           //Negative: Repeating setup for non-subject entities (collaborators)
-          GameWithKnownStates game = new GameWithKnownStates(false);
-          GameWithKnownStates leftTree = new GameWithKnownStates(false);
-          game.addKnownState("Left", leftTree);
-          leftTree.addKnownState("Draw", new GameWithKnownStates(true));
-          leftTree.addKnownState("ThenMaxWins", new GameWithKnownStates(true, max));
-
-          GameWithKnownStates rightTree = new GameWithKnownStates(false);
-          game.addKnownState("Right", rightTree);
-          rightTree.addKnownState("Draw", new GameWithKnownStates(true));
-          rightTree.addKnownState("ThenMaxLoses", new GameWithKnownStates(true, min));
-
+          GameWithKnownStates game = gameWithTwoMovesLeft();
           assertEquals(0, javaspec.subject().score(game, min));
         });
       });
     });
+  }
+
+  private GameWithKnownStates gameWithTwoMovesLeft() {
+    GameWithKnownStates game = new GameWithKnownStates(false);
+    GameWithKnownStates leftTree = new GameWithKnownStates(false);
+    game.addKnownState("Left", leftTree);
+    leftTree.addKnownState("Draw", new GameWithKnownStates(true));
+    leftTree.addKnownState("ThenMaxWins", new GameWithKnownStates(true, max));
+
+    GameWithKnownStates rightTree = new GameWithKnownStates(false);
+    game.addKnownState("Right", rightTree);
+    rightTree.addKnownState("Draw", new GameWithKnownStates(true));
+    rightTree.addKnownState("ThenMaxLoses", new GameWithKnownStates(true, min));
+    return game;
   }
 
   private static final class GameWithKnownStates implements GameState {
