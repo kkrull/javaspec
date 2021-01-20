@@ -57,6 +57,23 @@ class MinimaxWithSubjectSpecs {
           assertEquals(-1, javaspec.subject().score(game, min));
         });
       });
+
+      javaspec.context("when the game will end in 2 or more moves", () -> {
+        javaspec.it("the maximizer assumes the minimizer will pick the lowest score", () -> {
+          GameWithKnownStates game = new GameWithKnownStates(false);
+          GameWithKnownStates leftTree = new GameWithKnownStates(false);
+          game.addKnownState("Left", leftTree);
+          leftTree.addKnownState("Draw", new GameWithKnownStates(true));
+          leftTree.addKnownState("ThenMaxWins", new GameWithKnownStates(true, max));
+
+          GameWithKnownStates rightTree = new GameWithKnownStates(false);
+          game.addKnownState("Right", rightTree);
+          rightTree.addKnownState("Draw", new GameWithKnownStates(true));
+          rightTree.addKnownState("ThenMaxLoses", new GameWithKnownStates(true, min));
+
+          assertEquals(0, javaspec.subject().score(game, max));
+        });
+      });
     });
   }
 

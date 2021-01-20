@@ -23,7 +23,7 @@ final class Minimax {
       int bestScore = -100;
       for(String nextMove : game.availableMoves()) {
         GameState nextGame = game.move(nextMove);
-        int nextScore = score(nextGame, "Mad Max");
+        int nextScore = score(nextGame, this.minimizer);
         if(nextScore > bestScore) {
           bestScore = nextScore;
         }
