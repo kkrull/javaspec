@@ -5,6 +5,8 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.Executable;
 
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
 import java.util.LinkedList;
 import java.util.Stack;
 import java.util.function.Supplier;
@@ -19,8 +21,26 @@ final class JavaSpec<S> {
     containers.push(new RootNodeList());
   }
 
+  public void context(String condition, ContextBlock block) {
+    declareContainer(condition, block);
+  }
+
+  public DynamicNode describe(Class<?> actor, DescribeBlock block) {
+    return declareContainer(actor.getSimpleName(), block);
+  }
+
   public DynamicNode describe(String functionOrGenericActor, DescribeBlock block) {
     return declareContainer(functionOrGenericActor, block);
+  }
+
+  public DynamicNode disable(String intendedBehavior, Executable brokenVerification) {
+    DynamicTest test = makeSkippedTest(
+      intendedBehavior,
+      String.format("Disabled: %s.  This is not a failed assumption in the spec; it's just how JavaSpec disables a spec.", intendedBehavior)
+    );
+
+    addToCurrentContainer(test);
+    return test;
   }
 
   public DynamicTest it(String behavior, Executable verification) {
@@ -31,6 +51,16 @@ final class JavaSpec<S> {
 
   public DynamicTest it(String behavior, ExecutableWithSubject<S> verification) {
     DynamicTest test = DynamicTest.dynamicTest(behavior, () -> verification.execute(subject()));
+    addToCurrentContainer(test);
+    return test;
+  }
+
+  public DynamicNode pending(String pendingBehavior) {
+    DynamicTest test = makeSkippedTest(
+      pendingBehavior,
+      String.format("Pending: %s.  This is not a failed assumption in the spec; it's just how JavaSpec skips a pending a spec.", pendingBehavior)
+    );
+
     addToCurrentContainer(test);
     return test;
   }
@@ -51,6 +81,14 @@ final class JavaSpec<S> {
     return childContainer;
   }
 
+  private static DynamicTest makeSkippedTest(String intendedBehavior, String explanation) {
+    return DynamicTest.dynamicTest(intendedBehavior, () -> {
+      //Negative: It shows a misleading and distracting stack trace, due to the unmet assumption.
+      //Source: https://github.com/junit-team/junit5/issues/1439
+      assumeTrue(false, explanation);
+    });
+  }
+
   public S subject() {
     return this.subjectSupplier.get();
   }
@@ -58,6 +96,9 @@ final class JavaSpec<S> {
   public void subject(Supplier<S> supplier) {
     this.subjectSupplier = supplier;
   }
+
+  @FunctionalInterface
+  public interface ContextBlock extends DeclarationBlock { }
 
   @FunctionalInterface
   public interface DescribeBlock extends DeclarationBlock { }
