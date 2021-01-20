@@ -73,6 +73,22 @@ class MinimaxWithSubjectSpecs {
 
           assertEquals(0, javaspec.subject().score(game, max));
         });
+
+        javaspec.it("the minimizer assumes the maximizer will pick the highest score", () -> {
+          //Negative: Repeating setup for non-subject entities (collaborators)
+          GameWithKnownStates game = new GameWithKnownStates(false);
+          GameWithKnownStates leftTree = new GameWithKnownStates(false);
+          game.addKnownState("Left", leftTree);
+          leftTree.addKnownState("Draw", new GameWithKnownStates(true));
+          leftTree.addKnownState("ThenMaxWins", new GameWithKnownStates(true, max));
+
+          GameWithKnownStates rightTree = new GameWithKnownStates(false);
+          game.addKnownState("Right", rightTree);
+          rightTree.addKnownState("Draw", new GameWithKnownStates(true));
+          rightTree.addKnownState("ThenMaxLoses", new GameWithKnownStates(true, min));
+
+          assertEquals(0, javaspec.subject().score(game, min));
+        });
       });
     });
   }
