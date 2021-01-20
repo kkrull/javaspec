@@ -26,6 +26,11 @@ class MinimaxWithSubjectSpecs {
         GameWithKnownStates game = new GameWithKnownStates(true, max);
         assertEquals(+1, javaspec.subject().score(game, max));
       });
+
+      javaspec.it("scores a game won by the minmizing player as -1", () -> {
+        GameWithKnownStates game = new GameWithKnownStates(true, min);
+        assertEquals(-1, javaspec.subject().score(game, max));
+      });
     });
   }
 
