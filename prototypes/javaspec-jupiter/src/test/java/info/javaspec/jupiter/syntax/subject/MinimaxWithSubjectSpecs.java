@@ -13,22 +13,18 @@ class MinimaxWithSubjectSpecs {
   @TestFactory DynamicNode makeSpecs() {
     JavaSpec<Minimax> javaspec = new JavaSpec<>();
     return javaspec.describe(Minimax.class, () -> {
-      javaspec.it("scores a game ending in a draw as 0", () -> {
-        String max = "Max";
-        String min = "Min";
-        Minimax subject = new Minimax(max, min);
+      String max = "Max";
+      String min = "Min";
+      javaspec.subject(() -> new Minimax(max, min));
 
+      javaspec.it("scores a game ending in a draw as 0", () -> {
         GameWithKnownStates game = new GameWithKnownStates(true);
-        assertEquals(0, subject.score(game, max));
+        assertEquals(0, javaspec.subject().score(game, max));
       });
 
       javaspec.it("scores a game won by the maximizing player as +1", () -> {
-        String max = "Max";
-        String min = "Min";
-        Minimax subject = new Minimax(max, min);
-
         GameWithKnownStates game = new GameWithKnownStates(true, max);
-        assertEquals(+1, subject.score(game, max));
+        assertEquals(+1, javaspec.subject().score(game, max));
       });
     });
   }
