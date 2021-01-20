@@ -29,6 +29,12 @@ final class JavaSpec<S> {
     return test;
   }
 
+  public DynamicTest it(String behavior, ExecutableWithSubject<S> verification) {
+    DynamicTest test = DynamicTest.dynamicTest(behavior, () -> verification.execute(subject()));
+    addToCurrentContainer(test);
+    return test;
+  }
+
   private void addToCurrentContainer(DynamicNode testOrContainer) {
     containers.peek().add(testOrContainer);
   }
@@ -59,6 +65,11 @@ final class JavaSpec<S> {
   @FunctionalInterface
   private interface DeclarationBlock {
     void declare();
+  }
+
+  @FunctionalInterface
+  public interface ExecutableWithSubject<S> {
+    void execute(S subject) throws Throwable;
   }
 
   //Null object so there's always something on the stack, even if it's not a test container

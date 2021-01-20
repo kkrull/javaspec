@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-//TODO KDK: This isn't as annoying as I expected it to be.  Try driving Minimax?
+//TODO KDK: This isn't as annoying as I expected it to be.  Try driving Minimax.
 @DisplayName("Subject syntax: Type-safe generic methods")
 class SubjectViaJavaSpecInstanceSpecs {
   @TestFactory
@@ -29,16 +29,14 @@ class SubjectViaJavaSpecInstanceSpecs {
         return list;
       });
 
-      javaspec.it("appends to the tail", () -> {
-        //TODO KDK: If we're going this far, why not just pass the subject to the it lambda?
-        List<String> list = javaspec.subject();
-        list.add("appended");
-        assertEquals(Arrays.asList("existing", "appended"), list);
+      //Positive: You can receive the subject as a parameter, instead of having to explicitly ask for it
+      javaspec.it("appends to the tail", (subject) -> {
+        subject.add("appended");
+        assertEquals(Arrays.asList("existing", "appended"), subject);
       });
-      javaspec.it("prepends to the head", () -> {
-        List<String> list = javaspec.subject();
-        list.add(0, "prepended");
-        assertEquals(Arrays.asList("prepended", "existing"), list);
+      javaspec.it("prepends to the head", (subject) -> {
+        subject.add(0, "prepended");
+        assertEquals(Arrays.asList("prepended", "existing"), subject);
       });
     });
   }
