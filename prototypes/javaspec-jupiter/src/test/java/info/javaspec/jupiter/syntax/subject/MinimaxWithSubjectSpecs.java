@@ -28,48 +28,48 @@ class MinimaxWithSubjectSpecs {
       // Negative: The description in the context does not show up in the gradle test
       // reporter I'm using
       javaspec.context("when the game is already over", () -> {
-        javaspec.it("scores a game ending in a draw as 0", () -> {
+        javaspec.it("scores a game ending in a draw as 0", (subject) -> {
           GameWithKnownStates game = new GameWithKnownStates(true);
-          assertEquals(0, javaspec.subject().score(game, max));
+          assertEquals(0, subject.score(game, max));
         });
 
-        javaspec.it("scores a game won by the maximizing player as +1", () -> {
+        javaspec.it("scores a game won by the maximizing player as +1", (subject) -> {
           GameWithKnownStates game = new GameWithKnownStates(true, max);
-          assertEquals(+1, javaspec.subject().score(game, max));
+          assertEquals(+1, subject.score(game, max));
         });
 
-        javaspec.it("scores a game won by the minmizing player as -1", () -> {
+        javaspec.it("scores a game won by the minimizing player as -1", (subject) -> {
           GameWithKnownStates game = new GameWithKnownStates(true, min);
-          assertEquals(-1, javaspec.subject().score(game, max));
+          assertEquals(-1, subject.score(game, max));
         });
       });
 
       javaspec.context("when the next move will finish the game", () -> {
-        javaspec.it("the maximizer picks the move with the highest score", () -> {
+        javaspec.it("the maximizer picks the move with the highest score", (subject) -> {
           GameWithKnownStates game = new GameWithKnownStates(false);
           game.addKnownState("ThenDraw", new GameWithKnownStates(true));
           game.addKnownState("ThenMaxWins", new GameWithKnownStates(true, max));
-          assertEquals(+1, javaspec.subject().score(game, max));
+          assertEquals(+1, subject.score(game, max));
         });
 
-        javaspec.it("the minimizer picks the move with the lowest score", () -> {
+        javaspec.it("the minimizer picks the move with the lowest score", (subject) -> {
           GameWithKnownStates game = new GameWithKnownStates(false);
           game.addKnownState("ThenDraw", new GameWithKnownStates(true));
           game.addKnownState("ThenMaxLoses", new GameWithKnownStates(true, min));
-          assertEquals(-1, javaspec.subject().score(game, min));
+          assertEquals(-1, subject.score(game, min));
         });
       });
 
       javaspec.context("when the game will end in 2 or more moves", () -> {
-        javaspec.it("the maximizer assumes the minimizer will pick the lowest score", () -> {
+        javaspec.it("the maximizer assumes the minimizer will pick the lowest score", (subject) -> {
           GameWithKnownStates game = gameWithTwoMovesLeft();
-          assertEquals(0, javaspec.subject().score(game, max));
+          assertEquals(0, subject.score(game, max));
         });
 
-        javaspec.it("the minimizer assumes the maximizer will pick the highest score", () -> {
+        javaspec.it("the minimizer assumes the maximizer will pick the highest score", (subject) -> {
           //Negative: Repeating setup for non-subject entities (collaborators)
           GameWithKnownStates game = gameWithTwoMovesLeft();
-          assertEquals(0, javaspec.subject().score(game, min));
+          assertEquals(0, subject.score(game, min));
         });
       });
     });
