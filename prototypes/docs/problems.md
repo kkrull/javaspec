@@ -25,6 +25,8 @@ as always, but also add a `TestFilter` to ignore it?
 * [ ] Defining a common setup procedure that runs before each spec in a container.
 * [ ] Defining a common teardown procedure that runs after each spec in a container.
 
+TODO KDK: Work here on trying out `beforeEach`.
+
 Declaring and instantiating the test subject was a point of friction with declaration-only syntax with static methods.
 There isn't a way to add static methods that return type-safe subjects in their own type, so this pushed the design
 towards instantiating a `JavaSpec<S>` instance and using that to declare all specs.  This allowed for the addition of
