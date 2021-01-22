@@ -1,24 +1,27 @@
-package info.javaspec.jupiter.syntax.subject;
+package info.javaspec.jupiter.syntax.fixture;
 
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.Executable;
 
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
-
 import java.util.LinkedList;
 import java.util.Stack;
 import java.util.function.Supplier;
 
-final class JavaSpec<S> {
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
+final class JavaSpec {
   private final Stack<DynamicNodeList> containers = new Stack<>();
-  private Supplier<S> subjectSupplier;
 
   public JavaSpec() {
     //Push a null object onto the bottom of the stack, so there's always a parent list to add nodes to.
     //Unlike all other entries on the stack, the root node list does not get turned into a DynamicContainer.
     containers.push(new RootNodeList());
+  }
+
+  public void beforeEach(Executable arrange) {
+    throw new UnsupportedOperationException("Work here: Generalize DynamicNodeList to be able to add fixtures before/after the its at that context");
   }
 
   public void context(String condition, ContextBlock block) {
@@ -33,34 +36,8 @@ final class JavaSpec<S> {
     return declareContainer(functionOrGenericActor, block);
   }
 
-  public DynamicNode disable(String intendedBehavior, Executable brokenVerification) {
-    DynamicTest test = makeSkippedTest(
-      intendedBehavior,
-      String.format("Disabled: %s.  This is not a failed assumption in the spec; it's just how JavaSpec disables a spec.", intendedBehavior)
-    );
-
-    addToCurrentContainer(test);
-    return test;
-  }
-
   public DynamicTest it(String behavior, Executable verification) {
     DynamicTest test = DynamicTest.dynamicTest(behavior, verification);
-    addToCurrentContainer(test);
-    return test;
-  }
-
-  public DynamicTest it(String behavior, ExecutableWithSubject<S> verification) {
-    DynamicTest test = DynamicTest.dynamicTest(behavior, () -> verification.execute(subject()));
-    addToCurrentContainer(test);
-    return test;
-  }
-
-  public DynamicNode pending(String pendingBehavior) {
-    DynamicTest test = makeSkippedTest(
-      pendingBehavior,
-      String.format("Pending: %s.  This is not a failed assumption in the spec; it's just how JavaSpec skips a pending a spec.", pendingBehavior)
-    );
-
     addToCurrentContainer(test);
     return test;
   }
@@ -81,23 +58,6 @@ final class JavaSpec<S> {
     return childContainer;
   }
 
-  private static DynamicTest makeSkippedTest(String intendedBehavior, String explanation) {
-    return DynamicTest.dynamicTest(intendedBehavior, () -> {
-      //Negative: It shows a misleading and distracting stack trace, due to the unmet assumption.
-      //Source: https://github.com/junit-team/junit5/issues/1439
-      assumeTrue(false, explanation);
-    });
-  }
-
-  public S subject() {
-    return this.subjectSupplier.get();
-  }
-
-  //Future work: Support or reject subject overrides in nested blocks
-  public void subject(Supplier<S> supplier) {
-    this.subjectSupplier = supplier;
-  }
-
   @FunctionalInterface
   public interface ContextBlock extends DeclarationBlock { }
 
@@ -107,11 +67,6 @@ final class JavaSpec<S> {
   @FunctionalInterface
   private interface DeclarationBlock {
     void declare();
-  }
-
-  @FunctionalInterface
-  public interface ExecutableWithSubject<S> {
-    void execute(S subject) throws Throwable;
   }
 
   //Null object so there's always something on the stack, even if it's not a test container
