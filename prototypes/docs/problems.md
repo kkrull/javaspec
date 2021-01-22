@@ -1,23 +1,39 @@
 # Problem Space
 
 ## Writing Specs
-### Syntax for defining specs
+### 1 - Syntax for defining specs
 
-* [x] Descriptions of expected behavior(s): `it`.
-* [x] Procedures to verify those expectations `it`.
-* [x] Description of what (class, method, or function) is being tested: `describe`.
-* [x] Description of any particular circumstances, during which those expectations apply: `context`.
-* [x] Disabled spec, that should not be run: `disabled`.
-* [x] Pending spec, that lacks a verification: `pending`.
-* [ ] Declaration of reused variables.
-* [ ] Reusing common setup code that runs before each spec in a container.
-* [ ] Reusing common teardown code that runs after each spec in a container.
+* [x] Descriptions of expected behavior(s): `JavaSpec[#::]it`.
+* [x] Procedures to verify those expectations `JavaSpec[#::]it`.
+* [x] Description of what (class, method, or function) is being tested: `JavaSpec[#::]describe`.
+* [x] Description of any particular circumstances, during which those expectations apply: `JavaSpec[#::]context`.
+* [x] Disabled spec, that should not be run: `JavaSpec[#::]disabled`.
+* [x] Pending spec, that lacks a verification: `JavaSpec[#::]pending`.
 
 `StaticMethodSyntax` shows concise JavaSpec syntax by using static imports for JavaSpec methods.  It's more concise–and
 there are fewer opportunities to mix up scope–than with passing scope/context parameters back to the lambdas.
 
 The syntax for `disabled` is nice to write, but running it is quite misleading.  Could JavaSpec create the `DyanmicTest`
 as always, but also add a `TestFilter` to ignore it?
+
+
+### 2 - Syntax to help Arrange
+
+* [x] Common instance/factory for generating the test subject: `JavaSpec<S>#subject`.
+* [x] Declaration of reused variables: Class fields, local variables (immutable), local atomic variables (mutable).
+* [x] Creating common data or instantiating collaborators: Extract helper functions.
+* [ ] Defining a common setup procedure that runs before each spec in a container.
+* [ ] Defining a common teardown procedure that runs after each spec in a container.
+
+Declaring and instantiating the test subject was a point of friction with declaration-only syntax with static methods.
+There isn't a way to add static methods that return type-safe subjects in their own type, so this pushed the design
+towards instantiating a `JavaSpec<S>` instance and using that to declare all specs.  This allowed for the addition of
+generic methods to declare and create test subjects.
+
+What is the impact of using a `JavaSpec` instance instead of static methods?  While it is a little more verbose to
+declare and use the instance, it's not as distracting as I thought it would be.  It still remains posible to make a
+static wrapper (that tracks a thread- or class-local `JavaSpec` instance), if a more compact syntax is needed.  Such a
+wrapper would sacrifice the type-safe subject methods, however.
 
 
 ### Where in a spec class to use this syntax, to declare specs
@@ -34,7 +50,7 @@ as always, but also add a `TestFilter` to ignore it?
 ### How to run specs, in IntelliJ
 
 * [ ] Gradle test runner: Does not show `@DisplayName`, for regular Jupiter syntax.
-* [ ] IntelliJJ test runner: Works for `@DisplayName` in Jupiter syntax, and working so far for `DynamicTest`.
+* [ ] IntelliJ test runner: Works for `@DisplayName` in Jupiter syntax, and working so far for `DynamicTest`.
 
 
 ### How to run specs, on the command line

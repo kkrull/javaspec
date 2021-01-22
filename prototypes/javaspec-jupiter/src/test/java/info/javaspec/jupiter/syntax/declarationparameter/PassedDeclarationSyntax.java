@@ -8,7 +8,10 @@ import static info.javaspec.jupiter.syntax.declarationparameter.JavaSpec.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import org.junit.jupiter.api.DisplayName;
+
 //Shows how to pass a declaration context to lambdas, to get nested declaration.
+@DisplayName("Declaration syntax: Pass context parameter to lambdas")
 class PassedDeclarationSyntax {
   @TestFactory
   DynamicNode generateTests() {
