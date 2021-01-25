@@ -18,11 +18,18 @@ public class FixtureMethodSpecs {
       AtomicReference<Greeter> subject = new AtomicReference<>();
 
       greeterSpecs.beforeEach(() -> {
+        System.out.println("beforeEach");
         subject.set(new Greeter());
       });
 
       greeterSpecs.it("Greets the world", () -> {
+        System.out.println("it makeGreeting/0");
         assertEquals("Hello world!", subject.get().makeGreeting());
+      });
+
+      greeterSpecs.it("Greets a person by name", () -> {
+        System.out.println("it makeGreeting/1");
+        assertEquals("Hello George!", subject.get().makeGreeting("George"));
       });
     });
   }

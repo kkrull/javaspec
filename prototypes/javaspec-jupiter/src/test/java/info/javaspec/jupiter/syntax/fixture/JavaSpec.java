@@ -7,9 +7,6 @@ import org.junit.jupiter.api.function.Executable;
 
 import java.util.LinkedList;
 import java.util.Stack;
-import java.util.function.Supplier;
-
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 final class JavaSpec {
   private final Stack<DynamicNodeList> containers = new Stack<>();
@@ -21,7 +18,7 @@ final class JavaSpec {
   }
 
   public void beforeEach(Executable arrange) {
-    throw new UnsupportedOperationException("Work here: Generalize DynamicNodeList to be able to add fixtures before/after the its at that context");
+    containers.peek().pushBeforeEach(arrange);
   }
 
   public void context(String condition, ContextBlock block) {
@@ -37,9 +34,7 @@ final class JavaSpec {
   }
 
   public DynamicTest it(String behavior, Executable verification) {
-    DynamicTest test = DynamicTest.dynamicTest(behavior, verification);
-    addToCurrentContainer(test);
-    return test;
+    return containers.peek().addTest(behavior, verification);
   }
 
   private void addToCurrentContainer(DynamicNode testOrContainer) {
@@ -77,5 +72,26 @@ final class JavaSpec {
     }
   }
 
-  private static class DynamicNodeList extends LinkedList<DynamicNode> { }
+  private static class DynamicNodeList extends LinkedList<DynamicNode> {
+    //TODO KDK: Manage a stack of fixture lambdas, across all containers in the tree
+    private Executable arrange;
+
+    public void pushBeforeEach(Executable arrange) {
+      this.arrange = arrange;
+    }
+
+    public DynamicTest addTest(String behavior, Executable verification) {
+      //TODO KDK: Handle multiple fixture lambdas, at each level in the container?
+      DynamicTest test = DynamicTest.dynamicTest(behavior, () -> {
+        if(this.arrange != null) {
+          this.arrange.execute();
+        }
+
+        verification.execute();
+      });
+
+      add(test);
+      return test;
+    }
+  }
 }
