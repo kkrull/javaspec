@@ -18,7 +18,7 @@ final class JavaSpec {
   }
 
   public void beforeEach(Executable arrange) {
-    containers.peek().pushBeforeEach(arrange);
+    containers.peek().setBeforeEach(arrange);
   }
 
   public void context(String condition, ContextBlock block) {
@@ -76,7 +76,7 @@ final class JavaSpec {
     //TODO KDK: Manage a queue of fixture lambdas, across all containers in the tree
     private Executable arrange;
 
-    public void pushBeforeEach(Executable arrange) {
+    public void setBeforeEach(Executable arrange) {
       this.arrange = arrange;
     }
 
