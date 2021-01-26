@@ -17,18 +17,16 @@ public class FixtureMethodSpecs {
     return greeterSpecs.describe(Greeter.class, () -> {
       AtomicReference<Greeter> subject = new AtomicReference<>();
 
+      //Unknown: What happens if #beforeEach is called after #it?
       greeterSpecs.beforeEach(() -> {
-        System.out.println("beforeEach");
         subject.set(new Greeter());
       });
 
-      greeterSpecs.it("Greets the world", () -> {
-        System.out.println("it makeGreeting/0");
+      greeterSpecs.it("greets the world", () -> {
         assertEquals("Hello world!", subject.get().makeGreeting());
       });
 
-      greeterSpecs.it("Greets a person by name", () -> {
-        System.out.println("it makeGreeting/1");
+      greeterSpecs.it("greets a person by name", () -> {
         assertEquals("Hello George!", subject.get().makeGreeting("George"));
       });
     });

@@ -73,7 +73,7 @@ final class JavaSpec {
   }
 
   private static class DynamicNodeList extends LinkedList<DynamicNode> {
-    //TODO KDK: Manage a stack of fixture lambdas, across all containers in the tree
+    //TODO KDK: Manage a queue of fixture lambdas, across all containers in the tree
     private Executable arrange;
 
     public void pushBeforeEach(Executable arrange) {
@@ -81,7 +81,7 @@ final class JavaSpec {
     }
 
     public DynamicTest addTest(String behavior, Executable verification) {
-      //TODO KDK: Handle multiple fixture lambdas, at each level in the container?
+      //Future work: Allow multiple beforeEach in a single container?
       DynamicTest test = DynamicTest.dynamicTest(behavior, () -> {
         if(this.arrange != null) {
           this.arrange.execute();
