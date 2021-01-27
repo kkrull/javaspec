@@ -5,8 +5,13 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.Executable;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 final class JavaSpec {
   private final Stack<DynamicNodeList> containers = new Stack<>();
@@ -85,6 +90,27 @@ final class JavaSpec {
       DynamicTest test = DynamicTest.dynamicTest(behavior, () -> {
         if(this.arrange != null) {
           this.arrange.execute();
+        }
+
+        verification.execute();
+      });
+
+      add(test);
+      return test;
+    }
+
+    public DynamicTest addTestMultipleFixtures(String behavior, Executable verification) {
+      //TODO KDK: Convert the stack into a deque, inserting at the tail and iterating head->tail for setup (tail->head for teardown)
+      Deque<DynamicNodeList> containers = new ArrayDeque<>();
+      List<Executable> arrangements = containers.stream()
+        .map(x -> x.arrange)
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
+
+      //Future work: Allow multiple beforeEach in a single container?
+      DynamicTest test = DynamicTest.dynamicTest(behavior, () -> {
+        for(Executable arrange : arrangements) {
+          arrange.execute();
         }
 
         verification.execute();
