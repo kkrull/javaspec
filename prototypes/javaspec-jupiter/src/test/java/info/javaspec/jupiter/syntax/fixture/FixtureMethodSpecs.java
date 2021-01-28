@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @DisplayName("Fixture syntax: Methods on JavaSpec instance")
 public class FixtureMethodSpecs {
@@ -56,5 +57,31 @@ public class FixtureMethodSpecs {
         });
       });
     });
+  }
+
+  @TestFactory
+  DynamicNode afterEachSingle() {
+    JavaSpec sloppySpecs = new JavaSpec();
+    return sloppySpecs.describe(Greeter.class, () -> {
+      sloppySpecs.afterEach(() -> {
+        TestObject.sharedState = null;
+      });
+
+      sloppySpecs.it("sets a static variable once", () -> {
+        assertNull(TestObject.sharedState);
+        TestObject.sharedState = "One";
+        assertEquals("One", TestObject.sharedState);
+      });
+
+      sloppySpecs.it("sets a static variable twice", () -> {
+        assertNull(TestObject.sharedState);
+        TestObject.sharedState = "Other";
+        assertEquals("Other", TestObject.sharedState);
+      });
+    });
+  }
+
+  private static final class TestObject {
+    public static String sharedState;
   }
 }

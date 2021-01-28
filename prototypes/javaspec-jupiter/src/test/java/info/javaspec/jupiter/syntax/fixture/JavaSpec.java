@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.Executable;
 
 import java.util.ArrayDeque;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +20,10 @@ final class JavaSpec {
     //Push a null object onto the bottom of the stack, so there's always a parent list to add nodes to.
     //Unlike all other entries on the stack, the root node list does not get turned into a DynamicContainer.
     containers.addLast(new RootNodeList());
+  }
+
+  public void afterEach(Executable clean) {
+    containers.peekLast().setAfterEach(clean);
   }
 
   public void beforeEach(Executable arrange) {
@@ -43,7 +48,13 @@ final class JavaSpec {
       .filter(Objects::nonNull)
       .collect(Collectors.toList());
 
-    return containers.peekLast().addTest(behavior, arrangements, verification);
+    List<Executable> cleaners = containers.stream()
+      .map(x -> x.cleanup)
+      .filter(Objects::nonNull)
+      .collect(Collectors.toList());
+    Collections.reverse(cleaners);
+
+    return containers.peekLast().addTest(behavior, arrangements, verification, cleaners);
   }
 
   private void addToCurrentContainer(DynamicNode testOrContainer) {
@@ -83,18 +94,26 @@ final class JavaSpec {
 
   private static class DynamicNodeList extends LinkedList<DynamicNode> {
     private Executable arrange;
+    private Executable cleanup;
+
+    public void setAfterEach(Executable cleanup) {
+      this.cleanup = cleanup;
+    }
 
     public void setBeforeEach(Executable arrange) {
       this.arrange = arrange;
     }
 
-    public DynamicTest addTest(String behavior, List<Executable> arrangements, Executable verification) {
+    public DynamicTest addTest(String behavior, List<Executable> arrangements, Executable verification, List<Executable> cleaners) {
       DynamicTest test = DynamicTest.dynamicTest(behavior, () -> {
         for(Executable arrange : arrangements) {
           arrange.execute();
         }
 
         verification.execute();
+        for(Executable cleanup : cleaners) {
+          cleanup.execute();
+        }
       });
 
       add(test);

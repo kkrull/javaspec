@@ -23,7 +23,7 @@ as always, but also add a `TestFilter` to ignore it?
 * [x] Declaration of reused variables: Class fields, local variables (immutable), local atomic variables (mutable).
 * [x] Creating common data or instantiating collaborators: Extract helper functions.
 * [x] Defining a common setup procedure that runs before each spec in a container: `JavaSpec#beforeEach`.
-* [ ] Defining a common teardown procedure that runs after each spec in a container.
+* [x] Defining a common teardown procedure that runs after each spec in a container: `JavaSpec#afterEach`.
 
 Declaring and instantiating the test subject was a point of friction with declaration-only syntax with static methods.
 There isn't a way to add static methods that return type-safe subjects in their own type, so this pushed the design
