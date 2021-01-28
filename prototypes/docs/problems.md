@@ -3,12 +3,12 @@
 ## Writing Specs
 ### 1 - Syntax for defining specs
 
-* [x] Descriptions of expected behavior(s): `JavaSpec[#::]it`.
-* [x] Procedures to verify those expectations `JavaSpec[#::]it`.
-* [x] Description of what (class, method, or function) is being tested: `JavaSpec[#::]describe`.
-* [x] Description of any particular circumstances, during which those expectations apply: `JavaSpec[#::]context`.
-* [x] Disabled spec, that should not be run: `JavaSpec[#::]disabled`.
-* [x] Pending spec, that lacks a verification: `JavaSpec[#::]pending`.
+* [x] Descriptions of expected behavior(s): `JavaSpec#it`.
+* [x] Procedures to verify those expectations `JavaSpec#it`.
+* [x] Description of what (class, method, or function) is being tested: `JavaSpec#describe`.
+* [x] Description of any particular circumstances, during which those expectations apply: `JavaSpec#context`.
+* [x] Disabled spec, that should not be run: `JavaSpec#disabled`.
+* [x] Pending spec, that lacks a verification: `JavaSpec#pending`.
 
 `StaticMethodSyntax` shows concise JavaSpec syntax by using static imports for JavaSpec methods.  It's more concise–and
 there are fewer opportunities to mix up scope–than with passing scope/context parameters back to the lambdas.
@@ -22,10 +22,8 @@ as always, but also add a `TestFilter` to ignore it?
 * [x] Common instance/factory for generating the test subject: `JavaSpec<S>#subject`.
 * [x] Declaration of reused variables: Class fields, local variables (immutable), local atomic variables (mutable).
 * [x] Creating common data or instantiating collaborators: Extract helper functions.
-* [ ] Defining a common setup procedure that runs before each spec in a container.
+* [x] Defining a common setup procedure that runs before each spec in a container: `JavaSpec#beforeEach`.
 * [ ] Defining a common teardown procedure that runs after each spec in a container.
-
-TODO KDK: Work here on trying out `beforeEach`.
 
 Declaring and instantiating the test subject was a point of friction with declaration-only syntax with static methods.
 There isn't a way to add static methods that return type-safe subjects in their own type, so this pushed the design

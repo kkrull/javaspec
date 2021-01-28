@@ -10,20 +10,19 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Stack;
 import java.util.stream.Collectors;
 
 final class JavaSpec {
-  private final Stack<DynamicNodeList> containers = new Stack<>();
+  private final Deque<DynamicNodeList> containers = new ArrayDeque<>();
 
   public JavaSpec() {
     //Push a null object onto the bottom of the stack, so there's always a parent list to add nodes to.
     //Unlike all other entries on the stack, the root node list does not get turned into a DynamicContainer.
-    containers.push(new RootNodeList());
+    containers.addLast(new RootNodeList());
   }
 
   public void beforeEach(Executable arrange) {
-    containers.peek().setBeforeEach(arrange);
+    containers.peekLast().setBeforeEach(arrange);
   }
 
   public void context(String condition, ContextBlock block) {
@@ -39,20 +38,25 @@ final class JavaSpec {
   }
 
   public DynamicTest it(String behavior, Executable verification) {
-    return containers.peek().addTest(behavior, verification);
+    List<Executable> arrangements = containers.stream()
+      .map(x -> x.arrange)
+      .filter(Objects::nonNull)
+      .collect(Collectors.toList());
+
+    return containers.peekLast().addTest(behavior, arrangements, verification);
   }
 
   private void addToCurrentContainer(DynamicNode testOrContainer) {
-    containers.peek().add(testOrContainer);
+    containers.peekLast().add(testOrContainer);
   }
 
   private DynamicContainer declareContainer(String whatOrWhen, DeclarationBlock block) {
     //Push a fresh node list onto the stack and append declarations to that
-    containers.push(new DynamicNodeList());
+    containers.addLast(new DynamicNodeList());
     block.declare();
 
     //Create and link this container, now that all specs and/or sub-containers have been declared
-    DynamicNodeList childNodes = containers.pop();
+    DynamicNodeList childNodes = containers.removeLast();
     DynamicContainer childContainer = DynamicContainer.dynamicContainer(whatOrWhen, childNodes);
     addToCurrentContainer(childContainer);
     return childContainer;
@@ -78,36 +82,13 @@ final class JavaSpec {
   }
 
   private static class DynamicNodeList extends LinkedList<DynamicNode> {
-    //TODO KDK: Manage a queue of fixture lambdas, across all containers in the tree
     private Executable arrange;
 
     public void setBeforeEach(Executable arrange) {
       this.arrange = arrange;
     }
 
-    public DynamicTest addTest(String behavior, Executable verification) {
-      //Future work: Allow multiple beforeEach in a single container?
-      DynamicTest test = DynamicTest.dynamicTest(behavior, () -> {
-        if(this.arrange != null) {
-          this.arrange.execute();
-        }
-
-        verification.execute();
-      });
-
-      add(test);
-      return test;
-    }
-
-    public DynamicTest addTestMultipleFixtures(String behavior, Executable verification) {
-      //TODO KDK: Convert the stack into a deque, inserting at the tail and iterating head->tail for setup (tail->head for teardown)
-      Deque<DynamicNodeList> containers = new ArrayDeque<>();
-      List<Executable> arrangements = containers.stream()
-        .map(x -> x.arrange)
-        .filter(Objects::nonNull)
-        .collect(Collectors.toList());
-
-      //Future work: Allow multiple beforeEach in a single container?
+    public DynamicTest addTest(String behavior, List<Executable> arrangements, Executable verification) {
       DynamicTest test = DynamicTest.dynamicTest(behavior, () -> {
         for(Executable arrange : arrangements) {
           arrange.execute();

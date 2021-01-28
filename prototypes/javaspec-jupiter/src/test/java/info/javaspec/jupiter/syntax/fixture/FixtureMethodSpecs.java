@@ -42,19 +42,15 @@ public class FixtureMethodSpecs {
       AtomicReference<List<String>> subject = new AtomicReference<>();
 
       specs.beforeEach(() -> {
-        //TODO KDK: Work here to get this beforeEach called in the it two levels below
-        System.out.println("beforeEach describe/List");
         subject.set(new LinkedList<>());
       });
 
       specs.context("when the list has 1 or more elements", () -> {
         specs.beforeEach(() -> {
-          System.out.println("beforeEach context/1+");
           subject.get().add("existing");
         });
 
         specs.it("appends to the tail", () -> {
-          System.out.println("it/appends");
           subject.get().add("appended");
           assertEquals(Arrays.asList("existing", "appended"), subject.get());
         });
