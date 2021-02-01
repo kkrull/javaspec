@@ -22,10 +22,12 @@ final class JavaSpec {
     containers.addLast(new RootNodeList());
   }
 
+  //Positive: Supports any kind of code, that needs to run after each spec.
   public void afterEach(Executable clean) {
     containers.peekLast().setAfterEach(clean);
   }
 
+  //Positive: Supports any kind of code, that needs to run before each spec.
   public void beforeEach(Executable arrange) {
     containers.peekLast().setBeforeEach(arrange);
   }
@@ -43,6 +45,7 @@ final class JavaSpec {
   }
 
   public DynamicTest it(String behavior, Executable verification) {
+    //Positive: The algorithm for collecting fixture lambdas is straightforward enough, using a Deque.
     List<Executable> arrangements = containers.stream()
       .map(x -> x.arrange)
       .filter(Objects::nonNull)
@@ -110,6 +113,10 @@ final class JavaSpec {
           arrange.execute();
         }
 
+        //Unknown: Should a failed cleanup cause the spec to fail, even if all the assertions passed?
+        // I tend to think so, but it would be nice if the impact were clarified.
+        // Future work: What if AssertionErrors thrown from afterEach lambdas caused the spec to fail
+        // (sometimes they have odd assertions in them, too), but other failures caused a softer kind of failure?
         verification.execute();
         for(Executable cleanup : cleaners) {
           cleanup.execute();

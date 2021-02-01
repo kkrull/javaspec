@@ -19,13 +19,16 @@ public class FixtureMethodSpecs {
   DynamicNode beforeEachSingle() {
     JavaSpec greeterSpecs = new JavaSpec();
     return greeterSpecs.describe(Greeter.class, () -> {
+      //Negative: Can't just set in a beforeEach and access in it, without thinking about what "volatile" means.
       AtomicReference<Greeter> subject = new AtomicReference<>();
 
+      //Positive: beforeEach runs as expected, just before each spec.
       //Unknown: What happens if #beforeEach is called after #it?
       greeterSpecs.beforeEach(() -> {
         subject.set(new Greeter());
       });
 
+      //Positive: It is possible to access fields that are assigned in beforeEach, as long as you use AtomicReference.
       greeterSpecs.it("greets the world", () -> {
         assertEquals("Hello world!", subject.get().makeGreeting());
       });
@@ -47,6 +50,8 @@ public class FixtureMethodSpecs {
       });
 
       specs.context("when the list has 1 or more elements", () -> {
+        //Positive: Nested beforeEach blocks do work, in a manner similar to Jasmine and RSpec.
+        //Negative: Multiple beforeEach blocks can be abused, as with Jasmine and RSpec.
         specs.beforeEach(() -> {
           subject.get().add("existing");
         });
@@ -63,6 +68,7 @@ public class FixtureMethodSpecs {
   DynamicNode afterEachSingle() {
     JavaSpec sloppySpecs = new JavaSpec();
     return sloppySpecs.describe(Greeter.class, () -> {
+      //Positive: afterEach works too.
       sloppySpecs.afterEach(() -> {
         TestObject.sharedState = null;
       });
