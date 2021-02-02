@@ -11,12 +11,14 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-final class JavaSpec {
+final class JavaSpec<S> {
   private final Deque<DynamicNodeList> containers = new ArrayDeque<>();
+  private Supplier<S> subjectSupplier;
 
   public JavaSpec() {
     //Push a null object onto the bottom of the stack, so there's always a parent list to add nodes to.
@@ -70,6 +72,15 @@ final class JavaSpec {
 
     addToCurrentContainer(test);
     return test;
+  }
+
+  public S subject() {
+    return this.subjectSupplier.get();
+  }
+
+  //Future work: Support or reject subject overrides in nested blocks
+  public void subject(Supplier<S> supplier) {
+    this.subjectSupplier = supplier;
   }
 
   private void addToCurrentContainer(DynamicNode testOrContainer) {
