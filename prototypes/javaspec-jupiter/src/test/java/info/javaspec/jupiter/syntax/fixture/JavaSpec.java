@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
 final class JavaSpec {
   private final Deque<DynamicNodeList> containers = new ArrayDeque<>();
 
@@ -60,6 +62,16 @@ final class JavaSpec {
     return containers.peekLast().addTest(behavior, arrangements, verification, cleaners);
   }
 
+  public DynamicNode pending(String pendingBehavior) {
+    DynamicTest test = makeSkippedTest(
+      pendingBehavior,
+      String.format("Pending: %s.  This is not a failed assumption in the spec; it's just how JavaSpec skips a pending a spec.", pendingBehavior)
+    );
+
+    addToCurrentContainer(test);
+    return test;
+  }
+
   private void addToCurrentContainer(DynamicNode testOrContainer) {
     containers.peekLast().add(testOrContainer);
   }
@@ -74,6 +86,14 @@ final class JavaSpec {
     DynamicContainer childContainer = DynamicContainer.dynamicContainer(whatOrWhen, childNodes);
     addToCurrentContainer(childContainer);
     return childContainer;
+  }
+
+  private static DynamicTest makeSkippedTest(String intendedBehavior, String explanation) {
+    return DynamicTest.dynamicTest(intendedBehavior, () -> {
+      //Negative: It shows a misleading and distracting stack trace, due to the unmet assumption.
+      //Source: https://github.com/junit-team/junit5/issues/1439
+      assumeTrue(false, explanation);
+    });
   }
 
   @FunctionalInterface
