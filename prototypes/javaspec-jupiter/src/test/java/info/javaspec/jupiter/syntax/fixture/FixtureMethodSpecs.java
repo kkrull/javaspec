@@ -40,6 +40,26 @@ public class FixtureMethodSpecs {
   }
 
   @TestFactory
+  DynamicNode beforeEachExample() {
+    JavaSpec<List<String>> specs = new JavaSpec<>();
+    return specs.describe(List.class, () -> {
+      specs.subject(() -> new LinkedList<>());
+
+      specs.context("when the list has 1 or more elements", () -> {
+        specs.beforeEach(() -> {
+          specs.subject().add("existing");
+        });
+
+        specs.it("appends to the tail", () -> {
+          List<String> subject = specs.subject();
+          subject.add("appended");
+          assertEquals(Arrays.asList("existing", "appended"), subject);
+        });
+      });
+    });
+  }
+
+  @TestFactory
   DynamicNode beforeEachMultiple() {
     JavaSpec specs = new JavaSpec();
     return specs.describe(List.class, () -> {
