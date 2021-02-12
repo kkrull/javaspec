@@ -1,3 +1,5 @@
+#TODO KDK: Switch to one of the standard Java images and run gradle for prototypes
+
 dist: trusty
 language: generic
 
