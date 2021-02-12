@@ -93,6 +93,7 @@ final class JavaSpec<S> {
     return this.subjectSupplier.get();
   }
 
+  //Future work: Support or reject subject overrides in nested blocks
   public void subject(Supplier<S> supplier) {
     this.subjectSupplier = supplier;
   }
