@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 final class JavaSpec<S> {
   private final Deque<DynamicNodeList> containers = new ArrayDeque<>();
   private Supplier<S> subjectSupplier;
+  private S memoizedSubject;
 
   public JavaSpec() {
     //Push a null object onto the bottom of the stack, so there's always a parent list to add nodes to.
@@ -75,7 +76,11 @@ final class JavaSpec<S> {
   }
 
   public S subject() {
-    return this.subjectSupplier.get();
+    if(this.memoizedSubject == null) {
+      this.memoizedSubject = this.subjectSupplier.get();
+    }
+
+    return this.memoizedSubject;
   }
 
   //Future work: Support or reject subject overrides in nested blocks
