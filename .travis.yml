@@ -1,12 +1,4 @@
-dist: trusty
-language: generic
+language: java
+jdk: openjdk11
 
-before_install: cd lambdas-and-strings
-
-install:
-- bundle --version
-- rake --version
-- bundle install
-- ./gradlew assemble --console=plain --stacktrace
-
-script: rake
+before_install: cd prototypes
