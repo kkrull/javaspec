@@ -1,14 +1,3 @@
-#TODO KDK: Switch to one of the standard Java images and run gradle for prototypes
+language: java
 
-dist: trusty
-language: generic
-
-before_install: cd lambdas-and-strings
-
-install:
-- bundle --version
-- rake --version
-- bundle install
-- ./gradlew assemble --console=plain --stacktrace
-
-script: rake
+before_install: cd prototypes
