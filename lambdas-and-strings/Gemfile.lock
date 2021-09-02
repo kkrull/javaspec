@@ -59,7 +59,7 @@ GEM
       json
       websocket (~> 1.0)
     rake (12.3.0)
-    rdoc (6.0.4)
+    rdoc (6.3.1)
     rspec-expectations (3.8.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.8.0)
@@ -85,7 +85,7 @@ DEPENDENCIES
   aruba (~> 0.14.6)
   cucumber (~> 3.1)
   rake (~> 12.3.0)
-  rdoc (~> 6.0)
+  rdoc (~> 6.3)
   travis (~> 1.8)
 
 BUNDLED WITH

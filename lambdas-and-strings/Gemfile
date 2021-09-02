@@ -6,7 +6,7 @@ git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 
 group :development do
   gem "rake", "~> 12.3.0"
-  gem "rdoc", "~> 6.0"
+  gem "rdoc", "~> 6.3"
   gem "travis", "~> 1.8"
 end
 
