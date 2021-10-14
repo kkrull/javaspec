@@ -3,7 +3,7 @@
 
 plugins {
   id 'java-library' //Separates API from implementation
-  id 'com.adarshr.test-logger' version '2.1.1' //Test logging
+  id 'com.adarshr.test-logger' version '3.0.0' //Test logging
 }
 
 repositories {
