@@ -3,13 +3,13 @@ plugins {
 }
 
 application {
-  mainClass = 'gradle.hello.App' //TODO KDK: Fix
+  mainClass = 'info.javaspec.engine.Main'
 }
 
 dependencies {
-  testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
-  testImplementation 'org.junit.platform:junit-platform-launcher:1.8.1'
-  testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+  implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+  implementation 'org.junit.platform:junit-platform-launcher:1.8.1'
+  implementation 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 
 repositories {
@@ -27,5 +27,5 @@ task runTestLauncher(type: JavaExec) {
   group = "Execution"
   description = "Run the test main class with JavaExecTask"
   classpath = sourceSets.test.runtimeClasspath
-  main = "gradle.hello.LaunchMain"
+  main = "info.javaspec.engine.Main"
 }
