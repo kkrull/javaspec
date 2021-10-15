@@ -16,8 +16,8 @@ public class Main {
     LauncherConfig launcherConfig = LauncherConfig.builder()
       .enableTestEngineAutoRegistration(false)
       .enableTestExecutionListenerAutoRegistration(false)
-      .addTestEngines(new JupiterTestEngine())
-//      .addTestEngines(new JavaSpecTestEngine())
+//      .addTestEngines(new JupiterTestEngine())
+      .addTestEngines(new SpecTestEngine())
       .addLauncherDiscoveryListeners(launcherDiscoveryListener())
       .addTestExecutionListeners(testExecutionListener())
       .build();
