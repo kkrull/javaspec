@@ -21,7 +21,7 @@ public class SpecTestEngine implements TestEngine {
 
     for (TestDescriptor childDescriptor : engineDescriptor.getChildren()) {
       System.out.println("[SpecTestEngine#execute] %s".formatted(childDescriptor.getUniqueId()));
-      GreeterSpecs.incrementRunCount(); //TODO KDK: Run the lambda declared inside GreeterSpecs instead of hard-coding the outcome here
+      new GreeterSpecs().getOnlySpec().run();
     }
 
     listener.executionFinished(engineDescriptor, TestExecutionResult.successful());
