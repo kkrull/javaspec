@@ -20,8 +20,9 @@ public class SpecTestEngine implements TestEngine {
     listener.executionStarted(engineDescriptor);
 
     for (TestDescriptor childDescriptor : engineDescriptor.getChildren()) {
-      System.out.println("[SpecTestEngine#execute] %s".formatted(childDescriptor.getUniqueId()));
+      listener.executionStarted(childDescriptor);
       new GreeterSpecs().getOnlySpec().run();
+      listener.executionFinished(childDescriptor, TestExecutionResult.successful());
     }
 
     listener.executionFinished(engineDescriptor, TestExecutionResult.successful());
