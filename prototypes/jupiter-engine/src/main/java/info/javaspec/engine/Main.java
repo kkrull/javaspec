@@ -11,7 +11,7 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
 
 public class Main {
   public static void main(String[] args) {
-    System.out.println("Main says hello!");
+    System.out.println("[Main::main] Hello!");
 
     LauncherConfig launcherConfig = LauncherConfig.builder()
       .enableTestEngineAutoRegistration(false)
@@ -37,22 +37,22 @@ public class Main {
     return new LauncherDiscoveryListener() {
       @Override
       public void launcherDiscoveryStarted(LauncherDiscoveryRequest request) {
-        System.out.println("[launcherDiscoveryStarted]");
+        System.out.println("[LauncherDiscoveryListener#launcherDiscoveryStarted]");
       }
 
       @Override
       public void engineDiscoveryStarted(UniqueId engineId) {
-        System.out.println("[engineDiscoveryStarted] %s".formatted(engineId));
+        System.out.println("[LauncherDiscoveryListener#engineDiscoveryStarted] %s".formatted(engineId));
       }
 
       @Override
       public void engineDiscoveryFinished(UniqueId engineId, EngineDiscoveryResult result) {
-        System.out.println("[engineDiscoveryFinished] %s: %s".formatted(engineId, result.getStatus()));
+        System.out.println("[LauncherDiscoveryListener#engineDiscoveryFinished] %s: %s".formatted(engineId, result.getStatus()));
       }
 
       @Override
       public void launcherDiscoveryFinished(LauncherDiscoveryRequest request) {
-        System.out.println("[launcherDiscoveryFinished]");
+        System.out.println("[LauncherDiscoveryListener#launcherDiscoveryFinished]");
       }
     };
   }
@@ -61,22 +61,22 @@ public class Main {
     return new TestExecutionListener() {
       @Override
       public void testPlanExecutionStarted(TestPlan testPlan) {
-        System.out.println("[testPlanExecutionStarted]");
+        System.out.println("[TestExecutionListener#testPlanExecutionStarted]");
       }
 
       @Override
       public void executionStarted(TestIdentifier testId) {
-        System.out.println("[executionStarted] %s (%s)".formatted(testId.getUniqueId(), testId.getDisplayName()));
+        System.out.println("[TestExecutionListener#executionStarted] %s (%s)".formatted(testId.getUniqueId(), testId.getDisplayName()));
       }
 
       @Override
       public void executionFinished(TestIdentifier testId, TestExecutionResult testExecutionResult) {
-        System.out.println("[executionFinished] %s (%s)".formatted(testId.getUniqueId(), testId.getDisplayName()));
+        System.out.println("[TestExecutionListener#executionFinished] %s (%s)".formatted(testId.getUniqueId(), testId.getDisplayName()));
       }
 
       @Override
       public void testPlanExecutionFinished(TestPlan testPlan) {
-        System.out.println("[testPlanExecutionFinished]");
+        System.out.println("[TestExecutionListener#testPlanExecutionFinished]");
       }
     };
   }

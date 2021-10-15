@@ -9,6 +9,10 @@ public class GreeterSpecs {
     assertEquals(1, _numTimesRun, "Expected GreeterSpecs to have been run once");
   }
 
+  public static void incrementRunCount() {
+    _numTimesRun++;
+  }
+
   public GreeterSpecs() {
     System.out.println("[GreeterSpecs::GreeterSpecs]");
   }

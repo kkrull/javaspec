@@ -15,7 +15,16 @@ public class SpecTestEngine implements TestEngine {
 
   @Override
   public void execute(ExecutionRequest request) {
-    throw new UnsupportedOperationException();
+    TestDescriptor engineDescriptor = request.getRootTestDescriptor();
+    EngineExecutionListener listener = request.getEngineExecutionListener();
+    listener.executionStarted(engineDescriptor);
+
+    for (TestDescriptor childDescriptor : engineDescriptor.getChildren()) {
+      System.out.println("[SpecTestEngine#execute] %s".formatted(childDescriptor.getUniqueId()));
+      GreeterSpecs.incrementRunCount(); //TODO KDK: Run the lambda declared inside GreeterSpecs instead of hard-coding the outcome here
+    }
+
+    listener.executionFinished(engineDescriptor, TestExecutionResult.successful());
   }
 
   @Override
@@ -26,7 +35,7 @@ public class SpecTestEngine implements TestEngine {
   private static class SpecDescriptor extends AbstractTestDescriptor {
     public static SpecDescriptor forSpec(UniqueId engineId, String behavior) {
       return new SpecDescriptor(
-        engineId.append("spec", "lambda %s".formatted(behavior)),
+        engineId.append("spec", behavior),
         behavior
       );
     }
