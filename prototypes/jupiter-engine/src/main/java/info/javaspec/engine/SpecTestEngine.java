@@ -7,8 +7,8 @@ public class SpecTestEngine implements TestEngine {
   @Override
   public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId engineId) {
     EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
-    TestDescriptor specDescriptor = SpecDescriptor.forSpec(engineId, "greets the world", () -> GreeterSpecs.incrementRunCount());
-    engineDescriptor.addChild(specDescriptor);
+    LambdaSpec spec = new GreeterSpecs().declareOnlySpec();
+    spec.addTestDescriptorTo(engineDescriptor);
     return engineDescriptor;
   }
 

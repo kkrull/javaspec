@@ -6,9 +6,9 @@ import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 public class SpecDescriptor extends AbstractTestDescriptor {
   private final Executable verification;
 
-  public static SpecDescriptor forSpec(UniqueId engineId, String behavior, Executable verification) {
+  public static SpecDescriptor forSpec(UniqueId parentId, String behavior, Executable verification) {
     return new SpecDescriptor(
-      engineId.append("spec", behavior),
+      parentId.append("spec", behavior),
       behavior,
       verification
     );

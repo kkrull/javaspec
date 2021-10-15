@@ -16,4 +16,8 @@ public class GreeterSpecs {
   public GreeterSpecs() {
     System.out.println("[GreeterSpecs::GreeterSpecs]");
   }
+
+  public LambdaSpec declareOnlySpec() {
+    return new LambdaSpec("greets the world", () -> GreeterSpecs.incrementRunCount());
+  }
 }
