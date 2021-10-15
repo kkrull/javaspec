@@ -2,11 +2,11 @@ package info.javaspec.engine;
 
 import org.junit.platform.engine.TestDescriptor;
 
-public class LambdaSpec {
+public class JupiterSpec {
   private final String behavior;
   private final Executable verification;
 
-  public LambdaSpec(String behavior, Executable verification) {
+  public JupiterSpec(String behavior, Executable verification) {
     this.behavior = behavior;
     this.verification = verification;
   }

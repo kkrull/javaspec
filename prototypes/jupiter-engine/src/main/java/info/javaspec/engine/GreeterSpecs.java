@@ -17,10 +17,10 @@ public class GreeterSpecs {
     System.out.println("[GreeterSpecs::GreeterSpecs]");
   }
 
-  public SpecContainer declareSpecs() {
-    //TODO KDK: [3] Extract JupiterJavaSpec instance with #describe and #it to create SpecContainer and LambdaSpec
-    SpecContainer container = new SpecContainer();
-    container.addSpec(new LambdaSpec("greets the world", () -> GreeterSpecs.incrementRunCount()));
+  public JupiterSpecContainer declareSpecs() {
+    //TODO KDK: [3] Extract JupiterJavaSpec instance with #describe and #it to create SpecContainer and JupiterSpec
+    JupiterSpecContainer container = new JupiterSpecContainer();
+    container.addSpec(new JupiterSpec("greets the world", () -> GreeterSpecs.incrementRunCount()));
     return container;
   }
 }

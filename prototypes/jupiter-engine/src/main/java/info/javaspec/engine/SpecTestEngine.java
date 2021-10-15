@@ -7,7 +7,7 @@ public class SpecTestEngine implements TestEngine {
   @Override
   public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId engineId) {
     EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
-    SpecContainer specs = new GreeterSpecs().declareSpecs();
+    JupiterSpecContainer specs = new GreeterSpecs().declareSpecs();
     specs.addDescriptorsTo(engineDescriptor); //TODO KDK: [2] Create an intermediate descriptor for what will become JavaSpec#describe(Class<>)
     return engineDescriptor;
   }

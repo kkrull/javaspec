@@ -2,10 +2,10 @@ package info.javaspec.engine;
 
 import org.junit.platform.engine.TestDescriptor;
 
-public class SpecContainer {
-  private LambdaSpec spec;
+public class JupiterSpecContainer {
+  private JupiterSpec spec;
 
-  public void addSpec(LambdaSpec spec) {
+  public void addSpec(JupiterSpec spec) {
     this.spec = spec;
   }
 
