@@ -18,6 +18,7 @@ public class GreeterSpecs {
   }
 
   public LambdaSpec declareOnlySpec() {
-    return new LambdaSpec("greets the world", () -> GreeterSpecs.incrementRunCount());
+    JavaSpec javaspec = new JavaSpec();
+    return javaspec.it("greets the world", () -> GreeterSpecs.incrementRunCount());
   }
 }
