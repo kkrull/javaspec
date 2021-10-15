@@ -1,0 +1,31 @@
+plugins {
+  id 'application'
+}
+
+application {
+  mainClass = 'gradle.hello.App' //TODO KDK: Fix
+}
+
+dependencies {
+  testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+  testImplementation 'org.junit.platform:junit-platform-launcher:1.8.1'
+  testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+repositories {
+  mavenCentral()
+}
+
+version 'unspecified'
+
+tasks.named('test') {
+  useJUnitPlatform() //Use JUnit Platform for unit tests
+}
+
+//TODO KDK: Figure out what is deprecated about using main
+task runTestLauncher(type: JavaExec) {
+  group = "Execution"
+  description = "Run the test main class with JavaExecTask"
+  classpath = sourceSets.test.runtimeClasspath
+  main = "gradle.hello.LaunchMain"
+}
