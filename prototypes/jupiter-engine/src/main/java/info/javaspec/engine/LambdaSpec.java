@@ -1,7 +1,6 @@
 package info.javaspec.engine;
 
 import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
 public class LambdaSpec {
   private final String behavior;
@@ -12,7 +11,7 @@ public class LambdaSpec {
     this.verification = verification;
   }
 
-  public void addTestDescriptorTo(EngineDescriptor parentDescriptor) {
+  public void addTestDescriptorTo(TestDescriptor parentDescriptor) {
     TestDescriptor specDescriptor = SpecDescriptor.forSpec(
       parentDescriptor.getUniqueId(),
       this.behavior,

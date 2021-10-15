@@ -1,6 +1,5 @@
 package info.javaspec.engine;
 
-import org.junit.jupiter.engine.JupiterTestEngine;
 import org.junit.platform.engine.*;
 import org.junit.platform.launcher.*;
 import org.junit.platform.launcher.core.LauncherConfig;

@@ -7,8 +7,8 @@ public class SpecTestEngine implements TestEngine {
   @Override
   public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId engineId) {
     EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
-    LambdaSpec spec = new GreeterSpecs().declareOnlySpec();
-    spec.addTestDescriptorTo(engineDescriptor);
+    SpecContainer specs = new GreeterSpecs().declareSpecs();
+    specs.addDescriptorsTo(engineDescriptor); //TODO KDK: [2] Create an intermediate descriptor for what will become JavaSpec#describe(Class<>)
     return engineDescriptor;
   }
 
@@ -18,6 +18,7 @@ public class SpecTestEngine implements TestEngine {
     EngineExecutionListener listener = request.getEngineExecutionListener();
     listener.executionStarted(engineDescriptor);
 
+    //TODO KDK: [1] Do a depth first search (visitor?) to traverse the entire hierarchy
     for (TestDescriptor childDescriptor : engineDescriptor.getChildren()) {
       listener.executionStarted(childDescriptor);
       SpecDescriptor specDescriptor = (SpecDescriptor) childDescriptor;

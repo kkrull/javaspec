@@ -17,8 +17,10 @@ public class GreeterSpecs {
     System.out.println("[GreeterSpecs::GreeterSpecs]");
   }
 
-  public LambdaSpec declareOnlySpec() {
-    JavaSpec javaspec = new JavaSpec();
-    return javaspec.it("greets the world", () -> GreeterSpecs.incrementRunCount());
+  public SpecContainer declareSpecs() {
+    //TODO KDK: [3] Extract JupiterJavaSpec instance with #describe and #it to create SpecContainer and LambdaSpec
+    SpecContainer container = new SpecContainer();
+    container.addSpec(new LambdaSpec("greets the world", () -> GreeterSpecs.incrementRunCount()));
+    return container;
   }
 }
