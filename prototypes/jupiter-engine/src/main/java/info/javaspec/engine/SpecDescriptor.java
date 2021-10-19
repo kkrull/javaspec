@@ -19,10 +19,6 @@ public class SpecDescriptor extends AbstractTestDescriptor {
     this.verification = verification;
   }
 
-  private String behavior() {
-    return this.getDisplayName();
-  }
-
   @Override
   public Type getType() {
     return Type.TEST;
