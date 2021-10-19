@@ -14,19 +14,27 @@ public class SpecTestEngine implements TestEngine {
 
   @Override
   public void execute(ExecutionRequest request) {
-    TestDescriptor engineDescriptor = request.getRootTestDescriptor();
-    EngineExecutionListener listener = request.getEngineExecutionListener();
-    listener.executionStarted(engineDescriptor);
+    execute(
+      request.getRootTestDescriptor(),
+      request.getEngineExecutionListener()
+    );
+  }
 
-    //TODO KDK: [1] Do a depth first search (visitor?) to traverse the entire hierarchy
-    for (TestDescriptor childDescriptor : engineDescriptor.getChildren()) {
-      listener.executionStarted(childDescriptor);
-      SpecDescriptor specDescriptor = (SpecDescriptor) childDescriptor;
+  private void execute(TestDescriptor descriptor, EngineExecutionListener listener) {
+    listener.executionStarted(descriptor);
+
+    if (descriptor.isTest()) {
+      SpecDescriptor specDescriptor = (SpecDescriptor) descriptor;
       specDescriptor.runSpec();
-      listener.executionFinished(childDescriptor, TestExecutionResult.successful());
+    } else if (descriptor.isContainer()) {
+      for (TestDescriptor child : descriptor.getChildren()) {
+        execute(child, listener);
+      }
+    } else {
+      System.out.println("*** Unsupported descriptor type: %s ***".formatted(descriptor.getClass().getName()));
     }
 
-    listener.executionFinished(engineDescriptor, TestExecutionResult.successful());
+    listener.executionFinished(descriptor, TestExecutionResult.successful());
   }
 
   @Override
