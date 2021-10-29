@@ -4,17 +4,37 @@ import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.ClassSelector;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 public class SpecTestEngine implements TestEngine {
   @Override
   public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId engineId) {
     EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
 
     discoveryRequest.getSelectorsByType(ClassSelector.class).stream()
-      .forEach(x -> System.out.printf("Selected class: %s%n", x.getClassName()));
+      .map(ClassSelector::getJavaClass)
+      .map(selectedClass -> (Class<SpecClass>) selectedClass)
+      .map(specClass -> makeDeclaringInstance(specClass))
+      .map(SpecClass::declareSpecs)
+      .forEach(container -> container.addDescriptorsTo(engineDescriptor));
 
-    JupiterSpecContainer container = new GreeterSpecs().declareSpecs(); //TODO KDK [1]: Look for Spec classes, given in the runtime configuration
-    container.addDescriptorsTo(engineDescriptor);
     return engineDescriptor;
+  }
+
+  private SpecClass makeDeclaringInstance(Class<SpecClass> specClass) {
+    Constructor<SpecClass> constructor = null;
+    try {
+      constructor = specClass.getDeclaredConstructor();
+    } catch (NoSuchMethodException e) {
+      throw new RuntimeException("Failed to access no-arg SpecClass constructor", e);
+    }
+
+    try {
+      return constructor.newInstance();
+    } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+      throw new RuntimeException("Failed to instantiate SpecClass", e);
+    }
   }
 
   @Override

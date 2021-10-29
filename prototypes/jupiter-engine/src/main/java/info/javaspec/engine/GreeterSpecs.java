@@ -2,7 +2,7 @@ package info.javaspec.engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GreeterSpecs {
+public class GreeterSpecs implements SpecClass {
   private static int _numTimesRun = 0;
 
   public static void assertRanOnce() {
@@ -17,6 +17,7 @@ public class GreeterSpecs {
     System.out.println("[GreeterSpecs::GreeterSpecs]");
   }
 
+  @Override
   public JupiterSpecContainer declareSpecs() {
     //TODO KDK: [3] Extract JupiterJavaSpec instance with #describe and #it to create SpecContainer and JupiterSpec
     JupiterSpecContainer container = new JupiterSpecContainer(GreeterSpecs.class);
