@@ -18,7 +18,7 @@ public class GreeterSpecs {
   }
 
   public JupiterSpecContainer declareSpecs() {
-    //TODO KDK: [2] Extract JupiterJavaSpec instance with #describe and #it to create SpecContainer and JupiterSpec
+    //TODO KDK: [3] Extract JupiterJavaSpec instance with #describe and #it to create SpecContainer and JupiterSpec
     JupiterSpecContainer container = new JupiterSpecContainer(GreeterSpecs.class);
     container.addSpec(new JupiterSpec("greets the world", () -> GreeterSpecs.incrementRunCount()));
     return container;

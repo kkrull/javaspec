@@ -1,12 +1,17 @@
 package info.javaspec.engine;
 
 import org.junit.platform.engine.*;
+import org.junit.platform.engine.discovery.ClassSelector;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
 public class SpecTestEngine implements TestEngine {
   @Override
   public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId engineId) {
     EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
+
+    discoveryRequest.getSelectorsByType(ClassSelector.class).stream()
+      .forEach(x -> System.out.printf("Selected class: %s%n", x.getClassName()));
+
     JupiterSpecContainer container = new GreeterSpecs().declareSpecs(); //TODO KDK [1]: Look for Spec classes, given in the runtime configuration
     container.addDescriptorsTo(engineDescriptor);
     return engineDescriptor;
