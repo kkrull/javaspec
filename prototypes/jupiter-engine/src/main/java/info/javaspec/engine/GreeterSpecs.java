@@ -1,7 +1,39 @@
 package info.javaspec.engine;
 
+import org.junit.platform.commons.annotation.Testable;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * TODO KDK [1]: How to get IDE to run tests with my new custom TestEngine?
+ *
+ * Maybe it needs the @Testable annotation to get the run arrow and then these something like these gradle settings.
+ * The first step on this might be to extract SpecTestEngine, save artifacts locally, and register a custom test engine
+ * (from another module or project).  Then I could add the runtime dependency on the engine and make sure it's included
+ * when running tests.
+ *
+ * See here: https://stackoverflow.com/questions/45462987/junit5-with-intellij-and-gradle
+ *
+ * This issue with cucumber-IntelliJ integration may also have some related information:
+ * https://github.com/cucumber/cucumber-jvm/issues/2348
+ *
+ * dependencies {
+ *
+ *     testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+ *     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+ *
+ *     testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$junitVersion"
+ *     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+ * }
+ *
+ * test {
+ *     useJUnitPlatform {
+ *         includeEngines 'junit-jupiter', 'junit-vintage'
+ *     }
+ * }
+ */
+
+@Testable
 public class GreeterSpecs implements SpecClass {
   private static int _numTimesRun = 0;
 
