@@ -41,12 +41,12 @@ public class Main {
 
       @Override
       public void engineDiscoveryStarted(UniqueId engineId) {
-        System.out.println("[LauncherDiscoveryListener#engineDiscoveryStarted] %s".formatted(engineId));
+        System.out.println(String.format("[LauncherDiscoveryListener#engineDiscoveryStarted] %s", engineId));
       }
 
       @Override
       public void engineDiscoveryFinished(UniqueId engineId, EngineDiscoveryResult result) {
-        System.out.println("[LauncherDiscoveryListener#engineDiscoveryFinished] %s: %s".formatted(engineId, result.getStatus()));
+        System.out.println(String.format("[LauncherDiscoveryListener#engineDiscoveryFinished] %s: %s", engineId, result.getStatus()));
       }
 
       @Override
@@ -65,12 +65,12 @@ public class Main {
 
       @Override
       public void executionStarted(TestIdentifier testId) {
-        System.out.println("[TestExecutionListener#executionStarted] %s (%s)".formatted(testId.getUniqueId(), testId.getDisplayName()));
+        System.out.println(String.format("[TestExecutionListener#executionStarted] %s (%s)", testId.getUniqueId(), testId.getDisplayName()));
       }
 
       @Override
       public void executionFinished(TestIdentifier testId, TestExecutionResult testExecutionResult) {
-        System.out.println("[TestExecutionListener#executionFinished] %s (%s)".formatted(testId.getUniqueId(), testId.getDisplayName()));
+        System.out.println(String.format("[TestExecutionListener#executionFinished] %s (%s)", testId.getUniqueId(), testId.getDisplayName()));
       }
 
       @Override

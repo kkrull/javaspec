@@ -31,7 +31,7 @@ public class SpecTestEngine implements TestEngine {
         execute(child, listener);
       }
     } else {
-      System.out.println("*** Unsupported descriptor type: %s ***".formatted(descriptor.getClass().getName()));
+      System.out.println(String.format("*** Unsupported descriptor type: %s ***", descriptor.getClass().getName()));
     }
 
     listener.executionFinished(descriptor, TestExecutionResult.successful());
