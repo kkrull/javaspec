@@ -14,7 +14,7 @@ public class JupiterSpecContainer {
   public void addDescriptorsTo(TestDescriptor parentDescriptor) {
     ContainerDescriptor containerDescriptor = ContainerDescriptor.forClass(
       parentDescriptor.getUniqueId(),
-      GreeterSpecs.class //TODO KDK: Lift parameter to constructor
+      GreeterSpecs.class //TODO KDK [1]: Lift parameter to constructor
     );
     parentDescriptor.addChild(containerDescriptor);
 
