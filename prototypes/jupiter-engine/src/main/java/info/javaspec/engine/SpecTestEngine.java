@@ -56,6 +56,7 @@ public class SpecTestEngine implements TestEngine {
         execute(child, listener);
       }
     } else {
+      //Throwing exceptions from here didn't seem to cause any warnings, error messages, or failures.
       System.out.println(String.format("*** Unsupported descriptor type: %s ***", descriptor.getClass().getName()));
     }
 
