@@ -5,20 +5,25 @@ import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 
 public class JupiterSpecContainer {
+  private Class<?> specClass;
   private JupiterSpec spec;
 
-  public void addSpec(JupiterSpec spec) {
-    this.spec = spec;
+  public JupiterSpecContainer(Class<?> specClass) {
+    this.specClass = specClass;
   }
 
   public void addDescriptorsTo(TestDescriptor parentDescriptor) {
     ContainerDescriptor containerDescriptor = ContainerDescriptor.forClass(
       parentDescriptor.getUniqueId(),
-      GreeterSpecs.class //TODO KDK [1]: Lift parameter to constructor
+      specClass
     );
     parentDescriptor.addChild(containerDescriptor);
 
     spec.addTestDescriptorTo(containerDescriptor);
+  }
+
+  public void addSpec(JupiterSpec spec) {
+    this.spec = spec;
   }
 
   private static class ContainerDescriptor extends AbstractTestDescriptor {
