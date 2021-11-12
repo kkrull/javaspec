@@ -16,6 +16,12 @@ dependencies {
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
+task helloWorld() {
+  doLast {
+    println "Hello world!"
+  }
+}
+
 tasks.named('test') {
   useJUnitPlatform()
 }
