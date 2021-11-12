@@ -2,10 +2,9 @@
 
 That's right.  We're building our own engine.  We're going to the moon!
 
-## Running prototype
-
-Run with
+Run the prototype with:
 
 ```shell
-$ ./gradlew run
+$ cd prototypes/
+$ ./gradlew jupiter-engine:run
 ```
