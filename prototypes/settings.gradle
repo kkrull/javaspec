@@ -1,5 +1,5 @@
 //Multi-project build for prototyping.
-//https://docs.gradle.org/6.7.1/userguide/multi_project_builds.html
+//https://docs.gradle.org/7.3/userguide/intro_multi_project_builds.html
 
 rootProject.name = 'prototypes'
 include('javaspec-jupiter')

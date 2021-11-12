@@ -16,15 +16,8 @@ repositories {
   mavenCentral()
 }
 
-version 'unspecified'
+version '0.0.1'
 
 tasks.named('test') {
   useJUnitPlatform() //Use JUnit Platform for unit tests
-}
-
-task runTestLauncher(type: JavaExec) {
-  group = "Execution"
-  description = "Run the test main class with JavaExecTask"
-  classpath = sourceSets.test.runtimeClasspath
-  mainClass = "info.javaspec.engine.Main"
 }
