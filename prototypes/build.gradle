@@ -1,0 +1,13 @@
+//Common development tasks that aren't related to an partiular module
+
+task javaVersionsInstalled(type: Exec) {
+  description 'Lists versions of Java that are installed on this system'
+  commandLine '/usr/libexec/java_home', '-V'
+}
+
+task helloWorld() {
+  description 'Example task'
+  doLast {
+    println 'Hello world!'
+  }
+}
