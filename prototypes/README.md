@@ -31,7 +31,15 @@ of the time of this writing, OpenJDK 11 is the latest LTS release of Java.
   $ brew install openjdk@11
   ```
 
-* configuring the system to use that JDK (TBD),
+* configuring the system to use that JDK (try [`jenv`](https://www.jenv.be/) or
+  similar),
+
+  ```shell
+  $ jenv add <path to OpenJDK 11>
+  $ jenv versions
+  $ jenv local openjdk64-11.0.12
+  ```
+
 * and verifying that everyone is using that version
 
   ```shell
