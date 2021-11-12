@@ -3,7 +3,7 @@
 Behavior-Driven Development testing for Java using lambdas.  Inspired by [RSpec](http://rspec.info) and
 [Machine.Specifications](https://github.com/machine/machine.specifications).
 
-[![Build Status](https://travis-ci.org/kkrull/javaspec.svg?branch=main)](https://travis-ci.org/kkrull/javaspec)
+![Build Status](https://github.com/kkrull/javaspec/actions/workflows/gradle.yml/badge.svg)
 
 
 ## Why
@@ -135,7 +135,7 @@ class WidgetTest {
     Because of = () -> returned = subject.sayHello();
     It says_hello = () -> assertEquals("Hello World!", returned);
   }
-  
+
   class bar {
     class given_a_multiple_of_3 {
       It prints_fizz = () -> assertEquals("fizz", subject.bar(3));
