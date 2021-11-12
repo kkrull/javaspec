@@ -1,13 +1,13 @@
 //Prototypes for integration with JUnit Jupiter.
-//Reference: https://docs.gradle.org/6.7.1/userguide/building_java_projects.html
+//https://docs.gradle.org/6.7.1/userguide/building_java_projects.html
 
 plugins {
   id 'java-library' //Separates API from implementation
-  id 'com.adarshr.test-logger' version '2.1.1' //Test logging
+  id 'com.adarshr.test-logger' version '3.0.0' //Test logging
 }
 
 repositories {
-  jcenter()
+  mavenCentral()
 }
 
 dependencies {
