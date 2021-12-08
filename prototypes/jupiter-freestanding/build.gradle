@@ -1,11 +1,16 @@
+//Self-contained prototype JUnit 5 Launcher and TestEngine that runs from a main class
 plugins {
   id 'application'
 }
+
+group 'info.javaspec'
+version '0.0.1'
 
 application {
   mainClass = 'info.javaspec.engine.Main'
 }
 
+//Does not depend upon any other JavaSpec artifacts.
 dependencies {
   implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
   implementation 'org.junit.platform:junit-platform-launcher:1.8.1'
@@ -16,8 +21,6 @@ repositories {
   mavenCentral()
 }
 
-version '0.0.1'
-
-tasks.named('test') {
-  useJUnitPlatform() //Use JUnit Platform for unit tests
+test {
+  useJUnitPlatform()
 }

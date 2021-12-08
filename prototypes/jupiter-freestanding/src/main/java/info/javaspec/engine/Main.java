@@ -28,7 +28,7 @@ public class Main {
 
   private static LauncherDiscoveryRequest discoverRequestForTestClass() {
     return LauncherDiscoveryRequestBuilder.request()
-      .selectors(selectClass(GreeterSpecs.class)) //TODO KDK [2]: How to get the Gradle CLI and IDEs to select *Spec classes instead of *Test?
+      .selectors(selectClass(GreeterSpecs.class)) //TODO KDK: How to get the Gradle CLI and IDEs to select *Spec classes instead of *Test?
       .build();
   }
 

@@ -1,14 +1,11 @@
-//Prototypes for integration with JUnit Jupiter.
-//https://docs.gradle.org/6.7.1/userguide/building_java_projects.html
-
+//Prototype adapters of JavaSpec syntax to JUnit 5 constructs
 plugins {
   id 'java-library' //Separates API from implementation
   id 'com.adarshr.test-logger' version '3.0.0' //Test logging
 }
 
-repositories {
-  mavenCentral()
-}
+group 'info.javaspec'
+version '0.0.1'
 
 dependencies {
   //JUnit Jupiter API + engine for testing
@@ -16,7 +13,11 @@ dependencies {
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
-tasks.named('test') {
+repositories {
+  mavenCentral()
+}
+
+test {
   useJUnitPlatform()
 }
 

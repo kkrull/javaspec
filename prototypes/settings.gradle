@@ -1,6 +1,3 @@
-//Multi-project build for prototyping.
-//https://docs.gradle.org/7.3/userguide/intro_multi_project_builds.html
-
 rootProject.name = 'prototypes'
-include('javaspec-jupiter')
-include('jupiter-engine')
+include 'jupiter-adapters'
+include 'jupiter-freestanding'
