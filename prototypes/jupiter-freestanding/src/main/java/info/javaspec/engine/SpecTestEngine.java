@@ -7,7 +7,7 @@ import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-//TODO KDK [1]: Extract SpecTestEngine into its own artifact and register it as a custom engine at runtime
+//TODO KDK: Extract SpecTestEngine into its own artifact and register it as a custom engine at runtime
 //https://junit.org/junit5/docs/current/user-guide/#launcher-api-engines-custom
 //Make a new prototype module for this, as this prototype helps show it all together with a custom Main
 public class SpecTestEngine implements TestEngine {
