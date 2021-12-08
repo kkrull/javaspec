@@ -1,0 +1,20 @@
+//Code that uses JavaSpec's API to write specs
+plugins {
+  id 'java'
+}
+
+group 'info.javaspec'
+version '0.0.1'
+
+dependencies {
+//  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+//  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+repositories {
+  mavenCentral()
+}
+
+test {
+  useJUnitPlatform()
+}
