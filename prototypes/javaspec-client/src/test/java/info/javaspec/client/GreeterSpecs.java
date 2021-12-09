@@ -3,7 +3,10 @@ package info.javaspec.client;
 import info.javaspec.api.SpecClass;
 import info.javaspec.api.SpecContainer;
 
-//TODO KDK: [2] Create a separate javaspec-launcher module that is hard-coded to run these specs, then start extracting an engine and making it dynamic.
+//TODO KDK: [1] Create javaspec-launcher with a ::main and a TestLauncher
+//TODO KDK: [2] Create javaspec-engine that javaspec-launcher uses to run this spec
+//TODO KDK: [3] Stop hard-coding the engine to run these specs
+//TODO KDK: [4] Stop hard-coding the javaspec-launcher to use javaspec-engine
 public class GreeterSpecs implements SpecClass {
   @Override
   public void declareSpecs(SpecContainer container) {
