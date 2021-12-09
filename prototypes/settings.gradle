@@ -1,5 +1,6 @@
 rootProject.name = 'prototypes'
 include 'jupiter-adapters'
 include 'jupiter-freestanding'
-include 'javaspec-client'
 
+include 'javaspec-api'
+include 'javaspec-client'
