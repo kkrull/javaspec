@@ -6,7 +6,16 @@ import info.javaspec.api.SpecContainer;
 public class GreeterSpecs implements SpecClass {
   @Override
   public void declareSpecs(SpecContainer container) {
-    //TODO KDK: Work here and do something to declare the spec.  Maybe use an instance variety of the JavaSpec class?
-    container.addSpec("greets the world", () -> {});
+    container.addSpec("greets the world", () -> {
+      Greeter subject = new Greeter();
+      assertEquals("Hello world!", subject.greet());
+    });
+  }
+
+  private static void assertEquals(String expected, String actual) {
+    if(expected.equals(actual))
+      return;
+
+    throw new AssertionError(String.format("Expected <%s>, but was <%s>", expected, actual));
   }
 }
