@@ -1,0 +1,20 @@
+plugins {
+  id 'java-library'
+}
+
+group 'info.javaspec'
+version '0.0.1'
+
+dependencies {
+  implementation project(':javaspec-api')
+  implementation project(':javaspec-client') //TODO KDK: Remove engine dependency on specs themselves and find them during runtime instead
+  implementation 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+repositories {
+  mavenCentral()
+}
+
+test {
+  useJUnitPlatform()
+}
