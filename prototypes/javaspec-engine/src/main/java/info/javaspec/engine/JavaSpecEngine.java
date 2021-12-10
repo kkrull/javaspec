@@ -66,8 +66,8 @@ public class JavaSpecEngine implements TestEngine {
     listener.executionStarted(descriptor);
 
     if (descriptor.isTest()) {
-      JupiterSpec.SpecDescriptor specDescriptor = (JupiterSpec.SpecDescriptor) descriptor;
-      specDescriptor.runSpec();
+      JupiterSpec spec = (JupiterSpec) descriptor;
+      spec.run();
     } else if (descriptor.isContainer()) {
       for (TestDescriptor child : descriptor.getChildren()) {
         execute(child, listener);
