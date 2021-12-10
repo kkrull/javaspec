@@ -18,9 +18,9 @@ public class JavaSpecEngine implements TestEngine {
       .map(selectedClass -> (Class<SpecClass>) selectedClass)
       .map(specClass -> makeDeclaringInstance(specClass))
       .forEach(specClass -> {
-        //TODO KDK: [1] Create a SpecContainer and pass it to SpecClass#declareSpecs
-        //TODO KDK: [2] Get a TestDescriptor from the SpecContainer and add it to EngineDescriptor
-        throw new UnsupportedOperationException("Work here");
+        JupiterSpecContainer container = new JupiterSpecContainer(specClass.getClass());
+        specClass.declareSpecs(container);
+        container.addDescriptorsTo(engineDescriptor);
       });
 
     return engineDescriptor;
@@ -53,9 +53,8 @@ public class JavaSpecEngine implements TestEngine {
     listener.executionStarted(descriptor);
 
     if (descriptor.isTest()) {
-      throw new UnsupportedOperationException();
-//      SpecDescriptor specDescriptor = (SpecDescriptor) descriptor;
-//      specDescriptor.runSpec();
+      SpecDescriptor specDescriptor = (SpecDescriptor) descriptor;
+      specDescriptor.runSpec();
     } else if (descriptor.isContainer()) {
       for (TestDescriptor child : descriptor.getChildren()) {
         execute(child, listener);

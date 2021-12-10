@@ -23,6 +23,7 @@ public class EngineMain {
 
     Launcher launcher = LauncherFactory.create(launcherConfig);
     launcher.execute(discoverRequestForTestClass());
+    GreeterSpecs.assertRanOnce();
   }
 
   private static LauncherDiscoveryRequest discoverRequestForTestClass() {
