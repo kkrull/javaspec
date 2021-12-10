@@ -18,6 +18,7 @@ public class GreeterSpecs implements SpecClass {
 
   @Override
   public void declareSpecs(SpecContainer container) {
+    //TODO KDK: Is this how I want the syntax to work?  Being able to do static imports is really nice.
     container.addSpec("greets the world", () -> {
       incrementRunCount();
       Greeter subject = new Greeter();

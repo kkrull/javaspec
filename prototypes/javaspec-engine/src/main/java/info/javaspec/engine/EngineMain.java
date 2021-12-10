@@ -28,7 +28,7 @@ public class EngineMain {
 
   private static LauncherDiscoveryRequest discoverRequestForTestClass() {
     return LauncherDiscoveryRequestBuilder.request()
-      .selectors(selectClass(GreeterSpecs.class))
+      .selectors(selectClass(GreeterSpecs.class)) //TODO KDK: Stop hard-coding here and get Gradle to select *Spec instead of *Test
       .build();
   }
 

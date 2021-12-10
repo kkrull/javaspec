@@ -8,6 +8,19 @@ import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+/**
+ * TODO KDK: Register the engine artifact it as a custom engine at runtime
+ * https://junit.org/junit5/docs/current/user-guide/#launcher-api-engines-custom
+ *
+ * This gradle snippet may come in handy:
+ *
+ * test {
+ *     useJUnitPlatform {
+ *         includeEngines 'junit-jupiter', 'junit-vintage'
+ *     }
+ * }
+ */
+
 public class JavaSpecEngine implements TestEngine {
   @Override
   public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId engineId) {
