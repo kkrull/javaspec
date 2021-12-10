@@ -30,9 +30,9 @@ public class JavaSpecEngine implements TestEngine {
       .map(ClassSelector::getJavaClass)
       .map(selectedClass -> (Class<SpecClass>) selectedClass)
       .map(specClass -> makeDeclaringInstance(specClass))
-      .forEach(specClass -> {
-        JavaSpecForJupiter javaspec = new JavaSpecForJupiter(specClass.getClass());
-        specClass.declareSpecs(javaspec);
+      .forEach(declaringInstance -> {
+        JavaSpecForJupiter javaspec = JavaSpecForJupiter.forSpecClass(engineId, declaringInstance.getClass());
+        declaringInstance.declareSpecs(javaspec);
         javaspec.addDescriptorsTo(engineDescriptor);
       });
 
