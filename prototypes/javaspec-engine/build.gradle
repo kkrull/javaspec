@@ -10,6 +10,7 @@ application {
   mainClass = 'info.javaspec.engine.EngineMain'
 }
 
+//https://stackoverflow.com/questions/5644011/multi-project-test-dependencies-with-gradle/60138176#60138176
 dependencies {
   implementation project(':javaspec-api')
   implementation project(':javaspec-client') //TODO KDK: Remove engine dependency on specs themselves and find them during runtime instead
