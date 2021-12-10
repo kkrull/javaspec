@@ -3,6 +3,8 @@ package info.javaspec.engine;
 import info.javaspec.api.SpecContainer;
 import info.javaspec.api.Verification;
 import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 
 public class JupiterSpecContainer implements SpecContainer {
   private final Class<?> specClass;
@@ -25,5 +27,23 @@ public class JupiterSpecContainer implements SpecContainer {
     parentDescriptor.addChild(containerDescriptor);
 
     this.spec.addTestDescriptorTo(containerDescriptor);
+  }
+
+  private static class ContainerDescriptor extends AbstractTestDescriptor {
+    public static ContainerDescriptor forClass(UniqueId parentId, Class<?> specClass) {
+      return new ContainerDescriptor(
+        parentId.append("class", specClass.getName()),
+        specClass.getName()
+      );
+    }
+
+    private ContainerDescriptor(UniqueId uniqueId, String displayName) {
+      super(uniqueId, displayName);
+    }
+
+    @Override
+    public Type getType() {
+      return Type.CONTAINER;
+    }
   }
 }
