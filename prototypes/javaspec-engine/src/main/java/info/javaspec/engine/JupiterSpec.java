@@ -25,6 +25,7 @@ public class JupiterSpec {
   }
 
   //TODO KDK: Does it make sense for this to be separate from JupiterSpec?
+  //JUnit adapter that can run a spec
   public static class SpecDescriptor extends AbstractTestDescriptor {
     private final Verification verification;
 

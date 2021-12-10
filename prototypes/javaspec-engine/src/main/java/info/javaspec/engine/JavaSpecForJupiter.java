@@ -1,21 +1,21 @@
 package info.javaspec.engine;
 
-import info.javaspec.api.SpecContainer;
+import info.javaspec.api.JavaSpec;
 import info.javaspec.api.Verification;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 
-public class JupiterSpecContainer implements SpecContainer {
+public class JavaSpecForJupiter implements JavaSpec {
   private final Class<?> specClass;
   private JupiterSpec spec;
 
-  public JupiterSpecContainer(Class<?> specClass) {
+  public JavaSpecForJupiter(Class<?> specClass) {
     this.specClass = specClass;
   }
 
   @Override
-  public void addSpec(String behavior, Verification verification) {
+  public void it(String behavior, Verification verification) {
     this.spec = new JupiterSpec(behavior, verification);
   }
 

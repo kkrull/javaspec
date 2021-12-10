@@ -1,7 +1,7 @@
 package info.javaspec.client;
 
+import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
-import info.javaspec.api.SpecContainer;
 
 //TODO KDK: Stop hard-coding the engine to run these specs
 //TODO KDK: Stop hard-coding the javaspec-launcher to use javaspec-engine
@@ -16,10 +16,8 @@ public class GreeterSpecs implements SpecClass {
     _numTimesRun++;
   }
 
-  @Override
-  public void declareSpecs(SpecContainer container) {
-    //TODO KDK: Is this how I want the syntax to work?  Being able to do static imports is really nice.
-    container.addSpec("greets the world", () -> {
+  public void declareSpecs(JavaSpec javaspec) {
+    javaspec.it("greets the world", () -> {
       incrementRunCount();
       Greeter subject = new Greeter();
       assertEquals("Hello world!", subject.greet());
