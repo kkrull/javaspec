@@ -7,7 +7,7 @@ group 'info.javaspec'
 version '0.0.1'
 
 dependencies {
-  testImplementation project(':javaspec-api')
+  implementation project(':javaspec-api')
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
 

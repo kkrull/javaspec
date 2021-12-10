@@ -1,10 +1,14 @@
 package info.javaspec.engine;
 
+import info.javaspec.client.GreeterSpecs;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.launcher.*;
 import org.junit.platform.launcher.core.LauncherConfig;
+import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
+
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 
 public class EngineMain {
   //Run with ./gradlew javaspec-engine:run
@@ -22,10 +26,9 @@ public class EngineMain {
   }
 
   private static LauncherDiscoveryRequest discoverRequestForTestClass() {
-    throw new UnsupportedOperationException("Add dependency on test code.  Perhaps it's time to move this to a separate launcher module?");
-//    return LauncherDiscoveryRequestBuilder.request()
-//      .selectors(selectClass(GreeterSpecs.class))
-//      .build();
+    return LauncherDiscoveryRequestBuilder.request()
+      .selectors(selectClass(GreeterSpecs.class))
+      .build();
   }
 
   private static LauncherDiscoveryListener launcherDiscoveryListener() {
