@@ -10,12 +10,14 @@ application {
   mainClass = 'info.javaspec.engine.EngineMain'
 }
 
-//https://stackoverflow.com/questions/5644011/multi-project-test-dependencies-with-gradle/60138176#60138176
 dependencies {
+  //Launcher
+  implementation 'org.junit.platform:junit-platform-launcher:1.8.1'
+  implementation project(':javaspec-client')
+
+  //Engine
   implementation project(':javaspec-api')
-  implementation project(':javaspec-client') //TODO KDK: Remove engine dependency on specs themselves and find them during runtime instead
   implementation 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-  implementation 'org.junit.platform:junit-platform-launcher:1.8.1' //TODO KDK: Create a separate javaspec-launcher module and remove the platform-launcher dependency
 }
 
 repositories {
