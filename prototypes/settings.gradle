@@ -5,4 +5,3 @@ include 'jupiter-freestanding'
 include 'javaspec-api'
 include 'javaspec-client'
 include 'javaspec-engine'
-

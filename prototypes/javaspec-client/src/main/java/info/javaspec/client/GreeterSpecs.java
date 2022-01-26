@@ -3,7 +3,6 @@ package info.javaspec.client;
 import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
 
-//TODO KDK: Stop hard-coding the engine to run these specs
 //TODO KDK: Stop hard-coding the javaspec-launcher to use javaspec-engine
 public class GreeterSpecs implements SpecClass {
   private static int _numTimesRun = 0;

@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import static org.junit.platform.engine.discovery.ClassNameFilter.includeClassNamePatterns;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 
 public class EngineMain {
@@ -27,7 +28,7 @@ public class EngineMain {
 
     try(LauncherSession session = LauncherFactory.openSession(launcherConfig)) {
       Launcher launcher = session.getLauncher();
-      TestPlan plan = launcher.discover(discoverRequestForTestClass());
+      TestPlan plan = launcher.discover(discoverRequestForTestClass("info.javaspec.client.GreeterSpecs"));
       dfsTestIds(plan, plan.getRoots()).forEach(x ->
         System.out.printf("TestPlan %s%n", x.getUniqueId()));
 
@@ -37,11 +38,10 @@ public class EngineMain {
     GreeterSpecs.assertRanOnce();
   }
 
-  private static LauncherDiscoveryRequest discoverRequestForTestClass() {
-    //TODO KDK: Select *Spec classes in the info.javaspec.client package
-    //https://junit.org/junit5/docs/current/user-guide/#launcher-api-discovery
+  private static LauncherDiscoveryRequest discoverRequestForTestClass(String specClassName) {
     return LauncherDiscoveryRequestBuilder.request()
-      .selectors(selectClass("info.javaspec.client.GreeterSpecs"))
+      .selectors(selectClass(specClassName))
+      .filters(includeClassNamePatterns(".*Specs"))
       .build();
   }
 
