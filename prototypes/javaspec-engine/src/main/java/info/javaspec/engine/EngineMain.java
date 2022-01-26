@@ -1,6 +1,5 @@
 package info.javaspec.engine;
 
-import info.javaspec.client.GreeterSpecs;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.launcher.*;
@@ -8,6 +7,8 @@ import org.junit.platform.launcher.core.LauncherConfig;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -17,7 +18,7 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
 
 public class EngineMain {
   //Run with ./gradlew javaspec-engine:run
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
     LauncherConfig launcherConfig = LauncherConfig.builder()
       .enableTestEngineAutoRegistration(false)
       .enableTestExecutionListenerAutoRegistration(false)
@@ -26,16 +27,26 @@ public class EngineMain {
       .addTestExecutionListeners(testExecutionListener())
       .build();
 
+    String specClassName = "info.javaspec.client.GreeterSpecs";
     try(LauncherSession session = LauncherFactory.openSession(launcherConfig)) {
       Launcher launcher = session.getLauncher();
-      TestPlan plan = launcher.discover(discoverRequestForTestClass("info.javaspec.client.GreeterSpecs"));
+      TestPlan plan = launcher.discover(discoverRequestForTestClass(specClassName));
       dfsTestIds(plan, plan.getRoots()).forEach(x ->
         System.out.printf("TestPlan %s%n", x.getUniqueId()));
 
       launcher.execute(plan);
     }
 
-    GreeterSpecs.assertRanOnce();
+    assertSpecsRan(specClassName);
+  }
+
+  private static void assertSpecsRan(String specClassName)
+    throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+    Class<?> specClass = Class.forName(specClassName);
+    Method assertionMethod = specClass.getMethod("assertRanOnce");
+    System.out.printf("Verifying tests ran with: %s::%s%n", specClass.getName(), assertionMethod.getName());
+    assertionMethod.invoke(null);
   }
 
   private static LauncherDiscoveryRequest discoverRequestForTestClass(String specClassName) {

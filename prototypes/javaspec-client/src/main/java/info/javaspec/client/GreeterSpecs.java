@@ -7,6 +7,7 @@ import info.javaspec.api.SpecClass;
 public class GreeterSpecs implements SpecClass {
   private static int _numTimesRun = 0;
 
+  //Called via reflection
   public static void assertRanOnce() {
     assertEquals(1, _numTimesRun, "Expected GreeterSpecs to have been run once");
   }
