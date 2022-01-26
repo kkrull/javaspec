@@ -38,8 +38,10 @@ public class EngineMain {
   }
 
   private static LauncherDiscoveryRequest discoverRequestForTestClass() {
+    //TODO KDK: Select *Spec classes in the info.javaspec.client package
+    //https://junit.org/junit5/docs/current/user-guide/#launcher-api-discovery
     return LauncherDiscoveryRequestBuilder.request()
-      .selectors(selectClass(GreeterSpecs.class)) //TODO KDK: Stop hard-coding here and get Gradle to select *Spec instead of *Test
+      .selectors(selectClass("info.javaspec.client.GreeterSpecs"))
       .build();
   }
 

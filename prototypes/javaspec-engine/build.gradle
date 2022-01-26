@@ -13,7 +13,7 @@ application {
 dependencies {
   //Launcher
   implementation 'org.junit.platform:junit-platform-launcher:1.8.1'
-  implementation project(':javaspec-client')
+  implementation project(':javaspec-client') //TODO KDK: Change to runtime dependency
 
   //Engine
   implementation project(':javaspec-api')
