@@ -17,6 +17,7 @@ repositories {
   mavenCentral()
 }
 
+//TODO KDK: Clean this up. It seems to be working, but what makes it tick?
 test {
   useJUnitPlatform {
     includeEngines 'javaspec-engine'
