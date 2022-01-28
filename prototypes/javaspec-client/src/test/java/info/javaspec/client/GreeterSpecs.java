@@ -15,6 +15,10 @@ public class GreeterSpecs implements SpecClass {
     _numTimesRun++;
   }
 
+  public GreeterSpecs() {
+    System.out.println("GreeterSpecs::ctor");
+  }
+
   public void declareSpecs(JavaSpec javaspec) {
     javaspec.it("greets the world", () -> {
       incrementRunCount();

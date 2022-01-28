@@ -7,7 +7,8 @@ group 'info.javaspec'
 version '0.0.1'
 
 dependencies {
-  implementation project(':javaspec-api')
+  testImplementation project(':javaspec-api')
+  testRuntimeOnly project(':javaspec-engine')
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
 
@@ -15,19 +16,20 @@ repositories {
   mavenCentral()
 }
 
-/**
- * TODO KDK: Register the engine artifact it as a custom engine at runtime
- * https://junit.org/junit5/docs/current/user-guide/#launcher-api-engines-custom
- *
- * This gradle snippet may come in handy:
- *
- * test {
- *     useJUnitPlatform {
- *         includeEngines 'junit-jupiter', 'junit-vintage'
- *     }
- * }
- */
-
 test {
-  useJUnitPlatform()
+  useJUnitPlatform {
+    includeEngines 'javaspec-engine'
+  }
+
+  beforeTest { descriptor ->
+    logger.lifecycle('Running test: ' + descriptor)
+  }
+
+  include '**/*Specs*'
+
+  onOutput { descriptor, event ->
+    logger.lifecycle('Test: ' + descriptor + ' produced standard out/err: ' + event.message)
+  }
+
+  testLogging.showStandardStreams = true
 }
