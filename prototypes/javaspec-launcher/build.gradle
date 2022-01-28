@@ -1,0 +1,24 @@
+//Runs specs from javaspec-client in JUnit Jupiter using javaspec-engine
+plugins {
+  id 'application'
+}
+
+group 'info.javaspec'
+version '0.0.1'
+
+application {
+  mainClass = 'info.javaspec.launcher.LauncherMain'
+}
+
+dependencies {
+//  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+//  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+repositories {
+  mavenCentral()
+}
+
+test {
+  useJUnitPlatform()
+}
