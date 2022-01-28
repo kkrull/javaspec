@@ -1,6 +1,6 @@
 //JUnit TestEngine that is discovered at runtime and runs specs under JUnit Jupiter
 plugins {
-  id 'application'
+  id 'application' //TODO KDK: Change to library and add runtime dependency when running launcher
 }
 
 group 'info.javaspec'
