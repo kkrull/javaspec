@@ -1,5 +1,6 @@
 package info.javaspec.engine;
 
+import info.javaspec.api.SpecClass;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.ClassSelector;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
@@ -7,7 +8,20 @@ import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-public class SpecTestEngine implements TestEngine {
+/**
+ * TODO KDK: Register the engine artifact it as a custom engine at runtime
+ * https://junit.org/junit5/docs/current/user-guide/#launcher-api-engines-custom
+ *
+ * This gradle snippet may come in handy:
+ *
+ * test {
+ *     useJUnitPlatform {
+ *         includeEngines 'junit-jupiter', 'junit-vintage'
+ *     }
+ * }
+ */
+
+public class JavaSpecEngine implements TestEngine {
   @Override
   public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId engineId) {
     EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
@@ -16,8 +30,11 @@ public class SpecTestEngine implements TestEngine {
       .map(ClassSelector::getJavaClass)
       .map(selectedClass -> (Class<SpecClass>) selectedClass)
       .map(specClass -> makeDeclaringInstance(specClass))
-      .map(SpecClass::declareSpecs)
-      .forEach(container -> container.addDescriptorsTo(engineDescriptor));
+      .forEach(declaringInstance -> {
+        JavaSpecForJupiter javaspec = JavaSpecForJupiter.forSpecClass(engineId, declaringInstance.getClass());
+        declaringInstance.declareSpecs(javaspec);
+        javaspec.addDescriptorsTo(engineDescriptor);
+      });
 
     return engineDescriptor;
   }
@@ -49,8 +66,8 @@ public class SpecTestEngine implements TestEngine {
     listener.executionStarted(descriptor);
 
     if (descriptor.isTest()) {
-      SpecDescriptor specDescriptor = (SpecDescriptor) descriptor;
-      specDescriptor.runSpec();
+      JupiterSpec spec = (JupiterSpec) descriptor;
+      spec.run();
     } else if (descriptor.isContainer()) {
       for (TestDescriptor child : descriptor.getChildren()) {
         execute(child, listener);

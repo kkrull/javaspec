@@ -1,0 +1,29 @@
+//JUnit TestEngine that is discovered at runtime and runs specs under JUnit Jupiter
+plugins {
+  id 'application' //TODO KDK: Change to library and add runtime dependency when running launcher
+}
+
+group 'info.javaspec'
+version '0.0.1'
+
+application {
+  mainClass = 'info.javaspec.engine.EngineMain'
+}
+
+dependencies {
+  //Launcher
+  implementation 'org.junit.platform:junit-platform-launcher:1.8.1'
+  runtimeOnly project(':javaspec-client')
+
+  //Engine
+  implementation project(':javaspec-api')
+  implementation 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+repositories {
+  mavenCentral()
+}
+
+test {
+  useJUnitPlatform()
+}

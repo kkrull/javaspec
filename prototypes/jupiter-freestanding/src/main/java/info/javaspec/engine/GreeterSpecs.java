@@ -5,7 +5,7 @@ import org.junit.platform.commons.annotation.Testable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * TODO KDK: How to get IDE to run tests with my new custom TestEngine?
+ * How to get IDE to run tests with my new custom TestEngine?
  *
  * Maybe it needs the @Testable annotation to get the run arrow and then these something like these gradle settings.
  * The first step on this might be to extract SpecTestEngine, save artifacts locally, and register a custom test engine
@@ -51,7 +51,6 @@ public class GreeterSpecs implements SpecClass {
 
   @Override
   public JupiterSpecContainer declareSpecs() {
-    //TODO KDK: Extract JupiterJavaSpec instance with #describe and #it to create SpecContainer and JupiterSpec
     JupiterSpecContainer container = new JupiterSpecContainer(GreeterSpecs.class);
     container.addSpec(new JupiterSpec("greets the world", () -> GreeterSpecs.incrementRunCount()));
     return container;
