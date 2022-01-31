@@ -2,9 +2,12 @@ package info.javaspec.client;
 
 import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
+import org.junit.platform.commons.annotation.Testable;
 
-//Specs that exercise JavaSpec.  Run with ./gradlew :javaspec-client:test
-public class GreeterSpecs implements SpecClass { //TODO KDK: Shows as "UnknownClass"
+//Specs that exercise JavaSpec.
+//Run in IntelliJ or with ./gradlew :javaspec-client:test.
+@Testable
+public class GreeterSpecs implements SpecClass {
   private static int _numTimesRun = 0;
 
   //Called via reflection

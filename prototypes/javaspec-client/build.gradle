@@ -9,6 +9,7 @@ version '0.0.1'
 
 dependencies {
   testImplementation project(':javaspec-api')
+  testImplementation 'org.junit.platform:junit-platform-commons:1.8.1'
 
   testRuntimeOnly project(':javaspec-engine')
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
@@ -34,6 +35,7 @@ test {
 }
 
 //https://github.com/radarsh/gradle-test-logger-plugin
+//TODO KDK: Shows "UnknownClass" when running GreeterSpecs (also in HTML report)
 testlogger {
   theme 'mocha'
 }
