@@ -1,7 +1,7 @@
 //Code that uses JavaSpec's API to write specs
 plugins {
   id 'java'
-  id 'com.adarshr.test-logger' version '3.0.0' //Test logging
+  id 'com.adarshr.test-logger' version '3.0.0'
 }
 
 group 'info.javaspec'
@@ -24,7 +24,13 @@ test {
   }
 
   include '**/*Specs*'
-  testLogging.showStandardStreams = true
+
+  //Show output from the engine and the specs
+  onOutput { _descriptor, engineEvent ->
+    logger.lifecycle(engineEvent.message.trim())
+  }
+
+//  testLogging.showStandardStreams = true //Only shows output from the specs themselves
 }
 
 //https://github.com/radarsh/gradle-test-logger-plugin

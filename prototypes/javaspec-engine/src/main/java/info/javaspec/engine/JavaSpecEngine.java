@@ -11,6 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 public class JavaSpecEngine implements TestEngine {
   @Override
   public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId engineId) {
+    System.out.printf("[JavaSpecEngine#discover]");
     EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
 
     discoveryRequest.getSelectorsByType(ClassSelector.class).stream()
