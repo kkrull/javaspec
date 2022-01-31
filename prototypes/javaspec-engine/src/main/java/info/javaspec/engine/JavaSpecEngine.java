@@ -9,13 +9,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 public class JavaSpecEngine implements TestEngine {
-  public JavaSpecEngine() {
-    System.out.println("[JavaSpecEngine::ctor]");
-  }
-
   @Override
   public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId engineId) {
-    System.out.println("[JavaSpecEngine#discover]");
     EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
 
     discoveryRequest.getSelectorsByType(ClassSelector.class).stream()

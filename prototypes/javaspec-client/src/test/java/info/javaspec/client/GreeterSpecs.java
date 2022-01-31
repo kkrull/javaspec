@@ -3,7 +3,8 @@ package info.javaspec.client;
 import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
 
-public class GreeterSpecs implements SpecClass {
+//Specs that exercise JavaSpec.  Run with ./gradlew :javaspec-client:test
+public class GreeterSpecs implements SpecClass { //TODO KDK: Shows as "UnknownClass"
   private static int _numTimesRun = 0;
 
   //Called via reflection
@@ -13,10 +14,6 @@ public class GreeterSpecs implements SpecClass {
 
   public static void incrementRunCount() {
     _numTimesRun++;
-  }
-
-  public GreeterSpecs() {
-    System.out.println("GreeterSpecs::ctor");
   }
 
   public void declareSpecs(JavaSpec javaspec) {

@@ -9,6 +9,7 @@ version '0.0.1'
 
 dependencies {
   testImplementation project(':javaspec-api')
+
   testRuntimeOnly project(':javaspec-engine')
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
@@ -17,18 +18,12 @@ repositories {
   mavenCentral()
 }
 
-//TODO KDK: Clean this up. It seems to be working, but what makes it tick?
 test {
   useJUnitPlatform {
     includeEngines 'javaspec-engine'
   }
 
-  beforeTest { descriptor ->
-    logger.lifecycle('Running test: ' + descriptor)
-  }
-
   include '**/*Specs*'
-
   onOutput { descriptor, event ->
     logger.lifecycle(event.message.trim())
   }

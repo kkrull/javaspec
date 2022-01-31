@@ -17,6 +17,7 @@ import java.util.Set;
 import static org.junit.platform.engine.discovery.ClassNameFilter.includeClassNamePatterns;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 
+//TODO KDK: Is anybody calling this?  :javaspec-client:test is already registering the engine its own way, I think.
 //Configures JUnit Jupiter to run a known spec with the JavaSpec engine
 public class LauncherMain {
   //Run with ./gradlew javaspec-engine:run
@@ -95,8 +96,7 @@ public class LauncherMain {
 
   private static TestEngine loadTestEngine(String engineClassName) throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
     Class<TestEngine> engineClass= (Class<TestEngine>) Class.forName(engineClassName);
-    TestEngine javaSpecEngine = engineClass.getConstructor().newInstance();
-    return javaSpecEngine;
+    return engineClass.getConstructor().newInstance();
   }
 
   private static TestExecutionListener testExecutionListener() {
