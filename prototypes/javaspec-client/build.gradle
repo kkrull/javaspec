@@ -24,10 +24,6 @@ test {
   }
 
   include '**/*Specs*'
-  onOutput { descriptor, event ->
-    logger.lifecycle(event.message.trim())
-  }
-
   testLogging.showStandardStreams = true
 }
 
