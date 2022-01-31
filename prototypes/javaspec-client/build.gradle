@@ -24,7 +24,7 @@ test {
     includeEngines 'javaspec-engine'
   }
 
-  include '**/*Specs*'
+  include '**/*Specs*' //TODO KDK: Neither this nor includeEngines seems necessary.  How is the TestEngine discovering GreeterSpecs?
 
   //Show output from the engine and the specs
   onOutput { _descriptor, engineEvent ->
