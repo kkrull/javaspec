@@ -21,6 +21,7 @@ repositories {
 
 test {
   useJUnitPlatform {
+    //Jupiter will find this engine even if it's omitted, as long as it's on the classpath.
     includeEngines 'javaspec-engine'
   }
 
