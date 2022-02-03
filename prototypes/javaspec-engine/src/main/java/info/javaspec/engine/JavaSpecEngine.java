@@ -2,7 +2,7 @@ package info.javaspec.engine;
 
 import info.javaspec.api.SpecClass;
 import org.junit.platform.engine.*;
-import org.junit.platform.engine.discovery.ClassSelector;
+import org.junit.platform.engine.discovery.*;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
 import java.lang.reflect.Constructor;
@@ -12,13 +12,10 @@ public class JavaSpecEngine implements TestEngine {
   @Override
   public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId engineId) {
     System.out.printf("[JavaSpecEngine#discover]%n");
-    EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
+    printDiscoveryRequest(discoveryRequest);
 
+    EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
     discoveryRequest.getSelectorsByType(ClassSelector.class).stream()
-      .map(x -> {
-        System.out.printf("[JavaSpecEngine#discover] Selected class: %s%n", x.getClassName());
-        return x;
-      })
       .map(ClassSelector::getJavaClass)
       .map(selectedClass -> (Class<SpecClass>) selectedClass)
       .map(specClass -> makeDeclaringInstance(specClass))
@@ -29,6 +26,53 @@ public class JavaSpecEngine implements TestEngine {
       });
 
     return engineDescriptor;
+  }
+
+  private void printDiscoveryRequest(EngineDiscoveryRequest discoveryRequest) {
+    System.out.println();
+    System.out.printf("[JavaSpecEngine#discover] ClasspathResourceSelector%n");
+    discoveryRequest.getSelectorsByType(ClasspathResourceSelector.class)
+      .forEach(x -> System.out.printf("- %s%n", x.getClasspathResourceName()));
+
+    System.out.println();
+    System.out.printf("[JavaSpecEngine#discover] ClasspathRootSelector%n");
+    discoveryRequest.getSelectorsByType(ClasspathRootSelector.class)
+      .forEach(x -> System.out.printf("- %s%n", x.getClasspathRoot()));
+
+    System.out.println();
+    System.out.printf("[JavaSpecEngine#discover] ClassSelector%n");
+    discoveryRequest.getSelectorsByType(ClassSelector.class)
+      .forEach(x -> System.out.printf("- %s%n", x.getClassName()));
+
+    System.out.println();
+    System.out.printf("[JavaSpecEngine#discover] DirectorySelector%n");
+    discoveryRequest.getSelectorsByType(DirectorySelector.class)
+      .forEach(x -> System.out.printf("- %s%n", x.getRawPath()));
+
+    System.out.println();
+    System.out.printf("[JavaSpecEngine#discover] FileSelector%n");
+    discoveryRequest.getSelectorsByType(FileSelector.class)
+      .forEach(x -> System.out.printf("- %s%n", x.getRawPath()));
+
+    System.out.println();
+    System.out.printf("[JavaSpecEngine#discover] MethodSelector%n");
+    discoveryRequest.getSelectorsByType(MethodSelector.class)
+      .forEach(x -> System.out.printf("- %s#%s%n", x.getClassName(), x.getMethodName()));
+
+    System.out.println();
+    System.out.printf("[JavaSpecEngine#discover] PackageSelector%n");
+    discoveryRequest.getSelectorsByType(PackageSelector.class)
+      .forEach(x -> System.out.printf("- %s%n", x.getPackageName()));
+
+    System.out.println();
+    System.out.printf("[JavaSpecEngine#discover] UniqueIdSelector%n");
+    discoveryRequest.getSelectorsByType(UniqueIdSelector.class)
+      .forEach(x -> System.out.printf("- %s%n", x.getUniqueId()));
+
+    System.out.println();
+    System.out.printf("[JavaSpecEngine#discover] UriSelector%n");
+    discoveryRequest.getSelectorsByType(UriSelector.class)
+      .forEach(x -> System.out.printf("- %s%n", x.getUri().getRawPath()));
   }
 
   private SpecClass makeDeclaringInstance(Class<SpecClass> specClass) {
