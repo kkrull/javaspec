@@ -25,7 +25,9 @@ test {
     includeEngines 'javaspec-engine'
   }
 
-  //TODO KDK: Why are there ClassSelectors for each Spec class, when include is not defined?  Shouldn't it only look for Test classes?
+  //Include is an unnecessary filter.  Gradle (hence IntelliJ) makes ClassSelectors for each class in src/test.
+  //include '**/*Specs*'
+
   //Show all output: the specs themselves *and* the TestEngine
   onOutput { _descriptor, engineEvent ->
     logger.lifecycle(engineEvent.message.trim())
