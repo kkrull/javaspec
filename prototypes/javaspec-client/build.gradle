@@ -24,7 +24,11 @@ test {
     includeEngines 'javaspec-engine'
   }
 
-//  include '**/*Specs*'
+  //TODO KDK: Why are there ClassSelectors for each Spec class, when include is not defined?  Shouldn't it only look for Test classes?
+  //Show all output: the specs themselves *and* the TestEngine
+  onOutput { _descriptor, engineEvent ->
+    logger.lifecycle(engineEvent.message.trim())
+  }
 }
 
 //https://github.com/radarsh/gradle-test-logger-plugin
