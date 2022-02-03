@@ -73,6 +73,16 @@ public class JavaSpecEngine implements TestEngine {
     System.out.printf("[JavaSpecEngine#discover] UriSelector%n");
     discoveryRequest.getSelectorsByType(UriSelector.class)
       .forEach(x -> System.out.printf("- %s%n", x.getUri().getRawPath()));
+
+    System.out.println();
+    System.out.printf("[JavaSpecEngine#discover] ClassNameFilter%n");
+    discoveryRequest.getFiltersByType(ClassNameFilter.class)
+      .forEach(x -> System.out.printf("- %s%n", x));
+
+    System.out.println();
+    System.out.printf("[JavaSpecEngine#discover] PackageNameFilter%n");
+    discoveryRequest.getFiltersByType(PackageNameFilter.class)
+      .forEach(x -> System.out.printf("- %s%n", x));
   }
 
   private SpecClass makeDeclaringInstance(Class<SpecClass> specClass) {
