@@ -2,7 +2,12 @@ package info.javaspec.client;
 
 import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
+import org.junit.platform.commons.annotation.Testable;
 
+//Specs that exercise JavaSpec.
+//Run in IntelliJ or with ./gradlew :javaspec-client:test.
+//Adding this makes the run icon appear in IntelliJ, to run this spec individually.  Even without this, specs run just fine in IntelliJ if you select a package or source set and say "Run Tests".
+@Testable
 public class GreeterSpecs implements SpecClass {
   private static int _numTimesRun = 0;
 

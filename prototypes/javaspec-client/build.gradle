@@ -1,13 +1,17 @@
 //Code that uses JavaSpec's API to write specs
 plugins {
   id 'java'
+  id 'com.adarshr.test-logger' version '3.0.0'
 }
 
 group 'info.javaspec'
 version '0.0.1'
 
 dependencies {
-  implementation project(':javaspec-api')
+  testImplementation project(':javaspec-api')
+  testImplementation 'org.junit.platform:junit-platform-commons:1.8.1'
+
+  testRuntimeOnly project(':javaspec-engine')
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
 
@@ -16,5 +20,22 @@ repositories {
 }
 
 test {
-  useJUnitPlatform()
+  useJUnitPlatform {
+    //Jupiter will find this engine even if it's omitted, as long as it's on the classpath.
+    includeEngines 'javaspec-engine'
+  }
+
+  //Include is an unnecessary filter.  Gradle (hence IntelliJ) makes ClassSelectors for each class in src/test.
+  //include '**/*Specs*'
+
+  //Show all output: the specs themselves *and* the TestEngine
+  onOutput { _descriptor, engineEvent ->
+    logger.lifecycle(engineEvent.message.trim())
+  }
+}
+
+//https://github.com/radarsh/gradle-test-logger-plugin
+//TODO KDK: Shows "UnknownClass" when running GreeterSpecs (also in HTML report)
+testlogger {
+  theme 'mocha'
 }
