@@ -2,12 +2,12 @@
 .gradle/
 build/
 
+#Script dependencies
+lib/
+
 #VSCode
 .classpath
 .project
 .settings/
 .vscode/
 bin/
-
-#Dependencies
-lib/
