@@ -1,6 +1,7 @@
 //JUnit TestEngine that is discovered at runtime and runs specs under JUnit Jupiter
 plugins {
   id 'java-library'
+  id 'com.adarshr.test-logger' version '3.0.0'
 }
 
 group 'info.javaspec'
@@ -9,6 +10,8 @@ version '0.0.1'
 dependencies {
   implementation project(':javaspec-api')
   implementation 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+  testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 }
 
 repositories {
@@ -16,5 +19,13 @@ repositories {
 }
 
 test {
-  useJUnitPlatform()
+  useJUnitPlatform {
+    //Run with the basic Jupiter engine, not the new thing we're building
+    excludeEngines 'javaspec-engine'
+  }
+}
+
+//https://github.com/radarsh/gradle-test-logger-plugin
+testlogger {
+  theme 'mocha'
 }
