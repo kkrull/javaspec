@@ -10,14 +10,22 @@ public class MinimaxSpecs implements SpecClass {
   public void declareSpecs(JavaSpec javaspec) {
     javaspec.it("scores a game ending in a draw as 0", () -> {
       Minimax subject = new Minimax();
-      GameState game = new GameWithKnownState(true);
+      GameState game = GameWithKnownState.draw();
       assertEquals(0, subject.score(game));
+    });
+
+    javaspec.it("scores a game won by the maximizer as +1", () -> {
+      Minimax subject = new Minimax();
+      GameState game = GameWithKnownState.wonBy("Max");
+      assertEquals(1, subject.score(game));
     });
   }
 
   public static class Minimax {
     public int score(GameState game) {
-      if(game.isOver()) {
+      if(game.hasWon("Max")) {
+        return +1;
+      } else if(game.isOver()) {
         return 0;
       }
 
@@ -27,9 +35,23 @@ public class MinimaxSpecs implements SpecClass {
 
   public static class GameWithKnownState implements GameState {
     private final boolean isOver;
+    private final String winner;
 
-    public GameWithKnownState(boolean isOver) {
+    public static GameWithKnownState draw() {
+      return new GameWithKnownState(true, null);
+    }
+
+    public static GameWithKnownState wonBy(String winner) {
+      return new GameWithKnownState(true, winner);
+    }
+
+    private GameWithKnownState(boolean isOver, String winner) {
       this.isOver = isOver;
+      this.winner = winner;
+    }
+
+    public boolean hasWon(String player) {
+      return player.equals(this.winner);
     }
 
     public boolean isOver() {
@@ -38,6 +60,7 @@ public class MinimaxSpecs implements SpecClass {
   }
 
   public interface GameState {
+    boolean hasWon(String player);
     boolean isOver();
   }
 }
