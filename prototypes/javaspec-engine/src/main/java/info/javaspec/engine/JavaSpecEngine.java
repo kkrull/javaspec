@@ -117,7 +117,11 @@ public class JavaSpecEngine implements TestEngine {
       spec.run();
     } else if (descriptor.isContainer()) {
       for (TestDescriptor child : descriptor.getChildren()) {
-        execute(child, listener);
+        try {
+          execute(child, listener);
+        } catch (AssertionError e) {
+          listener.executionFinished(child, TestExecutionResult.failed(e));
+        }
       }
     } else {
       //Throwing exceptions from here didn't seem to cause any warnings, error messages, or failures.
