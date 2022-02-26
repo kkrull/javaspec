@@ -9,28 +9,38 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MinimaxSpecs implements SpecClass {
   public void declareSpecs(JavaSpec javaspec) {
     javaspec.it("scores a game ending in a draw as 0", () -> {
-      Minimax subject = new Minimax("Max");
+      Minimax subject = new Minimax("Max", "Min");
       GameState game = GameWithKnownState.draw();
       assertEquals(0, subject.score(game));
     });
 
     javaspec.it("scores a game won by the maximizer as +1", () -> {
-      Minimax subject = new Minimax("Max");
+      Minimax subject = new Minimax("Max", "Min");
       GameState game = GameWithKnownState.wonBy("Max");
-      assertEquals(1, subject.score(game));
+      assertEquals(+1, subject.score(game));
+    });
+
+    javaspec.it("scores a game won by the minimizer as -1", () -> {
+      Minimax subject = new Minimax("Max", "Min");
+      GameState game = GameWithKnownState.wonBy("Min");
+      assertEquals(-1, subject.score(game));
     });
   }
 
   public static class Minimax {
     private final String maximizer;
+    private final String minimizer;
 
-    public Minimax(String maximizer) {
+    public Minimax(String maximizer, String minimizer) {
       this.maximizer = maximizer;
+      this.minimizer = minimizer;
     }
 
     public int score(GameState game) {
       if(game.hasWon(this.maximizer)) {
         return +1;
+      } else if(game.hasWon(this.minimizer)) {
+        return -1;
       } else if(game.isOver()) {
         return 0;
       }
