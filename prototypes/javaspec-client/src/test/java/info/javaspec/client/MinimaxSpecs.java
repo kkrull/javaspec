@@ -25,6 +25,10 @@ public class MinimaxSpecs implements SpecClass {
       GameState game = GameWithKnownState.wonBy("Min");
       assertEquals(-1, subject.score(game));
     });
+
+    javaspec.it("scores possible next states, from the maximizer's point of view", () -> {
+      throw new UnsupportedOperationException("Work here");
+    });
   }
 
   public static class Minimax {

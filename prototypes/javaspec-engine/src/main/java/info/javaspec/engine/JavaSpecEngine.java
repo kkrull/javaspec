@@ -119,7 +119,7 @@ public class JavaSpecEngine implements TestEngine {
       for (TestDescriptor child : descriptor.getChildren()) {
         try {
           execute(child, listener);
-        } catch (AssertionError e) {
+        } catch (AssertionError|Exception e) {
           listener.executionFinished(child, TestExecutionResult.failed(e));
         }
       }
