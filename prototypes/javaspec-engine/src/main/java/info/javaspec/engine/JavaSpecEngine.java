@@ -17,6 +17,7 @@ public class JavaSpecEngine implements TestEngine {
     EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
     discoveryRequest.getSelectorsByType(ClassSelector.class).stream()
       .map(ClassSelector::getJavaClass)
+      .filter(selectedClass -> SpecClass.class.isAssignableFrom(selectedClass))
       .map(selectedClass -> (Class<SpecClass>) selectedClass)
       .map(specClass -> makeDeclaringInstance(specClass))
       .forEach(declaringInstance -> {
