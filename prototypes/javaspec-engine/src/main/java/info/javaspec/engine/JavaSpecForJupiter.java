@@ -1,5 +1,7 @@
 package info.javaspec.engine;
 
+import java.util.LinkedList;
+import java.util.List;
 import info.javaspec.api.JavaSpec;
 import info.javaspec.api.Verification;
 import org.junit.platform.engine.TestDescriptor;
@@ -10,7 +12,7 @@ import java.util.Optional;
 
 //A JavaSpec declaration that runs 1 or more specs on JUnit
 public class JavaSpecForJupiter extends AbstractTestDescriptor implements JavaSpec {
-  private JupiterSpec spec;
+  private final List<JupiterSpec> specs;
 
   public static JavaSpecForJupiter forSpecClass(UniqueId parentId, Class<?> specClass) {
     return new JavaSpecForJupiter(
@@ -21,6 +23,7 @@ public class JavaSpecForJupiter extends AbstractTestDescriptor implements JavaSp
 
   private JavaSpecForJupiter(UniqueId uniqueId, String displayName) {
     super(uniqueId, displayName);
+    this.specs = new LinkedList<>();
   }
 
   /* Jupiter */
@@ -32,14 +35,17 @@ public class JavaSpecForJupiter extends AbstractTestDescriptor implements JavaSp
 
   public void addDescriptorsTo(TestDescriptor parentDescriptor) {
     parentDescriptor.addChild(this);
-    Optional.ofNullable(this.spec)
-      .ifPresent(x -> x.addTestDescriptorTo(this));
+    this.specs.forEach(x -> x.addTestDescriptorTo(this));
   }
 
   /* JavaSpec syntax */
 
   @Override
   public void it(String behavior, Verification verification) {
-    this.spec = JupiterSpec.forBehavior(getUniqueId(), behavior, verification);
+    this.specs.add(JupiterSpec.forBehavior(
+      getUniqueId(),
+      behavior,
+      verification
+    ));
   }
 }

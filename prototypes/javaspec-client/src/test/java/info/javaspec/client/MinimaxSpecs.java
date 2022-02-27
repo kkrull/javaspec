@@ -46,7 +46,6 @@ public class MinimaxSpecs implements SpecClass {
       assertEquals(-1, subject.score(game, "Min"));
     });
 
-    //TODO KDK: Just realized it's only running the last-declared spec
     javaspec.it("given a game that will end in 2 or more moves, the maximizer assumes the minimizer will pick the lowest score", () -> {
       GameWithKnownState game = GameWithKnownState.stillGoing();
       GameWithKnownState leftTree = GameWithKnownState.stillGoing();
