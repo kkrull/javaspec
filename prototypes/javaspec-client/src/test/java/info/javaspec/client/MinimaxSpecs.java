@@ -61,6 +61,22 @@ public class MinimaxSpecs implements SpecClass {
       Minimax subject = new Minimax("Max", "Min");
       assertEquals(0, subject.score(game, "Max"));
     });
+
+    javaspec.it("given a game that will end in 2 or more moves, the minimizer assumes the maximizer will pick the highest score", () -> {
+      GameWithKnownState game = GameWithKnownState.stillGoing();
+      GameWithKnownState leftTree = GameWithKnownState.stillGoing();
+      game.addKnownState("LeftTree", leftTree);
+      leftTree.addKnownState("AndDraw", GameWithKnownState.draw());
+      leftTree.addKnownState("AndMaxWins", GameWithKnownState.wonBy("Max"));
+
+      GameWithKnownState rightTree = GameWithKnownState.stillGoing();
+      game.addKnownState("RightTree", rightTree);
+      rightTree.addKnownState("AndDraw", GameWithKnownState.draw());
+      rightTree.addKnownState("AndMaxLoses", GameWithKnownState.wonBy("Min"));
+
+      Minimax subject = new Minimax("Max", "Min");
+      assertEquals(0, subject.score(game, "Min"));
+    });
   }
 
   public static class Minimax {
@@ -85,7 +101,7 @@ public class MinimaxSpecs implements SpecClass {
         int minScore = +999;
         for(String nextMove : game.nextMoves()) {
           GameState nextGame = game.nextState(nextMove);
-          int score = score(nextGame, "Min");
+          int score = score(nextGame, this.maximizer);
           if(score < minScore) {
             minScore = score;
           }
