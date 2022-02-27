@@ -37,6 +37,14 @@ public class MinimaxSpecs implements SpecClass {
       game.addKnownState("ThenMaxWins", GameWithKnownState.wonBy("Max"));
       assertEquals(+1, subject.score(game, "Max"));
     });
+
+    javaspec.it("given a game that will end in the next move, the minimizer picks the move with the lowest score", () -> {
+      Minimax subject = new Minimax("Max", "Min");
+      GameWithKnownState game = GameWithKnownState.stillGoing();
+      game.addKnownState("ThenDraw", GameWithKnownState.draw());
+      game.addKnownState("ThenMinWins", GameWithKnownState.wonBy("Min"));
+      assertEquals(-1, subject.score(game, "Min"));
+    });
   }
 
   public static class Minimax {
@@ -57,16 +65,29 @@ public class MinimaxSpecs implements SpecClass {
         return 0;
       }
 
-      int maxScore = -999;
-      for(String nextMove : game.nextMoves()) {
-        GameState nextGame = game.nextState(nextMove);
-        int score = score(nextGame, "Max");
-        if(score > maxScore) {
-          maxScore = score;
+      if(this.minimizer.equals(player)) {
+        int minScore = +999;
+        for(String nextMove : game.nextMoves()) {
+          GameState nextGame = game.nextState(nextMove);
+          int score = score(nextGame, "Min");
+          if(score < minScore) {
+            minScore = score;
+          }
         }
-      }
 
-      return maxScore;
+        return minScore;
+      } else {
+        int maxScore = -999;
+        for(String nextMove : game.nextMoves()) {
+          GameState nextGame = game.nextState(nextMove);
+          int score = score(nextGame, "Max");
+          if(score > maxScore) {
+            maxScore = score;
+          }
+        }
+
+        return maxScore;
+      }
     }
   }
 
