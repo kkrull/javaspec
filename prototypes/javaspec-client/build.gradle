@@ -9,6 +9,7 @@ version '0.0.1'
 
 dependencies {
   testImplementation project(':javaspec-api')
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
   testImplementation 'org.junit.platform:junit-platform-commons:1.8.1'
 
   testRuntimeOnly project(':javaspec-engine')

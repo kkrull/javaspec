@@ -17,6 +17,7 @@ public class JavaSpecEngine implements TestEngine {
     EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
     discoveryRequest.getSelectorsByType(ClassSelector.class).stream()
       .map(ClassSelector::getJavaClass)
+      .filter(selectedClass -> SpecClass.class.isAssignableFrom(selectedClass))
       .map(selectedClass -> (Class<SpecClass>) selectedClass)
       .map(specClass -> makeDeclaringInstance(specClass))
       .forEach(declaringInstance -> {
@@ -116,7 +117,11 @@ public class JavaSpecEngine implements TestEngine {
       spec.run();
     } else if (descriptor.isContainer()) {
       for (TestDescriptor child : descriptor.getChildren()) {
-        execute(child, listener);
+        try {
+          execute(child, listener);
+        } catch (AssertionError|Exception e) {
+          listener.executionFinished(child, TestExecutionResult.failed(e));
+        }
       }
     } else {
       //Throwing exceptions from here didn't seem to cause any warnings, error messages, or failures.
