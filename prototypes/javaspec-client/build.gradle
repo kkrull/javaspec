@@ -8,13 +8,11 @@ group 'info.javaspec'
 version '0.0.1'
 
 dependencies {
-  implementation 'org.junit.platform:junit-platform-launcher:1.8.1'
-
   testImplementation project(':javaspec-api')
   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-  testImplementation 'org.junit.platform:junit-platform-commons:1.8.1'
 
   testRuntimeOnly project(':javaspec-engine')
+  testRuntimeOnly project(':jupiter-test-execution-listener')
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
 
