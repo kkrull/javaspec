@@ -29,6 +29,8 @@ public class JavaSpecEngine implements TestEngine {
     return engineDescriptor;
   }
 
+  //TODO KDK: Extract to ServiceLoader.  Put the interface in javaspec-api.
+  //Try this https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/ServiceLoader.html?is-external=true#load(java.lang.Class)
   private void printDiscoveryRequest(EngineDiscoveryRequest discoveryRequest) {
     System.out.println();
     System.out.printf("[JavaSpecEngine#discover] ClasspathResourceSelector%n");
