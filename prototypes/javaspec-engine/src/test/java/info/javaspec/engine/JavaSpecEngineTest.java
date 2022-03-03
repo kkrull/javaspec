@@ -1,6 +1,5 @@
 package info.javaspec.engine;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -83,11 +82,5 @@ public class JavaSpecEngineTest {
         event(container("class:info.javaspec.engine.OneFlatSpecs"), finishedSuccessfully())
       );
     }
-  }
-
-  @Test
-  @Disabled
-  @DisplayName("accepts spec classes that do not implement SpecClass")
-  public void acceptsAnyClassWithSpecsInIt() throws Exception {
   }
 }
