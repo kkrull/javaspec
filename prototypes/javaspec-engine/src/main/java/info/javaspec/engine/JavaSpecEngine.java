@@ -7,10 +7,14 @@ import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ServiceLoader;
 
 public class JavaSpecEngine implements TestEngine {
   @Override
   public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId engineId) {
+    ServiceLoader<EngineDiscoveryRequestListener> loader = ServiceLoader.load(EngineDiscoveryRequestListener.class);
+    loader.findFirst().ifPresent(x -> x.onDiscover(discoveryRequest));
+
     System.out.printf("[JavaSpecEngine#discover]%n");
     printDiscoveryRequest(discoveryRequest);
 
