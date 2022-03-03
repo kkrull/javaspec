@@ -1,7 +1,7 @@
 //Prototype adapters of JavaSpec syntax to JUnit 5 constructs
 plugins {
   id 'java-library' //Separates API from implementation
-  id 'com.adarshr.test-logger' version '3.0.0' //Test logging
+  id 'com.adarshr.test-logger' version '3.1.0' //Test logging
 }
 
 group 'info.javaspec'
