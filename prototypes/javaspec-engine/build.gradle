@@ -9,10 +9,10 @@ version '0.0.1'
 
 dependencies {
   implementation project(':javaspec-api')
-  implementation 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+  implementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 
-  testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
-  testImplementation 'org.junit.platform:junit-platform-testkit:1.8.1'
+  testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+  testImplementation 'org.junit.platform:junit-platform-testkit:1.8.2'
 }
 
 repositories {
