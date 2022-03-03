@@ -21,8 +21,7 @@ repositories {
 
 test {
   useJUnitPlatform {
-    //Run with the basic Jupiter engine, not the new thing we're building
-    excludeEngines 'javaspec-engine'
+    excludeEngines 'javaspec-engine' //Run with the default engine, not one we're building
   }
 }
 

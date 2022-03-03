@@ -20,23 +20,21 @@ repositories {
   mavenCentral()
 }
 
+//Suspected Gradle issue Gradle groups tests by 'default-package' and 'UnknownClass'.
+//Related Github issue: https://github.com/cucumber/cucumber-jvm/issues/2176
 test {
   useJUnitPlatform {
     //Jupiter will find this engine even if it's omitted, as long as it's on the classpath.
     includeEngines 'javaspec-engine'
   }
 
-  //Include is an unnecessary filter.  Gradle (hence IntelliJ) makes ClassSelectors for each class in src/test.
-  //include '**/*Specs*'
-
   //Show all output: the specs themselves *and* the TestEngine
-  onOutput { _descriptor, engineEvent ->
+  onOutput { _descriptor, TestOutputEvent engineEvent ->
     logger.lifecycle(engineEvent.message.trim())
   }
 }
 
 //https://github.com/radarsh/gradle-test-logger-plugin
-//TODO KDK: Shows "UnknownClass" when running GreeterSpecs (also in HTML report)
 testlogger {
   theme 'mocha'
 }
