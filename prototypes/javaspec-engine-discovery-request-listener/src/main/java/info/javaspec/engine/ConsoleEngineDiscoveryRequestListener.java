@@ -8,10 +8,6 @@ import org.junit.platform.engine.discovery.*;
 public class ConsoleEngineDiscoveryRequestListener implements EngineDiscoveryRequestListener {
   @Override
   public void onDiscover(EngineDiscoveryRequest discoveryRequest) {
-    printDiscoveryRequest(discoveryRequest);
-  }
-
-  private void printDiscoveryRequest(EngineDiscoveryRequest discoveryRequest) {
     System.out.println();
     System.out.printf("[ConsoleEngineDiscoveryRequestListener] ClasspathResourceSelector%n");
     discoveryRequest.getSelectorsByType(ClasspathResourceSelector.class)
