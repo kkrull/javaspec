@@ -57,6 +57,7 @@ public class JavaSpecEngine implements TestEngine {
   private void execute(TestDescriptor descriptor, EngineExecutionListener listener) {
     listener.executionStarted(descriptor);
 
+    descriptor.getType(); //TODO KDK: Change to switch, to handle containers that are also a test -- all 3 cases
     if (descriptor.isTest()) {
       JupiterSpec spec = (JupiterSpec) descriptor;
       spec.run();

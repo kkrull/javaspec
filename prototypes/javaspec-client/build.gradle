@@ -37,5 +37,6 @@ test {
 
 //https://github.com/radarsh/gradle-test-logger-plugin
 testlogger {
-  theme 'mocha'
+  theme 'mocha-parallel' //Override at runtime with: -Dtestlogger.theme=plain-parallel
+  showSimpleNames true
 }
