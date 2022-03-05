@@ -19,15 +19,15 @@ public class JavaSpecEngine implements TestEngine {
 
     EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
     discoveryRequest.getSelectorsByType(ClassSelector.class).stream()
-        .map(ClassSelector::getJavaClass)
-        .filter(selectedClass -> SpecClass.class.isAssignableFrom(selectedClass))
-        .map(selectedClass -> (Class<SpecClass>) selectedClass)
-        .map(specClass -> makeDeclaringInstance(specClass))
-        .forEach(declaringInstance -> {
-          JavaSpecForJupiter javaspec = JavaSpecForJupiter.forSpecClass(engineId, declaringInstance.getClass());
-          declaringInstance.declareSpecs(javaspec);
-          javaspec.addDescriptorsTo(engineDescriptor);
-        });
+      .map(ClassSelector::getJavaClass)
+      .filter(selectedClass -> SpecClass.class.isAssignableFrom(selectedClass))
+      .map(selectedClass -> (Class<SpecClass>) selectedClass)
+      .map(specClass -> makeDeclaringInstance(specClass))
+      .forEach(declaringInstance -> {
+        JavaSpecForJupiter javaspec = JavaSpecForJupiter.forSpecClass(engineId, declaringInstance.getClass());
+        declaringInstance.declareSpecs(javaspec);
+        javaspec.addDescriptorsTo(engineDescriptor);
+      });
 
     return engineDescriptor;
   }
@@ -50,8 +50,8 @@ public class JavaSpecEngine implements TestEngine {
   @Override
   public void execute(ExecutionRequest request) {
     execute(
-        request.getRootTestDescriptor(),
-        request.getEngineExecutionListener());
+      request.getRootTestDescriptor(),
+      request.getEngineExecutionListener());
   }
 
   private void execute(TestDescriptor descriptor, EngineExecutionListener listener) {
