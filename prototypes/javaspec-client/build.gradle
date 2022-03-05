@@ -1,7 +1,7 @@
 //Code that uses JavaSpec's API to write specs
 plugins {
   id 'java'
-  id 'com.adarshr.test-logger' version '3.0.0'
+  id 'com.adarshr.test-logger' version '3.1.0'
 }
 
 group 'info.javaspec'
@@ -9,34 +9,34 @@ version '0.0.1'
 
 dependencies {
   testImplementation project(':javaspec-api')
-  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-  testImplementation 'org.junit.platform:junit-platform-commons:1.8.1'
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
 
   testRuntimeOnly project(':javaspec-engine')
-  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+//  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
+//  testRuntimeOnly project(':jupiter-test-execution-listener')
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
 repositories {
   mavenCentral()
 }
 
+//Suspected Gradle issue Gradle groups tests by 'default-package' and 'UnknownClass'.
+//Related Github issue: https://github.com/cucumber/cucumber-jvm/issues/2176
 test {
   useJUnitPlatform {
     //Jupiter will find this engine even if it's omitted, as long as it's on the classpath.
     includeEngines 'javaspec-engine'
   }
 
-  //Include is an unnecessary filter.  Gradle (hence IntelliJ) makes ClassSelectors for each class in src/test.
-  //include '**/*Specs*'
-
   //Show all output: the specs themselves *and* the TestEngine
-  onOutput { _descriptor, engineEvent ->
+  onOutput { _descriptor, TestOutputEvent engineEvent ->
     logger.lifecycle(engineEvent.message.trim())
   }
 }
 
 //https://github.com/radarsh/gradle-test-logger-plugin
-//TODO KDK: Shows "UnknownClass" when running GreeterSpecs (also in HTML report)
 testlogger {
-  theme 'mocha'
+  theme 'mocha-parallel' //Override at runtime with: -Dtestlogger.theme=plain-parallel
+  showSimpleNames true
 }

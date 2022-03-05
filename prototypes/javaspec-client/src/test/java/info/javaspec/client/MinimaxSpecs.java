@@ -10,6 +10,7 @@ import org.junit.platform.commons.annotation.Testable;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Testable
 public class MinimaxSpecs implements SpecClass {
   public void declareSpecs(JavaSpec javaspec) {
     javaspec.it("scores a game ending in a draw as 0", () -> {

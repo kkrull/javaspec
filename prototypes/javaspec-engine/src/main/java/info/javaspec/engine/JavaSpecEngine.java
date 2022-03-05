@@ -2,17 +2,20 @@ package info.javaspec.engine;
 
 import info.javaspec.api.SpecClass;
 import org.junit.platform.engine.*;
+import org.junit.platform.engine.TestDescriptor.Type;
 import org.junit.platform.engine.discovery.*;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ServiceLoader;
 
+//Discovers specs, turns them into something Jupiter can run, and runs them.
 public class JavaSpecEngine implements TestEngine {
   @Override
   public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId engineId) {
-    System.out.printf("[JavaSpecEngine#discover]%n");
-    printDiscoveryRequest(discoveryRequest);
+    ServiceLoader<EngineDiscoveryRequestListener> loader = ServiceLoader.load(EngineDiscoveryRequestListener.class);
+    loader.findFirst().ifPresent(x -> x.onDiscover(discoveryRequest));
 
     EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
     discoveryRequest.getSelectorsByType(ClassSelector.class).stream()
@@ -27,63 +30,6 @@ public class JavaSpecEngine implements TestEngine {
       });
 
     return engineDescriptor;
-  }
-
-  private void printDiscoveryRequest(EngineDiscoveryRequest discoveryRequest) {
-    System.out.println();
-    System.out.printf("[JavaSpecEngine#discover] ClasspathResourceSelector%n");
-    discoveryRequest.getSelectorsByType(ClasspathResourceSelector.class)
-      .forEach(x -> System.out.printf("- %s%n", x.getClasspathResourceName()));
-
-    System.out.println();
-    System.out.printf("[JavaSpecEngine#discover] ClasspathRootSelector%n");
-    discoveryRequest.getSelectorsByType(ClasspathRootSelector.class)
-      .forEach(x -> System.out.printf("- %s%n", x.getClasspathRoot()));
-
-    System.out.println();
-    System.out.printf("[JavaSpecEngine#discover] ClassSelector%n");
-    discoveryRequest.getSelectorsByType(ClassSelector.class)
-      .forEach(x -> System.out.printf("- %s%n", x.getClassName()));
-
-    System.out.println();
-    System.out.printf("[JavaSpecEngine#discover] DirectorySelector%n");
-    discoveryRequest.getSelectorsByType(DirectorySelector.class)
-      .forEach(x -> System.out.printf("- %s%n", x.getRawPath()));
-
-    System.out.println();
-    System.out.printf("[JavaSpecEngine#discover] FileSelector%n");
-    discoveryRequest.getSelectorsByType(FileSelector.class)
-      .forEach(x -> System.out.printf("- %s%n", x.getRawPath()));
-
-    System.out.println();
-    System.out.printf("[JavaSpecEngine#discover] MethodSelector%n");
-    discoveryRequest.getSelectorsByType(MethodSelector.class)
-      .forEach(x -> System.out.printf("- %s#%s%n", x.getClassName(), x.getMethodName()));
-
-    System.out.println();
-    System.out.printf("[JavaSpecEngine#discover] PackageSelector%n");
-    discoveryRequest.getSelectorsByType(PackageSelector.class)
-      .forEach(x -> System.out.printf("- %s%n", x.getPackageName()));
-
-    System.out.println();
-    System.out.printf("[JavaSpecEngine#discover] UniqueIdSelector%n");
-    discoveryRequest.getSelectorsByType(UniqueIdSelector.class)
-      .forEach(x -> System.out.printf("- %s%n", x.getUniqueId()));
-
-    System.out.println();
-    System.out.printf("[JavaSpecEngine#discover] UriSelector%n");
-    discoveryRequest.getSelectorsByType(UriSelector.class)
-      .forEach(x -> System.out.printf("- %s%n", x.getUri().getRawPath()));
-
-    System.out.println();
-    System.out.printf("[JavaSpecEngine#discover] ClassNameFilter%n");
-    discoveryRequest.getFiltersByType(ClassNameFilter.class)
-      .forEach(x -> System.out.printf("- %s%n", x));
-
-    System.out.println();
-    System.out.printf("[JavaSpecEngine#discover] PackageNameFilter%n");
-    discoveryRequest.getFiltersByType(PackageNameFilter.class)
-      .forEach(x -> System.out.printf("- %s%n", x));
   }
 
   private SpecClass makeDeclaringInstance(Class<SpecClass> specClass) {
@@ -105,30 +51,48 @@ public class JavaSpecEngine implements TestEngine {
   public void execute(ExecutionRequest request) {
     execute(
       request.getRootTestDescriptor(),
-      request.getEngineExecutionListener()
-    );
+      request.getEngineExecutionListener());
   }
 
   private void execute(TestDescriptor descriptor, EngineExecutionListener listener) {
-    listener.executionStarted(descriptor);
-
-    if (descriptor.isTest()) {
-      JupiterSpec spec = (JupiterSpec) descriptor;
-      spec.run();
-    } else if (descriptor.isContainer()) {
-      for (TestDescriptor child : descriptor.getChildren()) {
-        try {
+    switch (descriptor.getType()) {
+      case CONTAINER:
+        listener.executionStarted(descriptor);
+        for (TestDescriptor child : descriptor.getChildren())
           execute(child, listener);
-        } catch (AssertionError|Exception e) {
-          listener.executionFinished(child, TestExecutionResult.failed(e));
-        }
-      }
-    } else {
-      //Throwing exceptions from here didn't seem to cause any warnings, error messages, or failures.
-      System.out.println(String.format("*** Unsupported descriptor type: %s ***", descriptor.getClass().getName()));
-    }
 
-    listener.executionFinished(descriptor, TestExecutionResult.successful());
+        listener.executionFinished(descriptor, TestExecutionResult.successful());
+        return;
+
+      case TEST:
+        listener.executionStarted(descriptor);
+        try {
+          JupiterSpec spec = (JupiterSpec) descriptor;
+          spec.run();
+        } catch (AssertionError | Exception e) {
+          listener.executionFinished(descriptor, TestExecutionResult.failed(e));
+          return;
+        }
+
+        listener.executionFinished(descriptor, TestExecutionResult.successful());
+        return;
+
+      case CONTAINER_AND_TEST:
+        listener.executionStarted(descriptor);
+        for (TestDescriptor child : descriptor.getChildren())
+          execute(child, listener);
+
+        try {
+          JupiterSpec spec = (JupiterSpec) descriptor;
+          spec.run();
+        } catch (AssertionError | Exception e) {
+          listener.executionFinished(descriptor, TestExecutionResult.failed(e));
+          return;
+        }
+
+        listener.executionFinished(descriptor, TestExecutionResult.successful());
+        return;
+    }
   }
 
   @Override
