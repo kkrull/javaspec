@@ -2,6 +2,7 @@ package info.javaspec.engine;
 
 import info.javaspec.api.SpecClass;
 import org.junit.platform.engine.*;
+import org.junit.platform.engine.TestDescriptor.Type;
 import org.junit.platform.engine.discovery.*;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
@@ -18,15 +19,15 @@ public class JavaSpecEngine implements TestEngine {
 
     EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
     discoveryRequest.getSelectorsByType(ClassSelector.class).stream()
-      .map(ClassSelector::getJavaClass)
-      .filter(selectedClass -> SpecClass.class.isAssignableFrom(selectedClass))
-      .map(selectedClass -> (Class<SpecClass>) selectedClass)
-      .map(specClass -> makeDeclaringInstance(specClass))
-      .forEach(declaringInstance -> {
-        JavaSpecForJupiter javaspec = JavaSpecForJupiter.forSpecClass(engineId, declaringInstance.getClass());
-        declaringInstance.declareSpecs(javaspec);
-        javaspec.addDescriptorsTo(engineDescriptor);
-      });
+        .map(ClassSelector::getJavaClass)
+        .filter(selectedClass -> SpecClass.class.isAssignableFrom(selectedClass))
+        .map(selectedClass -> (Class<SpecClass>) selectedClass)
+        .map(specClass -> makeDeclaringInstance(specClass))
+        .forEach(declaringInstance -> {
+          JavaSpecForJupiter javaspec = JavaSpecForJupiter.forSpecClass(engineId, declaringInstance.getClass());
+          declaringInstance.declareSpecs(javaspec);
+          javaspec.addDescriptorsTo(engineDescriptor);
+        });
 
     return engineDescriptor;
   }
@@ -49,32 +50,49 @@ public class JavaSpecEngine implements TestEngine {
   @Override
   public void execute(ExecutionRequest request) {
     execute(
-      request.getRootTestDescriptor(),
-      request.getEngineExecutionListener()
-    );
+        request.getRootTestDescriptor(),
+        request.getEngineExecutionListener());
   }
 
   private void execute(TestDescriptor descriptor, EngineExecutionListener listener) {
-    listener.executionStarted(descriptor);
-
-    descriptor.getType(); //TODO KDK: Change to switch, to handle containers that are also a test -- all 3 cases
-    if (descriptor.isTest()) {
-      JupiterSpec spec = (JupiterSpec) descriptor;
-      spec.run();
-    } else if (descriptor.isContainer()) {
-      for (TestDescriptor child : descriptor.getChildren()) {
-        try {
+    switch (descriptor.getType()) {
+      case CONTAINER:
+        listener.executionStarted(descriptor);
+        for (TestDescriptor child : descriptor.getChildren())
           execute(child, listener);
-        } catch (AssertionError|Exception e) {
-          listener.executionFinished(child, TestExecutionResult.failed(e));
-        }
-      }
-    } else {
-      //Throwing exceptions from here didn't seem to cause any warnings, error messages, or failures.
-      System.out.println(String.format("*** Unsupported descriptor type: %s ***", descriptor.getClass().getName()));
-    }
 
-    listener.executionFinished(descriptor, TestExecutionResult.successful());
+        listener.executionFinished(descriptor, TestExecutionResult.successful());
+        return;
+
+      case TEST:
+        listener.executionStarted(descriptor);
+        try {
+          JupiterSpec spec = (JupiterSpec) descriptor;
+          spec.run();
+        } catch (AssertionError | Exception e) {
+          listener.executionFinished(descriptor, TestExecutionResult.failed(e));
+          return;
+        }
+
+        listener.executionFinished(descriptor, TestExecutionResult.successful());
+        return;
+
+      case CONTAINER_AND_TEST:
+        listener.executionStarted(descriptor);
+        for (TestDescriptor child : descriptor.getChildren())
+          execute(child, listener);
+
+        try {
+          JupiterSpec spec = (JupiterSpec) descriptor;
+          spec.run();
+        } catch (AssertionError | Exception e) {
+          listener.executionFinished(descriptor, TestExecutionResult.failed(e));
+          return;
+        }
+
+        listener.executionFinished(descriptor, TestExecutionResult.successful());
+        return;
+    }
   }
 
   @Override
