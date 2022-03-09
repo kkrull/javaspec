@@ -1,19 +1,12 @@
 //Prototype adapters of JavaSpec syntax to JUnit 5 constructs
 plugins {
   id 'java-library'
-  id 'com.adarshr.test-logger' version '3.1.0'
+  id 'com.adarshr.test-logger'
 }
-
-group 'info.javaspec'
-version '0.0.1'
 
 dependencies {
   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
-}
-
-repositories {
-  mavenCentral()
 }
 
 test {
@@ -24,3 +17,5 @@ test {
 testlogger {
   theme 'mocha'
 }
+
+version '0.0.1'

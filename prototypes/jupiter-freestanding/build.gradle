@@ -3,9 +3,6 @@ plugins {
   id 'application'
 }
 
-group 'info.javaspec'
-version '0.0.1'
-
 application {
   mainClass = 'info.javaspec.engine.Main'
 }
@@ -17,10 +14,8 @@ dependencies {
   implementation 'org.junit.platform:junit-platform-launcher:1.8.2'
 }
 
-repositories {
-  mavenCentral()
-}
-
 test {
   useJUnitPlatform()
 }
+
+version '0.0.1'

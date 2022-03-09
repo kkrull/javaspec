@@ -3,18 +3,13 @@ plugins {
   id 'java-library'
 }
 
-group 'info.javaspec'
-version '0.0.1'
-
 dependencies {
   implementation project(':javaspec-engine')
   implementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
-repositories {
-  mavenCentral()
-}
-
 test {
   useJUnitPlatform()
 }
+
+version '0.0.1'

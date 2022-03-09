@@ -1,11 +1,8 @@
 //JUnit TestEngine that is discovered at runtime and runs specs under JUnit Jupiter
 plugins {
   id 'java-library'
-  id 'com.adarshr.test-logger' version '3.1.0'
+  id 'com.adarshr.test-logger'
 }
-
-group 'info.javaspec'
-version '0.0.1'
 
 dependencies {
   implementation project(':javaspec-api')
@@ -13,10 +10,6 @@ dependencies {
 
   testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
   testImplementation 'org.junit.platform:junit-platform-testkit:1.8.2'
-}
-
-repositories {
-  mavenCentral()
 }
 
 test {
@@ -29,3 +22,5 @@ test {
 testlogger {
   theme 'mocha'
 }
+
+version '0.0.1'

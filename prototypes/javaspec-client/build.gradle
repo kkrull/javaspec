@@ -1,11 +1,8 @@
 //Code that uses JavaSpec's API to write specs
 plugins {
   id 'java'
-  id 'com.adarshr.test-logger' version '3.1.0'
+  id 'com.adarshr.test-logger'
 }
-
-group 'info.javaspec'
-version '0.0.1'
 
 dependencies {
   testImplementation project(':javaspec-api')
@@ -15,10 +12,6 @@ dependencies {
 //  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
 //  testRuntimeOnly project(':jupiter-test-execution-listener')
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
-}
-
-repositories {
-  mavenCentral()
 }
 
 //Suspected Gradle issue Gradle groups tests by 'default-package' and 'UnknownClass'.
@@ -40,3 +33,5 @@ testlogger {
   theme 'mocha-parallel' //Override at runtime with: -Dtestlogger.theme=plain-parallel
   showSimpleNames true
 }
+
+version '0.0.1'

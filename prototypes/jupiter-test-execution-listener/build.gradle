@@ -3,17 +3,12 @@ plugins {
   id 'java-library'
 }
 
-group 'info.javaspec'
-version '0.0.1'
-
 dependencies {
   implementation 'org.junit.platform:junit-platform-launcher:1.8.1'
-}
-
-repositories {
-  mavenCentral()
 }
 
 test {
   useJUnitPlatform()
 }
+
+version '0.0.1'
