@@ -1,15 +1,15 @@
 //Service provider for EngineDiscoveryRequestListener
 plugins {
-  id 'java-library'
+	id 'java-library'
 }
 
 dependencies {
-  implementation project(':javaspec-engine')
-  implementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+	implementation project(':javaspec-engine')
+	implementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
 test {
-  useJUnitPlatform()
+	useJUnitPlatform()
 }
 
 version '0.0.1'
