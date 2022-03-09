@@ -1,10 +1,17 @@
 //Exports a service that reports test execution events to the console
 plugins {
 	id 'java-library'
+	id 'com.diffplug.spotless'
 }
 
 dependencies {
 	implementation 'org.junit.platform:junit-platform-launcher:1.8.1'
+}
+
+spotless {
+	java {
+		eclipse()
+	}
 }
 
 test {

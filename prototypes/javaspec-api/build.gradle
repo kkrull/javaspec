@@ -1,9 +1,16 @@
 //Code that JavaSpec clients use to write (not run) their specs
 plugins {
 	id 'java-library'
+	id 'com.diffplug.spotless'
 }
 
 dependencies { }
+
+spotless {
+	java {
+		eclipse()
+	}
+}
 
 test {
 	useJUnitPlatform()

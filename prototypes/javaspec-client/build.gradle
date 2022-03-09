@@ -2,6 +2,7 @@
 plugins {
 	id 'java'
 	id 'com.adarshr.test-logger'
+	id 'com.diffplug.spotless'
 }
 
 dependencies {
@@ -12,6 +13,12 @@ dependencies {
 //  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
 //  testRuntimeOnly project(':jupiter-test-execution-listener')
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+}
+
+spotless {
+	java {
+		eclipse()
+	}
 }
 
 //Suspected Gradle issue Gradle groups tests by 'default-package' and 'UnknownClass'.
