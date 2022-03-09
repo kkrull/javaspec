@@ -5,8 +5,9 @@ import info.javaspec.api.SpecClass;
 
 //Declares a single spec
 public class OneFlatSpecs implements SpecClass {
-  @Override
-  public void declareSpecs(JavaSpec javaspec) {
-    javaspec.it("works", () -> {});
-  }
+	@Override
+	public void declareSpecs(JavaSpec javaspec) {
+		javaspec.it("works", () -> {
+		});
+	}
 }
