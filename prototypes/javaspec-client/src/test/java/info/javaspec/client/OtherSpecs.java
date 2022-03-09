@@ -6,21 +6,17 @@ import org.junit.platform.commons.annotation.Testable;
 
 @Testable
 public class OtherSpecs implements SpecClass {
-  public void declareSpecs(JavaSpec javaspec) {
-    javaspec.it("answers the meaning of life", () -> {
-      int answer = 42;
-      assertEquals(42, answer);
-    });
-  }
+	public void declareSpecs(JavaSpec javaspec) {
+		javaspec.it("answers the meaning of life", () -> {
+			int answer = 42;
+			assertEquals(42, answer);
+		});
+	}
 
-  private static void assertEquals(int expected, int actual) {
-    if(actual == expected)
-      return;
+	private static void assertEquals(int expected, int actual) {
+		if (actual == expected)
+			return;
 
-    throw new AssertionError(String.format(
-      "Expected <%s>, but was <%s>",
-      expected,
-      actual
-    ));
-  }
+		throw new AssertionError(String.format("Expected <%s>, but was <%s>", expected, actual));
+	}
 }

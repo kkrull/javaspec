@@ -1,20 +1,22 @@
 //Service provider for EngineDiscoveryRequestListener
 plugins {
-  id 'java-library'
+	id 'java-library'
+	id 'com.diffplug.spotless'
 }
-
-group 'info.javaspec'
-version '0.0.1'
 
 dependencies {
-  implementation project(':javaspec-engine')
-  implementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+	implementation project(':javaspec-engine')
+	implementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
-repositories {
-  mavenCentral()
+spotless {
+	java {
+		eclipse()
+	}
 }
 
 test {
-  useJUnitPlatform()
+	useJUnitPlatform()
 }
+
+version '0.0.1'
