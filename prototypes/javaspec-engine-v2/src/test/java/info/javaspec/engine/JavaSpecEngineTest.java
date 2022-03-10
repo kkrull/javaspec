@@ -6,16 +6,18 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.TestEngine;
+import org.junit.platform.testkit.engine.EngineExecutionResults;
 import org.junit.platform.testkit.engine.EngineTestKit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.platform.testkit.engine.EventConditions.*;
 
 @Nested
 public class JavaSpecEngineTest {
 	@Test
-	@DisplayName("instantiates")
-	public void instantiates() throws Exception {
-		new JavaSpecEngine();
+	@DisplayName("can be loaded with ServiceLoader and located by ID")
+	@Disabled
+	public void isRegisteredWithServiceLoader() throws Exception {
 	}
 
 	@Test
@@ -30,12 +32,8 @@ public class JavaSpecEngineTest {
 	public void runsAsATestEngine() throws Exception {
 		DiscoverySelector nullSelector = new DiscoverySelector() {
 		};
-		EngineTestKit.engine(new JavaSpecEngine()).selectors(nullSelector).execute();
-	}
-
-	@Test
-	@DisplayName("can be loaded with ServiceLoader and located by ID")
-	@Disabled
-	public void isRegisteredWithServiceLoader() throws Exception {
+		EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine()).selectors(nullSelector).execute();
+		results.containerEvents().assertEventsMatchExactly(event(engine(), started()),
+				event(engine(), finishedSuccessfully()));
 	}
 }

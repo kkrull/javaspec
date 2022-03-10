@@ -11,6 +11,10 @@ public class JavaSpecEngine implements TestEngine {
 
 	@Override
 	public void execute(ExecutionRequest request) {
+		EngineExecutionListener listener = request.getEngineExecutionListener();
+		TestDescriptor rootDescriptor = request.getRootTestDescriptor();
+		listener.executionStarted(rootDescriptor);
+		listener.executionFinished(rootDescriptor, TestExecutionResult.successful());
 	}
 
 	@Override
