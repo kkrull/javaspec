@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.TestEngine;
 import org.junit.platform.testkit.engine.EngineTestKit;
 
@@ -20,15 +21,16 @@ public class JavaSpecEngineTest {
 	@Test
 	@DisplayName("returns an unique ID")
 	public void identifiesItselfAsTheEngineForJavaSpec() throws Exception {
-	  TestEngine subject = new JavaSpecEngine();
+		TestEngine subject = new JavaSpecEngine();
 		assertEquals("javaspec-engine-v2", subject.getId());
 	}
 
 	@Test
 	@DisplayName("runs as a TestEngine")
-	@Disabled
-	public void runsAsATestEngine () throws Exception {
-		EngineTestKit.engine(new JavaSpecEngine()).execute();
+	public void runsAsATestEngine() throws Exception {
+		DiscoverySelector nullSelector = new DiscoverySelector() {
+		};
+		EngineTestKit.engine(new JavaSpecEngine()).selectors(nullSelector).execute();
 	}
 
 	@Test
