@@ -8,9 +8,14 @@ import org.junit.platform.testkit.engine.EngineTestKit;
 @Nested
 public class JavaSpecEngineTest {
 	@Test
-	@DisplayName("runs as a TestEngine")
+	@DisplayName("instantiates")
 	public void instantiates() throws Exception {
 		new JavaSpecEngine();
+	}
+
+	@Test
+	@DisplayName("runs as a TestEngine")
+	public void runsAsATestEngine () throws Exception {
 		EngineTestKit.engine("javaspec-engine-v2").execute();
 	}
 }
