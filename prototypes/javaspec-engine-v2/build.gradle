@@ -25,7 +25,7 @@ test {
 
 //https://github.com/radarsh/gradle-test-logger-plugin
 testlogger {
-	theme 'mocha'
+	theme 'plain'
 }
 
 version '0.0.1'
