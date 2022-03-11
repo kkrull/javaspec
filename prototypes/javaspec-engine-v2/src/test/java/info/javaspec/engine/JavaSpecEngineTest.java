@@ -3,7 +3,7 @@ package info.javaspec.engine;
 import static info.javaspec.engine.DiscoverySelectorFactory.nullDiscoverySelector;
 import static info.javaspec.engine.EngineDiscoveryRequestFactory.classEngineDiscoveryRequest;
 import static info.javaspec.engine.EngineDiscoveryRequestFactory.nullEngineDiscoveryRequest;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.platform.testkit.engine.EventConditions.*;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import org.junit.platform.testkit.engine.EngineTestKit;
 public class JavaSpecEngineTest {
 	@Test
 	@DisplayName("can be loaded with ServiceLoader and located by ID")
-	@Disabled
+	@Disabled("wait until it can run specs, because enabling this will make it run for this project too")
 	public void isRegisteredWithServiceLoader() throws Exception {
 	}
 
@@ -32,43 +32,69 @@ public class JavaSpecEngineTest {
 	@Nested
 	class discover {
 		@Test
-		@DisplayName("returns a top-level TestDescriptor for the engine, with the given UniqueId")
-		public void returnsARootTestDescriptorForTheEngine() throws Exception {
+		@DisplayName("returns a top-level container for itself, using the given UniqueId")
+		public void returnsAContainerForTheEngine() throws Exception {
 			JavaSpecEngine subject = new JavaSpecEngine();
-
 			UniqueId engineId = UniqueId.forEngine(subject.getId());
-			TestDescriptor rootDescriptor = subject.discover(nullEngineDiscoveryRequest(), engineId);
 
-			assertEquals(TestDescriptor.Type.CONTAINER, rootDescriptor.getType());
-			assertEquals("JavaSpec", rootDescriptor.getDisplayName());
-			assertEquals(engineId, rootDescriptor.getUniqueId());
-			assertEquals(Optional.empty(), rootDescriptor.getParent());
+			TestDescriptor returned = subject.discover(nullEngineDiscoveryRequest(), engineId);
+			assertEquals(engineId, returned.getUniqueId());
+			assertEquals("JavaSpec", returned.getDisplayName());
+			assertEquals(Optional.empty(), returned.getParent());
+			assertTrue(returned.isContainer());
+			assertTrue(returned.isRoot());
 		}
 
 		@Test
-		@DisplayName("the engine descriptor has no children, given no selectors")
+		@DisplayName("discovers no containers or tests, given no selectors")
 		public void selectNoneYieldsNoChildren() throws Exception {
 			JavaSpecEngine subject = new JavaSpecEngine();
 
-			TestDescriptor rootDescriptor = subject.discover(nullEngineDiscoveryRequest(),
+			TestDescriptor returned = subject.discover(nullEngineDiscoveryRequest(),
 					UniqueId.forEngine(subject.getId()));
-			assertEquals(Collections.emptySet(), rootDescriptor.getChildren());
+			assertEquals(Collections.emptySet(), returned.getChildren());
+			assertFalse(returned.isTest());
 		}
 
 		@Test
-		@DisplayName("the engine descriptor has a child for a selected spec class")
-		public void selectOneClassYieldsOneChild() throws Exception {
+		@DisplayName("ignores selectors for classes that are not SpecClass")
+		@Disabled
+		public void ignoresNonSpecClassSelectors() throws Exception {
+		}
+
+		@Test
+		@DisplayName("discovers a container for each selected spec class")
+		public void selectOneClassYieldsOneContainer() throws Exception {
 			JavaSpecEngine subject = new JavaSpecEngine();
-			TestDescriptor rootDescriptor = subject.discover(classEngineDiscoveryRequest(NullSpecClass.class),
-				UniqueId.forEngine(subject.getId()));
+			TestDescriptor returned = subject.discover(classEngineDiscoveryRequest(NullSpecClass.class),
+					UniqueId.forEngine(subject.getId()));
 
-			List<TestDescriptor> specClassDescriptors = new ArrayList(rootDescriptor.getChildren());
-			assertEquals(1, rootDescriptor.getChildren().size());
+			List<TestDescriptor> specClassDescriptors = new ArrayList(returned.getChildren());
+			assertEquals(1, returned.getChildren().size());
 
-			TestDescriptor specClassDescriptor = specClassDescriptors.get(0);
-			assertEquals(rootDescriptor, specClassDescriptor.getParent().orElseThrow());
-			assertEquals(TestDescriptor.Type.CONTAINER, specClassDescriptor.getType());
-			assertEquals("NullSpecClass", specClassDescriptor.getDisplayName());
+			TestDescriptor onlyChild = specClassDescriptors.get(0);
+			UniqueId.Segment idSegment = onlyChild.getUniqueId().getLastSegment();
+			assertEquals("class", idSegment.getType());
+			assertEquals("info.javaspec.engine.JavaSpecEngineTest$NullSpecClass", idSegment.getValue());
+
+			assertEquals("info.javaspec.engine.JavaSpecEngineTest$NullSpecClass", onlyChild.getDisplayName());
+			assertEquals(returned, onlyChild.getParent().orElseThrow());
+			assertTrue(onlyChild.isContainer());
+			assertFalse(onlyChild.isRoot());
+			assertFalse(onlyChild.isTest());
+		}
+	}
+
+	@DisplayName("#execute")
+	@Nested
+	class execute {
+		@Test
+		@DisplayName("reports execution events for the engine")
+		public void reportsEngineExecutionEvents() throws Exception {
+			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
+					.selectors(nullDiscoverySelector()).execute();
+			results.containerEvents().assertEventsMatchExactly(event(engine(), started()),
+					event(engine(), finishedSuccessfully()));
 		}
 	}
 
@@ -80,19 +106,6 @@ public class JavaSpecEngineTest {
 		public void identifiesItselfAsTheEngineForJavaSpec() throws Exception {
 			TestEngine subject = new JavaSpecEngine();
 			assertEquals("javaspec-engine-v2", subject.getId());
-		}
-	}
-
-	@DisplayName("TestEngine discovery and execution")
-	@Nested
-	class testEngineExecution {
-		@Test
-		@DisplayName("reports execution events for the engine")
-		public void runsAsATestEngine() throws Exception {
-			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
-					.selectors(nullDiscoverySelector()).execute();
-			results.containerEvents().assertEventsMatchExactly(event(engine(), started()),
-					event(engine(), finishedSuccessfully()));
 		}
 	}
 

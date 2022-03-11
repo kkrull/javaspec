@@ -4,11 +4,17 @@ import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.DiscoveryFilter;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.EngineDiscoveryRequest;
+import org.junit.platform.engine.discovery.ClassSelector;
+import org.junit.platform.engine.discovery.DiscoverySelectors;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static info.javaspec.engine.ConfigurationParametersFactory.nullConfigurationParameters;
+import static java.util.stream.Collectors.toList;
 
 //Test data factory for different kinds of EngineDiscoveryRequest.
 public final class EngineDiscoveryRequestFactory {
@@ -25,7 +31,11 @@ public final class EngineDiscoveryRequestFactory {
 	}
 
 	private static final class ClassEngineDiscoveryRequest implements EngineDiscoveryRequest {
+		private final List<DiscoverySelector> selectors;
+
 		public ClassEngineDiscoveryRequest(Class<?> specClass) {
+			this.selectors = new LinkedList<>();
+			this.selectors.add(DiscoverySelectors.selectClass(specClass));
 		}
 
 		@Override
@@ -40,8 +50,11 @@ public final class EngineDiscoveryRequestFactory {
 
 		@Override
 		public <T extends DiscoverySelector> List<T> getSelectorsByType(Class<T> selectorType) {
-			throw new UnsupportedOperationException(
-				"work here - return the one selector for the one class if it's a class selector; otherwise empty list");
+			if (!ClassSelector.class.equals(selectorType)) {
+				return Collections.emptyList();
+			}
+
+			return this.selectors.stream().map(selectorType::cast).collect(toList());
 		}
 	}
 
