@@ -6,14 +6,18 @@ import static info.javaspec.engine.EngineDiscoveryRequestFactory.nullEngineDisco
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.platform.testkit.engine.EventConditions.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.engine.*;
+import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.TestEngine;
+import org.junit.platform.engine.UniqueId;
 import org.junit.platform.testkit.engine.EngineExecutionResults;
 import org.junit.platform.testkit.engine.EngineTestKit;
 
@@ -47,15 +51,25 @@ public class JavaSpecEngineTest {
 		public void selectNoneYieldsNoChildren() throws Exception {
 			JavaSpecEngine subject = new JavaSpecEngine();
 
-			UniqueId engineId = UniqueId.forEngine(subject.getId());
-			TestDescriptor rootDescriptor = subject.discover(nullEngineDiscoveryRequest(), engineId);
+			TestDescriptor rootDescriptor = subject.discover(nullEngineDiscoveryRequest(),
+					UniqueId.forEngine(subject.getId()));
 			assertEquals(Collections.emptySet(), rootDescriptor.getChildren());
 		}
 
 		@Test
 		@DisplayName("the engine descriptor has a child for a selected spec class")
-		@Disabled
 		public void selectOneClassYieldsOneChild() throws Exception {
+			JavaSpecEngine subject = new JavaSpecEngine();
+			TestDescriptor rootDescriptor = subject.discover(classEngineDiscoveryRequest(NullSpecClass.class),
+				UniqueId.forEngine(subject.getId()));
+
+			List<TestDescriptor> specClassDescriptors = new ArrayList(rootDescriptor.getChildren());
+			assertEquals(1, rootDescriptor.getChildren().size());
+
+			TestDescriptor specClassDescriptor = specClassDescriptors.get(0);
+			assertEquals(rootDescriptor, specClassDescriptor.getParent().orElseThrow());
+			assertEquals(TestDescriptor.Type.CONTAINER, specClassDescriptor.getType());
+			assertEquals("NullSpecClass", specClassDescriptor.getDisplayName());
 		}
 	}
 
@@ -84,5 +98,8 @@ public class JavaSpecEngineTest {
 	}
 
 	static final class NullSpecClass {
+	}
+
+	static final class OneSpecClass {
 	}
 }
