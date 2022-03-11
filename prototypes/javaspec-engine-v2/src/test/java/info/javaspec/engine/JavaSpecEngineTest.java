@@ -37,8 +37,7 @@ public class JavaSpecEngineTest {
 			JavaSpecEngine subject = new JavaSpecEngine();
 
 			UniqueId engineId = UniqueId.forEngine(subject.getId());
-			TestDescriptor rootDescriptor = subject.discover(classEngineDiscoveryRequest(NullSpecClass.class),
-					engineId);
+			TestDescriptor rootDescriptor = subject.discover(nullEngineDiscoveryRequest(), engineId);
 
 			assertEquals(TestDescriptor.Type.CONTAINER, rootDescriptor.getType());
 			assertEquals("JavaSpec", rootDescriptor.getDisplayName());
@@ -98,8 +97,5 @@ public class JavaSpecEngineTest {
 	}
 
 	static final class NullSpecClass {
-	}
-
-	static final class OneSpecClass {
 	}
 }

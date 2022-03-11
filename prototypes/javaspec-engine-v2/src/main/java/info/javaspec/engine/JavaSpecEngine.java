@@ -1,12 +1,17 @@
 package info.javaspec.engine;
 
 import org.junit.platform.engine.*;
+import org.junit.platform.engine.discovery.ClassSelector;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
 public class JavaSpecEngine implements TestEngine {
 	@Override
 	public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId engineId) {
-		return new EngineDescriptor(engineId, "JavaSpec");
+		EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
+
+		discoveryRequest.getSelectorsByType(ClassSelector.class);
+
+		return engineDescriptor;
 	}
 
 	@Override
