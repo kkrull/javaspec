@@ -4,6 +4,7 @@ import static info.javaspec.engine.DiscoverySelectorFactory.nullDiscoverySelecto
 import static info.javaspec.engine.EngineDiscoveryRequestFactory.classEngineDiscoveryRequest;
 import static info.javaspec.engine.EngineDiscoveryRequestFactory.nullEngineDiscoveryRequest;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.testkit.engine.EventConditions.*;
 
 import java.util.ArrayList;
@@ -11,6 +12,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import info.javaspec.api.JavaSpec;
+import info.javaspec.api.SpecClass;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -90,11 +93,32 @@ public class JavaSpecEngineTest {
 	class execute {
 		@Test
 		@DisplayName("reports execution events for the engine")
-		public void reportsEngineExecutionEvents() throws Exception {
+		public void reportsEngineEvents() throws Exception {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
 					.selectors(nullDiscoverySelector()).execute();
 			results.containerEvents().assertEventsMatchExactly(event(engine(), started()),
 					event(engine(), finishedSuccessfully()));
+		}
+
+		@Test
+		@DisplayName("skips spec class containers that don't have any specs in them")
+		@Disabled
+		public void skipsSpecClassContainersWithoutAnySpecs() throws Exception {
+			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
+					.selectors(selectClass(NullSpecClass.class)).execute();
+			results.containerEvents().assertEventsMatchExactly(event(engine(), started()),
+					event(engine(), finishedSuccessfully()));
+		}
+
+		@Test
+		@DisplayName("reports execution events for spec class containers")
+		public void reportsSpecClassContainerEvents() throws Exception {
+			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
+					.selectors(selectClass(OneSpecClass.class)).execute();
+			results.containerEvents().assertEventsMatchExactly(event(engine(), started()),
+				event(container("class:info.javaspec.engine.OneSpecClass"), started()),
+				event(container("class:info.javaspec.engine.OneSpecClass"), finishedSuccessfully()),
+				event(engine(), finishedSuccessfully()));
 		}
 	}
 
@@ -109,6 +133,18 @@ public class JavaSpecEngineTest {
 		}
 	}
 
-	static final class NullSpecClass {
+	static final class NullSpecClass implements SpecClass {
+		@Override
+		public void declareSpecs(JavaSpec javaspec) {
+			//Do nothing
+		}
+	}
+
+	static final class OneSpecClass implements SpecClass {
+		public void declareSpecs(JavaSpec javaSpec) {
+			javaSpec.it("can do simple arithmetic", () -> {
+				assertEquals(2, 1 + 1);
+			});
+		}
 	}
 }
