@@ -74,7 +74,8 @@ public class JavaSpecEngineV2Test {
 		@DisplayName("discovers a container for each selected spec class")
 		public void selectOneClassYieldsOneContainer() throws Exception {
 			JavaSpecEngineV2 subject = new JavaSpecEngineV2();
-			TestDescriptor returned = subject.discover(classEngineDiscoveryRequest(NullSpecClass.class),
+			Class<?> nullSpecClass = SpecClasses.nullSpecClass();
+			TestDescriptor returned = subject.discover(classEngineDiscoveryRequest(nullSpecClass),
 					UniqueId.forEngine(subject.getId()));
 
 			List<TestDescriptor> specClassDescriptors = new ArrayList<>(returned.getChildren());
@@ -83,9 +84,9 @@ public class JavaSpecEngineV2Test {
 			TestDescriptor onlyChild = specClassDescriptors.get(0);
 			UniqueId.Segment idSegment = onlyChild.getUniqueId().getLastSegment();
 			assertEquals("class", idSegment.getType());
-			assertEquals("info.javaspec.engine.JavaSpecEngineV2Test$NullSpecClass", idSegment.getValue());
+			assertEquals(nullSpecClass.getName(), idSegment.getValue());
 
-			assertEquals("info.javaspec.engine.JavaSpecEngineV2Test$NullSpecClass", onlyChild.getDisplayName());
+			assertEquals(nullSpecClass.getName(), onlyChild.getDisplayName());
 			assertEquals(returned, onlyChild.getParent().orElseThrow());
 			assertTrue(onlyChild.isContainer());
 			assertFalse(onlyChild.isRoot());
@@ -130,7 +131,7 @@ public class JavaSpecEngineV2Test {
 		@DisplayName("skips spec class containers that don't have any specs in them")
 		public void skipsSpecClassContainersWithoutAnySpecs() throws Exception {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngineV2())
-					.selectors(selectClass(NullSpecClass.class)).execute();
+					.selectors(selectClass(SpecClasses.nullSpecClass())).execute();
 			results.containerEvents().assertEventsMatchExactly(event(engine(), started()),
 					event(engine(), finishedSuccessfully()));
 		}
@@ -199,13 +200,6 @@ public class JavaSpecEngineV2Test {
 	}
 
 	static final class NotASpecClass {
-	}
-
-	static final class NullSpecClass implements SpecClass {
-		@Override
-		public void declareSpecs(JavaSpec javaspec) {
-			//Do nothing
-		}
 	}
 
 	static final class OneSpecClass implements SpecClass {
