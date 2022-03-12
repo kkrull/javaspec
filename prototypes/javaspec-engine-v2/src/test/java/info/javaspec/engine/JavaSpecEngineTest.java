@@ -169,6 +169,19 @@ public class JavaSpecEngineTest {
 				event(container(OneSpecWithRuntimeException.class), finishedSuccessfully())
 			);
 		}
+
+		@Test
+		@DisplayName("catches specs that fail by throwing AssertionError")
+		public void reportsSpecEventsWhenFailingWithAssertionError() throws Exception {
+			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
+					.selectors(selectClass(OneSpecWithAssertionError.class)).execute();
+			results.allEvents().assertEventsMatchLooselyInOrder(
+				event(container(OneSpecWithAssertionError.class), started()),
+				event(test(), started()),
+				event(test(), finishedWithFailure()),
+				event(container(OneSpecWithAssertionError.class), finishedSuccessfully())
+			);
+		}
 	}
 
 	@DisplayName("#getId")
@@ -196,6 +209,14 @@ public class JavaSpecEngineTest {
 		public void declareSpecs(JavaSpec javaSpec) {
 			javaSpec.it("one spec", () -> {
 				assertEquals(2, 1 + 1);
+			});
+		}
+	}
+
+	static final class OneSpecWithAssertionError implements SpecClass {
+		public void declareSpecs(JavaSpec javaSpec) {
+			javaSpec.it("throws", () -> {
+				assertEquals(42, 41);
 			});
 		}
 	}

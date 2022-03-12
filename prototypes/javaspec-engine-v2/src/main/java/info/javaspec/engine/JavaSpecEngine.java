@@ -66,7 +66,7 @@ public class JavaSpecEngine implements TestEngine {
 
 				try {
 					spec.execute();
-				} catch (Exception e) {
+				} catch (AssertionError | Exception e) {
 					listener.executionFinished(spec, TestExecutionResult.failed(e));
 					return;
 				}
