@@ -25,7 +25,6 @@ import org.junit.platform.engine.TestEngine;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.testkit.engine.EngineExecutionResults;
 import org.junit.platform.testkit.engine.EngineTestKit;
-import org.junit.platform.testkit.engine.EventConditions;
 
 public class JavaSpecEngineTest {
 	@Test
