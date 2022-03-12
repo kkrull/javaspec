@@ -26,7 +26,7 @@ import org.junit.platform.engine.UniqueId;
 import org.junit.platform.testkit.engine.EngineExecutionResults;
 import org.junit.platform.testkit.engine.EngineTestKit;
 
-public class JavaSpecEngineTest {
+public class JavaSpecEngineV2Test {
 	@Test
 	@DisplayName("can be loaded with ServiceLoader and located by ID")
 	@Disabled("wait until it can run specs, because enabling this will make it run for this project too")
@@ -39,7 +39,7 @@ public class JavaSpecEngineTest {
 		@Test
 		@DisplayName("returns a top-level container for itself, using the given UniqueId")
 		public void returnsAContainerForTheEngine() throws Exception {
-			JavaSpecEngine subject = new JavaSpecEngine();
+			JavaSpecEngineV2 subject = new JavaSpecEngineV2();
 			UniqueId engineId = UniqueId.forEngine(subject.getId());
 
 			TestDescriptor returned = subject.discover(nullEngineDiscoveryRequest(), engineId);
@@ -53,7 +53,7 @@ public class JavaSpecEngineTest {
 		@Test
 		@DisplayName("discovers no containers or tests, given no selectors")
 		public void selectNoneYieldsNoChildren() throws Exception {
-			JavaSpecEngine subject = new JavaSpecEngine();
+			JavaSpecEngineV2 subject = new JavaSpecEngineV2();
 
 			TestDescriptor returned = subject.discover(nullEngineDiscoveryRequest(),
 					UniqueId.forEngine(subject.getId()));
@@ -64,7 +64,7 @@ public class JavaSpecEngineTest {
 		@Test
 		@DisplayName("ignores selectors for classes that are not SpecClass")
 		public void ignoresNonSpecClassSelectors() throws Exception {
-			JavaSpecEngine subject = new JavaSpecEngine();
+			JavaSpecEngineV2 subject = new JavaSpecEngineV2();
 			TestDescriptor returned = subject.discover(classEngineDiscoveryRequest(NotASpecClass.class),
 					UniqueId.forEngine(subject.getId()));
 			assertEquals(Collections.emptySet(), returned.getChildren());
@@ -73,7 +73,7 @@ public class JavaSpecEngineTest {
 		@Test
 		@DisplayName("discovers a container for each selected spec class")
 		public void selectOneClassYieldsOneContainer() throws Exception {
-			JavaSpecEngine subject = new JavaSpecEngine();
+			JavaSpecEngineV2 subject = new JavaSpecEngineV2();
 			TestDescriptor returned = subject.discover(classEngineDiscoveryRequest(NullSpecClass.class),
 					UniqueId.forEngine(subject.getId()));
 
@@ -83,9 +83,9 @@ public class JavaSpecEngineTest {
 			TestDescriptor onlyChild = specClassDescriptors.get(0);
 			UniqueId.Segment idSegment = onlyChild.getUniqueId().getLastSegment();
 			assertEquals("class", idSegment.getType());
-			assertEquals("info.javaspec.engine.JavaSpecEngineTest$NullSpecClass", idSegment.getValue());
+			assertEquals("info.javaspec.engine.JavaSpecEngineV2Test$NullSpecClass", idSegment.getValue());
 
-			assertEquals("info.javaspec.engine.JavaSpecEngineTest$NullSpecClass", onlyChild.getDisplayName());
+			assertEquals("info.javaspec.engine.JavaSpecEngineV2Test$NullSpecClass", onlyChild.getDisplayName());
 			assertEquals(returned, onlyChild.getParent().orElseThrow());
 			assertTrue(onlyChild.isContainer());
 			assertFalse(onlyChild.isRoot());
@@ -95,7 +95,7 @@ public class JavaSpecEngineTest {
 		@Test
 		@DisplayName("discovers a test for each spec in a spec class")
 		public void discoversATestForEachSpec() throws Exception {
-			JavaSpecEngine subject = new JavaSpecEngine();
+			JavaSpecEngineV2 subject = new JavaSpecEngineV2();
 			TestDescriptor returned = subject.discover(classEngineDiscoveryRequest(OneSpecClass.class),
 					UniqueId.forEngine(subject.getId()));
 
@@ -120,7 +120,7 @@ public class JavaSpecEngineTest {
 		@Test
 		@DisplayName("reports execution events for the engine")
 		public void reportsEngineEvents() throws Exception {
-			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
+			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngineV2())
 					.selectors(nullDiscoverySelector()).execute();
 			results.containerEvents().assertEventsMatchExactly(event(engine(), started()),
 					event(engine(), finishedSuccessfully()));
@@ -129,7 +129,7 @@ public class JavaSpecEngineTest {
 		@Test
 		@DisplayName("skips spec class containers that don't have any specs in them")
 		public void skipsSpecClassContainersWithoutAnySpecs() throws Exception {
-			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
+			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngineV2())
 					.selectors(selectClass(NullSpecClass.class)).execute();
 			results.containerEvents().assertEventsMatchExactly(event(engine(), started()),
 					event(engine(), finishedSuccessfully()));
@@ -138,7 +138,7 @@ public class JavaSpecEngineTest {
 		@Test
 		@DisplayName("reports execution events for spec class containers")
 		public void reportsSpecClassContainerEvents() throws Exception {
-			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
+			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngineV2())
 					.selectors(selectClass(OneSpecClass.class)).execute();
 			results.containerEvents().assertEventsMatchExactly(event(engine(), started()),
 				event(container(OneSpecClass.class), started()),
@@ -149,7 +149,7 @@ public class JavaSpecEngineTest {
 		@Test
 		@DisplayName("reports start and successful finish events for passing specs")
 		public void reportsSpecEventsForPassingSpecs() throws Exception {
-			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
+			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngineV2())
 					.selectors(selectClass(OneSpecClass.class)).execute();
 			results.allEvents().assertEventsMatchLooselyInOrder(
 				event(container(OneSpecClass.class), started()),
@@ -162,7 +162,7 @@ public class JavaSpecEngineTest {
 		@Test
 		@DisplayName("reports start and failed finish events for failing specs")
 		public void reportsSpecEventsForFailingSpecs() throws Exception {
-			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
+			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngineV2())
 					.selectors(selectClass(OneSpecWithRuntimeException.class)).execute();
 			results.allEvents().assertEventsMatchLooselyInOrder(
 				event(container(OneSpecWithRuntimeException.class), started()),
@@ -175,7 +175,7 @@ public class JavaSpecEngineTest {
 		@Test
 		@DisplayName("catches specs that fail by throwing AssertionError")
 		public void reportsSpecEventsWhenFailingWithAssertionError() throws Exception {
-			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
+			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngineV2())
 					.selectors(selectClass(OneSpecWithAssertionError.class)).execute();
 
 			results.allEvents().assertEventsMatchLooselyInOrder(
@@ -193,7 +193,7 @@ public class JavaSpecEngineTest {
 		@Test
 		@DisplayName("returns an unique ID")
 		public void identifiesItselfAsTheEngineForJavaSpec() throws Exception {
-			TestEngine subject = new JavaSpecEngine();
+			TestEngine subject = new JavaSpecEngineV2();
 			assertEquals("javaspec-engine-v2", subject.getId());
 		}
 	}

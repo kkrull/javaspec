@@ -12,7 +12,7 @@ import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
 import info.javaspec.api.Verification;
 
-public class JavaSpecEngine implements TestEngine {
+public class JavaSpecEngineV2 implements TestEngine {
 	@Override
 	public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId engineId) {
 		EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
