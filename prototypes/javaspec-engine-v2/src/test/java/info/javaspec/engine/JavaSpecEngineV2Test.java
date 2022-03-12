@@ -18,10 +18,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Condition;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestEngine;
 import org.junit.platform.engine.UniqueId;
@@ -107,38 +103,21 @@ public class JavaSpecEngineV2Test implements SpecClass {
 			assertTrue(specDescriptor.isTest());
 		});
 
-		javaspec.it("#getId returns a unique ID", () -> {
-			TestEngine subject = new JavaSpecEngineV2();
-			assertEquals("javaspec-engine-v2", subject.getId());
-		});
-	}
-
-	@DisplayName("#execute")
-	@Nested
-	class execute {
-		@Test
-		@DisplayName("reports execution events for the engine")
-		public void reportsEngineEvents() throws Exception {
+		javaspec.it("#execute reports execution events for the engine", () -> {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngineV2())
 					.selectors(nullDiscoverySelector()).execute();
-
 			results.containerEvents().assertEventsMatchExactly(event(engine(), started()),
 					event(engine(), finishedSuccessfully()));
-		}
+		});
 
-		@Test
-		@DisplayName("skips spec class containers that don't have any specs in them")
-		public void skipsSpecClassContainersWithoutAnySpecs() throws Exception {
+		javaspec.it("#execute skips spec class containers that don't have any specs in them", () -> {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngineV2())
 					.selectors(selectClass(nullSpecClass())).execute();
-
 			results.containerEvents().assertEventsMatchExactly(event(engine(), started()),
 					event(engine(), finishedSuccessfully()));
-		}
+		});
 
-		@Test
-		@DisplayName("reports execution events for spec class containers")
-		public void reportsSpecClassContainerEvents() throws Exception {
+		javaspec.it("#execute reports execution events for spec class containers", () -> {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngineV2())
 					.selectors(selectClass(oneSpecClass())).execute();
 
@@ -146,11 +125,9 @@ public class JavaSpecEngineV2Test implements SpecClass {
 				event(container(), started()),
 				event(container(), finishedSuccessfully()),
 				event(engine(), finishedSuccessfully()));
-		}
+		});
 
-		@Test
-		@DisplayName("reports start and successful finish events for passing specs")
-		public void reportsSpecEventsForPassingSpecs() throws Exception {
+		javaspec.it("#execute reports start and successful finish events for passing specs", () -> {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngineV2())
 					.selectors(selectClass(oneSpecClass())).execute();
 
@@ -160,11 +137,9 @@ public class JavaSpecEngineV2Test implements SpecClass {
 				event(test(), finishedSuccessfully()),
 				event(container(), finishedSuccessfully())
 			);
-		}
+		});
 
-		@Test
-		@DisplayName("reports start and failed finish events for failing specs")
-		public void reportsSpecEventsForFailingSpecs() throws Exception {
+		javaspec.it("#execute reports start and failed finish events for failing specs", () -> {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngineV2())
 					.selectors(selectClass(oneSpecThrowingRuntimeException())).execute();
 
@@ -174,11 +149,9 @@ public class JavaSpecEngineV2Test implements SpecClass {
 				event(test(), finishedWithFailure(new Condition<Throwable>(t -> RuntimeException.class.isInstance(t), "RuntimeException"))),
 				event(container(), finishedSuccessfully())
 			);
-		}
+		});
 
-		@Test
-		@DisplayName("catches specs that fail by throwing AssertionError")
-		public void reportsSpecEventsWhenFailingWithAssertionError() throws Exception {
+		javaspec.it("#execute catches specs that fail by throwing AssertionError", () -> {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngineV2())
 					.selectors(selectClass(oneSpecThrowingAssertionError())).execute();
 
@@ -188,6 +161,11 @@ public class JavaSpecEngineV2Test implements SpecClass {
 				event(test(), finishedWithFailure(new Condition<Throwable>(t -> AssertionError.class.isInstance(t), "AssertionError"))),
 				event(container(), finishedSuccessfully())
 			);
-		}
+		});
+
+		javaspec.it("#getId returns a unique ID", () -> {
+			TestEngine subject = new JavaSpecEngineV2();
+			assertEquals("javaspec-engine-v2", subject.getId());
+		});
 	}
 }
