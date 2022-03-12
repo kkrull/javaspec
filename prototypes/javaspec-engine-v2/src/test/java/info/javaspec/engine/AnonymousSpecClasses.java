@@ -6,8 +6,8 @@ import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
 
 //Anonymous classes that only exist after methods are invoked, to avoid running side by side with project tests.
-public class SpecClasses {
-	private SpecClasses() {
+public class AnonymousSpecClasses {
+	private AnonymousSpecClasses() {
 		/* Static class */
 	}
 
