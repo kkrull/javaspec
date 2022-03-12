@@ -126,7 +126,6 @@ public class JavaSpecEngineTest {
 
 		@Test
 		@DisplayName("skips spec class containers that don't have any specs in them")
-		@Disabled
 		public void skipsSpecClassContainersWithoutAnySpecs() throws Exception {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
 					.selectors(selectClass(NullSpecClass.class)).execute();
