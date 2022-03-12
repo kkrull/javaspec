@@ -145,8 +145,8 @@ public class JavaSpecEngineTest {
 		}
 
 		@Test
-		@DisplayName("reports execution events for specs")
-		public void reportsSpecEvents() throws Exception {
+		@DisplayName("reports start and successful finish events for passing specs")
+		public void reportsSpecEventsForPassingSpecs() throws Exception {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
 					.selectors(selectClass(OneSpecClass.class)).execute();
 			results.allEvents().assertEventsMatchLooselyInOrder(
@@ -154,6 +154,19 @@ public class JavaSpecEngineTest {
 				event(test(), started()),
 				event(test(), finishedSuccessfully()),
 				event(container(OneSpecClass.class), finishedSuccessfully())
+			);
+		}
+
+		@Test
+		@DisplayName("reports start and failed finish events for failing specs")
+		public void reportsSpecEventsForFailingSpecs() throws Exception {
+			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
+					.selectors(selectClass(OneSpecWithRuntimeException.class)).execute();
+			results.allEvents().assertEventsMatchLooselyInOrder(
+				event(container(OneSpecWithRuntimeException.class), started()),
+				event(test(), started()),
+				event(test(), finishedWithFailure()),
+				event(container(OneSpecWithRuntimeException.class), finishedSuccessfully())
 			);
 		}
 	}
@@ -183,6 +196,14 @@ public class JavaSpecEngineTest {
 		public void declareSpecs(JavaSpec javaSpec) {
 			javaSpec.it("one spec", () -> {
 				assertEquals(2, 1 + 1);
+			});
+		}
+	}
+
+	static final class OneSpecWithRuntimeException implements SpecClass {
+		public void declareSpecs(JavaSpec javaSpec) {
+			javaSpec.it("throws", () -> {
+				throw new RuntimeException("bang!");
 			});
 		}
 	}

@@ -62,6 +62,15 @@ public class JavaSpecEngine implements TestEngine {
 
 			case TEST:
 				listener.executionStarted(descriptor);
+				SpecDescriptor spec = SpecDescriptor.class.cast(descriptor);
+
+				try {
+					spec.execute();
+				} catch (Exception e) {
+					listener.executionFinished(spec, TestExecutionResult.failed(e));
+					return;
+				}
+
 				listener.executionFinished(descriptor, TestExecutionResult.successful());
 				return;
 
@@ -114,17 +123,30 @@ public class JavaSpecEngine implements TestEngine {
 	}
 
 	private static final class SpecDescriptor extends AbstractTestDescriptor {
+		private final Verification verification;
+
 		public static SpecDescriptor of(UniqueId parentId, String behavior, Verification verification) {
-			return new SpecDescriptor(parentId.append("test", behavior), behavior);
+			return new SpecDescriptor(
+				parentId.append("test", behavior),
+				behavior,
+				verification
+			);
 		}
 
-		private SpecDescriptor(UniqueId uniqueId, String displayName) {
+		private SpecDescriptor(UniqueId uniqueId, String displayName, Verification verification) {
 			super(uniqueId, displayName);
+			this.verification = verification;
 		}
 
 		@Override
 		public Type getType() {
 			return Type.TEST;
+		}
+
+		/* JavaSpec */
+
+		public void execute() {
+			this.verification.execute();
 		}
 	}
 }
