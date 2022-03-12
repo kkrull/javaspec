@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Condition;
+import org.junit.platform.commons.annotation.Testable;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestEngine;
 import org.junit.platform.engine.UniqueId;
@@ -27,6 +28,7 @@ import org.junit.platform.testkit.engine.EngineTestKit;
 import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
 
+@Testable
 public class JavaSpecEngineV2Test implements SpecClass {
 	@Override
 	public void declareSpecs(JavaSpec javaspec) {
