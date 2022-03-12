@@ -143,6 +143,19 @@ public class JavaSpecEngineTest {
 				event(container(OneSpecClass.class), finishedSuccessfully()),
 				event(engine(), finishedSuccessfully()));
 		}
+
+		@Test
+		@DisplayName("reports execution events for specs")
+		public void reportsSpecEvents() throws Exception {
+			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
+					.selectors(selectClass(OneSpecClass.class)).execute();
+			results.allEvents().assertEventsMatchLooselyInOrder(
+				event(container(OneSpecClass.class), started()),
+				event(test(), started()),
+				event(test(), finishedSuccessfully()),
+				event(container(OneSpecClass.class), finishedSuccessfully())
+			);
+		}
 	}
 
 	@DisplayName("#getId")
