@@ -34,17 +34,15 @@ import info.javaspec.api.SpecClass;
 public class JavaSpecEngineV2Test implements SpecClass {
 	@Override
 	public void declareSpecs(JavaSpec javaspec) {
+		javaspec.it("can be loaded with ServiceLoader and located by ID", () -> {
+			EngineTestKit.engine("javaspec-engine-v2")
+				.selectors(selectClass(nullSpecClass())).execute();
+		});
+
 		javaspec.it("#getId returns a unique ID", () -> {
 			TestEngine subject = new JavaSpecEngineV2();
 			assertEquals("javaspec-engine-v2", subject.getId());
 		});
-	}
-
-	@Test
-	@DisplayName("can be loaded with ServiceLoader and located by ID")
-	public void isRegisteredWithServiceLoader() throws Exception {
-		EngineTestKit.engine("javaspec-engine-v2")
-				.selectors(selectClass(nullSpecClass())).execute();
 	}
 
 	@DisplayName("#discover")
