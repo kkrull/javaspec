@@ -136,13 +136,12 @@ public class JavaSpecEngineTest {
 
 		@Test
 		@DisplayName("reports execution events for spec class containers")
-		@Disabled
 		public void reportsSpecClassContainerEvents() throws Exception {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
 					.selectors(selectClass(OneSpecClass.class)).execute();
 			results.containerEvents().assertEventsMatchExactly(event(engine(), started()),
-				event(container("class:info.javaspec.engine.OneSpecClass"), started()),
-				event(container("class:info.javaspec.engine.OneSpecClass"), finishedSuccessfully()),
+				event(container("class:info.javaspec.engine.JavaSpecEngineTest$OneSpecClass"), started()),
+				event(container("class:info.javaspec.engine.JavaSpecEngineTest$OneSpecClass"), finishedSuccessfully()),
 				event(engine(), finishedSuccessfully()));
 		}
 	}

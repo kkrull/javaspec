@@ -46,10 +46,10 @@ public class JavaSpecEngine implements TestEngine {
 		TestDescriptor rootDescriptor = request.getRootTestDescriptor();
 		listener.executionStarted(rootDescriptor);
 
-		// for (TestDescriptor child : rootDescriptor.getChildren()) {
-		// 	listener.executionStarted(child);
-		// 	listener.executionFinished(child, TestExecutionResult.successful());
-		// }
+		for (TestDescriptor child : rootDescriptor.getChildren()) {
+			listener.executionStarted(child);
+			listener.executionFinished(child, TestExecutionResult.successful());
+		}
 
 		listener.executionFinished(rootDescriptor, TestExecutionResult.successful());
 	}
