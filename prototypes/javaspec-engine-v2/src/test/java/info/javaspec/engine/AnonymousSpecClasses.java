@@ -12,7 +12,8 @@ public class AnonymousSpecClasses {
 	}
 
 	public static Class<?> notASpecClass() {
-		return new Object() {}.getClass();
+		return new Object() {
+		}.getClass();
 	}
 
 	public static Class<? extends SpecClass> nullSpecClass() {
@@ -23,7 +24,7 @@ public class AnonymousSpecClasses {
 		return new SpecClass() {
 			@Override
 			public void declareSpecs(JavaSpec javaspec) {
-				//Do nothing
+				// Do nothing
 			}
 		};
 	}

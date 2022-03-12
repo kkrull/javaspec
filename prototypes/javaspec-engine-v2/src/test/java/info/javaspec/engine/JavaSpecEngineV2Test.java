@@ -33,8 +33,7 @@ public class JavaSpecEngineV2Test implements SpecClass {
 	@Override
 	public void declareSpecs(JavaSpec javaspec) {
 		javaspec.it("can be loaded with ServiceLoader and located by ID", () -> {
-			EngineTestKit.engine("javaspec-engine-v2")
-				.selectors(selectClass(nullSpecClass())).execute();
+			EngineTestKit.engine("javaspec-engine-v2").selectors(selectClass(nullSpecClass())).execute();
 		});
 
 		javaspec.it("#discover returns a top-level container for itself, using the given UniqueId", () -> {
@@ -124,45 +123,36 @@ public class JavaSpecEngineV2Test implements SpecClass {
 					.selectors(selectClass(oneSpecClass())).execute();
 
 			results.containerEvents().assertEventsMatchExactly(event(engine(), started()),
-				event(container(), started()),
-				event(container(), finishedSuccessfully()),
-				event(engine(), finishedSuccessfully()));
+					event(container(), started()), event(container(), finishedSuccessfully()),
+					event(engine(), finishedSuccessfully()));
 		});
 
 		javaspec.it("#execute reports start and successful finish events for passing specs", () -> {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngineV2())
 					.selectors(selectClass(oneSpecClass())).execute();
 
-			results.allEvents().assertEventsMatchLooselyInOrder(
-				event(container(), started()),
-				event(test(), started()),
-				event(test(), finishedSuccessfully()),
-				event(container(), finishedSuccessfully())
-			);
+			results.allEvents().assertEventsMatchLooselyInOrder(event(container(), started()), event(test(), started()),
+					event(test(), finishedSuccessfully()), event(container(), finishedSuccessfully()));
 		});
 
 		javaspec.it("#execute reports start and failed finish events for failing specs", () -> {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngineV2())
 					.selectors(selectClass(oneSpecThrowingRuntimeException())).execute();
 
-			results.allEvents().assertEventsMatchLooselyInOrder(
-				event(container(), started()),
-				event(test(), started()),
-				event(test(), finishedWithFailure(new Condition<Throwable>(t -> RuntimeException.class.isInstance(t), "RuntimeException"))),
-				event(container(), finishedSuccessfully())
-			);
+			results.allEvents().assertEventsMatchLooselyInOrder(event(container(), started()), event(test(), started()),
+					event(test(), finishedWithFailure(
+							new Condition<Throwable>(t -> RuntimeException.class.isInstance(t), "RuntimeException"))),
+					event(container(), finishedSuccessfully()));
 		});
 
 		javaspec.it("#execute catches specs that fail by throwing AssertionError", () -> {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngineV2())
 					.selectors(selectClass(oneSpecThrowingAssertionError())).execute();
 
-			results.allEvents().assertEventsMatchLooselyInOrder(
-				event(container(), started()),
-				event(test(), started()),
-				event(test(), finishedWithFailure(new Condition<Throwable>(t -> AssertionError.class.isInstance(t), "AssertionError"))),
-				event(container(), finishedSuccessfully())
-			);
+			results.allEvents().assertEventsMatchLooselyInOrder(event(container(), started()), event(test(), started()),
+					event(test(), finishedWithFailure(
+							new Condition<Throwable>(t -> AssertionError.class.isInstance(t), "AssertionError"))),
+					event(container(), finishedSuccessfully()));
 		});
 
 		javaspec.it("#getId returns a unique ID", () -> {

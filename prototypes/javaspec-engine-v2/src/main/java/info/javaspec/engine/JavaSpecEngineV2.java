@@ -16,17 +16,13 @@ public class JavaSpecEngineV2 implements TestEngine {
 	public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId engineId) {
 		EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
 
-		discoveryRequest.getSelectorsByType(ClassSelector.class).stream()
-			.map(ClassSelector::getJavaClass)
-			.filter(anyClass -> SpecClass.class.isAssignableFrom(anyClass))
-			.map(specClass -> instantiate(specClass))
-			.map(SpecClass.class::cast)
-			.map(declaringInstance -> {
-				SpecClassDescriptor specClassDescriptor = SpecClassDescriptor.of(engineId, declaringInstance);
-				specClassDescriptor.discover();
-				return specClassDescriptor;
-			})
-			.forEach(engineDescriptor::addChild);
+		discoveryRequest.getSelectorsByType(ClassSelector.class).stream().map(ClassSelector::getJavaClass)
+				.filter(anyClass -> SpecClass.class.isAssignableFrom(anyClass)).map(specClass -> instantiate(specClass))
+				.map(SpecClass.class::cast).map(declaringInstance -> {
+					SpecClassDescriptor specClassDescriptor = SpecClassDescriptor.of(engineId, declaringInstance);
+					specClassDescriptor.discover();
+					return specClassDescriptor;
+				}).forEach(engineDescriptor::addChild);
 
 		return engineDescriptor;
 	}
@@ -48,8 +44,8 @@ public class JavaSpecEngineV2 implements TestEngine {
 	}
 
 	private void execute(TestDescriptor descriptor, EngineExecutionListener listener) {
-		switch(descriptor.getType()) {
-			case CONTAINER:
+		switch (descriptor.getType()) {
+			case CONTAINER :
 				listener.executionStarted(descriptor);
 
 				for (TestDescriptor child : descriptor.getChildren()) {
@@ -59,7 +55,7 @@ public class JavaSpecEngineV2 implements TestEngine {
 				listener.executionFinished(descriptor, TestExecutionResult.successful());
 				return;
 
-			case TEST:
+			case TEST :
 				listener.executionStarted(descriptor);
 				SpecDescriptor spec = SpecDescriptor.class.cast(descriptor);
 
@@ -73,7 +69,7 @@ public class JavaSpecEngineV2 implements TestEngine {
 				listener.executionFinished(descriptor, TestExecutionResult.successful());
 				return;
 
-			default:
+			default :
 				throw new UnsupportedOperationException(String.format("Unsupported TestDescriptor: %s", descriptor));
 		}
 	}
@@ -88,11 +84,8 @@ public class JavaSpecEngineV2 implements TestEngine {
 
 		public static SpecClassDescriptor of(UniqueId parentId, SpecClass declaringInstance) {
 			Class<? extends SpecClass> declaringClass = declaringInstance.getClass();
-			return new SpecClassDescriptor(
-				parentId.append("class", declaringClass.getName()),
-				declaringClass.getName(),
-				declaringInstance
-			);
+			return new SpecClassDescriptor(parentId.append("class", declaringClass.getName()), declaringClass.getName(),
+					declaringInstance);
 		}
 
 		private SpecClassDescriptor(UniqueId uniqueId, String displayName, SpecClass declaringInstance) {
@@ -125,11 +118,7 @@ public class JavaSpecEngineV2 implements TestEngine {
 		private final Verification verification;
 
 		public static SpecDescriptor of(UniqueId parentId, String behavior, Verification verification) {
-			return new SpecDescriptor(
-				parentId.append("test", behavior),
-				behavior,
-				verification
-			);
+			return new SpecDescriptor(parentId.append("test", behavior), behavior, verification);
 		}
 
 		private SpecDescriptor(UniqueId uniqueId, String displayName, Verification verification) {
