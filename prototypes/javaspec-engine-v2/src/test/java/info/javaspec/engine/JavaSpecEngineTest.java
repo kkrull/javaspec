@@ -140,8 +140,8 @@ public class JavaSpecEngineTest {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
 					.selectors(selectClass(OneSpecClass.class)).execute();
 			results.containerEvents().assertEventsMatchExactly(event(engine(), started()),
-				event(container("class:info.javaspec.engine.JavaSpecEngineTest$OneSpecClass"), started()),
-				event(container("class:info.javaspec.engine.JavaSpecEngineTest$OneSpecClass"), finishedSuccessfully()),
+				event(container(OneSpecClass.class), started()),
+				event(container(OneSpecClass.class), finishedSuccessfully()),
 				event(engine(), finishedSuccessfully()));
 		}
 	}
