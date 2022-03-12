@@ -92,7 +92,6 @@ public class JavaSpecEngineTest {
 
 		@Test
 		@DisplayName("discovers a test for each spec in a spec class")
-		@Disabled
 		public void discoversATestForEachSpec() throws Exception {
 			JavaSpecEngine subject = new JavaSpecEngine();
 			TestDescriptor returned = subject.discover(classEngineDiscoveryRequest(OneSpecClass.class),

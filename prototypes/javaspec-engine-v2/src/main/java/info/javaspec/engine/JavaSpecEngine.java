@@ -7,7 +7,9 @@ import org.junit.platform.engine.discovery.ClassSelector;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
+import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
+import info.javaspec.api.Verification;
 
 public class JavaSpecEngine implements TestEngine {
 	@Override
@@ -17,18 +19,19 @@ public class JavaSpecEngine implements TestEngine {
 		discoveryRequest.getSelectorsByType(ClassSelector.class).stream()
 			.map(ClassSelector::getJavaClass)
 			.filter(anyClass -> SpecClass.class.isAssignableFrom(anyClass))
-			.map(specClass -> makeDeclaringObject(specClass))
+			.map(specClass -> instantiate(specClass))
 			.map(SpecClass.class::cast)
 			.map(declaringInstance -> {
-				// declaringInstance.declareSpecs(javaspec);
-				return SpecClassDescriptor.forClass(engineId, declaringInstance.getClass());
+				SpecClassDescriptor specClassDescriptor = SpecClassDescriptor.of(engineId, declaringInstance);
+				specClassDescriptor.discover();
+				return specClassDescriptor;
 			})
 			.forEach(engineDescriptor::addChild);
 
 		return engineDescriptor;
 	}
 
-	private Object makeDeclaringObject(Class<?> clazz) {
+	private Object instantiate(Class<?> clazz) {
 		try {
 			Constructor<?> constructor = clazz.getDeclaredConstructor();
 			return constructor.newInstance();
@@ -56,18 +59,56 @@ public class JavaSpecEngine implements TestEngine {
 		return "javaspec-engine-v2";
 	}
 
-	private static final class SpecClassDescriptor extends AbstractTestDescriptor {
-		public static SpecClassDescriptor forClass(UniqueId parentId, Class<?> specClass) {
-			return new SpecClassDescriptor(parentId.append("class", specClass.getName()), specClass.getName());
+	private static final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSpec {
+		private final SpecClass declaringInstance;
+
+		public static SpecClassDescriptor of(UniqueId parentId, SpecClass declaringInstance) {
+			Class<? extends SpecClass> declaringClass = declaringInstance.getClass();
+			return new SpecClassDescriptor(
+				parentId.append("class", declaringClass.getName()),
+				declaringClass.getName(),
+				declaringInstance
+			);
 		}
 
-		private SpecClassDescriptor(UniqueId uniqueId, String displayName) {
+		private SpecClassDescriptor(UniqueId uniqueId, String displayName, SpecClass declaringInstance) {
+			super(uniqueId, displayName);
+			this.declaringInstance = declaringInstance;
+		}
+
+		/* Jupiter */
+
+		@Override
+		public Type getType() {
+			return Type.CONTAINER;
+		}
+
+		/* JavaSpec */
+
+		public void discover() {
+			this.declaringInstance.declareSpecs(this);
+		}
+
+		@Override
+		public void it(String behavior, Verification verification) {
+			SpecDescriptor specDescriptor = SpecDescriptor.of(getUniqueId(), behavior, verification);
+			specDescriptor.setParent(this);
+			this.addChild(specDescriptor);
+		}
+	}
+
+	private static final class SpecDescriptor extends AbstractTestDescriptor {
+		public static SpecDescriptor of(UniqueId parentId, String behavior, Verification verification) {
+			return new SpecDescriptor(parentId.append("test", behavior), behavior);
+		}
+
+		private SpecDescriptor(UniqueId uniqueId, String displayName) {
 			super(uniqueId, displayName);
 		}
 
 		@Override
 		public Type getType() {
-			return Type.CONTAINER;
+			return Type.TEST;
 		}
 	}
 }
