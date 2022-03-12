@@ -61,8 +61,11 @@ public class JavaSpecEngineTest {
 
 		@Test
 		@DisplayName("ignores selectors for classes that are not SpecClass")
-		@Disabled
 		public void ignoresNonSpecClassSelectors() throws Exception {
+			JavaSpecEngine subject = new JavaSpecEngine();
+			TestDescriptor returned = subject.discover(classEngineDiscoveryRequest(NotASpecClass.class),
+					UniqueId.forEngine(subject.getId()));
+			assertEquals(Collections.emptySet(), returned.getChildren());
 		}
 
 		@Test
@@ -89,6 +92,7 @@ public class JavaSpecEngineTest {
 
 		@Test
 		@DisplayName("discovers a test for each spec in a spec class")
+		@Disabled
 		public void discoversATestForEachSpec() throws Exception {
 			JavaSpecEngine subject = new JavaSpecEngine();
 			TestDescriptor returned = subject.discover(classEngineDiscoveryRequest(OneSpecClass.class),
@@ -153,6 +157,9 @@ public class JavaSpecEngineTest {
 			TestEngine subject = new JavaSpecEngine();
 			assertEquals("javaspec-engine-v2", subject.getId());
 		}
+	}
+
+	static final class NotASpecClass {
 	}
 
 	static final class NullSpecClass implements SpecClass {

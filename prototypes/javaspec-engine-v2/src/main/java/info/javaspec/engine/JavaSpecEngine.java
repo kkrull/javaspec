@@ -1,9 +1,13 @@
 package info.javaspec.engine;
 
+import java.lang.reflect.Constructor;
+
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.ClassSelector;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
+
+import info.javaspec.api.SpecClass;
 
 public class JavaSpecEngine implements TestEngine {
 	@Override
@@ -12,10 +16,25 @@ public class JavaSpecEngine implements TestEngine {
 
 		discoveryRequest.getSelectorsByType(ClassSelector.class).stream()
 			.map(ClassSelector::getJavaClass)
-			.map(specClass -> SpecClassDescriptor.forClass(engineId, specClass))
+			.filter(anyClass -> SpecClass.class.isAssignableFrom(anyClass))
+			.map(specClass -> makeDeclaringObject(specClass))
+			.map(SpecClass.class::cast)
+			.map(declaringInstance -> {
+				// declaringInstance.declareSpecs(javaspec);
+				return SpecClassDescriptor.forClass(engineId, declaringInstance.getClass());
+			})
 			.forEach(engineDescriptor::addChild);
 
 		return engineDescriptor;
+	}
+
+	private Object makeDeclaringObject(Class<?> clazz) {
+		try {
+			Constructor<?> constructor = clazz.getDeclaredConstructor();
+			return constructor.newInstance();
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to instantiate spec class", e);
+		}
 	}
 
 	@Override
@@ -23,6 +42,12 @@ public class JavaSpecEngine implements TestEngine {
 		EngineExecutionListener listener = request.getEngineExecutionListener();
 		TestDescriptor rootDescriptor = request.getRootTestDescriptor();
 		listener.executionStarted(rootDescriptor);
+
+		// for (TestDescriptor child : rootDescriptor.getChildren()) {
+		// 	listener.executionStarted(child);
+		// 	listener.executionFinished(child, TestExecutionResult.successful());
+		// }
+
 		listener.executionFinished(rootDescriptor, TestExecutionResult.successful());
 	}
 
