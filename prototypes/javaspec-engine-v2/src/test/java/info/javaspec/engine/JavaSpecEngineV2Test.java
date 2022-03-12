@@ -31,8 +31,9 @@ import org.junit.platform.testkit.engine.EngineTestKit;
 public class JavaSpecEngineV2Test {
 	@Test
 	@DisplayName("can be loaded with ServiceLoader and located by ID")
-	@Disabled("wait until it can run specs, because enabling this will make it run for this project too")
 	public void isRegisteredWithServiceLoader() throws Exception {
+		EngineTestKit.engine("javaspec-engine-v2")
+				.selectors(selectClass(nullSpecClass())).execute();
 	}
 
 	@DisplayName("#discover")
