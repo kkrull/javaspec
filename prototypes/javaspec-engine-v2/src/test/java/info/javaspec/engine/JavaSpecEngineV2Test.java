@@ -3,8 +3,11 @@ package info.javaspec.engine;
 import static info.javaspec.engine.DiscoverySelectorFactory.nullDiscoverySelector;
 import static info.javaspec.engine.EngineDiscoveryRequestFactory.classEngineDiscoveryRequest;
 import static info.javaspec.engine.EngineDiscoveryRequestFactory.nullEngineDiscoveryRequest;
+import static info.javaspec.engine.SpecClasses.notASpecClass;
 import static info.javaspec.engine.SpecClasses.nullSpecClass;
 import static info.javaspec.engine.SpecClasses.oneSpecClass;
+import static info.javaspec.engine.SpecClasses.oneSpecThrowingAssertionError;
+import static info.javaspec.engine.SpecClasses.oneSpecThrowingRuntimeException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.testkit.engine.EventConditions.*;
@@ -13,9 +16,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
-import info.javaspec.api.JavaSpec;
-import info.javaspec.api.SpecClass;
 
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Disabled;
@@ -67,7 +67,7 @@ public class JavaSpecEngineV2Test {
 		@DisplayName("ignores selectors for classes that are not SpecClass")
 		public void ignoresNonSpecClassSelectors() throws Exception {
 			JavaSpecEngineV2 subject = new JavaSpecEngineV2();
-			TestDescriptor returned = subject.discover(classEngineDiscoveryRequest(NotASpecClass.class),
+			TestDescriptor returned = subject.discover(classEngineDiscoveryRequest(notASpecClass()),
 					UniqueId.forEngine(subject.getId()));
 			assertEquals(Collections.emptySet(), returned.getChildren());
 		}
@@ -170,13 +170,13 @@ public class JavaSpecEngineV2Test {
 		@DisplayName("reports start and failed finish events for failing specs")
 		public void reportsSpecEventsForFailingSpecs() throws Exception {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngineV2())
-					.selectors(selectClass(OneSpecWithRuntimeException.class)).execute();
+					.selectors(selectClass(oneSpecThrowingRuntimeException())).execute();
 
 			results.allEvents().assertEventsMatchLooselyInOrder(
-				event(container(OneSpecWithRuntimeException.class), started()),
+				event(container(), started()),
 				event(test(), started()),
 				event(test(), finishedWithFailure(new Condition<Throwable>(t -> RuntimeException.class.isInstance(t), "RuntimeException"))),
-				event(container(OneSpecWithRuntimeException.class), finishedSuccessfully())
+				event(container(), finishedSuccessfully())
 			);
 		}
 
@@ -184,13 +184,13 @@ public class JavaSpecEngineV2Test {
 		@DisplayName("catches specs that fail by throwing AssertionError")
 		public void reportsSpecEventsWhenFailingWithAssertionError() throws Exception {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngineV2())
-					.selectors(selectClass(OneSpecWithAssertionError.class)).execute();
+					.selectors(selectClass(oneSpecThrowingAssertionError())).execute();
 
 			results.allEvents().assertEventsMatchLooselyInOrder(
-				event(container(OneSpecWithAssertionError.class), started()),
+				event(container(), started()),
 				event(test(), started()),
 				event(test(), finishedWithFailure(new Condition<Throwable>(t -> AssertionError.class.isInstance(t), "AssertionError"))),
-				event(container(OneSpecWithAssertionError.class), finishedSuccessfully())
+				event(container(), finishedSuccessfully())
 			);
 		}
 	}
@@ -203,25 +203,6 @@ public class JavaSpecEngineV2Test {
 		public void identifiesItselfAsTheEngineForJavaSpec() throws Exception {
 			TestEngine subject = new JavaSpecEngineV2();
 			assertEquals("javaspec-engine-v2", subject.getId());
-		}
-	}
-
-	static final class NotASpecClass {
-	}
-
-	static final class OneSpecWithAssertionError implements SpecClass {
-		public void declareSpecs(JavaSpec javaSpec) {
-			javaSpec.it("throws", () -> {
-				assertEquals(42, 41);
-			});
-		}
-	}
-
-	static final class OneSpecWithRuntimeException implements SpecClass {
-		public void declareSpecs(JavaSpec javaSpec) {
-			javaSpec.it("throws", () -> {
-				throw new RuntimeException("bang!");
-			});
 		}
 	}
 }

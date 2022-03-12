@@ -11,6 +11,10 @@ public class SpecClasses {
 		/* Static class */
 	}
 
+	public static Class<?> notASpecClass() {
+		return new Object() {}.getClass();
+	}
+
 	public static Class<? extends SpecClass> nullSpecClass() {
 		return nullSpecClassInstance().getClass();
 	}
@@ -34,6 +38,36 @@ public class SpecClasses {
 			public void declareSpecs(JavaSpec javaspec) {
 				javaspec.it("one spec", () -> {
 					assertEquals(2, 1 + 1);
+				});
+			}
+		};
+	}
+
+	public static Class<? extends SpecClass> oneSpecThrowingAssertionError() {
+		return oneSpecThrowingAssertionErrorInstance().getClass();
+	}
+
+	private static SpecClass oneSpecThrowingAssertionErrorInstance() {
+		return new SpecClass() {
+			@Override
+			public void declareSpecs(JavaSpec javaspec) {
+				javaspec.it("throws", () -> {
+					assertEquals(42, 41);
+				});
+			}
+		};
+	}
+
+	public static Class<? extends SpecClass> oneSpecThrowingRuntimeException() {
+		return oneSpecThrowingRuntimeExceptionInstance().getClass();
+	}
+
+	private static SpecClass oneSpecThrowingRuntimeExceptionInstance() {
+		return new SpecClass() {
+			@Override
+			public void declareSpecs(JavaSpec javaspec) {
+				javaspec.it("throws", () -> {
+					throw new RuntimeException("bang!");
 				});
 			}
 		};

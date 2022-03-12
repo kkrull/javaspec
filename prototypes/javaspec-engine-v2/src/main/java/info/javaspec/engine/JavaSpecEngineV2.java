@@ -3,7 +3,6 @@ package info.javaspec.engine;
 import java.lang.reflect.Constructor;
 
 import org.junit.platform.engine.*;
-import org.junit.platform.engine.TestDescriptor.Type;
 import org.junit.platform.engine.discovery.ClassSelector;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
