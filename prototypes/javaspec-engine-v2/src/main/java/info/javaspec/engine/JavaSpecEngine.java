@@ -3,6 +3,7 @@ package info.javaspec.engine;
 import java.lang.reflect.Constructor;
 
 import org.junit.platform.engine.*;
+import org.junit.platform.engine.TestDescriptor.Type;
 import org.junit.platform.engine.discovery.ClassSelector;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
@@ -42,16 +43,31 @@ public class JavaSpecEngine implements TestEngine {
 
 	@Override
 	public void execute(ExecutionRequest request) {
-		EngineExecutionListener listener = request.getEngineExecutionListener();
 		TestDescriptor rootDescriptor = request.getRootTestDescriptor();
-		listener.executionStarted(rootDescriptor);
+		EngineExecutionListener listener = request.getEngineExecutionListener();
+		execute(rootDescriptor, listener);
+	}
 
-		for (TestDescriptor child : rootDescriptor.getChildren()) {
-			listener.executionStarted(child);
-			listener.executionFinished(child, TestExecutionResult.successful());
+	private void execute(TestDescriptor descriptor, EngineExecutionListener listener) {
+		switch(descriptor.getType()) {
+			case CONTAINER:
+				listener.executionStarted(descriptor);
+
+				for (TestDescriptor child : descriptor.getChildren()) {
+					execute(child, listener);
+				}
+
+				listener.executionFinished(descriptor, TestExecutionResult.successful());
+				return;
+
+			case TEST:
+				listener.executionStarted(descriptor);
+				listener.executionFinished(descriptor, TestExecutionResult.successful());
+				return;
+
+			default:
+				throw new UnsupportedOperationException(String.format("Unsupported TestDescriptor: %s", descriptor));
 		}
-
-		listener.executionFinished(rootDescriptor, TestExecutionResult.successful());
 	}
 
 	@Override
