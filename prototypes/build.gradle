@@ -10,3 +10,5 @@ subprojects {
 		mavenCentral()
 	}
 }
+
+//test-logger: Customize at runtime ./gradlew -Dtestlogger.theme=mocha test

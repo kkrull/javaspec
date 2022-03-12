@@ -1,0 +1,2 @@
+#ServiceLoader provider configuration so that JUnit Platform knows this artifact has a TestEngine in it
+info.javaspec.engine.JavaSpecEngineV2
