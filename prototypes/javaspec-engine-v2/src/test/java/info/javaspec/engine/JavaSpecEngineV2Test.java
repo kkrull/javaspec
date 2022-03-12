@@ -28,7 +28,18 @@ import org.junit.platform.engine.UniqueId;
 import org.junit.platform.testkit.engine.EngineExecutionResults;
 import org.junit.platform.testkit.engine.EngineTestKit;
 
-public class JavaSpecEngineV2Test {
+import info.javaspec.api.JavaSpec;
+import info.javaspec.api.SpecClass;
+
+public class JavaSpecEngineV2Test implements SpecClass {
+	@Override
+	public void declareSpecs(JavaSpec javaspec) {
+		javaspec.it("#getId returns a unique ID", () -> {
+			TestEngine subject = new JavaSpecEngineV2();
+			assertEquals("javaspec-engine-v2", subject.getId());
+		});
+	}
+
 	@Test
 	@DisplayName("can be loaded with ServiceLoader and located by ID")
 	public void isRegisteredWithServiceLoader() throws Exception {
@@ -193,17 +204,6 @@ public class JavaSpecEngineV2Test {
 				event(test(), finishedWithFailure(new Condition<Throwable>(t -> AssertionError.class.isInstance(t), "AssertionError"))),
 				event(container(), finishedSuccessfully())
 			);
-		}
-	}
-
-	@DisplayName("#getId")
-	@Nested
-	class getId {
-		@Test
-		@DisplayName("returns an unique ID")
-		public void identifiesItselfAsTheEngineForJavaSpec() throws Exception {
-			TestEngine subject = new JavaSpecEngineV2();
-			assertEquals("javaspec-engine-v2", subject.getId());
 		}
 	}
 }
