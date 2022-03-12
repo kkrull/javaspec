@@ -14,6 +14,8 @@ import java.util.Optional;
 
 import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
+
+import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -23,6 +25,7 @@ import org.junit.platform.engine.TestEngine;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.testkit.engine.EngineExecutionResults;
 import org.junit.platform.testkit.engine.EngineTestKit;
+import org.junit.platform.testkit.engine.EventConditions;
 
 public class JavaSpecEngineTest {
 	@Test
@@ -165,7 +168,7 @@ public class JavaSpecEngineTest {
 			results.allEvents().assertEventsMatchLooselyInOrder(
 				event(container(OneSpecWithRuntimeException.class), started()),
 				event(test(), started()),
-				event(test(), finishedWithFailure()),
+				event(test(), finishedWithFailure(new Condition<Throwable>(t -> RuntimeException.class.isInstance(t), "RuntimeException"))),
 				event(container(OneSpecWithRuntimeException.class), finishedSuccessfully())
 			);
 		}
@@ -175,10 +178,11 @@ public class JavaSpecEngineTest {
 		public void reportsSpecEventsWhenFailingWithAssertionError() throws Exception {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
 					.selectors(selectClass(OneSpecWithAssertionError.class)).execute();
+
 			results.allEvents().assertEventsMatchLooselyInOrder(
 				event(container(OneSpecWithAssertionError.class), started()),
 				event(test(), started()),
-				event(test(), finishedWithFailure()),
+				event(test(), finishedWithFailure(new Condition<Throwable>(t -> AssertionError.class.isInstance(t), "AssertionError"))),
 				event(container(OneSpecWithAssertionError.class), finishedSuccessfully())
 			);
 		}
