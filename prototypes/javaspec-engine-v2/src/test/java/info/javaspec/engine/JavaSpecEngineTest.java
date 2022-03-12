@@ -72,7 +72,7 @@ public class JavaSpecEngineTest {
 			TestDescriptor returned = subject.discover(classEngineDiscoveryRequest(NullSpecClass.class),
 					UniqueId.forEngine(subject.getId()));
 
-			List<TestDescriptor> specClassDescriptors = new ArrayList(returned.getChildren());
+			List<TestDescriptor> specClassDescriptors = new ArrayList<>(returned.getChildren());
 			assertEquals(1, returned.getChildren().size());
 
 			TestDescriptor onlyChild = specClassDescriptors.get(0);
@@ -85,6 +85,27 @@ public class JavaSpecEngineTest {
 			assertTrue(onlyChild.isContainer());
 			assertFalse(onlyChild.isRoot());
 			assertFalse(onlyChild.isTest());
+		}
+
+		@Test
+		@DisplayName("discovers a test for each spec in a spec class")
+		public void discoversATestForEachSpec() throws Exception {
+			JavaSpecEngine subject = new JavaSpecEngine();
+			TestDescriptor returned = subject.discover(classEngineDiscoveryRequest(OneSpecClass.class),
+					UniqueId.forEngine(subject.getId()));
+
+			TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
+			assertEquals(1, specClassDescriptor.getChildren().size());
+
+			TestDescriptor specDescriptor = specClassDescriptor.getChildren().iterator().next();
+			UniqueId.Segment idSegment = specDescriptor.getUniqueId().getLastSegment();
+			assertEquals("test", idSegment.getType());
+			assertEquals("one spec", idSegment.getValue());
+
+			assertEquals(specClassDescriptor, specDescriptor.getParent().orElseThrow());
+			assertFalse(specDescriptor.isContainer());
+			assertFalse(specDescriptor.isRoot());
+			assertTrue(specDescriptor.isTest());
 		}
 	}
 
@@ -112,6 +133,7 @@ public class JavaSpecEngineTest {
 
 		@Test
 		@DisplayName("reports execution events for spec class containers")
+		@Disabled
 		public void reportsSpecClassContainerEvents() throws Exception {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
 					.selectors(selectClass(OneSpecClass.class)).execute();
@@ -142,7 +164,7 @@ public class JavaSpecEngineTest {
 
 	static final class OneSpecClass implements SpecClass {
 		public void declareSpecs(JavaSpec javaSpec) {
-			javaSpec.it("can do simple arithmetic", () -> {
+			javaSpec.it("one spec", () -> {
 				assertEquals(2, 1 + 1);
 			});
 		}
