@@ -39,18 +39,7 @@ public class JavaSpecEngineV2Test implements SpecClass {
 				.selectors(selectClass(nullSpecClass())).execute();
 		});
 
-		javaspec.it("#getId returns a unique ID", () -> {
-			TestEngine subject = new JavaSpecEngineV2();
-			assertEquals("javaspec-engine-v2", subject.getId());
-		});
-	}
-
-	@DisplayName("#discover")
-	@Nested
-	class discover {
-		@Test
-		@DisplayName("returns a top-level container for itself, using the given UniqueId")
-		public void returnsAContainerForTheEngine() throws Exception {
+		javaspec.it("#discover returns a top-level container for itself, using the given UniqueId", () -> {
 			JavaSpecEngineV2 subject = new JavaSpecEngineV2();
 			UniqueId engineId = UniqueId.forEngine(subject.getId());
 
@@ -60,31 +49,25 @@ public class JavaSpecEngineV2Test implements SpecClass {
 			assertEquals(Optional.empty(), returned.getParent());
 			assertTrue(returned.isContainer());
 			assertTrue(returned.isRoot());
-		}
+		});
 
-		@Test
-		@DisplayName("discovers no containers or tests, given no selectors")
-		public void selectNoneYieldsNoChildren() throws Exception {
+		javaspec.it("#discover discovers no containers or tests, given no selectors", () -> {
 			JavaSpecEngineV2 subject = new JavaSpecEngineV2();
 
 			TestDescriptor returned = subject.discover(nullEngineDiscoveryRequest(),
 					UniqueId.forEngine(subject.getId()));
 			assertEquals(Collections.emptySet(), returned.getChildren());
 			assertFalse(returned.isTest());
-		}
+		});
 
-		@Test
-		@DisplayName("ignores selectors for classes that are not SpecClass")
-		public void ignoresNonSpecClassSelectors() throws Exception {
+		javaspec.it("#discover ignores selectors for classes that are not SpecClass", () -> {
 			JavaSpecEngineV2 subject = new JavaSpecEngineV2();
 			TestDescriptor returned = subject.discover(classEngineDiscoveryRequest(notASpecClass()),
 					UniqueId.forEngine(subject.getId()));
 			assertEquals(Collections.emptySet(), returned.getChildren());
-		}
+		});
 
-		@Test
-		@DisplayName("discovers a container for each selected spec class")
-		public void selectOneClassYieldsOneContainer() throws Exception {
+		javaspec.it("#discover discovers a container for each selected spec class", () -> {
 			JavaSpecEngineV2 subject = new JavaSpecEngineV2();
 			Class<?> nullSpecClass = nullSpecClass();
 			TestDescriptor returned = subject.discover(classEngineDiscoveryRequest(nullSpecClass),
@@ -103,11 +86,9 @@ public class JavaSpecEngineV2Test implements SpecClass {
 			assertTrue(onlyChild.isContainer());
 			assertFalse(onlyChild.isRoot());
 			assertFalse(onlyChild.isTest());
-		}
+		});
 
-		@Test
-		@DisplayName("discovers a test for each spec in a spec class")
-		public void discoversATestForEachSpec() throws Exception {
+		javaspec.it("#discover discovers a test for each spec in a spec class", () -> {
 			JavaSpecEngineV2 subject = new JavaSpecEngineV2();
 			TestDescriptor returned = subject.discover(classEngineDiscoveryRequest(oneSpecClass()),
 					UniqueId.forEngine(subject.getId()));
@@ -124,7 +105,12 @@ public class JavaSpecEngineV2Test implements SpecClass {
 			assertFalse(specDescriptor.isContainer());
 			assertFalse(specDescriptor.isRoot());
 			assertTrue(specDescriptor.isTest());
-		}
+		});
+
+		javaspec.it("#getId returns a unique ID", () -> {
+			TestEngine subject = new JavaSpecEngineV2();
+			assertEquals("javaspec-engine-v2", subject.getId());
+		});
 	}
 
 	@DisplayName("#execute")
