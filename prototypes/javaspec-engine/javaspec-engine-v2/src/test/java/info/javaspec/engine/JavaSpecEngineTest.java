@@ -29,7 +29,7 @@ import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
 
 @Testable
-public class JavaSpecEngineV2Test implements SpecClass {
+public class JavaSpecEngineTest implements SpecClass {
 	@Override
 	public void declareSpecs(JavaSpec javaspec) {
 		javaspec.it("can be loaded with ServiceLoader and located by ID", () -> {

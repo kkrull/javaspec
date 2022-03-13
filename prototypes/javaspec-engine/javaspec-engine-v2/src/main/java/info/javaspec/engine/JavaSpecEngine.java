@@ -11,7 +11,7 @@ import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
 import info.javaspec.api.Verification;
 
-public class JavaSpecEngineV2 implements TestEngine {
+public class JavaSpecEngine implements TestEngine {
 	@Override
 	public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId engineId) {
 		EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
@@ -76,7 +76,7 @@ public class JavaSpecEngineV2 implements TestEngine {
 
 	@Override
 	public String getId() {
-		return "javaspec-engine-v2";
+		return "javaspec-engine";
 	}
 
 	private static final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSpec {

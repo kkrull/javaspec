@@ -5,5 +5,5 @@ include 'jupiter-test-execution-listener'
 
 include 'javaspec-api'
 include 'javaspec-client'
-include 'javaspec-engine-v2'
+include 'javaspec-engine'
 include 'javaspec-engine-discovery-request-listener'
