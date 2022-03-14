@@ -1,94 +1,85 @@
 package info.javaspec.engine;
 
-import info.javaspec.api.SpecClass;
-import org.junit.platform.engine.*;
-import org.junit.platform.engine.TestDescriptor.Type;
-import org.junit.platform.engine.discovery.*;
-import org.junit.platform.engine.support.descriptor.EngineDescriptor;
-
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ServiceLoader;
 
-//Discovers specs, turns them into something Jupiter can run, and runs them.
+import org.junit.platform.engine.*;
+import org.junit.platform.engine.discovery.ClassSelector;
+import org.junit.platform.engine.support.descriptor.EngineDescriptor;
+
+import info.javaspec.api.SpecClass;
+
 public class JavaSpecEngine implements TestEngine {
+	private final EngineDiscoveryRequestListenerProvider loader;
+
+	public JavaSpecEngine() {
+		this.loader = () -> ServiceLoader.load(EngineDiscoveryRequestListener.class).findFirst();
+	}
+
+	public JavaSpecEngine(EngineDiscoveryRequestListenerProvider loader) {
+		this.loader = loader;
+	}
+
 	@Override
 	public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId engineId) {
-		ServiceLoader<EngineDiscoveryRequestListener> loader = ServiceLoader.load(EngineDiscoveryRequestListener.class);
-		loader.findFirst().ifPresent(x -> x.onDiscover(discoveryRequest));
+		this.loader.findFirst().ifPresent(listener -> listener.onDiscover(discoveryRequest));
 
 		EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
 		discoveryRequest.getSelectorsByType(ClassSelector.class).stream().map(ClassSelector::getJavaClass)
-				.filter(selectedClass -> SpecClass.class.isAssignableFrom(selectedClass))
-				.map(selectedClass -> (Class<SpecClass>) selectedClass)
-				.map(specClass -> makeDeclaringInstance(specClass)).forEach(declaringInstance -> {
-					JavaSpecForJupiter javaspec = JavaSpecForJupiter.forSpecClass(engineId,
-							declaringInstance.getClass());
-					declaringInstance.declareSpecs(javaspec);
-					javaspec.addDescriptorsTo(engineDescriptor);
-				});
+				.filter(anyClass -> SpecClass.class.isAssignableFrom(anyClass)).map(specClass -> instantiate(specClass))
+				.map(SpecClass.class::cast).map(declaringInstance -> {
+					SpecClassDescriptor specClassDescriptor = SpecClassDescriptor.of(engineId, declaringInstance);
+					specClassDescriptor.discover();
+					return specClassDescriptor;
+				}).forEach(engineDescriptor::addChild);
 
 		return engineDescriptor;
 	}
 
-	private SpecClass makeDeclaringInstance(Class<SpecClass> specClass) {
-		Constructor<SpecClass> constructor = null;
+	private Object instantiate(Class<?> clazz) {
 		try {
-			constructor = specClass.getDeclaredConstructor();
-		} catch (NoSuchMethodException e) {
-			throw new RuntimeException("Failed to access no-arg SpecClass constructor", e);
-		}
-
-		try {
+			Constructor<?> constructor = clazz.getDeclaredConstructor();
 			return constructor.newInstance();
-		} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-			throw new RuntimeException("Failed to instantiate SpecClass", e);
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to instantiate spec class", e);
 		}
 	}
 
 	@Override
 	public void execute(ExecutionRequest request) {
-		execute(request.getRootTestDescriptor(), request.getEngineExecutionListener());
+		TestDescriptor rootDescriptor = request.getRootTestDescriptor();
+		EngineExecutionListener listener = request.getEngineExecutionListener();
+		execute(rootDescriptor, listener);
 	}
 
 	private void execute(TestDescriptor descriptor, EngineExecutionListener listener) {
 		switch (descriptor.getType()) {
 			case CONTAINER :
 				listener.executionStarted(descriptor);
-				for (TestDescriptor child : descriptor.getChildren())
+
+				for (TestDescriptor child : descriptor.getChildren()) {
 					execute(child, listener);
+				}
 
 				listener.executionFinished(descriptor, TestExecutionResult.successful());
 				return;
 
 			case TEST :
 				listener.executionStarted(descriptor);
+				SpecDescriptor spec = SpecDescriptor.class.cast(descriptor);
+
 				try {
-					JupiterSpec spec = (JupiterSpec) descriptor;
-					spec.run();
+					spec.execute();
 				} catch (AssertionError | Exception e) {
-					listener.executionFinished(descriptor, TestExecutionResult.failed(e));
+					listener.executionFinished(spec, TestExecutionResult.failed(e));
 					return;
 				}
 
 				listener.executionFinished(descriptor, TestExecutionResult.successful());
 				return;
 
-			case CONTAINER_AND_TEST :
-				listener.executionStarted(descriptor);
-				for (TestDescriptor child : descriptor.getChildren())
-					execute(child, listener);
-
-				try {
-					JupiterSpec spec = (JupiterSpec) descriptor;
-					spec.run();
-				} catch (AssertionError | Exception e) {
-					listener.executionFinished(descriptor, TestExecutionResult.failed(e));
-					return;
-				}
-
-				listener.executionFinished(descriptor, TestExecutionResult.successful());
-				return;
+			default :
+				throw new UnsupportedOperationException(String.format("Unsupported TestDescriptor: %s", descriptor));
 		}
 	}
 
