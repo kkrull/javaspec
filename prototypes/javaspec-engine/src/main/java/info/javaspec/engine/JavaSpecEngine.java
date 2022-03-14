@@ -5,12 +5,9 @@ import java.util.ServiceLoader;
 
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.ClassSelector;
-import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
-import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
-import info.javaspec.api.Verification;
 
 public class JavaSpecEngine implements TestEngine {
 	private final EngineDiscoveryRequestListenerProvider loader;
@@ -90,64 +87,5 @@ public class JavaSpecEngine implements TestEngine {
 	@Override
 	public String getId() {
 		return "javaspec-engine";
-	}
-
-	private static final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSpec {
-		private final SpecClass declaringInstance;
-
-		public static SpecClassDescriptor of(UniqueId parentId, SpecClass declaringInstance) {
-			Class<? extends SpecClass> declaringClass = declaringInstance.getClass();
-			return new SpecClassDescriptor(parentId.append("class", declaringClass.getName()), declaringClass.getName(),
-					declaringInstance);
-		}
-
-		private SpecClassDescriptor(UniqueId uniqueId, String displayName, SpecClass declaringInstance) {
-			super(uniqueId, displayName);
-			this.declaringInstance = declaringInstance;
-		}
-
-		/* Jupiter */
-
-		@Override
-		public Type getType() {
-			return Type.CONTAINER;
-		}
-
-		/* JavaSpec */
-
-		public void discover() {
-			this.declaringInstance.declareSpecs(this);
-		}
-
-		@Override
-		public void it(String behavior, Verification verification) {
-			SpecDescriptor specDescriptor = SpecDescriptor.of(getUniqueId(), behavior, verification);
-			specDescriptor.setParent(this);
-			this.addChild(specDescriptor);
-		}
-	}
-
-	private static final class SpecDescriptor extends AbstractTestDescriptor {
-		private final Verification verification;
-
-		public static SpecDescriptor of(UniqueId parentId, String behavior, Verification verification) {
-			return new SpecDescriptor(parentId.append("test", behavior), behavior, verification);
-		}
-
-		private SpecDescriptor(UniqueId uniqueId, String displayName, Verification verification) {
-			super(uniqueId, displayName);
-			this.verification = verification;
-		}
-
-		@Override
-		public Type getType() {
-			return Type.TEST;
-		}
-
-		/* JavaSpec */
-
-		public void execute() {
-			this.verification.execute();
-		}
 	}
 }
