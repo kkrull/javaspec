@@ -41,12 +41,6 @@ public class JavaSpecEngineTest implements SpecClass {
 			listener.onDiscoverExpected();
 		});
 
-		javaspec.it("#discover reports to a registered EngineDiscoveryRequestListener", () -> {
-			//That last test provided the interface, but it didn't test the wiring to a real ServiceLoader.
-			//Should there be a unit test for this?  Or does this fall under the category of "imperative shell"?
-			assertEquals("passing", "pending");
-		});
-
 		javaspec.it("#discover returns a top-level container for itself, using the given UniqueId", () -> {
 			JavaSpecEngine subject = new JavaSpecEngine();
 			UniqueId engineId = UniqueId.forEngine(subject.getId());

@@ -11,6 +11,7 @@ dependencies {
 
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
 	testImplementation 'org.junit.platform:junit-platform-testkit:1.8.2'
+//  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
 }
 
 spotless {
@@ -21,6 +22,11 @@ spotless {
 
 test {
 	useJUnitPlatform()
+
+	//Show all output: the specs themselves *and* the TestEngine
+	onOutput { _descriptor, TestOutputEvent engineEvent ->
+		logger.lifecycle(engineEvent.message.trim())
+	}
 }
 
 //https://github.com/radarsh/gradle-test-logger-plugin
