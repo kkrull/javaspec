@@ -2,7 +2,7 @@ package info.javaspec.engine;
 
 import org.junit.platform.engine.EngineDiscoveryRequest;
 
-//Receives an EngineDiscoveryRequest, upon discovery
+//Receives an EngineDiscoveryRequest, upon JavaSpecEngine#discover.
 public interface EngineDiscoveryRequestListener {
-	void onDiscover(EngineDiscoveryRequest discoveryRequest);
+	void onDiscover(EngineDiscoveryRequest request);
 }

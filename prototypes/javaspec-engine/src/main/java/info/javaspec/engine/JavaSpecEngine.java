@@ -1,7 +1,6 @@
 package info.javaspec.engine;
 
 import java.lang.reflect.Constructor;
-import java.util.Optional;
 import java.util.ServiceLoader;
 
 import org.junit.platform.engine.*;
@@ -14,13 +13,13 @@ import info.javaspec.api.SpecClass;
 import info.javaspec.api.Verification;
 
 public class JavaSpecEngine implements TestEngine {
-	private final EngineDiscoveryRequestListenerServiceLoader loader;
+	private final EngineDiscoveryRequestListenerProvider loader;
 
 	public JavaSpecEngine() {
 		this.loader = () -> ServiceLoader.load(EngineDiscoveryRequestListener.class).findFirst();
 	}
 
-	public JavaSpecEngine(EngineDiscoveryRequestListenerServiceLoader loader) {
+	public JavaSpecEngine(EngineDiscoveryRequestListenerProvider loader) {
 		this.loader = loader;
 	}
 
@@ -91,12 +90,6 @@ public class JavaSpecEngine implements TestEngine {
 	@Override
 	public String getId() {
 		return "javaspec-engine";
-	}
-
-	//Loads optional runtime dependencies, just like ServiceLoader::load.
-	@FunctionalInterface
-	public interface EngineDiscoveryRequestListenerServiceLoader {
-		Optional<EngineDiscoveryRequestListener> findFirst();
 	}
 
 	private static final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSpec {
