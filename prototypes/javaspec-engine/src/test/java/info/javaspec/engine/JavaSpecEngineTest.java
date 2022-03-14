@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import org.assertj.core.api.Condition;
 import org.junit.platform.commons.annotation.Testable;
+import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestEngine;
 import org.junit.platform.engine.UniqueId;
@@ -34,6 +35,14 @@ public class JavaSpecEngineTest implements SpecClass {
 	public void declareSpecs(JavaSpec javaspec) {
 		javaspec.it("can be loaded with ServiceLoader and located by ID", () -> {
 			EngineTestKit.engine("javaspec-engine").selectors(selectClass(nullSpecClass())).execute();
+		});
+
+		javaspec.it("#discover reports to an EngineDiscoveryRequestListener, when registered", () -> {
+			MockEngineDiscoveryRequestListener listener = new MockEngineDiscoveryRequestListener();
+			JavaSpecEngine subject = new JavaSpecEngine();
+
+			subject.discover(nullEngineDiscoveryRequest(), UniqueId.forEngine(subject.getId()));
+			listener.onDiscoverExpected();
 		});
 
 		javaspec.it("#discover returns a top-level container for itself, using the given UniqueId", () -> {
@@ -159,5 +168,18 @@ public class JavaSpecEngineTest implements SpecClass {
 			TestEngine subject = new JavaSpecEngine();
 			assertEquals("javaspec-engine", subject.getId());
 		});
+	}
+
+	private static final class MockEngineDiscoveryRequestListener implements EngineDiscoveryRequestListener {
+		EngineDiscoveryRequest onDiscoveryReceived;
+
+		@Override
+		public void onDiscover(EngineDiscoveryRequest discoveryRequest) {
+			this.onDiscoveryReceived = discoveryRequest;
+		}
+
+		public void onDiscoverExpected() {
+			assertNotNull(this.onDiscoveryReceived, "Expected #onDiscover to have been called");
+		}
 	}
 }
