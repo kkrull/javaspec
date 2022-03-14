@@ -1,6 +1,7 @@
 package info.javaspec.engine;
 
 import java.lang.reflect.Constructor;
+import java.util.Optional;
 
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.ClassSelector;
@@ -12,10 +13,22 @@ import info.javaspec.api.SpecClass;
 import info.javaspec.api.Verification;
 
 public class JavaSpecEngine implements TestEngine {
+	private final EngineDiscoveryRequestListenerServiceLoader loader;
+
+	public JavaSpecEngine() {
+		this.loader = Optional::empty;
+	}
+
+	public JavaSpecEngine(EngineDiscoveryRequestListenerServiceLoader loader) {
+		this.loader = loader;
+	}
+
 	@Override
 	public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId engineId) {
-		EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
+		this.loader.findFirst()
+			.ifPresent(listener -> listener.onDiscover(discoveryRequest));
 
+		EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
 		discoveryRequest.getSelectorsByType(ClassSelector.class).stream().map(ClassSelector::getJavaClass)
 				.filter(anyClass -> SpecClass.class.isAssignableFrom(anyClass)).map(specClass -> instantiate(specClass))
 				.map(SpecClass.class::cast).map(declaringInstance -> {
@@ -77,6 +90,11 @@ public class JavaSpecEngine implements TestEngine {
 	@Override
 	public String getId() {
 		return "javaspec-engine";
+	}
+
+	@FunctionalInterface
+	public interface EngineDiscoveryRequestListenerServiceLoader {
+		Optional<EngineDiscoveryRequestListener> findFirst();
 	}
 
 	private static final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSpec {

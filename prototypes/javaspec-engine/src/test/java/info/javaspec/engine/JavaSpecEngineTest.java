@@ -1,13 +1,9 @@
 package info.javaspec.engine;
 
+import static info.javaspec.engine.AnonymousSpecClasses.*;
 import static info.javaspec.engine.DiscoverySelectorFactory.nullDiscoverySelector;
 import static info.javaspec.engine.EngineDiscoveryRequestFactory.classEngineDiscoveryRequest;
 import static info.javaspec.engine.EngineDiscoveryRequestFactory.nullEngineDiscoveryRequest;
-import static info.javaspec.engine.AnonymousSpecClasses.notASpecClass;
-import static info.javaspec.engine.AnonymousSpecClasses.nullSpecClass;
-import static info.javaspec.engine.AnonymousSpecClasses.oneSpecClass;
-import static info.javaspec.engine.AnonymousSpecClasses.oneSpecThrowingAssertionError;
-import static info.javaspec.engine.AnonymousSpecClasses.oneSpecThrowingRuntimeException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.testkit.engine.EventConditions.*;
@@ -39,7 +35,7 @@ public class JavaSpecEngineTest implements SpecClass {
 
 		javaspec.it("#discover reports to an EngineDiscoveryRequestListener, when registered", () -> {
 			MockEngineDiscoveryRequestListener listener = new MockEngineDiscoveryRequestListener();
-			JavaSpecEngine subject = new JavaSpecEngine();
+			JavaSpecEngine subject = new JavaSpecEngine(() -> Optional.of(listener));
 
 			subject.discover(nullEngineDiscoveryRequest(), UniqueId.forEngine(subject.getId()));
 			listener.onDiscoverExpected();
