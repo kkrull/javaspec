@@ -22,8 +22,7 @@ public class JavaSpecEngine implements TestEngine {
 
 	@Override
 	public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId engineId) {
-		this.loader.findFirst()
-			.ifPresent(listener -> listener.onDiscover(discoveryRequest));
+		this.loader.findFirst().ifPresent(listener -> listener.onDiscover(discoveryRequest));
 
 		EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
 		discoveryRequest.getSelectorsByType(ClassSelector.class).stream().map(ClassSelector::getJavaClass)
