@@ -109,7 +109,8 @@ public class JavaSpecEngineTest implements SpecClass {
 		});
 
 		javaspec.it("#execute reports execution events for the engine", () -> {
-			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine()).selectors(nullDiscoverySelector())
+			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
+				.selectors(nullDiscoverySelector())
 				.execute();
 			results.containerEvents()
 				.assertEventsMatchExactly(event(engine(), started()), event(engine(), finishedSuccessfully()));
@@ -117,63 +118,72 @@ public class JavaSpecEngineTest implements SpecClass {
 
 		javaspec.it("#execute skips spec class containers that don't have any specs in them", () -> {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
-				.selectors(selectClass(nullSpecClass())).execute();
+				.selectors(selectClass(nullSpecClass()))
+				.execute();
 			results.containerEvents()
 				.assertEventsMatchExactly(event(engine(), started()), event(engine(), finishedSuccessfully()));
 		});
 
 		javaspec.it("#execute reports execution events for spec class containers", () -> {
-			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine()).selectors(selectClass(oneSpecClass()))
+			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
+				.selectors(selectClass(oneSpecClass()))
 				.execute();
 
-			results.containerEvents().assertEventsMatchExactly(
-				event(engine(), started()),
-				event(container(), started()),
-				event(container(), finishedSuccessfully()),
-				event(engine(), finishedSuccessfully())
-			);
+			results.containerEvents()
+				.assertEventsMatchExactly(
+					event(engine(), started()),
+					event(container(), started()),
+					event(container(), finishedSuccessfully()),
+					event(engine(), finishedSuccessfully())
+				);
 		});
 
 		javaspec.it("#execute reports start and successful finish events for passing specs", () -> {
-			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine()).selectors(selectClass(oneSpecClass()))
+			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
+				.selectors(selectClass(oneSpecClass()))
 				.execute();
 
-			results.allEvents().assertEventsMatchLooselyInOrder(
-				event(container(), started()),
-				event(test(), started()),
-				event(test(), finishedSuccessfully()),
-				event(container(), finishedSuccessfully())
-			);
+			results.allEvents()
+				.assertEventsMatchLooselyInOrder(
+					event(container(), started()),
+					event(test(), started()),
+					event(test(), finishedSuccessfully()),
+					event(container(), finishedSuccessfully())
+				);
 		});
 
 		javaspec.it("#execute reports start and failed finish events for failing specs", () -> {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
-				.selectors(selectClass(oneSpecThrowingRuntimeException())).execute();
+				.selectors(selectClass(oneSpecThrowingRuntimeException()))
+				.execute();
 
-			results.allEvents().assertEventsMatchLooselyInOrder(
-				event(container(), started()),
-				event(test(), started()),
-				event(
-					test(),
-					finishedWithFailure(new Condition<Throwable>(t -> RuntimeException.class.isInstance(t), "RuntimeException"))
-				),
-				event(container(), finishedSuccessfully())
-			);
+			results.allEvents()
+				.assertEventsMatchLooselyInOrder(
+					event(container(), started()),
+					event(test(), started()),
+					event(
+						test(),
+						finishedWithFailure(new Condition<Throwable>(t -> RuntimeException.class.isInstance(t), "RuntimeException"))
+					),
+					event(container(), finishedSuccessfully())
+				);
 		});
 
 		javaspec.it("#execute catches specs that fail by throwing AssertionError", () -> {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
-				.selectors(selectClass(oneSpecThrowingAssertionError())).execute();
+				.selectors(selectClass(oneSpecThrowingAssertionError()))
+				.execute();
 
-			results.allEvents().assertEventsMatchLooselyInOrder(
-				event(container(), started()),
-				event(test(), started()),
-				event(
-					test(),
-					finishedWithFailure(new Condition<Throwable>(t -> AssertionError.class.isInstance(t), "AssertionError"))
-				),
-				event(container(), finishedSuccessfully())
-			);
+			results.allEvents()
+				.assertEventsMatchLooselyInOrder(
+					event(container(), started()),
+					event(test(), started()),
+					event(
+						test(),
+						finishedWithFailure(new Condition<Throwable>(t -> AssertionError.class.isInstance(t), "AssertionError"))
+					),
+					event(container(), finishedSuccessfully())
+				);
 		});
 
 		javaspec.it("#getId returns a unique ID", () -> {

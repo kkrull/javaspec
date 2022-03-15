@@ -25,14 +25,19 @@ public class JavaSpecEngine implements TestEngine {
 		this.loader.findFirst().ifPresent(listener -> listener.onDiscover(discoveryRequest));
 
 		EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
-		discoveryRequest.getSelectorsByType(ClassSelector.class).stream().map(ClassSelector::getJavaClass)
-			.filter(anyClass -> SpecClass.class.isAssignableFrom(anyClass)).map(specClass -> instantiate(specClass))
-			.map(SpecClass.class::cast).map(declaringInstance ->
+		discoveryRequest.getSelectorsByType(ClassSelector.class)
+			.stream()
+			.map(ClassSelector::getJavaClass)
+			.filter(anyClass -> SpecClass.class.isAssignableFrom(anyClass))
+			.map(specClass -> instantiate(specClass))
+			.map(SpecClass.class::cast)
+			.map(declaringInstance ->
 			{
 				SpecClassDescriptor specClassDescriptor = SpecClassDescriptor.of(engineId, declaringInstance);
 				specClassDescriptor.discover();
 				return specClassDescriptor;
-			}).forEach(engineDescriptor::addChild);
+			})
+			.forEach(engineDescriptor::addChild);
 
 		return engineDescriptor;
 	}
