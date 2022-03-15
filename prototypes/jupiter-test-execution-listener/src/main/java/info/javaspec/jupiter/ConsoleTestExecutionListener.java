@@ -47,6 +47,6 @@ public class ConsoleTestExecutionListener implements TestExecutionListener {
 
 	@Override
 	public void reportingEntryPublished(TestIdentifier id, ReportEntry entry) {
-				System.out.printf("[ConsoleTestExecutionListener#reportingEntryPublished] %s: %s%n", id, entry);
+		System.out.printf("[ConsoleTestExecutionListener#reportingEntryPublished] %s: %s%n", id, entry);
 	}
 }
