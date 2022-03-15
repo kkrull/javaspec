@@ -52,7 +52,9 @@ public final class EngineDiscoveryRequestFactory {
 				return Collections.emptyList();
 			}
 
-			return this.selectors.stream().map(selectorType::cast).collect(toList());
+			return this.selectors.stream()
+				.map(selectorType::cast)
+				.collect(toList());
 		}
 	}
 
