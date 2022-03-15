@@ -12,6 +12,5 @@ public final class DiscoverySelectorFactory {
 		return new NullDiscoverySelector();
 	}
 
-	private static final class NullDiscoverySelector implements DiscoverySelector {
-	}
+	private static final class NullDiscoverySelector implements DiscoverySelector {}
 }
