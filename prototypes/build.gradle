@@ -9,6 +9,13 @@ subprojects {
 	repositories {
 		mavenCentral()
 	}
+
+	apply plugin: 'com.diffplug.spotless'
+	spotless {
+		java {
+			eclipse().configFile('../etc/eclipse-format.xml')
+		}
+	}
 }
 
 //test-logger: Customize at runtime ./gradlew -Dtestlogger.theme=mocha test

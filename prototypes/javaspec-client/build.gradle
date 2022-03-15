@@ -15,12 +15,6 @@ dependencies {
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
-spotless {
-	java {
-		eclipse()
-	}
-}
-
 //Suspected Gradle issue Gradle groups tests by 'default-package' and 'UnknownClass'.
 //Related Github issue: https://github.com/cucumber/cucumber-jvm/issues/2176
 test {

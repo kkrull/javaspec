@@ -14,8 +14,10 @@ public class ConsoleTestExecutionListener implements TestExecutionListener {
 
 	@Override
 	public void testPlanExecutionStarted(TestPlan plan) {
-		System.out.printf("[ConsoleTestExecutionListener#testPlanExecutionStarted] %d tests%n",
-				plan.countTestIdentifiers(x -> true));
+		System.out.printf(
+			"[ConsoleTestExecutionListener#testPlanExecutionStarted] %d tests%n",
+			plan.countTestIdentifiers(x -> true)
+		);
 	}
 
 	@Override

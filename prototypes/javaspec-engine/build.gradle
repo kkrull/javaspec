@@ -14,12 +14,6 @@ dependencies {
 //  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
 }
 
-spotless {
-	java {
-		eclipse()
-	}
-}
-
 test {
 	useJUnitPlatform()
 

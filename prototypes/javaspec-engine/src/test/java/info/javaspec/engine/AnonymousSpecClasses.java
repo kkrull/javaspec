@@ -7,13 +7,10 @@ import info.javaspec.api.SpecClass;
 
 //Anonymous classes that only exist after methods are invoked, to avoid running side by side with project tests.
 public class AnonymousSpecClasses {
-	private AnonymousSpecClasses() {
-		/* Static class */
-	}
+	private AnonymousSpecClasses() { /* Static class */ }
 
 	public static Class<?> notASpecClass() {
-		return new Object() {
-		}.getClass();
+		return new Object() {}.getClass();
 	}
 
 	public static Class<? extends SpecClass> nullSpecClass() {
@@ -23,9 +20,7 @@ public class AnonymousSpecClasses {
 	private static SpecClass nullSpecClassInstance() {
 		return new SpecClass() {
 			@Override
-			public void declareSpecs(JavaSpec javaspec) {
-				// Do nothing
-			}
+			public void declareSpecs(JavaSpec javaspec) { /* Do nothing */ }
 		};
 	}
 

@@ -9,26 +9,26 @@ import java.util.LinkedList;
 import java.util.List;
 
 final class JavaSpec {
-  public static DynamicContainer describe(String what, LeafDeclaration block) {
-    List<DynamicNode> nodes = new LinkedList<>();
-    block.declare(new It() {
-      @Override
-      public void declare(String behavior, Executable verification) {
-        DynamicTest test = DynamicTest.dynamicTest(behavior, verification);
-        nodes.add(test);
-      }
-    });
+	public static DynamicContainer describe(String what, LeafDeclaration block) {
+		List<DynamicNode> nodes = new LinkedList<>();
+		block.declare(new It() {
+			@Override
+			public void declare(String behavior, Executable verification) {
+				DynamicTest test = DynamicTest.dynamicTest(behavior, verification);
+				nodes.add(test);
+			}
+		});
 
-    return DynamicContainer.dynamicContainer(what, nodes);
-  }
+		return DynamicContainer.dynamicContainer(what, nodes);
+	}
 
-  @FunctionalInterface
-  public interface LeafDeclaration {
-    void declare(It it);
-  }
+	@FunctionalInterface
+	public interface LeafDeclaration {
+		void declare(It it);
+	}
 
-  @FunctionalInterface
-  public interface It {
-    void declare(String behavior, Executable verification);
-  }
+	@FunctionalInterface
+	public interface It {
+		void declare(String behavior, Executable verification);
+	}
 }
