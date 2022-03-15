@@ -55,10 +55,12 @@ public class ConsoleEngineDiscoveryRequestListener implements EngineDiscoveryReq
 
 		System.out.println();
 		System.out.printf("[ConsoleEngineDiscoveryRequestListener] ClassNameFilter%n");
-		discoveryRequest.getFiltersByType(ClassNameFilter.class).forEach(x -> System.out.printf("- %s%n", x));
+		discoveryRequest.getFiltersByType(ClassNameFilter.class)
+			.forEach(x -> System.out.printf("- %s%n", x));
 
 		System.out.println();
 		System.out.printf("[ConsoleEngineDiscoveryRequestListener] PackageNameFilter%n");
-		discoveryRequest.getFiltersByType(PackageNameFilter.class).forEach(x -> System.out.printf("- %s%n", x));
+		discoveryRequest.getFiltersByType(PackageNameFilter.class)
+			.forEach(x -> System.out.printf("- %s%n", x));
 	}
 }
