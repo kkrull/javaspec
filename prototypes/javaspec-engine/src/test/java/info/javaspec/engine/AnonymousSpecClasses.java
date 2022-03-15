@@ -10,7 +10,7 @@ public class AnonymousSpecClasses {
 	private AnonymousSpecClasses() { /* Static class */ }
 
 	public static Class<?> notASpecClass() {
-		return new Object() { }.getClass();
+		return new Object() {}.getClass();
 	}
 
 	public static Class<? extends SpecClass> nullSpecClass() {
@@ -20,7 +20,7 @@ public class AnonymousSpecClasses {
 	private static SpecClass nullSpecClassInstance() {
 		return new SpecClass() {
 			@Override
-			public void declareSpecs(JavaSpec javaspec) {	/* Do nothing */ }
+			public void declareSpecs(JavaSpec javaspec) { /* Do nothing */ }
 		};
 	}
 
