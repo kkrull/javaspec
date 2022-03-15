@@ -13,8 +13,11 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 
 	public static SpecClassDescriptor of(UniqueId parentId, SpecClass declaringInstance) {
 		Class<? extends SpecClass> declaringClass = declaringInstance.getClass();
-		return new SpecClassDescriptor(parentId.append("class", declaringClass.getName()), declaringClass.getName(),
-				declaringInstance);
+		return new SpecClassDescriptor(
+			parentId.append("class", declaringClass.getName()),
+			declaringClass.getName(),
+			declaringInstance
+		);
 	}
 
 	private SpecClassDescriptor(UniqueId uniqueId, String displayName, SpecClass declaringInstance) {

@@ -26,12 +26,13 @@ public class JavaSpecEngine implements TestEngine {
 
 		EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
 		discoveryRequest.getSelectorsByType(ClassSelector.class).stream().map(ClassSelector::getJavaClass)
-				.filter(anyClass -> SpecClass.class.isAssignableFrom(anyClass)).map(specClass -> instantiate(specClass))
-				.map(SpecClass.class::cast).map(declaringInstance -> {
-					SpecClassDescriptor specClassDescriptor = SpecClassDescriptor.of(engineId, declaringInstance);
-					specClassDescriptor.discover();
-					return specClassDescriptor;
-				}).forEach(engineDescriptor::addChild);
+			.filter(anyClass -> SpecClass.class.isAssignableFrom(anyClass)).map(specClass -> instantiate(specClass))
+			.map(SpecClass.class::cast).map(declaringInstance ->
+			{
+				SpecClassDescriptor specClassDescriptor = SpecClassDescriptor.of(engineId, declaringInstance);
+				specClassDescriptor.discover();
+				return specClassDescriptor;
+			}).forEach(engineDescriptor::addChild);
 
 		return engineDescriptor;
 	}
@@ -54,32 +55,32 @@ public class JavaSpecEngine implements TestEngine {
 
 	private void execute(TestDescriptor descriptor, EngineExecutionListener listener) {
 		switch (descriptor.getType()) {
-			case CONTAINER :
-				listener.executionStarted(descriptor);
+		case CONTAINER:
+			listener.executionStarted(descriptor);
 
-				for (TestDescriptor child : descriptor.getChildren()) {
-					execute(child, listener);
-				}
+			for (TestDescriptor child : descriptor.getChildren()) {
+				execute(child, listener);
+			}
 
-				listener.executionFinished(descriptor, TestExecutionResult.successful());
+			listener.executionFinished(descriptor, TestExecutionResult.successful());
+			return;
+
+		case TEST:
+			listener.executionStarted(descriptor);
+			SpecDescriptor spec = SpecDescriptor.class.cast(descriptor);
+
+			try {
+				spec.execute();
+			} catch (AssertionError | Exception e) {
+				listener.executionFinished(spec, TestExecutionResult.failed(e));
 				return;
+			}
 
-			case TEST :
-				listener.executionStarted(descriptor);
-				SpecDescriptor spec = SpecDescriptor.class.cast(descriptor);
+			listener.executionFinished(descriptor, TestExecutionResult.successful());
+			return;
 
-				try {
-					spec.execute();
-				} catch (AssertionError | Exception e) {
-					listener.executionFinished(spec, TestExecutionResult.failed(e));
-					return;
-				}
-
-				listener.executionFinished(descriptor, TestExecutionResult.successful());
-				return;
-
-			default :
-				throw new UnsupportedOperationException(String.format("Unsupported TestDescriptor: %s", descriptor));
+		default:
+			throw new UnsupportedOperationException(String.format("Unsupported TestDescriptor: %s", descriptor));
 		}
 	}
 
