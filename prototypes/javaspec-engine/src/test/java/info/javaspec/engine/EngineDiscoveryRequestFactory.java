@@ -18,9 +18,7 @@ import static java.util.stream.Collectors.toList;
 
 //Test data factory for different kinds of EngineDiscoveryRequest.
 public final class EngineDiscoveryRequestFactory {
-	private EngineDiscoveryRequestFactory() {
-		/* static class */
-	}
+	private EngineDiscoveryRequestFactory() { /* static class */ }
 
 	public static EngineDiscoveryRequest classEngineDiscoveryRequest(Class<?> specClass) {
 		return new ClassEngineDiscoveryRequest(specClass);

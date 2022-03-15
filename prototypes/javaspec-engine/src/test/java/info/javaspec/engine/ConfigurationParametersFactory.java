@@ -6,9 +6,7 @@ import java.util.Optional;
 
 //Test data factory for different kinds of ConfigurationParameters.
 public final class ConfigurationParametersFactory {
-	private ConfigurationParametersFactory() {
-		/* static class */
-	}
+	private ConfigurationParametersFactory() { /* static class */ }
 
 	public static ConfigurationParameters nullConfigurationParameters() {
 		return new NullConfigurationParameters();
