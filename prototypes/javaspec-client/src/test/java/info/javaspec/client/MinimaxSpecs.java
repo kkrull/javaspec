@@ -47,19 +47,17 @@ public class MinimaxSpecs implements SpecClass {
 			assertEquals(-1, subject.score(game, "Min"));
 		});
 
-		javaspec.it("given a game ending in 2+ moves, the maximizer assumes the minimizer picks the lowest score",
-				() -> {
-					Minimax subject = new Minimax("Max", "Min");
-					GameState game = gameWithTwoMovesLeft();
-					assertEquals(0, subject.score(game, "Max"));
-				});
+		javaspec.it("given a game ending in 2+ moves, the maximizer assumes the minimizer picks the lowest score", () -> {
+			Minimax subject = new Minimax("Max", "Min");
+			GameState game = gameWithTwoMovesLeft();
+			assertEquals(0, subject.score(game, "Max"));
+		});
 
-		javaspec.it("given a game ending in 2+ moves, the minimizer assumes the maximizer picks the highest score",
-				() -> {
-					Minimax subject = new Minimax("Max", "Min");
-					GameState game = gameWithTwoMovesLeft();
-					assertEquals(0, subject.score(game, "Min"));
-				});
+		javaspec.it("given a game ending in 2+ moves, the minimizer assumes the maximizer picks the highest score", () -> {
+			Minimax subject = new Minimax("Max", "Min");
+			GameState game = gameWithTwoMovesLeft();
+			assertEquals(0, subject.score(game, "Min"));
+		});
 	}
 
 	private static GameState gameWithTwoMovesLeft() {
