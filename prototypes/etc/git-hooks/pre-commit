@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# Redirect output to stderr.
+exec 1>&2
+
+# Make sure code is formatted
+echo "[$0] Formatting code..."
+cd prototypes
+exec ./gradlew spotlessCheck

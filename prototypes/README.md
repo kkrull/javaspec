@@ -9,9 +9,13 @@ Prototypes to figure out how the next version of JavaSpec might work.
 
 ### Git
 
-There's a pre-commit hook that formats the code.  It should run `./gradlew spotlessApply`.
+There's a pre-commit hook that verifies that the code is formatted.  It will tell you how to address
+any violations.
 
-But how to install it?
+Install it by copying the hook to your `.git` directory in this repository.  From the repository
+root:
+
+    $ cp prototypes/etc/git-hooks/* .git/hooks
 
 
 ### Gradle and Java JDKs
