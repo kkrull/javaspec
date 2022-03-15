@@ -6,12 +6,6 @@ plugins {
 
 dependencies { }
 
-spotless {
-	java {
-		eclipse()
-	}
-}
-
 test {
 	useJUnitPlatform()
 }
