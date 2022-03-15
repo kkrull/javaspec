@@ -7,6 +7,13 @@ Prototypes to figure out how the next version of JavaSpec might work.
 
 ## Development
 
+### Git
+
+There's a pre-commit hook that formats the code.  It should run `./gradlew spotlessApply`.
+
+But how to install it?
+
+
 ### Gradle and Java JDKs
 
 Development uses Gradle 7 and OpenJDK 11 LTS.  Gradle has recently been a bit
