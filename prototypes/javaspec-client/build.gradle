@@ -17,7 +17,7 @@ dependencies {
 
 spotless {
 	java {
-		eclipse().configFile('../eclipse-format.xml')
+		eclipse().configFile('../etc/eclipse-format.xml')
 	}
 }
 
