@@ -1,13 +1,11 @@
 package info.javaspec.jupiter.factory;
 
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
-
-import info.javaspec.jupiter.Greeter;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import info.javaspec.jupiter.Greeter;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 
 //Shows how to use a @TestFactory method to declare a dynamic test
 @DisplayName("Test creation: TestFactory method")

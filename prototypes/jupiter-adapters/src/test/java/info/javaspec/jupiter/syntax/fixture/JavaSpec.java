@@ -1,9 +1,6 @@
 package info.javaspec.jupiter.syntax.fixture;
 
-import org.junit.jupiter.api.DynamicContainer;
-import org.junit.jupiter.api.DynamicNode;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.function.Executable;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.util.ArrayDeque;
 import java.util.Collections;
@@ -13,8 +10,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import org.junit.jupiter.api.DynamicContainer;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.function.Executable;
 
 final class JavaSpec<S> {
 	private final Deque<DynamicNodeList> containers = new ArrayDeque<>();

@@ -1,8 +1,8 @@
 package info.javaspec.engine;
 
-import org.junit.platform.commons.annotation.Testable;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.platform.commons.annotation.Testable;
 
 /**
  * How to get IDE to run tests with my new custom TestEngine?

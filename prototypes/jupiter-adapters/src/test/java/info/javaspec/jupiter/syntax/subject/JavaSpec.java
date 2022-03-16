@@ -1,15 +1,14 @@
 package info.javaspec.jupiter.syntax.subject;
 
-import org.junit.jupiter.api.DynamicContainer;
-import org.junit.jupiter.api.DynamicNode;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.function.Executable;
-
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.util.LinkedList;
 import java.util.Stack;
 import java.util.function.Supplier;
+import org.junit.jupiter.api.DynamicContainer;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.function.Executable;
 
 final class JavaSpec<S> {
 	private final Stack<DynamicNodeList> containers = new Stack<>();

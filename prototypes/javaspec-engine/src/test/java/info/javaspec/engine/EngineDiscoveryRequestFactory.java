@@ -1,18 +1,17 @@
 package info.javaspec.engine;
 
+import static info.javaspec.engine.ConfigurationParametersFactory.nullConfigurationParameters;
+import static java.util.stream.Collectors.toList;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.DiscoveryFilter;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.discovery.ClassSelector;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
-
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
-import static info.javaspec.engine.ConfigurationParametersFactory.nullConfigurationParameters;
-import static java.util.stream.Collectors.toList;
 
 //Test data factory for different kinds of EngineDiscoveryRequest.
 public final class EngineDiscoveryRequestFactory {

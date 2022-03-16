@@ -1,12 +1,12 @@
 package info.javaspec.engine;
 
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
+
 import org.junit.platform.engine.*;
 import org.junit.platform.launcher.*;
 import org.junit.platform.launcher.core.LauncherConfig;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
-
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 
 public class Main {
 	public static void main(String[] args) {

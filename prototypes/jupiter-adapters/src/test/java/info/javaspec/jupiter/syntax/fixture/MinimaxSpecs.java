@@ -1,17 +1,16 @@
 package info.javaspec.jupiter.syntax.fixture;
 
-import info.javaspec.jupiter.syntax.fixture.Minimax.GameState;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.DynamicNode;
-import org.junit.jupiter.api.TestFactory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import info.javaspec.jupiter.syntax.fixture.Minimax.GameState;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.TestFactory;
 
 @DisplayName("Fixture syntax: Minimax")
 class MinimaxSpecs {

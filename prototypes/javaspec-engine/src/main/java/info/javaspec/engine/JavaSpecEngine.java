@@ -1,13 +1,11 @@
 package info.javaspec.engine;
 
+import info.javaspec.api.SpecClass;
 import java.lang.reflect.Constructor;
 import java.util.ServiceLoader;
-
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.ClassSelector;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
-
-import info.javaspec.api.SpecClass;
 
 public class JavaSpecEngine implements TestEngine {
 	private final EngineDiscoveryRequestListenerProvider loader;

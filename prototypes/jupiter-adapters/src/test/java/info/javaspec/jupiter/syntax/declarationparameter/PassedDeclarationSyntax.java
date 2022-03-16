@@ -1,14 +1,13 @@
 package info.javaspec.jupiter.syntax.declarationparameter;
 
-import info.javaspec.jupiter.Greeter;
-import org.junit.jupiter.api.DynamicNode;
-import org.junit.jupiter.api.TestFactory;
-
 import static info.javaspec.jupiter.syntax.declarationparameter.JavaSpec.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import info.javaspec.jupiter.Greeter;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.TestFactory;
 
 //Shows how to pass a declaration context to lambdas, to get nested declaration.
 @DisplayName("Declaration syntax: Pass context parameter to lambdas")
