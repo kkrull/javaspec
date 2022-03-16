@@ -7,11 +7,9 @@ import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.discovery.ClassSelector;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static info.javaspec.engine.ConfigurationParametersFactory.nullConfigurationParameters;
 import static java.util.stream.Collectors.toList;
