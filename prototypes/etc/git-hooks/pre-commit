@@ -4,6 +4,6 @@
 exec 1>&2
 
 # Make sure code is formatted
-echo "[$0] Formatting code..."
+echo "[$0] Making sure code is formatted"
 cd prototypes
 exec ./gradlew spotlessCheck
