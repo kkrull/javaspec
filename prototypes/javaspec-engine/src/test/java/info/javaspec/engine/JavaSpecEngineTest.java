@@ -27,6 +27,10 @@ import org.junit.platform.testkit.engine.EngineTestKit;
 public class JavaSpecEngineTest implements SpecClass {
 	@Override
 	public void declareSpecs(JavaSpec javaspec) {
+		javaspec.it("supports a pending spec", () -> {
+			assertEquals("passing", "pending");
+		});
+
 		javaspec.it("can be loaded with ServiceLoader and located by ID", () -> {
 			EngineTestKit.engine("javaspec-engine").selectors(selectClass(nullSpecClass())).execute();
 		});
