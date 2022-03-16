@@ -18,4 +18,14 @@ subprojects {
 	}
 }
 
+task installGitHook(type: Copy) {
+	description 'Installs pre-commit hook in .git/hooks'
+	from 'etc/git-hooks'
+	into '../.git/hooks'
+
+	doLast {
+		println "Installed Git hooks in ${destinationDir}"
+	}
+}
+
 //test-logger: Customize at runtime ./gradlew -Dtestlogger.theme=mocha test
