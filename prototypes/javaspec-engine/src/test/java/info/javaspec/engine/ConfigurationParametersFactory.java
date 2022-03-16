@@ -1,8 +1,7 @@
 package info.javaspec.engine;
 
-import org.junit.platform.engine.ConfigurationParameters;
-
 import java.util.Optional;
+import org.junit.platform.engine.ConfigurationParameters;
 
 //Test data factory for different kinds of ConfigurationParameters.
 public final class ConfigurationParametersFactory {

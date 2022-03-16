@@ -13,8 +13,20 @@ subprojects {
 	apply plugin: 'com.diffplug.spotless'
 	spotless {
 		java {
+			removeUnusedImports()
+			importOrder()
 			eclipse().configFile('../etc/eclipse-format.xml')
 		}
+	}
+}
+
+task installGitHook(type: Copy) {
+	description 'Installs pre-commit hook in .git/hooks'
+	from 'etc/git-hooks'
+	into '../.git/hooks'
+
+	doLast {
+		println "Installed Git hooks in ${destinationDir}"
 	}
 }
 

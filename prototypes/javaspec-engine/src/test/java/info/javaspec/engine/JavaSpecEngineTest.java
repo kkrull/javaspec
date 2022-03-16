@@ -8,11 +8,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.testkit.engine.EventConditions.*;
 
+import info.javaspec.api.JavaSpec;
+import info.javaspec.api.SpecClass;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
 import org.assertj.core.api.Condition;
 import org.junit.platform.commons.annotation.Testable;
 import org.junit.platform.engine.EngineDiscoveryRequest;
@@ -21,9 +22,6 @@ import org.junit.platform.engine.TestEngine;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.testkit.engine.EngineExecutionResults;
 import org.junit.platform.testkit.engine.EngineTestKit;
-
-import info.javaspec.api.JavaSpec;
-import info.javaspec.api.SpecClass;
 
 @Testable
 public class JavaSpecEngineTest implements SpecClass {

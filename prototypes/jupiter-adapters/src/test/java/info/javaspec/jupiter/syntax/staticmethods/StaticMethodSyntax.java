@@ -1,14 +1,13 @@
 package info.javaspec.jupiter.syntax.staticmethods;
 
-import info.javaspec.jupiter.Greeter;
-import org.junit.jupiter.api.DynamicNode;
-import org.junit.jupiter.api.TestFactory;
-
 import static info.javaspec.jupiter.syntax.staticmethods.JavaSpec.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import info.javaspec.jupiter.Greeter;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.TestFactory;
 
 //Shows how to use static imports for spec syntax.
 @DisplayName("Declaration syntax: Static methods")

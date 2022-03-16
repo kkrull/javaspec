@@ -1,18 +1,16 @@
 package info.javaspec.jupiter.syntax.staticmethods;
 
+import static info.javaspec.jupiter.syntax.staticmethods.JavaSpec.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import info.javaspec.jupiter.syntax.staticmethods.Minimax.GameState;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.DynamicNode;
-import org.junit.jupiter.api.TestFactory;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import static info.javaspec.jupiter.syntax.staticmethods.JavaSpec.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.TestFactory;
 
 @DisplayName("Declaration syntax: Try Minimax")
 class MinimaxWithStaticMethodSyntaxSpecs {

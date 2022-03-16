@@ -1,13 +1,12 @@
 package info.javaspec.jupiter.syntax.componentparameters;
 
-import info.javaspec.jupiter.Greeter;
-import org.junit.jupiter.api.DynamicNode;
-import org.junit.jupiter.api.TestFactory;
-
 import static info.javaspec.jupiter.syntax.componentparameters.JavaSpec.describe;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import info.javaspec.jupiter.Greeter;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.TestFactory;
 
 //Shows how to pass `it` to describe lambdas, as a parameter.
 @DisplayName("Declaration syntax: Pass distinct declaration objects to lambdas")

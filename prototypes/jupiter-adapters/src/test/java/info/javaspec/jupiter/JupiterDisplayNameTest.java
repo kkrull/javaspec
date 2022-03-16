@@ -1,9 +1,9 @@
 package info.javaspec.jupiter;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 //Shows how to use the base Jupiter API to describe a test.
 @DisplayName("Declaration syntax: JUnit Jupiter built-ins")

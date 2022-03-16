@@ -2,16 +2,14 @@ package info.javaspec.jupiter.syntax.subject;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import info.javaspec.jupiter.syntax.subject.Minimax.GameState;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
-
-import info.javaspec.jupiter.syntax.subject.Minimax.GameState;
 
 @DisplayName("Subject syntax: Try Minimax")
 class MinimaxWithSubjectSpecs {

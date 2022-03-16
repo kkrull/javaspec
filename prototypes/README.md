@@ -7,6 +7,21 @@ Prototypes to figure out how the next version of JavaSpec might work.
 
 ## Development
 
+### Git
+
+There's a pre-commit hook that verifies that the code is formatted.  It will tell you how to address
+any violations.
+
+Install it by copying the hook to your `.git` directory in this repository.  From the repository
+root:
+
+    $ cp prototypes/etc/git-hooks/* .git/hooks
+
+Or use easy mode:
+
+    $ ./gradlew installGitHook
+
+
 ### Gradle and Java JDKs
 
 Development uses Gradle 7 and OpenJDK 11 LTS.  Gradle has recently been a bit

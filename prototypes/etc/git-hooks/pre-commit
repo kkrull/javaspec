@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# Redirect output to stderr.
+exec 1>&2
+
+function checkCodeFormat() {
+  echo "[$0] Making sure code is formatted"
+  cd prototypes
+  exec ./gradlew spotlessCheck
+}
+
+checkCodeFormat

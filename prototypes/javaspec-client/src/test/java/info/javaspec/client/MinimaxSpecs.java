@@ -1,14 +1,14 @@
 package info.javaspec.client;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import info.javaspec.api.JavaSpec;
+import info.javaspec.api.SpecClass;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import info.javaspec.api.JavaSpec;
-import info.javaspec.api.SpecClass;
 import org.junit.platform.commons.annotation.Testable;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Testable
 public class MinimaxSpecs implements SpecClass {

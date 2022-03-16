@@ -1,12 +1,11 @@
 package info.javaspec.jupiter.syntax.declarationparameter;
 
+import java.util.LinkedList;
+import java.util.List;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.Executable;
-
-import java.util.LinkedList;
-import java.util.List;
 
 final class JavaSpec {
 	public static DynamicNode describe(String what, DescribeBlock block) {
