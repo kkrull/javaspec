@@ -17,6 +17,10 @@ root:
 
     $ cp prototypes/etc/git-hooks/* .git/hooks
 
+Or use easy mode:
+
+    $ ./gradlew installGitHook
+
 
 ### Gradle and Java JDKs
 
