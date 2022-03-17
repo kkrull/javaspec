@@ -1,5 +1,6 @@
 package info.javaspec.engine;
 
+import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 
@@ -20,5 +21,8 @@ final class PendingSpecDescriptor extends AbstractTestDescriptor {
 
 	/* JavaSpec */
 
-	public void execute() { /* Do nothing */ }
+	public void execute(EngineExecutionListener listener) {
+		listener.executionStarted(this);
+		listener.executionSkipped(this, "pending");
+	}
 }

@@ -61,8 +61,8 @@ public class JavaSpecEngine implements TestEngine {
 
 	private void execute(TestDescriptor descriptor, EngineExecutionListener listener) {
 		if (descriptor instanceof PendingSpecDescriptor) {
-			listener.executionStarted(descriptor);
-			listener.executionSkipped(descriptor, "pending");
+			PendingSpecDescriptor pendingDescriptor = PendingSpecDescriptor.class.cast(descriptor);
+			pendingDescriptor.execute(listener);
 			return;
 		}
 
