@@ -68,4 +68,17 @@ public class AnonymousSpecClasses {
 			}
 		};
 	}
+
+	public static Class<? extends SpecClass> pendingSpecClass() {
+		return pendingSpecClassInstance().getClass();
+	}
+
+	private static SpecClass pendingSpecClassInstance() {
+		return new SpecClass() {
+			@Override
+			public void declareSpecs(JavaSpec javaspec) {
+				javaspec.pending("pending spec");
+			}
+		};
+	}
 }

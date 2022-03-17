@@ -27,10 +27,6 @@ import org.junit.platform.testkit.engine.EngineTestKit;
 public class JavaSpecEngineTest implements SpecClass {
 	@Override
 	public void declareSpecs(JavaSpec javaspec) {
-		javaspec.it("supports a pending spec", () -> {
-			assertEquals("passing", "pending");
-		});
-
 		javaspec.it("can be loaded with ServiceLoader and located by ID", () -> {
 			EngineTestKit.engine("javaspec-engine").selectors(selectClass(nullSpecClass())).execute();
 		});
@@ -89,6 +85,20 @@ public class JavaSpecEngineTest implements SpecClass {
 			assertTrue(onlyChild.isContainer());
 			assertFalse(onlyChild.isRoot());
 			assertFalse(onlyChild.isTest());
+		});
+
+		javaspec.it("#discover discovers a pending spec", () -> {
+			JavaSpecEngine subject = new JavaSpecEngine();
+			TestDescriptor returned = subject
+				.discover(classEngineDiscoveryRequest(pendingSpecClass()), UniqueId.forEngine(subject.getId()));
+
+			TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
+			assertEquals(1, specClassDescriptor.getChildren().size());
+
+			TestDescriptor specDescriptor = specClassDescriptor.getChildren().iterator().next();
+			UniqueId.Segment idSegment = specDescriptor.getUniqueId().getLastSegment();
+			assertEquals("test", idSegment.getType());
+			assertEquals("pending spec", idSegment.getValue());
 		});
 
 		javaspec.it("#discover discovers a test for each spec in a spec class", () -> {
