@@ -87,6 +87,8 @@ public class JavaSpecEngineTest implements SpecClass {
 			assertFalse(onlyChild.isTest());
 		});
 
+		javaspec.pending("#discover discovers a describe block, within a spec class");
+
 		javaspec.it("#discover discovers a pending spec", () -> {
 			JavaSpecEngine subject = new JavaSpecEngine();
 			TestDescriptor returned = subject
