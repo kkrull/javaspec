@@ -78,17 +78,8 @@ public class JavaSpecEngine implements TestEngine {
 			return;
 
 		case TEST:
-			listener.executionStarted(descriptor);
 			SpecDescriptor spec = SpecDescriptor.class.cast(descriptor);
-
-			try {
-				spec.execute();
-			} catch (AssertionError | Exception e) {
-				listener.executionFinished(spec, TestExecutionResult.failed(e));
-				return;
-			}
-
-			listener.executionFinished(descriptor, TestExecutionResult.successful());
+			spec.execute(listener);
 			return;
 
 		default:
