@@ -7,7 +7,7 @@ import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 
 //Adapter for a spec that makes it work like a Jupiter test.
-final class SpecDescriptor extends AbstractTestDescriptor {
+final class SpecDescriptor extends AbstractTestDescriptor implements JavaSpecDescriptor {
 	private final Verification verification;
 
 	public static SpecDescriptor of(UniqueId parentId, String behavior, Verification verification) {
@@ -26,6 +26,7 @@ final class SpecDescriptor extends AbstractTestDescriptor {
 
 	/* JavaSpec */
 
+	@Override
 	public void execute(EngineExecutionListener listener) {
 		listener.executionStarted(this);
 

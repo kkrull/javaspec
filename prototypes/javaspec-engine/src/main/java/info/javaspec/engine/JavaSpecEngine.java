@@ -60,12 +60,6 @@ public class JavaSpecEngine implements TestEngine {
 	}
 
 	private void execute(TestDescriptor descriptor, EngineExecutionListener listener) {
-		if (descriptor instanceof PendingSpecDescriptor) {
-			PendingSpecDescriptor pendingDescriptor = PendingSpecDescriptor.class.cast(descriptor);
-			pendingDescriptor.execute(listener);
-			return;
-		}
-
 		switch (descriptor.getType()) {
 		case CONTAINER:
 			listener.executionStarted(descriptor);
@@ -78,7 +72,7 @@ public class JavaSpecEngine implements TestEngine {
 			return;
 
 		case TEST:
-			SpecDescriptor spec = SpecDescriptor.class.cast(descriptor);
+			JavaSpecDescriptor spec = JavaSpecDescriptor.class.cast(descriptor);
 			spec.execute(listener);
 			return;
 

@@ -5,7 +5,7 @@ import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 
 //Adapter for a pending spec that makes it work like a skipped Jupiter test.
-final class PendingSpecDescriptor extends AbstractTestDescriptor {
+final class PendingSpecDescriptor extends AbstractTestDescriptor implements JavaSpecDescriptor {
 	public static PendingSpecDescriptor of(UniqueId parentId, String behavior) {
 		return new PendingSpecDescriptor(parentId.append("test", behavior), behavior);
 	}
@@ -21,6 +21,7 @@ final class PendingSpecDescriptor extends AbstractTestDescriptor {
 
 	/* JavaSpec */
 
+	@Override
 	public void execute(EngineExecutionListener listener) {
 		listener.executionStarted(this);
 		listener.executionSkipped(this, "pending");
