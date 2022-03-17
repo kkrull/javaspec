@@ -9,6 +9,20 @@ import info.javaspec.api.SpecClass;
 public class AnonymousSpecClasses {
 	private AnonymousSpecClasses() { /* Static class */ }
 
+	public static Class<? extends SpecClass> specClassWithEmptyDescribeBlock() {
+		return specClassWithEmptyDescribeBlockInstance().getClass();
+	}
+
+	private static SpecClass specClassWithEmptyDescribeBlockInstance() {
+		return new SpecClass() {
+			@Override
+			public void declareSpecs(JavaSpec javaspec) {
+				javaspec.describe("something", () -> {
+					/* empty */ });
+			}
+		};
+	}
+
 	public static Class<?> notASpecClass() {
 		return new Object() {}.getClass();
 	}
