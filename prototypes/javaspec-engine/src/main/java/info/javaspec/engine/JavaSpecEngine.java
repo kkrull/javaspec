@@ -60,6 +60,12 @@ public class JavaSpecEngine implements TestEngine {
 	}
 
 	private void execute(TestDescriptor descriptor, EngineExecutionListener listener) {
+		if (descriptor instanceof PendingSpecDescriptor) {
+			listener.executionStarted(descriptor);
+			listener.executionSkipped(descriptor, "pending");
+			return;
+		}
+
 		switch (descriptor.getType()) {
 		case CONTAINER:
 			listener.executionStarted(descriptor);

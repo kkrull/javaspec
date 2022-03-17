@@ -47,8 +47,7 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 
 	@Override
 	public void pending(String futureBehavior) {
-		SpecDescriptor specDescriptor = SpecDescriptor.of(getUniqueId(), futureBehavior, () -> {
-		});
+		PendingSpecDescriptor specDescriptor = PendingSpecDescriptor.of(getUniqueId(), futureBehavior);
 		specDescriptor.setParent(this);
 		this.addChild(specDescriptor);
 	}
