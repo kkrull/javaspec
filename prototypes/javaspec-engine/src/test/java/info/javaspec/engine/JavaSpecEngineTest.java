@@ -3,6 +3,7 @@ package info.javaspec.engine;
 import static info.javaspec.engine.DiscoverySelectorFactory.nullDiscoverySelector;
 import static info.javaspec.engine.EngineDiscoveryRequestFactory.classEngineDiscoveryRequest;
 import static info.javaspec.engine.EngineDiscoveryRequestFactory.nullEngineDiscoveryRequest;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.testkit.engine.EventConditions.*;
@@ -48,11 +49,12 @@ public class JavaSpecEngineTest implements SpecClass {
 				UniqueId engineId = UniqueId.forEngine(subject.getId());
 
 				TestDescriptor returned = subject.discover(nullEngineDiscoveryRequest(), engineId);
-				assertEquals(engineId, returned.getUniqueId());
-				assertEquals("JavaSpec", returned.getDisplayName());
-				assertEquals(Optional.empty(), returned.getParent());
-				assertTrue(returned.isContainer());
-				assertTrue(returned.isRoot());
+				assertThat(returned.getUniqueId()).isEqualTo(engineId);
+				assertThat(returned.getDisplayName()).isEqualTo("JavaSpec");
+				assertThat(returned.getParent()).isEmpty();
+				assertThat(returned.isContainer()).isTrue();
+				assertThat(returned.isRoot()).isTrue();
+				assertThat(returned.isTest()).isFalse();
 			});
 
 			javaspec.it("discovers no containers or tests, given no selectors", () -> {
