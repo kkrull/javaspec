@@ -93,9 +93,7 @@ public class JavaSpecEngineTest implements SpecClass {
 
 				assertEquals(nullSpecClass.getName(), onlyChild.getDisplayName());
 				assertEquals(returned, onlyChild.getParent().orElseThrow());
-				assertTrue(onlyChild.isContainer());
-				assertFalse(onlyChild.isRoot());
-				assertFalse(onlyChild.isTest());
+				assertThat(onlyChild).isRegularContainer();
 			});
 
 			javaspec.it("discovers a describe block", () -> {

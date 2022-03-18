@@ -28,6 +28,18 @@ public class TestDescriptorAssert extends AbstractAssert<TestDescriptorAssert, T
 		return this;
 	}
 
+	public TestDescriptorAssert isRegularContainer() {
+		isNotNull();
+		if (!actual.isContainer())
+			failWithMessage("Expected TestDescriptor to be a container that can contain other descriptors");
+		if (actual.isRoot())
+			failWithMessage("Expected TestDescriptor not to be a root container");
+		if (actual.isTest())
+			failWithMessage("Expected TestDescriptor not to be a test");
+
+		return this;
+	}
+
 	public TestDescriptorAssert isRootContainer() {
 		isNotNull();
 		if (!actual.isContainer())
