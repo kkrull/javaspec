@@ -17,8 +17,7 @@ public class AnonymousSpecClasses {
 		return new SpecClass() {
 			@Override
 			public void declareSpecs(JavaSpec javaspec) {
-				javaspec.describe("something", () -> {
-				});
+				javaspec.describe("something", () -> {});
 				javaspec.pending("spec");
 			}
 		};
@@ -47,7 +46,7 @@ public class AnonymousSpecClasses {
 		return new SpecClass() {
 			@Override
 			public void declareSpecs(JavaSpec javaspec) {
-				javaspec.describe("something", () -> { });
+				javaspec.describe("something", () -> {});
 			}
 		};
 	}
