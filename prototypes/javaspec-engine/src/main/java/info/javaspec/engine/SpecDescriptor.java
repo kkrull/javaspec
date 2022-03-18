@@ -1,11 +1,13 @@
 package info.javaspec.engine;
 
 import info.javaspec.api.Verification;
+import org.junit.platform.engine.EngineExecutionListener;
+import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 
 //Adapter for a spec that makes it work like a Jupiter test.
-final class SpecDescriptor extends AbstractTestDescriptor {
+final class SpecDescriptor extends AbstractTestDescriptor implements JavaSpecDescriptor {
 	private final Verification verification;
 
 	public static SpecDescriptor of(UniqueId parentId, String behavior, Verification verification) {
@@ -24,7 +26,17 @@ final class SpecDescriptor extends AbstractTestDescriptor {
 
 	/* JavaSpec */
 
-	public void execute() {
-		this.verification.execute();
+	@Override
+	public void execute(EngineExecutionListener listener) {
+		listener.executionStarted(this);
+
+		try {
+			this.verification.execute();
+		} catch (AssertionError | Exception e) {
+			listener.executionFinished(this, TestExecutionResult.failed(e));
+			return;
+		}
+
+		listener.executionFinished(this, TestExecutionResult.successful());
 	}
 }

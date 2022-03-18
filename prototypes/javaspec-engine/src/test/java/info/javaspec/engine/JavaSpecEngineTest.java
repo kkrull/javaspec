@@ -87,6 +87,20 @@ public class JavaSpecEngineTest implements SpecClass {
 			assertFalse(onlyChild.isTest());
 		});
 
+		javaspec.it("#discover discovers a pending spec", () -> {
+			JavaSpecEngine subject = new JavaSpecEngine();
+			TestDescriptor returned = subject
+				.discover(classEngineDiscoveryRequest(pendingSpecClass()), UniqueId.forEngine(subject.getId()));
+
+			TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
+			assertEquals(1, specClassDescriptor.getChildren().size());
+
+			TestDescriptor specDescriptor = specClassDescriptor.getChildren().iterator().next();
+			UniqueId.Segment idSegment = specDescriptor.getUniqueId().getLastSegment();
+			assertEquals("test", idSegment.getType());
+			assertEquals("pending spec", idSegment.getValue());
+		});
+
 		javaspec.it("#discover discovers a test for each spec in a spec class", () -> {
 			JavaSpecEngine subject = new JavaSpecEngine();
 			TestDescriptor returned = subject
@@ -133,6 +147,18 @@ public class JavaSpecEngineTest implements SpecClass {
 					event(container(), started()),
 					event(container(), finishedSuccessfully()),
 					event(engine(), finishedSuccessfully())
+				);
+		});
+
+		javaspec.it("#execute reports start and skipped events for pending specs", () -> {
+			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
+				.selectors(selectClass(pendingSpecClass()))
+				.execute();
+
+			results.allEvents()
+				.assertEventsMatchLooselyInOrder(
+					event(test(), started()),
+					event(test(), skippedWithReason("pending"))
 				);
 		});
 
