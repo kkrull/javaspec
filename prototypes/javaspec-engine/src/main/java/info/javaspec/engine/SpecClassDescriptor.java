@@ -54,7 +54,8 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 		// I haven't added any notion of a stack to track the current context yet
 		// This will cause specs in the describe block to be children of this
 		// SpecClassDescriptor instead of DescribeDescriptor.
-//		declaration.declare();
+		this.container = child;
+		declaration.declare();
 	}
 
 	@Override
