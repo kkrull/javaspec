@@ -162,7 +162,7 @@ public class JavaSpecEngineTest implements SpecClass {
 			assertTrue(specDescriptor.isTest());
 		});
 
-		javaspec.it("#discover discovers nested describe blocks", () -> {
+		javaspec.it("#discover discovers specs declared after a describe block in the same level of nesting", () -> {
 			JavaSpecEngine subject = new JavaSpecEngine();
 			TestDescriptor returned = subject.discover(
 				classEngineDiscoveryRequest(AnonymousSpecClasses.describeThenSpec()),
