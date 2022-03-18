@@ -11,9 +11,6 @@ import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 //Implements JavaSpec syntax on Jupiter.
 final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSpec {
 	private final SpecClass declaringInstance;
-
-	// TODO KDK: This will need to be a Stack, but how long can we get away with
-	// this? Maybe putting #it *after* #describe?
 	private TestDescriptor container;
 
 	public static SpecClassDescriptor of(UniqueId parentId, SpecClass declaringInstance) {

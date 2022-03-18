@@ -136,6 +136,8 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertTrue(specDescriptor.isTest());
 			});
 
+			javaspec.pending("discovers specs declared after nested describe blocks, realizing the beauty of a Stack");
+
 			javaspec.it("discovers a pending spec", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
 				TestDescriptor returned = subject.discover(
