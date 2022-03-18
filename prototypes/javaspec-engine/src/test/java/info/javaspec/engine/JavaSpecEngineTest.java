@@ -1,6 +1,5 @@
 package info.javaspec.engine;
 
-import static info.javaspec.engine.AnonymousSpecClasses.*;
 import static info.javaspec.engine.DiscoverySelectorFactory.nullDiscoverySelector;
 import static info.javaspec.engine.EngineDiscoveryRequestFactory.classEngineDiscoveryRequest;
 import static info.javaspec.engine.EngineDiscoveryRequestFactory.nullEngineDiscoveryRequest;
@@ -30,7 +29,9 @@ public class JavaSpecEngineTest implements SpecClass {
 	@Override
 	public void declareSpecs(JavaSpec javaspec) {
 		javaspec.it("can be loaded with ServiceLoader and located by ID", () -> {
-			EngineTestKit.engine("javaspec-engine").selectors(selectClass(emptySpecClass())).execute();
+			EngineTestKit.engine("javaspec-engine")
+				.selectors(selectClass(AnonymousSpecClasses.emptySpecClass()))
+				.execute();
 		});
 
 		javaspec.describe("#discover", () -> {
@@ -64,16 +65,20 @@ public class JavaSpecEngineTest implements SpecClass {
 
 			javaspec.it("ignores selectors for classes that are not SpecClass", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
-				TestDescriptor returned = subject
-					.discover(classEngineDiscoveryRequest(notASpecClass()), UniqueId.forEngine(subject.getId()));
+				TestDescriptor returned = subject.discover(
+					classEngineDiscoveryRequest(AnonymousSpecClasses.notASpecClass()),
+					UniqueId.forEngine(subject.getId())
+				);
 				assertEquals(Collections.emptySet(), returned.getChildren());
 			});
 
 			javaspec.it("discovers a container for each selected spec class", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
-				Class<?> nullSpecClass = emptySpecClass();
-				TestDescriptor returned = subject
-					.discover(classEngineDiscoveryRequest(nullSpecClass), UniqueId.forEngine(subject.getId()));
+				Class<?> nullSpecClass = AnonymousSpecClasses.emptySpecClass();
+				TestDescriptor returned = subject.discover(
+					classEngineDiscoveryRequest(nullSpecClass),
+					UniqueId.forEngine(subject.getId())
+				);
 
 				List<TestDescriptor> specClassDescriptors = new ArrayList<>(returned.getChildren());
 				assertEquals(1, returned.getChildren().size());
@@ -92,9 +97,10 @@ public class JavaSpecEngineTest implements SpecClass {
 
 			javaspec.it("discovers a describe block", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
-				Class<?> describeSpecClass = emptyDescribe();
-				TestDescriptor returned = subject
-					.discover(classEngineDiscoveryRequest(describeSpecClass), UniqueId.forEngine(subject.getId()));
+				TestDescriptor returned = subject.discover(
+					classEngineDiscoveryRequest(AnonymousSpecClasses.emptyDescribe()),
+					UniqueId.forEngine(subject.getId())
+				);
 
 				assertEquals(1, returned.getChildren().size());
 				TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
@@ -115,7 +121,7 @@ public class JavaSpecEngineTest implements SpecClass {
 			javaspec.it("discovers a describe block with a spec in it", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
 				TestDescriptor returned = subject.discover(
-					classEngineDiscoveryRequest(describeWithOneSpec()),
+					classEngineDiscoveryRequest(AnonymousSpecClasses.describeWithOneSpec()),
 					UniqueId.forEngine(subject.getId())
 				);
 
@@ -132,8 +138,10 @@ public class JavaSpecEngineTest implements SpecClass {
 
 			javaspec.it("discovers a pending spec", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
-				TestDescriptor returned = subject
-					.discover(classEngineDiscoveryRequest(pendingSpec()), UniqueId.forEngine(subject.getId()));
+				TestDescriptor returned = subject.discover(
+					classEngineDiscoveryRequest(AnonymousSpecClasses.pendingSpec()),
+					UniqueId.forEngine(subject.getId())
+				);
 
 				TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
 				assertEquals(1, specClassDescriptor.getChildren().size());
@@ -146,8 +154,10 @@ public class JavaSpecEngineTest implements SpecClass {
 
 			javaspec.it("discovers a test for each spec in a spec class", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
-				TestDescriptor returned = subject
-					.discover(classEngineDiscoveryRequest(oneSpec()), UniqueId.forEngine(subject.getId()));
+				TestDescriptor returned = subject.discover(
+					classEngineDiscoveryRequest(AnonymousSpecClasses.oneSpec()),
+					UniqueId.forEngine(subject.getId())
+				);
 
 				TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
 				assertEquals(1, specClassDescriptor.getChildren().size());
@@ -189,7 +199,7 @@ public class JavaSpecEngineTest implements SpecClass {
 
 			javaspec.it("skips spec class containers that don't have any specs in them", () -> {
 				EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
-					.selectors(selectClass(emptySpecClass()))
+					.selectors(selectClass(AnonymousSpecClasses.emptySpecClass()))
 					.execute();
 				results.containerEvents()
 					.assertEventsMatchExactly(event(engine(), started()), event(engine(), finishedSuccessfully()));
@@ -197,7 +207,7 @@ public class JavaSpecEngineTest implements SpecClass {
 
 			javaspec.it("reports execution events for spec class containers", () -> {
 				EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
-					.selectors(selectClass(oneSpec()))
+					.selectors(selectClass(AnonymousSpecClasses.oneSpec()))
 					.execute();
 
 				results.containerEvents()
@@ -211,7 +221,7 @@ public class JavaSpecEngineTest implements SpecClass {
 
 			javaspec.it("reports start and skipped events for pending specs", () -> {
 				EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
-					.selectors(selectClass(pendingSpec()))
+					.selectors(selectClass(AnonymousSpecClasses.pendingSpec()))
 					.execute();
 
 				results.allEvents()
@@ -223,7 +233,7 @@ public class JavaSpecEngineTest implements SpecClass {
 
 			javaspec.it("reports start and successful finish events for passing specs", () -> {
 				EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
-					.selectors(selectClass(oneSpec()))
+					.selectors(selectClass(AnonymousSpecClasses.oneSpec()))
 					.execute();
 
 				results.allEvents()
@@ -237,7 +247,7 @@ public class JavaSpecEngineTest implements SpecClass {
 
 			javaspec.it("reports start and failed finish events for failing specs", () -> {
 				EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
-					.selectors(selectClass(oneSpecThrowingRuntimeException()))
+					.selectors(selectClass(AnonymousSpecClasses.oneSpecThrowingRuntimeException()))
 					.execute();
 
 				results.allEvents()
@@ -254,7 +264,7 @@ public class JavaSpecEngineTest implements SpecClass {
 
 			javaspec.it("catches specs that fail by throwing AssertionError", () -> {
 				EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
-					.selectors(selectClass(oneSpecThrowingAssertionError()))
+					.selectors(selectClass(AnonymousSpecClasses.oneSpecThrowingAssertionError()))
 					.execute();
 
 				results.allEvents()
