@@ -55,19 +55,4 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 		PendingSpecDescriptor specDescriptor = PendingSpecDescriptor.of(getUniqueId(), futureBehavior);
 		this.addChild(specDescriptor);
 	}
-
-	static final class DescribeDescriptor extends AbstractTestDescriptor {
-		public static DescribeDescriptor about(UniqueId parentId, String what) {
-			return new DescribeDescriptor(parentId.append("describe-block", what), what);
-		}
-
-		private DescribeDescriptor(UniqueId uniqueId, String displayName) {
-			super(uniqueId, displayName);
-		}
-
-		@Override
-		public Type getType() {
-			return Type.CONTAINER;
-		}
-	}
 }
