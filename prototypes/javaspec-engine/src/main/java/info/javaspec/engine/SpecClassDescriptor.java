@@ -41,7 +41,7 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 
 	// Entry point into the discovery process
 	public void discover() {
-		this.container = this;
+		setCurrentContainer(this);
 		this.declaringInstance.declareSpecs(this);
 	}
 
