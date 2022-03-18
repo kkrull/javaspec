@@ -89,7 +89,7 @@ public class JavaSpecEngineTest implements SpecClass {
 
 		javaspec.it("#discover discovers a describe block", () -> {
 			JavaSpecEngine subject = new JavaSpecEngine();
-			Class<?> describeSpecClass = specClassWithEmptyDescribeBlock();
+			Class<?> describeSpecClass = nullDescribeBlock();
 			TestDescriptor returned = subject
 				.discover(classEngineDiscoveryRequest(describeSpecClass), UniqueId.forEngine(subject.getId()));
 
@@ -107,6 +107,22 @@ public class JavaSpecEngineTest implements SpecClass {
 			assertTrue(describeDescriptor.isContainer());
 			assertFalse(describeDescriptor.isRoot());
 			assertFalse(describeDescriptor.isTest());
+		});
+
+		javaspec.it("#discover discovers a describe block with a spec in it", () -> {
+			JavaSpecEngine subject = new JavaSpecEngine();
+			TestDescriptor returned = subject.discover(
+				classEngineDiscoveryRequest(describeBlockWithOneSpec()),
+				UniqueId.forEngine(subject.getId())
+			);
+
+			TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
+			TestDescriptor describeDescriptor = specClassDescriptor.getChildren().iterator().next();
+			assertEquals(1, describeDescriptor.getChildren().size());
+
+			TestDescriptor specDescriptor = describeDescriptor.getChildren().iterator().next();
+			assertEquals("works", specDescriptor.getDisplayName());
+			assertTrue(specDescriptor.isTest());
 		});
 
 		javaspec.it("#discover discovers a pending spec", () -> {

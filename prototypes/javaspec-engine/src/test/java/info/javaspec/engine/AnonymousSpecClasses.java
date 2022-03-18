@@ -9,11 +9,31 @@ import info.javaspec.api.SpecClass;
 public class AnonymousSpecClasses {
 	private AnonymousSpecClasses() { /* Static class */ }
 
-	public static Class<? extends SpecClass> specClassWithEmptyDescribeBlock() {
-		return specClassWithEmptyDescribeBlockInstance().getClass();
+	public static Class<? extends SpecClass> describeBlockWithOneSpec() {
+		return describeBlockWithOneSpecInstance().getClass();
 	}
 
-	private static SpecClass specClassWithEmptyDescribeBlockInstance() {
+	private static SpecClass describeBlockWithOneSpecInstance() {
+		return new SpecClass() {
+			@Override
+			public void declareSpecs(JavaSpec javaspec) {
+				javaspec.describe("something", () -> {
+					javaspec.it("works", () -> {
+					});
+				});
+			}
+		};
+	}
+
+	public static Class<?> notASpecClass() {
+		return new Object() {}.getClass();
+	}
+
+	public static Class<? extends SpecClass> nullDescribeBlock() {
+		return nullDescribeBlockInstance().getClass();
+	}
+
+	private static SpecClass nullDescribeBlockInstance() {
 		return new SpecClass() {
 			@Override
 			public void declareSpecs(JavaSpec javaspec) {
@@ -22,10 +42,6 @@ public class AnonymousSpecClasses {
 				});
 			}
 		};
-	}
-
-	public static Class<?> notASpecClass() {
-		return new Object() {}.getClass();
 	}
 
 	public static Class<? extends SpecClass> nullSpecClass() {
