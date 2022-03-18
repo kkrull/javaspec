@@ -83,6 +83,7 @@ public class JavaSpecEngineTest implements SpecClass {
 					UniqueId.forEngine(subject.getId())
 				);
 
+				// TODO KDK: Add assertion for children's display names
 				List<TestDescriptor> specClassDescriptors = new ArrayList<>(returned.getChildren());
 				assertEquals(1, returned.getChildren().size());
 
@@ -91,9 +92,10 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertEquals("class", idSegment.getType());
 				assertEquals(nullSpecClass.getName(), idSegment.getValue());
 
-				assertEquals(nullSpecClass.getName(), onlyChild.getDisplayName());
-				assertThat(onlyChild).hasParent(returned);
-				assertThat(onlyChild).isRegularContainer();
+				assertEquals(nullSpecClass.getName(), onlyChild.getDisplayName()); // TODO KDK: Add assertion for name and ID
+				assertThat(onlyChild)
+					.isRegularContainer()
+					.hasParent(returned);
 			});
 
 			javaspec.it("discovers a describe block", () -> {

@@ -19,31 +19,34 @@ public class TestDescriptorAssert extends AbstractAssert<TestDescriptorAssert, T
 	public TestDescriptorAssert hasNoChildren() {
 		isNotNull();
 		if (!Objects.equals(actual.getChildren(), Collections.emptySet())) {
-			failureWithActualExpected(
-				actual.getChildren(),
-				Collections.emptySet(),
-				"Expected TestDescriptor to have no children"
+			failWithMessage(
+				"Expected TestDescriptor to have no children but was <%s>",
+				actual.getChildren()
 			);
 		}
 
 		return this;
 	}
 
-	public TestDescriptorAssert hasParent(TestDescriptor expected) {
+	public TestDescriptorAssert hasParent(TestDescriptor expectedParent) {
 		isNotNull();
 
-		Optional<TestDescriptor> parent = actual.getParent();
-		if (parent.isEmpty()) {
+		Optional<TestDescriptor> actualParent = actual.getParent();
+		if (actualParent.isEmpty()) {
 			failWithMessage(
 				String.format(
 					"Expected TestDescriptor to have parent named <%s>, but was null",
-					expected.getDisplayName()
+					expectedParent
 				)
 			);
 		}
 
-		if (parent.orElseThrow() != expected) {
-			failureWithActualExpected(parent.orElseThrow(), expected, "Expected TestDescriptor to have parent");
+		if (!Objects.equals(actualParent.orElseThrow(), expectedParent)) {
+			failWithMessage(
+				"Expected TestDescriptor to have parent <%s> but was <%s>",
+				expectedParent,
+				actualParent.orElseThrow()
+			);
 		}
 
 		return this;
