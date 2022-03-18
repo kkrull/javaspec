@@ -12,6 +12,10 @@ import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSpec {
 	private final SpecClass declaringInstance;
 
+	// TODO KDK: This will need to be a Stack, but how long can we get away with
+	// this?
+	private TestDescriptor container;
+
 	public static SpecClassDescriptor of(UniqueId parentId, SpecClass declaringInstance) {
 		Class<? extends SpecClass> declaringClass = declaringInstance.getClass();
 		return new SpecClassDescriptor(
@@ -35,14 +39,17 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 
 	/* JavaSpec */
 
+	// Entry point into the discovery process
 	public void discover() {
+		this.container = this;
 		this.declaringInstance.declareSpecs(this);
 	}
 
 	@Override
 	public void describe(String what, BehaviorDeclaration declaration) {
-		DescribeDescriptor child = DescribeDescriptor.about(getUniqueId(), what);
-		this.addChild(child);
+		TestDescriptor container = currentContainer();
+		DescribeDescriptor child = DescribeDescriptor.about(container.getUniqueId(), what);
+		container.addChild(child);
 
 		// I haven't added any notion of a stack to track the current context yet
 		// This will cause specs in the describe block to be children of this
@@ -52,17 +59,19 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 
 	@Override
 	public void it(String behavior, Verification verification) {
-		SpecDescriptor specDescriptor = SpecDescriptor.of(getUniqueId(), behavior, verification);
-		this.addChild(specDescriptor);
+		TestDescriptor container = currentContainer();
+		SpecDescriptor specDescriptor = SpecDescriptor.of(container.getUniqueId(), behavior, verification);
+		container.addChild(specDescriptor);
 	}
 
 	@Override
 	public void pending(String futureBehavior) {
-		PendingSpecDescriptor specDescriptor = PendingSpecDescriptor.of(getUniqueId(), futureBehavior);
-		this.addChild(specDescriptor);
+		TestDescriptor container = currentContainer();
+		PendingSpecDescriptor specDescriptor = PendingSpecDescriptor.of(container.getUniqueId(), futureBehavior);
+		container.addChild(specDescriptor);
 	}
 
 	private TestDescriptor currentContainer() {
-		return this;
+		return this.container;
 	}
 }
