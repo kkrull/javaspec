@@ -42,6 +42,11 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 	public void describe(String what, BehaviorDeclaration declaration) {
 		DescribeDescriptor child = DescribeDescriptor.about(getUniqueId(), what);
 		this.addChild(child);
+
+		// I haven't added any notion of a stack to track the current context yet
+		// This will cause specs in the describe block to be children of this
+		// SpecClassDescriptor instead of DescribeDescriptor.
+//		declaration.declare();
 	}
 
 	@Override

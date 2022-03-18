@@ -117,6 +117,8 @@ public class JavaSpecEngineTest implements SpecClass {
 			);
 
 			TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
+			assertEquals(1, specClassDescriptor.getChildren().size());
+
 			TestDescriptor describeDescriptor = specClassDescriptor.getChildren().iterator().next();
 			assertEquals(1, describeDescriptor.getChildren().size());
 
