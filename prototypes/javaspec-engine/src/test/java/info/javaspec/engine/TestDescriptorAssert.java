@@ -1,5 +1,7 @@
 package info.javaspec.engine;
 
+import java.util.Collections;
+import java.util.Objects;
 import org.assertj.core.api.AbstractAssert;
 import org.junit.platform.engine.TestDescriptor;
 
@@ -11,6 +13,19 @@ public class TestDescriptorAssert extends AbstractAssert<TestDescriptorAssert, T
 
 	public TestDescriptorAssert(TestDescriptor testDescriptor) {
 		super(testDescriptor, TestDescriptorAssert.class);
+	}
+
+	public TestDescriptorAssert hasNoChildren() {
+		isNotNull();
+		if (!Objects.equals(actual.getChildren(), Collections.emptySet())) {
+			failureWithActualExpected(
+				actual.getChildren(),
+				Collections.emptySet(),
+				"Expected TestDescriptor to have no children"
+			);
+		}
+
+		return this;
 	}
 
 	public TestDescriptorAssert isRootContainer() {

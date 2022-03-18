@@ -12,7 +12,6 @@ import static org.junit.platform.testkit.engine.EventConditions.*;
 import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -58,10 +57,12 @@ public class JavaSpecEngineTest implements SpecClass {
 
 			javaspec.it("discovers no containers or tests, given no selectors", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
+				TestDescriptor returned = subject.discover(
+					nullEngineDiscoveryRequest(),
+					UniqueId.forEngine(subject.getId())
+				);
 
-				TestDescriptor returned = subject.discover(nullEngineDiscoveryRequest(), UniqueId.forEngine(subject.getId()));
-				assertEquals(Collections.emptySet(), returned.getChildren());
-				assertFalse(returned.isTest());
+				assertThat(returned).hasNoChildren();
 			});
 
 			javaspec.it("ignores selectors for classes that are not SpecClass", () -> {
@@ -70,7 +71,8 @@ public class JavaSpecEngineTest implements SpecClass {
 					classEngineDiscoveryRequest(AnonymousSpecClasses.notASpecClass()),
 					UniqueId.forEngine(subject.getId())
 				);
-				assertEquals(Collections.emptySet(), returned.getChildren());
+
+				assertThat(returned).hasNoChildren();
 			});
 
 			javaspec.it("discovers a container for each selected spec class", () -> {
