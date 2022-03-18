@@ -53,6 +53,7 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 
 		setCurrentContainer(child);
 		declaration.declare();
+		setCurrentContainer(this);
 	}
 
 	@Override

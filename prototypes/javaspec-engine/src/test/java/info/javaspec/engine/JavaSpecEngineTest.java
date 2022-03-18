@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.assertj.core.api.Condition;
+import org.assertj.core.util.Lists;
 import org.junit.platform.commons.annotation.Testable;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.TestDescriptor;
@@ -159,6 +161,22 @@ public class JavaSpecEngineTest implements SpecClass {
 			assertFalse(specDescriptor.isRoot());
 			assertTrue(specDescriptor.isTest());
 		});
+
+		javaspec.it("#discover discovers nested describe blocks", () -> {
+			JavaSpecEngine subject = new JavaSpecEngine();
+			TestDescriptor returned = subject.discover(
+				classEngineDiscoveryRequest(AnonymousSpecClasses.describeThenSpec()),
+				UniqueId.forEngine(subject.getId())
+			);
+
+			TestDescriptor specClass = returned.getChildren().iterator().next();
+			List<String> displayNames = specClass.getChildren().stream()
+				.map(TestDescriptor::getDisplayName)
+				.collect(Collectors.toList());
+			assertEquals(Lists.newArrayList("something", "spec"), displayNames);
+		});
+
+		javaspec.pending("#discover discovers two describe blocks, side by side");
 
 		javaspec.it("#execute reports execution events for the engine", () -> {
 			EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())

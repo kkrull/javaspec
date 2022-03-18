@@ -25,6 +25,21 @@ public class AnonymousSpecClasses {
 		};
 	}
 
+	public static Class<? extends SpecClass> describeThenSpec() {
+		return describeThenSpecInstance().getClass();
+	}
+
+	private static SpecClass describeThenSpecInstance() {
+		return new SpecClass() {
+			@Override
+			public void declareSpecs(JavaSpec javaspec) {
+				javaspec.describe("something", () -> {
+				});
+				javaspec.pending("spec");
+			}
+		};
+	}
+
 	public static Class<?> notASpecClass() {
 		return new Object() {}.getClass();
 	}
