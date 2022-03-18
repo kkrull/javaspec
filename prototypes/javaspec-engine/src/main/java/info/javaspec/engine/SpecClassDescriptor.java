@@ -3,6 +3,7 @@ package info.javaspec.engine;
 import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
 import info.javaspec.api.Verification;
+import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 
@@ -59,5 +60,9 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 	public void pending(String futureBehavior) {
 		PendingSpecDescriptor specDescriptor = PendingSpecDescriptor.of(getUniqueId(), futureBehavior);
 		this.addChild(specDescriptor);
+	}
+
+	private TestDescriptor currentContainer() {
+		return this;
 	}
 }
