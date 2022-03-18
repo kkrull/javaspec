@@ -9,22 +9,6 @@ import info.javaspec.api.SpecClass;
 public class AnonymousSpecClasses {
 	private AnonymousSpecClasses() { /* Static class */ }
 
-	public static Class<? extends SpecClass> describeBlockWithOneSpec() {
-		return describeBlockWithOneSpecInstance().getClass();
-	}
-
-	private static SpecClass describeBlockWithOneSpecInstance() {
-		return new SpecClass() {
-			@Override
-			public void declareSpecs(JavaSpec javaspec) {
-				javaspec.describe("something", () -> {
-					javaspec.it("works", () -> {
-					});
-				});
-			}
-		};
-	}
-
 	public static Class<? extends SpecClass> describeThenSpec() {
 		return describeThenSpecInstance().getClass();
 	}
@@ -40,47 +24,58 @@ public class AnonymousSpecClasses {
 		};
 	}
 
-	public static Class<?> notASpecClass() {
-		return new Object() {}.getClass();
+	public static Class<? extends SpecClass> describeWithOneSpec() {
+		return describeWithOneSpecInstance().getClass();
 	}
 
-	public static Class<? extends SpecClass> nullDescribeBlock() {
-		return nullDescribeBlockInstance().getClass();
-	}
-
-	private static SpecClass nullDescribeBlockInstance() {
+	private static SpecClass describeWithOneSpecInstance() {
 		return new SpecClass() {
 			@Override
 			public void declareSpecs(JavaSpec javaspec) {
 				javaspec.describe("something", () -> {
-					/* empty */
+					javaspec.pending("works");
 				});
 			}
 		};
 	}
 
-	public static Class<? extends SpecClass> nullSpecClass() {
-		return nullSpecClassInstance().getClass();
+	public static Class<? extends SpecClass> emptyDescribe() {
+		return emptyDescribeInstance().getClass();
 	}
 
-	private static SpecClass nullSpecClassInstance() {
+	private static SpecClass emptyDescribeInstance() {
+		return new SpecClass() {
+			@Override
+			public void declareSpecs(JavaSpec javaspec) {
+				javaspec.describe("something", () -> { });
+			}
+		};
+	}
+
+	public static Class<? extends SpecClass> emptySpecClass() {
+		return emptySpecClassInstance().getClass();
+	}
+
+	private static SpecClass emptySpecClassInstance() {
 		return new SpecClass() {
 			@Override
 			public void declareSpecs(JavaSpec javaspec) { /* Do nothing */ }
 		};
 	}
 
-	public static Class<? extends SpecClass> oneSpecClass() {
-		return oneSpecClassInstance().getClass();
+	public static Class<?> notASpecClass() {
+		return new Object() {}.getClass();
 	}
 
-	private static SpecClass oneSpecClassInstance() {
+	public static Class<? extends SpecClass> oneSpec() {
+		return oneSpecInstance().getClass();
+	}
+
+	private static SpecClass oneSpecInstance() {
 		return new SpecClass() {
 			@Override
 			public void declareSpecs(JavaSpec javaspec) {
-				javaspec.it("one spec", () -> {
-					assertEquals(2, 1 + 1);
-				});
+				javaspec.it("one spec", () -> assertEquals(2, 1 + 1));
 			}
 		};
 	}
@@ -93,9 +88,7 @@ public class AnonymousSpecClasses {
 		return new SpecClass() {
 			@Override
 			public void declareSpecs(JavaSpec javaspec) {
-				javaspec.it("throws", () -> {
-					assertEquals(42, 41);
-				});
+				javaspec.it("throws", () -> assertEquals(42, 41));
 			}
 		};
 	}
@@ -115,11 +108,11 @@ public class AnonymousSpecClasses {
 		};
 	}
 
-	public static Class<? extends SpecClass> pendingSpecClass() {
-		return pendingSpecClassInstance().getClass();
+	public static Class<? extends SpecClass> pendingSpec() {
+		return pendingSpecInstance().getClass();
 	}
 
-	private static SpecClass pendingSpecClassInstance() {
+	private static SpecClass pendingSpecInstance() {
 		return new SpecClass() {
 			@Override
 			public void declareSpecs(JavaSpec javaspec) {
