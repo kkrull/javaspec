@@ -13,7 +13,7 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 	private final SpecClass declaringInstance;
 
 	// TODO KDK: This will need to be a Stack, but how long can we get away with
-	// this?
+	// this? Maybe putting #it *after* #describe?
 	private TestDescriptor container;
 
 	public static SpecClassDescriptor of(UniqueId parentId, SpecClass declaringInstance) {
@@ -51,10 +51,7 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 		DescribeDescriptor child = DescribeDescriptor.about(container.getUniqueId(), what);
 		container.addChild(child);
 
-		// I haven't added any notion of a stack to track the current context yet
-		// This will cause specs in the describe block to be children of this
-		// SpecClassDescriptor instead of DescribeDescriptor.
-		this.container = child;
+		setCurrentContainer(child);
 		declaration.declare();
 	}
 
@@ -74,5 +71,9 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 
 	private TestDescriptor currentContainer() {
 		return this.container;
+	}
+
+	private void setCurrentContainer(TestDescriptor container) {
+		this.container = container;
 	}
 }
