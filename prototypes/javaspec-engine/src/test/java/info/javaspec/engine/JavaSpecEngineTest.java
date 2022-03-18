@@ -34,7 +34,7 @@ public class JavaSpecEngineTest implements SpecClass {
 		});
 
 		javaspec.describe("#discover", () -> {
-			javaspec.it("#discover reports to a provided EngineDiscoveryRequestListener", () -> {
+			javaspec.it("reports to a provided EngineDiscoveryRequestListener", () -> {
 				MockEngineDiscoveryRequestListener listener = new MockEngineDiscoveryRequestListener();
 				JavaSpecEngine subject = new JavaSpecEngine(() -> Optional.of(listener));
 
@@ -42,7 +42,7 @@ public class JavaSpecEngineTest implements SpecClass {
 				listener.onDiscoverExpected();
 			});
 
-			javaspec.it("#discover returns a top-level container for itself, using the given UniqueId", () -> {
+			javaspec.it("returns a top-level container for itself, using the given UniqueId", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
 				UniqueId engineId = UniqueId.forEngine(subject.getId());
 
@@ -54,7 +54,7 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertTrue(returned.isRoot());
 			});
 
-			javaspec.it("#discover discovers no containers or tests, given no selectors", () -> {
+			javaspec.it("discovers no containers or tests, given no selectors", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
 
 				TestDescriptor returned = subject.discover(nullEngineDiscoveryRequest(), UniqueId.forEngine(subject.getId()));
@@ -62,14 +62,14 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertFalse(returned.isTest());
 			});
 
-			javaspec.it("#discover ignores selectors for classes that are not SpecClass", () -> {
+			javaspec.it("ignores selectors for classes that are not SpecClass", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
 				TestDescriptor returned = subject
 					.discover(classEngineDiscoveryRequest(notASpecClass()), UniqueId.forEngine(subject.getId()));
 				assertEquals(Collections.emptySet(), returned.getChildren());
 			});
 
-			javaspec.it("#discover discovers a container for each selected spec class", () -> {
+			javaspec.it("discovers a container for each selected spec class", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
 				Class<?> nullSpecClass = nullSpecClass();
 				TestDescriptor returned = subject
@@ -90,7 +90,7 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertFalse(onlyChild.isTest());
 			});
 
-			javaspec.it("#discover discovers a describe block", () -> {
+			javaspec.it("discovers a describe block", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
 				Class<?> describeSpecClass = nullDescribeBlock();
 				TestDescriptor returned = subject
@@ -112,7 +112,7 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertFalse(describeDescriptor.isTest());
 			});
 
-			javaspec.it("#discover discovers a describe block with a spec in it", () -> {
+			javaspec.it("discovers a describe block with a spec in it", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
 				TestDescriptor returned = subject.discover(
 					classEngineDiscoveryRequest(describeBlockWithOneSpec()),
@@ -130,7 +130,7 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertTrue(specDescriptor.isTest());
 			});
 
-			javaspec.it("#discover discovers a pending spec", () -> {
+			javaspec.it("discovers a pending spec", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
 				TestDescriptor returned = subject
 					.discover(classEngineDiscoveryRequest(pendingSpecClass()), UniqueId.forEngine(subject.getId()));
@@ -144,7 +144,7 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertEquals("pending spec", idSegment.getValue());
 			});
 
-			javaspec.it("#discover discovers a test for each spec in a spec class", () -> {
+			javaspec.it("discovers a test for each spec in a spec class", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
 				TestDescriptor returned = subject
 					.discover(classEngineDiscoveryRequest(oneSpecClass()), UniqueId.forEngine(subject.getId()));
@@ -163,7 +163,7 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertTrue(specDescriptor.isTest());
 			});
 
-			javaspec.it("#discover discovers specs declared after a describe block in the same level of nesting", () -> {
+			javaspec.it("discovers specs declared after a describe block in the same level of nesting", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
 				TestDescriptor returned = subject.discover(
 					classEngineDiscoveryRequest(AnonymousSpecClasses.describeThenSpec()),
@@ -179,7 +179,7 @@ public class JavaSpecEngineTest implements SpecClass {
 		});
 
 		javaspec.describe("#execute", () -> {
-			javaspec.it("#execute reports execution events for the engine", () -> {
+			javaspec.it("reports execution events for the engine", () -> {
 				EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
 					.selectors(nullDiscoverySelector())
 					.execute();
@@ -187,7 +187,7 @@ public class JavaSpecEngineTest implements SpecClass {
 					.assertEventsMatchExactly(event(engine(), started()), event(engine(), finishedSuccessfully()));
 			});
 
-			javaspec.it("#execute skips spec class containers that don't have any specs in them", () -> {
+			javaspec.it("skips spec class containers that don't have any specs in them", () -> {
 				EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
 					.selectors(selectClass(nullSpecClass()))
 					.execute();
@@ -195,7 +195,7 @@ public class JavaSpecEngineTest implements SpecClass {
 					.assertEventsMatchExactly(event(engine(), started()), event(engine(), finishedSuccessfully()));
 			});
 
-			javaspec.it("#execute reports execution events for spec class containers", () -> {
+			javaspec.it("reports execution events for spec class containers", () -> {
 				EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
 					.selectors(selectClass(oneSpecClass()))
 					.execute();
@@ -209,7 +209,7 @@ public class JavaSpecEngineTest implements SpecClass {
 					);
 			});
 
-			javaspec.it("#execute reports start and skipped events for pending specs", () -> {
+			javaspec.it("reports start and skipped events for pending specs", () -> {
 				EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
 					.selectors(selectClass(pendingSpecClass()))
 					.execute();
@@ -221,7 +221,7 @@ public class JavaSpecEngineTest implements SpecClass {
 					);
 			});
 
-			javaspec.it("#execute reports start and successful finish events for passing specs", () -> {
+			javaspec.it("reports start and successful finish events for passing specs", () -> {
 				EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
 					.selectors(selectClass(oneSpecClass()))
 					.execute();
@@ -235,7 +235,7 @@ public class JavaSpecEngineTest implements SpecClass {
 					);
 			});
 
-			javaspec.it("#execute reports start and failed finish events for failing specs", () -> {
+			javaspec.it("reports start and failed finish events for failing specs", () -> {
 				EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
 					.selectors(selectClass(oneSpecThrowingRuntimeException()))
 					.execute();
@@ -252,7 +252,7 @@ public class JavaSpecEngineTest implements SpecClass {
 					);
 			});
 
-			javaspec.it("#execute catches specs that fail by throwing AssertionError", () -> {
+			javaspec.it("catches specs that fail by throwing AssertionError", () -> {
 				EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
 					.selectors(selectClass(oneSpecThrowingAssertionError()))
 					.execute();
@@ -271,7 +271,7 @@ public class JavaSpecEngineTest implements SpecClass {
 		});
 
 		javaspec.describe("#getId", () -> {
-			javaspec.it("#getId returns a unique ID", () -> {
+			javaspec.it("returns a unique ID", () -> {
 				TestEngine subject = new JavaSpecEngine();
 				assertEquals("javaspec-engine", subject.getId());
 			});
