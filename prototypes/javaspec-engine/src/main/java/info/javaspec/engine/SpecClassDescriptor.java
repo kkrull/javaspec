@@ -39,16 +39,35 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 	}
 
 	@Override
+	public void describe(String what, BehaviorDeclaration declaration) {
+		DescribeDescriptor child = DescribeDescriptor.about(getUniqueId(), what);
+		this.addChild(child);
+	}
+
+	@Override
 	public void it(String behavior, Verification verification) {
 		SpecDescriptor specDescriptor = SpecDescriptor.of(getUniqueId(), behavior, verification);
-		specDescriptor.setParent(this);
 		this.addChild(specDescriptor);
 	}
 
 	@Override
 	public void pending(String futureBehavior) {
 		PendingSpecDescriptor specDescriptor = PendingSpecDescriptor.of(getUniqueId(), futureBehavior);
-		specDescriptor.setParent(this);
 		this.addChild(specDescriptor);
+	}
+
+	static final class DescribeDescriptor extends AbstractTestDescriptor {
+		public static DescribeDescriptor about(UniqueId parentId, String what) {
+			return new DescribeDescriptor(parentId.append("describe-block", what), what);
+		}
+
+		private DescribeDescriptor(UniqueId uniqueId, String displayName) {
+			super(uniqueId, displayName);
+		}
+
+		@Override
+		public Type getType() {
+			return Type.CONTAINER;
+		}
 	}
 }

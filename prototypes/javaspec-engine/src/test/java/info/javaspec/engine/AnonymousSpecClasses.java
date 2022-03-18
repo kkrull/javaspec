@@ -18,7 +18,8 @@ public class AnonymousSpecClasses {
 			@Override
 			public void declareSpecs(JavaSpec javaspec) {
 				javaspec.describe("something", () -> {
-					/* empty */ });
+					/* empty */
+				});
 			}
 		};
 	}
