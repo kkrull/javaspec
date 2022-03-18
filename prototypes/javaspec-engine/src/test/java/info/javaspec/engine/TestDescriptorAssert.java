@@ -2,6 +2,7 @@ package info.javaspec.engine;
 
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Optional;
 import org.assertj.core.api.AbstractAssert;
 import org.junit.platform.engine.TestDescriptor;
 
@@ -23,6 +24,26 @@ public class TestDescriptorAssert extends AbstractAssert<TestDescriptorAssert, T
 				Collections.emptySet(),
 				"Expected TestDescriptor to have no children"
 			);
+		}
+
+		return this;
+	}
+
+	public TestDescriptorAssert hasParent(TestDescriptor expected) {
+		isNotNull();
+
+		Optional<TestDescriptor> parent = actual.getParent();
+		if (parent.isEmpty()) {
+			failWithMessage(
+				String.format(
+					"Expected TestDescriptor to have parent named <%s>, but was null",
+					expected.getDisplayName()
+				)
+			);
+		}
+
+		if (parent.orElseThrow() != expected) {
+			failureWithActualExpected(parent.orElseThrow(), expected, "Expected TestDescriptor to have parent");
 		}
 
 		return this;
