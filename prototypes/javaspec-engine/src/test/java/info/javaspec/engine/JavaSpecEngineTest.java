@@ -204,7 +204,7 @@ public class JavaSpecEngineTest implements SpecClass {
 
 				TestDescriptor spec = given.getChildren().iterator().next();
 				assertThat(spec)
-					.hasIdEndingIn("spec", "spec")
+					.hasIdEndingIn("test", "spec")
 					.hasParent(given)
 					.isJustATest();
 			});

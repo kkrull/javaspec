@@ -58,6 +58,10 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 		TestDescriptor container = currentContainer();
 		ContextDescriptor child = ContextDescriptor.given(container.getUniqueId(), what);
 		container.addChild(child);
+
+		enterScope(child);
+		declaration.declare();
+		exitScope();
 	}
 
 	@Override
