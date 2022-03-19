@@ -107,16 +107,11 @@ public class JavaSpecEngineTest implements SpecClass {
 
 				assertEquals(1, specClassDescriptor.getChildren().size());
 				TestDescriptor describeDescriptor = specClassDescriptor.getChildren().iterator().next();
-				assertThat(describeDescriptor).hasIdEndingIn(
-					"describe-block",
-					"something"
-				);
-
-				assertThat(describeDescriptor).hasDisplayName("something");
-				assertThat(describeDescriptor).hasParent(specClassDescriptor);
-				assertTrue(describeDescriptor.isContainer());
-				assertFalse(describeDescriptor.isRoot());
-				assertFalse(describeDescriptor.isTest());
+				assertThat(describeDescriptor)
+					.hasDisplayName("something")
+					.hasIdEndingIn("describe-block", "something")
+					.hasParent(specClassDescriptor)
+					.isRegularContainer();
 			});
 
 			javaspec.it("discovers a describe block with a spec in it", () -> {
@@ -133,8 +128,9 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertEquals(1, describeDescriptor.getChildren().size());
 
 				TestDescriptor specDescriptor = describeDescriptor.getChildren().iterator().next();
-				assertThat(specDescriptor).hasDisplayName("works");
-				assertTrue(specDescriptor.isTest());
+				assertThat(specDescriptor)
+					.hasDisplayName("works")
+					.isJustATest();
 			});
 
 			javaspec.pending("discovers specs declared after nested describe blocks, realizing the beauty of a Stack");
@@ -164,12 +160,10 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertEquals(1, specClassDescriptor.getChildren().size());
 
 				TestDescriptor specDescriptor = specClassDescriptor.getChildren().iterator().next();
-				assertThat(specDescriptor).hasIdEndingIn("test", "one spec");
-
-				assertThat(specDescriptor).hasParent(specClassDescriptor);
-				assertFalse(specDescriptor.isContainer());
-				assertFalse(specDescriptor.isRoot());
-				assertTrue(specDescriptor.isTest());
+				assertThat(specDescriptor)
+					.hasIdEndingIn("test", "one spec")
+					.hasParent(specClassDescriptor)
+					.isJustATest();
 			});
 
 			javaspec.it("discovers specs declared after a describe block in the same level of nesting", () -> {
