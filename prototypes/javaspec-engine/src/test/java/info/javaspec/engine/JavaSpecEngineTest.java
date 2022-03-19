@@ -88,10 +88,9 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertEquals(1, returned.getChildren().size());
 
 				TestDescriptor onlyChild = specClassDescriptors.get(0);
-				assertThat(onlyChild).hasIdEndingIn("class", nullSpecClass.getName());
-
-				assertThat(onlyChild).hasDisplayName(nullSpecClass.getName());
 				assertThat(onlyChild)
+					.hasDisplayName(nullSpecClass.getName())
+					.hasIdEndingIn("class", nullSpecClass.getName())
 					.isRegularContainer()
 					.hasParent(returned);
 			});
