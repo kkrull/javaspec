@@ -45,7 +45,12 @@ public class TestDescriptorAssert extends AbstractAssert<TestDescriptorAssert, T
 			.map(x -> x.getDisplayName())
 			.collect(Collectors.toList());
 
-		Assertions.assertThat(actualNames).containsExactly(displayNames);
+		Assertions.assertThat(actualNames)
+			.describedAs(
+				"Expected TestDescriptor <%s> to have children with display names",
+				actual.getUniqueId()
+			)
+			.containsExactly(displayNames);
 		return this;
 	}
 
