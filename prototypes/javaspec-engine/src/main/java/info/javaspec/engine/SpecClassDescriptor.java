@@ -54,6 +54,11 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 	}
 
 	@Override
+	public void given(String what, BehaviorDeclaration declaration) {
+		throw new UnsupportedOperationException("treat this like a DescribeDescriptor, perhaps with another static method");
+	}
+
+	@Override
 	public void it(String behavior, Verification verification) {
 		TestDescriptor container = currentContainer();
 		SpecDescriptor specDescriptor = SpecDescriptor.of(container.getUniqueId(), behavior, verification);
