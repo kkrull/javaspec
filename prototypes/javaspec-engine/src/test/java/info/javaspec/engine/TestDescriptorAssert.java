@@ -6,7 +6,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.Assertions;
 import org.junit.platform.engine.TestDescriptor;
@@ -23,7 +22,7 @@ public class TestDescriptorAssert extends AbstractAssert<TestDescriptorAssert, T
 		super(testDescriptor, TestDescriptorAssert.class);
 	}
 
-  public TestDescriptorAssert hasChildren(int expectedNum) {
+	public TestDescriptorAssert hasChildren(int expectedNum) {
 		isNotNull();
 
 		Set<? extends TestDescriptor> actualChildren = actual.getChildren();
@@ -37,7 +36,7 @@ public class TestDescriptorAssert extends AbstractAssert<TestDescriptorAssert, T
 		}
 
 		return this;
-  }
+	}
 
 	public TestDescriptorAssert hasChildrenNamed(String name) {
 		isNotNull();

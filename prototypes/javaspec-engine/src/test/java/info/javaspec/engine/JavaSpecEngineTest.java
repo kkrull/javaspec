@@ -11,12 +11,8 @@ import static org.junit.platform.testkit.engine.EventConditions.*;
 
 import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.assertj.core.api.Condition;
-import org.assertj.core.util.Lists;
 import org.junit.platform.commons.annotation.Testable;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.TestDescriptor;
