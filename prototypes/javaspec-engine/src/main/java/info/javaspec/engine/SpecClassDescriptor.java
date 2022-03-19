@@ -35,7 +35,7 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 		return Type.CONTAINER;
 	}
 
-	/* Discovery */
+	/* Context discovery */
 
 	// Entry point into the discovery process
 	public void discover() {
@@ -68,6 +68,8 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 		block.declare();
 		exitScope();
 	}
+
+	/* Spec discovery */
 
 	@Override
 	public void it(String behavior, Verification verification) {
