@@ -18,7 +18,7 @@ public class TestDescriptorAssert extends AbstractAssert<TestDescriptorAssert, T
 		return new TestDescriptorAssert(actual);
 	}
 
-	public TestDescriptorAssert(TestDescriptor testDescriptor) {
+	private TestDescriptorAssert(TestDescriptor testDescriptor) {
 		super(testDescriptor, TestDescriptorAssert.class);
 	}
 
@@ -128,6 +128,18 @@ public class TestDescriptorAssert extends AbstractAssert<TestDescriptorAssert, T
 		return this;
 	}
 
+	public TestDescriptorAssert isJustATest() {
+		isNotNull();
+		if (actual.isContainer())
+			failWithMessage("Expected TestDescriptor to not be a container that can contain other descriptors");
+		if (actual.isRoot())
+			failWithMessage("Expected TestDescriptor to not be a root container that contains everything else");
+		if (!actual.isTest())
+			failWithMessage("Expected TestDescriptor to be a test");
+
+		return this;
+	}
+
 	public TestDescriptorAssert isRegularContainer() {
 		isNotNull();
 		if (!actual.isContainer())
@@ -148,18 +160,6 @@ public class TestDescriptorAssert extends AbstractAssert<TestDescriptorAssert, T
 			failWithMessage("Expected TestDescriptor to be a root container that contains everything else");
 		if (actual.isTest())
 			failWithMessage("Expected TestDescriptor not to be a test");
-
-		return this;
-	}
-
-	public TestDescriptorAssert isJustATest() {
-		isNotNull();
-		if (actual.isContainer())
-			failWithMessage("Expected TestDescriptor to not be a container that can contain other descriptors");
-		if (actual.isRoot())
-			failWithMessage("Expected TestDescriptor to not be a root container that contains everything else");
-		if (!actual.isTest())
-			failWithMessage("Expected TestDescriptor to be a test");
 
 		return this;
 	}
