@@ -12,7 +12,7 @@ import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 //Implements JavaSpec syntax on Jupiter.
 final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSpec {
 	private final SpecClass declaringInstance;
-	private final Stack<TestDescriptor> containers;
+	private final Stack<TestDescriptor> containersInScope;
 
 	public static SpecClassDescriptor of(UniqueId parentId, SpecClass declaringInstance) {
 		Class<? extends SpecClass> declaringClass = declaringInstance.getClass();
@@ -26,21 +26,19 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 	private SpecClassDescriptor(UniqueId uniqueId, String displayName, SpecClass declaringInstance) {
 		super(uniqueId, displayName);
 		this.declaringInstance = declaringInstance;
-		this.containers = new Stack<>();
+		this.containersInScope = new Stack<>();
 	}
-
-	/* Jupiter */
 
 	@Override
 	public Type getType() {
 		return Type.CONTAINER;
 	}
 
-	/* JavaSpec */
+	/* Discovery */
 
 	// Entry point into the discovery process
 	public void discover() {
-		pushContainer(this); // no pop?
+		enterScope(this); // no pop?
 		this.declaringInstance.declareSpecs(this);
 	}
 
@@ -50,9 +48,9 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 		DescribeDescriptor child = DescribeDescriptor.about(container.getUniqueId(), what);
 		container.addChild(child);
 
-		pushContainer(child);
+		enterScope(child);
 		declaration.declare();
-		popContainer();
+		exitScope();
 	}
 
 	@Override
@@ -70,14 +68,14 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 	}
 
 	private TestDescriptor currentContainer() {
-		return this.containers.peek();
+		return this.containersInScope.peek();
 	}
 
-	private void pushContainer(TestDescriptor container) {
-		this.containers.push(container);
+	private void enterScope(TestDescriptor container) {
+		this.containersInScope.push(container);
 	}
 
-	private void popContainer() {
-		this.containers.pop();
+	private void exitScope() {
+		this.containersInScope.pop();
 	}
 }
