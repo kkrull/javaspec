@@ -4,6 +4,7 @@ import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
 import info.javaspec.api.Verification;
 import java.util.Stack;
+import java.util.function.Function;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
@@ -44,23 +45,27 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 
 	@Override
 	public void describe(String what, BehaviorDeclaration declaration) {
-		TestDescriptor container = currentContainer();
-		ContextDescriptor child = ContextDescriptor.describe(container.getUniqueId(), what);
-		container.addChild(child);
-
-		enterScope(child);
-		declaration.declare();
-		exitScope();
+		declareInNewScope(
+			declaration,
+			current -> ContextDescriptor.describe(current.getUniqueId(), what)
+		);
 	}
 
 	@Override
 	public void given(String what, BehaviorDeclaration declaration) {
+		declareInNewScope(
+			declaration,
+			current -> ContextDescriptor.given(current.getUniqueId(), what)
+		);
+	}
+
+	private void declareInNewScope(BehaviorDeclaration block, Function<TestDescriptor, ContextDescriptor> makeChild) {
 		TestDescriptor container = currentContainer();
-		ContextDescriptor child = ContextDescriptor.given(container.getUniqueId(), what);
+		ContextDescriptor child = makeChild.apply(container);
 		container.addChild(child);
 
 		enterScope(child);
-		declaration.declare();
+		block.declare();
 		exitScope();
 	}
 
