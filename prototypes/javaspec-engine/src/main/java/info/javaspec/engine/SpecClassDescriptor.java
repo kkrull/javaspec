@@ -3,6 +3,7 @@ package info.javaspec.engine;
 import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
 import info.javaspec.api.Verification;
+import java.util.Stack;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
@@ -11,7 +12,7 @@ import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 //Implements JavaSpec syntax on Jupiter.
 final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSpec {
 	private final SpecClass declaringInstance;
-	private TestDescriptor container;
+	private final Stack<TestDescriptor> containers;
 
 	public static SpecClassDescriptor of(UniqueId parentId, SpecClass declaringInstance) {
 		Class<? extends SpecClass> declaringClass = declaringInstance.getClass();
@@ -25,6 +26,7 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 	private SpecClassDescriptor(UniqueId uniqueId, String displayName, SpecClass declaringInstance) {
 		super(uniqueId, displayName);
 		this.declaringInstance = declaringInstance;
+		this.containers = new Stack<>();
 	}
 
 	/* Jupiter */
@@ -38,7 +40,7 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 
 	// Entry point into the discovery process
 	public void discover() {
-		setCurrentContainer(this);
+		pushContainer(this); // no pop?
 		this.declaringInstance.declareSpecs(this);
 	}
 
@@ -48,9 +50,9 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 		DescribeDescriptor child = DescribeDescriptor.about(container.getUniqueId(), what);
 		container.addChild(child);
 
-		setCurrentContainer(child);
+		pushContainer(child);
 		declaration.declare();
-		setCurrentContainer(this);
+		popContainer();
 	}
 
 	@Override
@@ -68,10 +70,14 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 	}
 
 	private TestDescriptor currentContainer() {
-		return this.container;
+		return this.containers.peek();
 	}
 
-	private void setCurrentContainer(TestDescriptor container) {
-		this.container = container;
+	private void pushContainer(TestDescriptor container) {
+		this.containers.push(container);
+	}
+
+	private void popContainer() {
+		this.containers.pop();
 	}
 }
