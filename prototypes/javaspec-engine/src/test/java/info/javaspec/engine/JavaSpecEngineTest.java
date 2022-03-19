@@ -115,7 +115,7 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertEquals("something", idSegment.getValue());
 
 				assertThat(describeDescriptor).hasDisplayName("something");
-				assertEquals(specClassDescriptor, describeDescriptor.getParent().orElseThrow());
+				assertThat(describeDescriptor).hasParent(specClassDescriptor);
 				assertTrue(describeDescriptor.isContainer());
 				assertFalse(describeDescriptor.isRoot());
 				assertFalse(describeDescriptor.isTest());
@@ -172,7 +172,7 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertEquals("test", idSegment.getType());
 				assertEquals("one spec", idSegment.getValue());
 
-				assertEquals(specClassDescriptor, specDescriptor.getParent().orElseThrow());
+				assertThat(specDescriptor).hasParent(specClassDescriptor);
 				assertFalse(specDescriptor.isContainer());
 				assertFalse(specDescriptor.isRoot());
 				assertTrue(specDescriptor.isTest());
