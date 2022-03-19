@@ -38,25 +38,14 @@ public class TestDescriptorAssert extends AbstractAssert<TestDescriptorAssert, T
 		return this;
 	}
 
-	public TestDescriptorAssert hasChildrenNamed(String name) {
+	public TestDescriptorAssert hasChildrenNamed(String... displayNames) {
 		isNotNull();
-		List<String> displayNames = actual.getChildren()
+		List<String> actualNames = actual.getChildren()
 			.stream()
 			.map(x -> x.getDisplayName())
 			.collect(Collectors.toList());
 
-		Assertions.assertThat(displayNames).containsExactly(name);
-		return this;
-	}
-
-	public TestDescriptorAssert hasChildrenNamed(String first, String last) {
-		isNotNull();
-		List<String> displayNames = actual.getChildren()
-			.stream()
-			.map(x -> x.getDisplayName())
-			.collect(Collectors.toList());
-
-		Assertions.assertThat(displayNames).containsExactly(first, last);
+		Assertions.assertThat(actualNames).containsExactly(displayNames);
 		return this;
 	}
 
