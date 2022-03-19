@@ -1,9 +1,13 @@
 package info.javaspec.engine;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.assertj.core.api.AbstractAssert;
+import org.assertj.core.api.Assertions;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.UniqueId.Segment;
@@ -16,6 +20,17 @@ public class TestDescriptorAssert extends AbstractAssert<TestDescriptorAssert, T
 
 	public TestDescriptorAssert(TestDescriptor testDescriptor) {
 		super(testDescriptor, TestDescriptorAssert.class);
+	}
+
+	public TestDescriptorAssert hasChildrenNamed(String name) {
+		isNotNull();
+		List<String> displayNames = actual.getChildren()
+			.stream()
+			.map(x -> x.getDisplayName())
+			.collect(Collectors.toList());
+
+		Assertions.assertThat(displayNames).containsExactly(name);
+		return this;
 	}
 
 	public TestDescriptorAssert hasDisplayName(String expected) {

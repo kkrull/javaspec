@@ -84,13 +84,8 @@ public class JavaSpecEngineTest implements SpecClass {
 					UniqueId.forEngine(subject.getId())
 				);
 
-				// TODO KDK: Add assertion for children's display names
-				List<TestDescriptor> specClassDescriptors = new ArrayList<>(returned.getChildren());
-				assertEquals(1, returned.getChildren().size());
-
-				TestDescriptor onlyChild = specClassDescriptors.get(0);
-				assertThat(onlyChild)
-					.hasDisplayName(nullSpecClass.getName())
+				assertThat(returned).hasChildrenNamed(nullSpecClass.getName());
+				assertThat(returned.getChildren().iterator().next())
 					.hasIdEndingIn("class", nullSpecClass.getName())
 					.isRegularContainer()
 					.hasParent(returned);
