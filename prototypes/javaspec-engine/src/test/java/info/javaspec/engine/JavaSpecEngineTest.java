@@ -187,6 +187,28 @@ public class JavaSpecEngineTest implements SpecClass {
 					.isRegularContainer();
 			});
 
+			javaspec.it("discovers specs declared inside a given block", () -> {
+				JavaSpecEngine subject = new JavaSpecEngine();
+				TestDescriptor returned = subject.discover(
+					classEngineDiscoveryRequest(AnonymousSpecClasses.givenWithOneSpec()),
+					UniqueId.forEngine(subject.getId())
+				);
+
+				assertThat(returned).hasChildren(1);
+
+				TestDescriptor specClass = returned.getChildren().iterator().next();
+				assertThat(specClass).hasChildrenNamed("given");
+
+				TestDescriptor given = specClass.getChildren().iterator().next();
+				assertThat(given).hasChildrenNamed("spec");
+
+				TestDescriptor spec = given.getChildren().iterator().next();
+				assertThat(spec)
+					.hasIdEndingIn("spec", "spec")
+					.hasParent(given)
+					.isJustATest();
+			});
+
 			javaspec.it("doesn't get fooled by nested describe blocks", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
 				TestDescriptor returned = subject.discover(

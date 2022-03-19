@@ -75,6 +75,21 @@ public class AnonymousSpecClasses {
 		};
 	}
 
+	public static Class<? extends SpecClass> givenWithOneSpec() {
+		return givenWithOneSpecInstance().getClass();
+	}
+
+	private static SpecClass givenWithOneSpecInstance() {
+		return new SpecClass() {
+			@Override
+			public void declareSpecs(JavaSpec javaspec) {
+				javaspec.given("given", () -> {
+					javaspec.pending("spec");
+				});
+			}
+		};
+	}
+
 	public static Class<? extends SpecClass> nestedDescribe() {
 		return nestedDescribeInstance().getClass();
 	}
