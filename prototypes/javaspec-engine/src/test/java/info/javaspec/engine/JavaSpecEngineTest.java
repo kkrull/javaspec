@@ -49,10 +49,11 @@ public class JavaSpecEngineTest implements SpecClass {
 				UniqueId engineId = UniqueId.forEngine(subject.getId());
 
 				TestDescriptor returned = subject.discover(nullEngineDiscoveryRequest(), engineId);
-				assertThat(returned.getUniqueId()).isEqualTo(engineId);
-				assertThat(returned).hasDisplayName("JavaSpec");
+				assertThat(returned)
+					.hasDisplayName("JavaSpec")
+					.hasUniqueId(engineId)
+					.isRootContainer();
 				assertThat(returned.getParent()).isEmpty();
-				assertThat(returned).isRootContainer();
 			});
 
 			javaspec.it("discovers no containers or tests, given no selectors", () -> {

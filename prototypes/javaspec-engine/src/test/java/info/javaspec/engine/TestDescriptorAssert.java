@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Optional;
 import org.assertj.core.api.AbstractAssert;
 import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.UniqueId.Segment;
 
 //Assertions on Jupiter TestDescriptors
@@ -77,6 +78,19 @@ public class TestDescriptorAssert extends AbstractAssert<TestDescriptorAssert, T
 				"Expected TestDescriptor to have parent <%s> but was <%s>",
 				expectedParent,
 				actualParent.orElseThrow()
+			);
+		}
+
+		return this;
+	}
+
+	public TestDescriptorAssert hasUniqueId(UniqueId expected) {
+		isNotNull();
+		if (!Objects.equals(actual.getUniqueId(), expected)) {
+			failWithMessage(
+				"Expected TestDescriptor to have UniqueId <%s> but was <%s>",
+				expected,
+				actual.getUniqueId()
 			);
 		}
 
