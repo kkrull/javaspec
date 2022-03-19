@@ -178,7 +178,7 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertThat(returned).hasChildren(1);
 
 				TestDescriptor specClass = returned.getChildren().iterator().next();
-				assertThat(specClass).hasChildrenNamed("given-block");
+				assertThat(specClass).hasChildrenNamed("given");
 
 				TestDescriptor given = specClass.getChildren().iterator().next();
 				assertThat(given)

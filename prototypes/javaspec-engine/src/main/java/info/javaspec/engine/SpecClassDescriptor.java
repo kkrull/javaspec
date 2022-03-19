@@ -45,7 +45,7 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 	@Override
 	public void describe(String what, BehaviorDeclaration declaration) {
 		TestDescriptor container = currentContainer();
-		DescribeDescriptor child = DescribeDescriptor.about(container.getUniqueId(), what);
+		DescribeDescriptor child = DescribeDescriptor.describing(container.getUniqueId(), what);
 		container.addChild(child);
 
 		enterScope(child);
@@ -55,7 +55,9 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 
 	@Override
 	public void given(String what, BehaviorDeclaration declaration) {
-		throw new UnsupportedOperationException("treat this like a DescribeDescriptor, perhaps with another static method");
+		TestDescriptor container = currentContainer();
+		DescribeDescriptor child = DescribeDescriptor.given(container.getUniqueId(), what);
+		container.addChild(child);
 	}
 
 	@Override
