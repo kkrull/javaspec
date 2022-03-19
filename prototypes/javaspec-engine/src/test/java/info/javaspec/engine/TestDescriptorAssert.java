@@ -16,6 +16,19 @@ public class TestDescriptorAssert extends AbstractAssert<TestDescriptorAssert, T
 		super(testDescriptor, TestDescriptorAssert.class);
 	}
 
+	public TestDescriptorAssert hasDisplayName(String expected) {
+		isNotNull();
+		if (!Objects.equals(actual.getDisplayName(), expected)) {
+			failWithMessage(
+				"Expected TestDescriptor to have display name <%s> but was <%s>",
+				expected,
+				actual.getDisplayName()
+			);
+		}
+
+		return this;
+	}
+
 	public TestDescriptorAssert hasNoChildren() {
 		isNotNull();
 		if (!Objects.equals(actual.getChildren(), Collections.emptySet())) {

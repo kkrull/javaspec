@@ -50,7 +50,7 @@ public class JavaSpecEngineTest implements SpecClass {
 
 				TestDescriptor returned = subject.discover(nullEngineDiscoveryRequest(), engineId);
 				assertThat(returned.getUniqueId()).isEqualTo(engineId);
-				assertThat(returned.getDisplayName()).isEqualTo("JavaSpec");
+				assertThat(returned).hasDisplayName("JavaSpec");
 				assertThat(returned.getParent()).isEmpty();
 				assertThat(returned).isRootContainer();
 			});
@@ -92,7 +92,7 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertEquals("class", idSegment.getType());
 				assertEquals(nullSpecClass.getName(), idSegment.getValue());
 
-				assertEquals(nullSpecClass.getName(), onlyChild.getDisplayName()); // TODO KDK: Add assertion for name and ID
+				assertThat(onlyChild).hasDisplayName(nullSpecClass.getName());
 				assertThat(onlyChild)
 					.isRegularContainer()
 					.hasParent(returned);
@@ -114,7 +114,7 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertEquals("describe-block", idSegment.getType());
 				assertEquals("something", idSegment.getValue());
 
-				assertEquals("something", describeDescriptor.getDisplayName());
+				assertThat(describeDescriptor).hasDisplayName("something");
 				assertEquals(specClassDescriptor, describeDescriptor.getParent().orElseThrow());
 				assertTrue(describeDescriptor.isContainer());
 				assertFalse(describeDescriptor.isRoot());
@@ -135,7 +135,7 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertEquals(1, describeDescriptor.getChildren().size());
 
 				TestDescriptor specDescriptor = describeDescriptor.getChildren().iterator().next();
-				assertEquals("works", specDescriptor.getDisplayName());
+				assertThat(specDescriptor).hasDisplayName("works");
 				assertTrue(specDescriptor.isTest());
 			});
 
