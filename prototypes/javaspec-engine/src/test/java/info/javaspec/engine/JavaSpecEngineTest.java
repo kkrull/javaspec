@@ -3,19 +3,16 @@ package info.javaspec.engine;
 import static info.javaspec.engine.DiscoverySelectorFactory.nullDiscoverySelector;
 import static info.javaspec.engine.EngineDiscoveryRequestFactory.classEngineDiscoveryRequest;
 import static info.javaspec.engine.EngineDiscoveryRequestFactory.nullEngineDiscoveryRequest;
+import static info.javaspec.engine.TestDescriptorAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.testkit.engine.EventConditions.*;
 
 import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.assertj.core.api.Condition;
-import org.assertj.core.util.Lists;
 import org.junit.platform.commons.annotation.Testable;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.TestDescriptor;
@@ -48,19 +45,21 @@ public class JavaSpecEngineTest implements SpecClass {
 				UniqueId engineId = UniqueId.forEngine(subject.getId());
 
 				TestDescriptor returned = subject.discover(nullEngineDiscoveryRequest(), engineId);
-				assertEquals(engineId, returned.getUniqueId());
-				assertEquals("JavaSpec", returned.getDisplayName());
-				assertEquals(Optional.empty(), returned.getParent());
-				assertTrue(returned.isContainer());
-				assertTrue(returned.isRoot());
+				assertThat(returned)
+					.hasDisplayName("JavaSpec")
+					.hasUniqueId(engineId)
+					.isRootContainer();
+				assertThat(returned.getParent()).isEmpty();
 			});
 
 			javaspec.it("discovers no containers or tests, given no selectors", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
+				TestDescriptor returned = subject.discover(
+					nullEngineDiscoveryRequest(),
+					UniqueId.forEngine(subject.getId())
+				);
 
-				TestDescriptor returned = subject.discover(nullEngineDiscoveryRequest(), UniqueId.forEngine(subject.getId()));
-				assertEquals(Collections.emptySet(), returned.getChildren());
-				assertFalse(returned.isTest());
+				assertThat(returned).hasNoChildren();
 			});
 
 			javaspec.it("ignores selectors for classes that are not SpecClass", () -> {
@@ -69,7 +68,8 @@ public class JavaSpecEngineTest implements SpecClass {
 					classEngineDiscoveryRequest(AnonymousSpecClasses.notASpecClass()),
 					UniqueId.forEngine(subject.getId())
 				);
-				assertEquals(Collections.emptySet(), returned.getChildren());
+
+				assertThat(returned).hasNoChildren();
 			});
 
 			javaspec.it("discovers a container for each selected spec class", () -> {
@@ -80,19 +80,11 @@ public class JavaSpecEngineTest implements SpecClass {
 					UniqueId.forEngine(subject.getId())
 				);
 
-				List<TestDescriptor> specClassDescriptors = new ArrayList<>(returned.getChildren());
-				assertEquals(1, returned.getChildren().size());
-
-				TestDescriptor onlyChild = specClassDescriptors.get(0);
-				UniqueId.Segment idSegment = onlyChild.getUniqueId().getLastSegment();
-				assertEquals("class", idSegment.getType());
-				assertEquals(nullSpecClass.getName(), idSegment.getValue());
-
-				assertEquals(nullSpecClass.getName(), onlyChild.getDisplayName());
-				assertEquals(returned, onlyChild.getParent().orElseThrow());
-				assertTrue(onlyChild.isContainer());
-				assertFalse(onlyChild.isRoot());
-				assertFalse(onlyChild.isTest());
+				assertThat(returned).hasChildrenNamed(nullSpecClass.getName());
+				assertThat(returned.getChildren().iterator().next())
+					.hasIdEndingIn("class", nullSpecClass.getName())
+					.isRegularContainer()
+					.hasParent(returned);
 			});
 
 			javaspec.it("discovers a describe block", () -> {
@@ -102,20 +94,17 @@ public class JavaSpecEngineTest implements SpecClass {
 					UniqueId.forEngine(subject.getId())
 				);
 
-				assertEquals(1, returned.getChildren().size());
+				assertThat(returned).hasChildren(1);
+
 				TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
+				assertThat(specClassDescriptor).hasChildren(1);
 
-				assertEquals(1, specClassDescriptor.getChildren().size());
 				TestDescriptor describeDescriptor = specClassDescriptor.getChildren().iterator().next();
-				UniqueId.Segment idSegment = describeDescriptor.getUniqueId().getLastSegment();
-				assertEquals("describe-block", idSegment.getType());
-				assertEquals("something", idSegment.getValue());
-
-				assertEquals("something", describeDescriptor.getDisplayName());
-				assertEquals(specClassDescriptor, describeDescriptor.getParent().orElseThrow());
-				assertTrue(describeDescriptor.isContainer());
-				assertFalse(describeDescriptor.isRoot());
-				assertFalse(describeDescriptor.isTest());
+				assertThat(describeDescriptor)
+					.hasDisplayName("something")
+					.hasIdEndingIn("describe-block", "something")
+					.hasParent(specClassDescriptor)
+					.isRegularContainer();
 			});
 
 			javaspec.it("discovers a describe block with a spec in it", () -> {
@@ -126,14 +115,15 @@ public class JavaSpecEngineTest implements SpecClass {
 				);
 
 				TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
-				assertEquals(1, specClassDescriptor.getChildren().size());
+				assertThat(specClassDescriptor).hasChildren(1);
 
 				TestDescriptor describeDescriptor = specClassDescriptor.getChildren().iterator().next();
-				assertEquals(1, describeDescriptor.getChildren().size());
+				assertThat(describeDescriptor).hasChildren(1);
 
 				TestDescriptor specDescriptor = describeDescriptor.getChildren().iterator().next();
-				assertEquals("works", specDescriptor.getDisplayName());
-				assertTrue(specDescriptor.isTest());
+				assertThat(specDescriptor)
+					.hasDisplayName("works")
+					.isJustATest();
 			});
 
 			javaspec.pending("discovers specs declared after nested describe blocks, realizing the beauty of a Stack");
@@ -146,12 +136,10 @@ public class JavaSpecEngineTest implements SpecClass {
 				);
 
 				TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
-				assertEquals(1, specClassDescriptor.getChildren().size());
+				assertThat(specClassDescriptor).hasChildren(1);
 
 				TestDescriptor specDescriptor = specClassDescriptor.getChildren().iterator().next();
-				UniqueId.Segment idSegment = specDescriptor.getUniqueId().getLastSegment();
-				assertEquals("test", idSegment.getType());
-				assertEquals("pending spec", idSegment.getValue());
+				assertThat(specDescriptor).hasIdEndingIn("test", "pending spec");
 			});
 
 			javaspec.it("discovers a test for each spec in a spec class", () -> {
@@ -162,17 +150,13 @@ public class JavaSpecEngineTest implements SpecClass {
 				);
 
 				TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
-				assertEquals(1, specClassDescriptor.getChildren().size());
+				assertThat(specClassDescriptor).hasChildren(1);
 
 				TestDescriptor specDescriptor = specClassDescriptor.getChildren().iterator().next();
-				UniqueId.Segment idSegment = specDescriptor.getUniqueId().getLastSegment();
-				assertEquals("test", idSegment.getType());
-				assertEquals("one spec", idSegment.getValue());
-
-				assertEquals(specClassDescriptor, specDescriptor.getParent().orElseThrow());
-				assertFalse(specDescriptor.isContainer());
-				assertFalse(specDescriptor.isRoot());
-				assertTrue(specDescriptor.isTest());
+				assertThat(specDescriptor)
+					.hasIdEndingIn("test", "one spec")
+					.hasParent(specClassDescriptor)
+					.isJustATest();
 			});
 
 			javaspec.it("discovers specs declared after a describe block in the same level of nesting", () -> {
@@ -183,10 +167,7 @@ public class JavaSpecEngineTest implements SpecClass {
 				);
 
 				TestDescriptor specClass = returned.getChildren().iterator().next();
-				List<String> displayNames = specClass.getChildren().stream()
-					.map(TestDescriptor::getDisplayName)
-					.collect(Collectors.toList());
-				assertEquals(Lists.newArrayList("something", "spec"), displayNames);
+				assertThat(specClass).hasChildrenNamed("something", "spec");
 			});
 		});
 
