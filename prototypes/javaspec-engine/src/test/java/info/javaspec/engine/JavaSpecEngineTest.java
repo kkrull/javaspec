@@ -168,6 +168,25 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertThat(specClass).hasChildrenNamed("something", "spec");
 			});
 
+			javaspec.it("discovers a container for a given block", () -> {
+				JavaSpecEngine subject = new JavaSpecEngine();
+				TestDescriptor returned = subject.discover(
+					classEngineDiscoveryRequest(AnonymousSpecClasses.emptyGiven()),
+					UniqueId.forEngine(subject.getId())
+				);
+
+				assertThat(returned).hasChildren(1);
+
+				TestDescriptor specClass = returned.getChildren().iterator().next();
+				assertThat(specClass).hasChildrenNamed("given-block");
+
+				TestDescriptor given = specClass.getChildren().iterator().next();
+				assertThat(given)
+					.hasIdEndingIn("given-block", "given")
+					.hasParent(specClass)
+					.isRegularContainer();
+			});
+
 			javaspec.it("doesn't get fooled by nested describe blocks", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
 				TestDescriptor returned = subject.discover(

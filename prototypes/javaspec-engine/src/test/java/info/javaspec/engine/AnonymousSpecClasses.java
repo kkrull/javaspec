@@ -51,6 +51,19 @@ public class AnonymousSpecClasses {
 		};
 	}
 
+	public static Class<? extends SpecClass> emptyGiven() {
+		return emptyGivenInstance().getClass();
+	}
+
+	private static SpecClass emptyGivenInstance() {
+		return new SpecClass() {
+			@Override
+			public void declareSpecs(JavaSpec javaspec) {
+				javaspec.given("given", () -> {});
+			}
+		};
+	}
+
 	public static Class<? extends SpecClass> emptySpecClass() {
 		return emptySpecClassInstance().getClass();
 	}
