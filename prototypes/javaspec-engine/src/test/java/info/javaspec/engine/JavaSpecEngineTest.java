@@ -87,7 +87,7 @@ public class JavaSpecEngineTest implements SpecClass {
 					.hasParent(returned);
 			});
 
-			javaspec.it("discovers a skipped test for each pending spec in a SpecClass", () -> {
+			javaspec.it("discovers a skipped test for each pending spec", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
 				TestDescriptor returned = subject.discover(
 					classEngineDiscoveryRequest(AnonymousSpecClasses.pendingSpec()),
@@ -101,7 +101,7 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertThat(specDescriptor).hasIdEndingIn("test", "pending spec");
 			});
 
-			javaspec.it("discovers a test for each spec in a SpecClass", () -> {
+			javaspec.it("discovers a test for each spec", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
 				TestDescriptor returned = subject.discover(
 					classEngineDiscoveryRequest(AnonymousSpecClasses.oneSpec()),
@@ -118,7 +118,7 @@ public class JavaSpecEngineTest implements SpecClass {
 					.isJustATest();
 			});
 
-			javaspec.it("discovers a describe block", () -> {
+			javaspec.it("discovers a container for a describe block", () -> {
 				JavaSpecEngine subject = new JavaSpecEngine();
 				TestDescriptor returned = subject.discover(
 					classEngineDiscoveryRequest(AnonymousSpecClasses.emptyDescribe()),
