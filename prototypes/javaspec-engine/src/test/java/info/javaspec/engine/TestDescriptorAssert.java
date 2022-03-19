@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Optional;
 import org.assertj.core.api.AbstractAssert;
 import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.UniqueId.Segment;
 
 //Assertions on Jupiter TestDescriptors
 public class TestDescriptorAssert extends AbstractAssert<TestDescriptorAssert, TestDescriptor> {
@@ -23,6 +24,23 @@ public class TestDescriptorAssert extends AbstractAssert<TestDescriptorAssert, T
 				"Expected TestDescriptor to have display name <%s> but was <%s>",
 				expected,
 				actual.getDisplayName()
+			);
+		}
+
+		return this;
+	}
+
+	public TestDescriptorAssert hasIdEndingIn(String type, String value) {
+		isNotNull();
+		Segment actualSegment = actual.getUniqueId().getLastSegment();
+
+		if (!Objects.equals(actualSegment.getType(), type)
+			|| !Objects.equals(actualSegment.getValue(), value)) {
+			failWithMessage(
+				"Expected TestDescriptor's UniqueId to end in <%s:%s> but was <%s>",
+				type,
+				value,
+				actualSegment
 			);
 		}
 

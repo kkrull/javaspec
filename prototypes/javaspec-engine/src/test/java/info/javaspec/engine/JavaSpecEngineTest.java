@@ -88,9 +88,7 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertEquals(1, returned.getChildren().size());
 
 				TestDescriptor onlyChild = specClassDescriptors.get(0);
-				UniqueId.Segment idSegment = onlyChild.getUniqueId().getLastSegment();
-				assertEquals("class", idSegment.getType());
-				assertEquals(nullSpecClass.getName(), idSegment.getValue());
+				assertThat(onlyChild).hasIdEndingIn("class", nullSpecClass.getName());
 
 				assertThat(onlyChild).hasDisplayName(nullSpecClass.getName());
 				assertThat(onlyChild)
@@ -110,9 +108,10 @@ public class JavaSpecEngineTest implements SpecClass {
 
 				assertEquals(1, specClassDescriptor.getChildren().size());
 				TestDescriptor describeDescriptor = specClassDescriptor.getChildren().iterator().next();
-				UniqueId.Segment idSegment = describeDescriptor.getUniqueId().getLastSegment();
-				assertEquals("describe-block", idSegment.getType());
-				assertEquals("something", idSegment.getValue());
+				assertThat(describeDescriptor).hasIdEndingIn(
+					"describe-block",
+					"something"
+				);
 
 				assertThat(describeDescriptor).hasDisplayName("something");
 				assertThat(describeDescriptor).hasParent(specClassDescriptor);
@@ -152,9 +151,7 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertEquals(1, specClassDescriptor.getChildren().size());
 
 				TestDescriptor specDescriptor = specClassDescriptor.getChildren().iterator().next();
-				UniqueId.Segment idSegment = specDescriptor.getUniqueId().getLastSegment();
-				assertEquals("test", idSegment.getType());
-				assertEquals("pending spec", idSegment.getValue());
+				assertThat(specDescriptor).hasIdEndingIn("test", "pending spec");
 			});
 
 			javaspec.it("discovers a test for each spec in a spec class", () -> {
@@ -168,9 +165,7 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertEquals(1, specClassDescriptor.getChildren().size());
 
 				TestDescriptor specDescriptor = specClassDescriptor.getChildren().iterator().next();
-				UniqueId.Segment idSegment = specDescriptor.getUniqueId().getLastSegment();
-				assertEquals("test", idSegment.getType());
-				assertEquals("one spec", idSegment.getValue());
+				assertThat(specDescriptor).hasIdEndingIn("test", "one spec");
 
 				assertThat(specDescriptor).hasParent(specClassDescriptor);
 				assertFalse(specDescriptor.isContainer());
