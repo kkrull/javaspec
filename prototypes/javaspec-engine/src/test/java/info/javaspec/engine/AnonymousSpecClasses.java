@@ -62,6 +62,23 @@ public class AnonymousSpecClasses {
 		};
 	}
 
+	public static Class<? extends SpecClass> nestedDescribe() {
+		return nestedDescribeInstance().getClass();
+	}
+
+	private static SpecClass nestedDescribeInstance() {
+		return new SpecClass() {
+			@Override
+			public void declareSpecs(JavaSpec javaspec) {
+				javaspec.describe("describe-outer", () -> {
+					javaspec.describe("describe-inner", () -> {});
+					javaspec.pending("describe-outer-spec");
+					;
+				});
+			}
+		};
+	}
+
 	public static Class<?> notASpecClass() {
 		return new Object() {}.getClass();
 	}

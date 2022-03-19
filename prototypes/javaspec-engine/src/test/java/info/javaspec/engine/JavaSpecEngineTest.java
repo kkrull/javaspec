@@ -168,7 +168,24 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertThat(specClass).hasChildrenNamed("something", "spec");
 			});
 
-			javaspec.pending("discovers specs declared after nested describe blocks, realizing the beauty of a Stack");
+			javaspec.it("doesn't get fooled by nested describe blocks", () -> {
+				JavaSpecEngine subject = new JavaSpecEngine();
+				TestDescriptor returned = subject.discover(
+					classEngineDiscoveryRequest(AnonymousSpecClasses.nestedDescribe()),
+					UniqueId.forEngine(subject.getId())
+				);
+
+				assertThat(returned).hasChildren(1);
+
+				TestDescriptor specClass = returned.getChildren().iterator().next();
+				assertThat(specClass).hasChildrenNamed("describe-outer");
+
+				TestDescriptor describeOuter = specClass.getChildren().iterator().next();
+				assertThat(describeOuter).hasChildrenNamed(
+					"describe-inner",
+					"describe-outer-spec"
+				);
+			});
 		});
 
 		javaspec.describe("#execute", () -> {
