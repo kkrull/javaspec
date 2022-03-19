@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.assertj.core.api.AbstractAssert;
@@ -22,6 +23,22 @@ public class TestDescriptorAssert extends AbstractAssert<TestDescriptorAssert, T
 		super(testDescriptor, TestDescriptorAssert.class);
 	}
 
+  public TestDescriptorAssert hasChildren(int expectedNum) {
+		isNotNull();
+
+		Set<? extends TestDescriptor> actualChildren = actual.getChildren();
+		if (actualChildren.size() != expectedNum) {
+			failWithMessage(
+				"Expected TestDescriptor to have <%d> children but has <%d>: <%s>",
+				expectedNum,
+				actualChildren.size(),
+				actualChildren
+			);
+		}
+
+		return this;
+  }
+
 	public TestDescriptorAssert hasChildrenNamed(String name) {
 		isNotNull();
 		List<String> displayNames = actual.getChildren()
@@ -30,6 +47,17 @@ public class TestDescriptorAssert extends AbstractAssert<TestDescriptorAssert, T
 			.collect(Collectors.toList());
 
 		Assertions.assertThat(displayNames).containsExactly(name);
+		return this;
+	}
+
+	public TestDescriptorAssert hasChildrenNamed(String first, String last) {
+		isNotNull();
+		List<String> displayNames = actual.getChildren()
+			.stream()
+			.map(x -> x.getDisplayName())
+			.collect(Collectors.toList());
+
+		Assertions.assertThat(displayNames).containsExactly(first, last);
 		return this;
 	}
 

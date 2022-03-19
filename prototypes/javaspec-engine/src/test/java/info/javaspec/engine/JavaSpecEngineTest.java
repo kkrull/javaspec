@@ -98,10 +98,11 @@ public class JavaSpecEngineTest implements SpecClass {
 					UniqueId.forEngine(subject.getId())
 				);
 
-				assertEquals(1, returned.getChildren().size());
-				TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
+				assertThat(returned).hasChildren(1);
 
-				assertEquals(1, specClassDescriptor.getChildren().size());
+				TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
+				assertThat(specClassDescriptor).hasChildren(1);
+
 				TestDescriptor describeDescriptor = specClassDescriptor.getChildren().iterator().next();
 				assertThat(describeDescriptor)
 					.hasDisplayName("something")
@@ -118,10 +119,10 @@ public class JavaSpecEngineTest implements SpecClass {
 				);
 
 				TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
-				assertEquals(1, specClassDescriptor.getChildren().size());
+				assertThat(specClassDescriptor).hasChildren(1);
 
 				TestDescriptor describeDescriptor = specClassDescriptor.getChildren().iterator().next();
-				assertEquals(1, describeDescriptor.getChildren().size());
+				assertThat(describeDescriptor).hasChildren(1);
 
 				TestDescriptor specDescriptor = describeDescriptor.getChildren().iterator().next();
 				assertThat(specDescriptor)
@@ -139,7 +140,7 @@ public class JavaSpecEngineTest implements SpecClass {
 				);
 
 				TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
-				assertEquals(1, specClassDescriptor.getChildren().size());
+				assertThat(specClassDescriptor).hasChildren(1);
 
 				TestDescriptor specDescriptor = specClassDescriptor.getChildren().iterator().next();
 				assertThat(specDescriptor).hasIdEndingIn("test", "pending spec");
@@ -153,7 +154,7 @@ public class JavaSpecEngineTest implements SpecClass {
 				);
 
 				TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
-				assertEquals(1, specClassDescriptor.getChildren().size());
+				assertThat(specClassDescriptor).hasChildren(1);
 
 				TestDescriptor specDescriptor = specClassDescriptor.getChildren().iterator().next();
 				assertThat(specDescriptor)
@@ -170,10 +171,7 @@ public class JavaSpecEngineTest implements SpecClass {
 				);
 
 				TestDescriptor specClass = returned.getChildren().iterator().next();
-				List<String> displayNames = specClass.getChildren().stream()
-					.map(TestDescriptor::getDisplayName)
-					.collect(Collectors.toList());
-				assertEquals(Lists.newArrayList("something", "spec"), displayNames);
+				assertThat(specClass).hasChildrenNamed("something", "spec");
 			});
 		});
 
