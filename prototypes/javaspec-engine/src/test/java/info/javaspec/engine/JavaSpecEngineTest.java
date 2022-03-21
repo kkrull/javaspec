@@ -204,16 +204,14 @@ public class JavaSpecEngineTest implements SpecClass {
 					assertThat(returned).hasChildren(1);
 
 					TestDescriptor specClass = returned.getChildren().iterator().next();
-					assertThat(specClass).hasChildrenNamed("given");
+					assertThat(specClass).hasChildrenNamed("given a precondition");
 
 					TestDescriptor given = specClass.getChildren().iterator().next();
 					assertThat(given)
-						.hasIdEndingIn("given-block", "given")
+						.hasIdEndingIn("given-block", "a precondition")
 						.hasParent(specClass)
 						.isRegularContainer();
 				});
-
-				javaspec.pending("prepends the word 'given' onto the display name");
 
 				javaspec.it("discovers specs declared inside a given block", () -> {
 					JavaSpecEngine subject = new JavaSpecEngine();
@@ -225,7 +223,7 @@ public class JavaSpecEngineTest implements SpecClass {
 					assertThat(returned).hasChildren(1);
 
 					TestDescriptor specClass = returned.getChildren().iterator().next();
-					assertThat(specClass).hasChildrenNamed("given");
+					assertThat(specClass).hasChildren(1);
 
 					TestDescriptor given = specClass.getChildren().iterator().next();
 					assertThat(given).hasChildrenNamed("spec");

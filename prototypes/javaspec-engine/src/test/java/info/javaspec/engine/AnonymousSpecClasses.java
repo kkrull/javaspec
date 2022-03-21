@@ -59,7 +59,7 @@ public class AnonymousSpecClasses {
 		return new SpecClass() {
 			@Override
 			public void declareSpecs(JavaSpec javaspec) {
-				javaspec.given("given", () -> {});
+				javaspec.given("a precondition", () -> {});
 			}
 		};
 	}
@@ -83,7 +83,7 @@ public class AnonymousSpecClasses {
 		return new SpecClass() {
 			@Override
 			public void declareSpecs(JavaSpec javaspec) {
-				javaspec.given("given", () -> {
+				javaspec.given("a precondition", () -> {
 					javaspec.pending("spec");
 				});
 			}
