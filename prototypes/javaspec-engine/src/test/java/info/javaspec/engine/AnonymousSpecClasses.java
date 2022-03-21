@@ -164,4 +164,20 @@ public class AnonymousSpecClasses {
 			}
 		};
 	}
+
+	public static Class<? extends SpecClass> withFaultyConstructor() {
+		return withFaultyConstructorInstance().getClass();
+	}
+
+	private static SpecClass withFaultyConstructorInstance() {
+		return new SpecClass() {
+			{
+				if (true != false)
+					throw new RuntimeException("bang!");
+			}
+
+			@Override
+			public void declareSpecs(JavaSpec javaspec) { /* empty */ }
+		};
+	}
 }

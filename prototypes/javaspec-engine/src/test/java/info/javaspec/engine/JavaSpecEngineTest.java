@@ -66,10 +66,22 @@ public class JavaSpecEngineTest implements SpecClass {
 					assertThat(returned).hasNoChildren();
 				});
 
-				javaspec.it("ignores selectors for classes that are not SpecClass", () -> {
+				javaspec.it("ignores selectors for classes that are not SpecClass (Gradle default behavior)", () -> {
 					JavaSpecEngine subject = new JavaSpecEngine();
 					TestDescriptor returned = subject.discover(
 						classEngineDiscoveryRequest(AnonymousSpecClasses.notASpecClass()),
+						UniqueId.forEngine(subject.getId())
+					);
+
+					assertThat(returned).hasNoChildren();
+				});
+
+				javaspec.it("skips a selected SpecClass that won't instantiate", () -> {
+					// TODO KDK: Would this be a useful thing to report to
+					// EngineDiscoveryRequestListener#onSkipSpecClass(Class, Reason, Throwable)?
+					JavaSpecEngine subject = new JavaSpecEngine();
+					TestDescriptor returned = subject.discover(
+						classEngineDiscoveryRequest(AnonymousSpecClasses.withFaultyConstructor()),
 						UniqueId.forEngine(subject.getId())
 					);
 
