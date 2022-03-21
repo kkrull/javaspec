@@ -52,180 +52,190 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertThat(returned.getParent()).isEmpty();
 			});
 
-			javaspec.it("discovers nothing, given no selectors", () -> {
-				JavaSpecEngine subject = new JavaSpecEngine();
-				TestDescriptor returned = subject.discover(
-					nullEngineDiscoveryRequest(),
-					UniqueId.forEngine(subject.getId())
-				);
+			javaspec.describe("edge cases", () -> {
+				javaspec.it("discovers nothing, given no selectors", () -> {
+					JavaSpecEngine subject = new JavaSpecEngine();
+					TestDescriptor returned = subject.discover(
+						nullEngineDiscoveryRequest(),
+						UniqueId.forEngine(subject.getId())
+					);
 
-				assertThat(returned).hasNoChildren();
+					assertThat(returned).hasNoChildren();
+				});
+
+				javaspec.it("ignores selectors for classes that are not SpecClass", () -> {
+					JavaSpecEngine subject = new JavaSpecEngine();
+					TestDescriptor returned = subject.discover(
+						classEngineDiscoveryRequest(AnonymousSpecClasses.notASpecClass()),
+						UniqueId.forEngine(subject.getId())
+					);
+
+					assertThat(returned).hasNoChildren();
+				});
 			});
 
-			javaspec.it("ignores selectors for classes that are not SpecClass", () -> {
-				JavaSpecEngine subject = new JavaSpecEngine();
-				TestDescriptor returned = subject.discover(
-					classEngineDiscoveryRequest(AnonymousSpecClasses.notASpecClass()),
-					UniqueId.forEngine(subject.getId())
-				);
+			javaspec.given("selectors for 1 or more SpecClasses", () -> {
+				javaspec.it("discovers a container for each SpecClass", () -> {
+					JavaSpecEngine subject = new JavaSpecEngine();
+					Class<?> nullSpecClass = AnonymousSpecClasses.emptySpecClass();
+					TestDescriptor returned = subject.discover(
+						classEngineDiscoveryRequest(nullSpecClass),
+						UniqueId.forEngine(subject.getId())
+					);
 
-				assertThat(returned).hasNoChildren();
+					assertThat(returned).hasChildrenNamed(nullSpecClass.getName());
+					assertThat(returned.getChildren().iterator().next())
+						.hasIdEndingIn("class", nullSpecClass.getName())
+						.isRegularContainer()
+						.hasParent(returned);
+				});
+
+				javaspec.it("discovers a skipped test for each pending spec", () -> {
+					JavaSpecEngine subject = new JavaSpecEngine();
+					TestDescriptor returned = subject.discover(
+						classEngineDiscoveryRequest(AnonymousSpecClasses.pendingSpec()),
+						UniqueId.forEngine(subject.getId())
+					);
+
+					TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
+					assertThat(specClassDescriptor).hasChildren(1);
+
+					TestDescriptor specDescriptor = specClassDescriptor.getChildren().iterator().next();
+					assertThat(specDescriptor).hasIdEndingIn("test", "pending spec");
+				});
+
+				javaspec.it("discovers a test for each spec", () -> {
+					JavaSpecEngine subject = new JavaSpecEngine();
+					TestDescriptor returned = subject.discover(
+						classEngineDiscoveryRequest(AnonymousSpecClasses.oneSpec()),
+						UniqueId.forEngine(subject.getId())
+					);
+
+					TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
+					assertThat(specClassDescriptor).hasChildren(1);
+
+					TestDescriptor specDescriptor = specClassDescriptor.getChildren().iterator().next();
+					assertThat(specDescriptor)
+						.hasIdEndingIn("test", "one spec")
+						.hasParent(specClassDescriptor)
+						.isJustATest();
+				});
 			});
 
-			javaspec.it("discovers a container for each selected SpecClass", () -> {
-				JavaSpecEngine subject = new JavaSpecEngine();
-				Class<?> nullSpecClass = AnonymousSpecClasses.emptySpecClass();
-				TestDescriptor returned = subject.discover(
-					classEngineDiscoveryRequest(nullSpecClass),
-					UniqueId.forEngine(subject.getId())
-				);
+			javaspec.given("a selected SpecClass with a describe block", () -> {
+				javaspec.it("discovers a container for a describe block", () -> {
+					JavaSpecEngine subject = new JavaSpecEngine();
+					TestDescriptor returned = subject.discover(
+						classEngineDiscoveryRequest(AnonymousSpecClasses.emptyDescribe()),
+						UniqueId.forEngine(subject.getId())
+					);
 
-				assertThat(returned).hasChildrenNamed(nullSpecClass.getName());
-				assertThat(returned.getChildren().iterator().next())
-					.hasIdEndingIn("class", nullSpecClass.getName())
-					.isRegularContainer()
-					.hasParent(returned);
+					assertThat(returned).hasChildren(1);
+
+					TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
+					assertThat(specClassDescriptor).hasChildren(1);
+
+					TestDescriptor describeDescriptor = specClassDescriptor.getChildren().iterator().next();
+					assertThat(describeDescriptor)
+						.hasDisplayName("something")
+						.hasIdEndingIn("describe-block", "something")
+						.hasParent(specClassDescriptor)
+						.isRegularContainer();
+				});
+
+				javaspec.it("discovers specs declared inside a describe block", () -> {
+					JavaSpecEngine subject = new JavaSpecEngine();
+					TestDescriptor returned = subject.discover(
+						classEngineDiscoveryRequest(AnonymousSpecClasses.describeWithOneSpec()),
+						UniqueId.forEngine(subject.getId())
+					);
+
+					TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
+					assertThat(specClassDescriptor).hasChildren(1);
+
+					TestDescriptor describeDescriptor = specClassDescriptor.getChildren().iterator().next();
+					assertThat(describeDescriptor).hasChildren(1);
+
+					TestDescriptor specDescriptor = describeDescriptor.getChildren().iterator().next();
+					assertThat(specDescriptor)
+						.hasDisplayName("works")
+						.isJustATest();
+				});
+
+				javaspec.it("discovers specs declared next to a describe block", () -> {
+					JavaSpecEngine subject = new JavaSpecEngine();
+					TestDescriptor returned = subject.discover(
+						classEngineDiscoveryRequest(AnonymousSpecClasses.describeThenSpec()),
+						UniqueId.forEngine(subject.getId())
+					);
+
+					TestDescriptor specClass = returned.getChildren().iterator().next();
+					assertThat(specClass).hasChildrenNamed("something", "spec");
+				});
+
+				javaspec.it("doesn't get fooled by nested describe blocks", () -> {
+					JavaSpecEngine subject = new JavaSpecEngine();
+					TestDescriptor returned = subject.discover(
+						classEngineDiscoveryRequest(AnonymousSpecClasses.nestedDescribe()),
+						UniqueId.forEngine(subject.getId())
+					);
+
+					assertThat(returned).hasChildren(1);
+
+					TestDescriptor specClass = returned.getChildren().iterator().next();
+					assertThat(specClass).hasChildrenNamed("describe-outer");
+
+					TestDescriptor describeOuter = specClass.getChildren().iterator().next();
+					assertThat(describeOuter).hasChildrenNamed(
+						"describe-inner",
+						"describe-outer-spec"
+					);
+				});
 			});
 
-			javaspec.it("discovers a skipped test for each pending spec", () -> {
-				JavaSpecEngine subject = new JavaSpecEngine();
-				TestDescriptor returned = subject.discover(
-					classEngineDiscoveryRequest(AnonymousSpecClasses.pendingSpec()),
-					UniqueId.forEngine(subject.getId())
-				);
+			javaspec.given("a selected SpecClass with a given block", () -> {
+				javaspec.it("discovers a container for a given block", () -> {
+					JavaSpecEngine subject = new JavaSpecEngine();
+					TestDescriptor returned = subject.discover(
+						classEngineDiscoveryRequest(AnonymousSpecClasses.emptyGiven()),
+						UniqueId.forEngine(subject.getId())
+					);
 
-				TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
-				assertThat(specClassDescriptor).hasChildren(1);
+					assertThat(returned).hasChildren(1);
 
-				TestDescriptor specDescriptor = specClassDescriptor.getChildren().iterator().next();
-				assertThat(specDescriptor).hasIdEndingIn("test", "pending spec");
-			});
+					TestDescriptor specClass = returned.getChildren().iterator().next();
+					assertThat(specClass).hasChildrenNamed("given");
 
-			javaspec.it("discovers a test for each spec", () -> {
-				JavaSpecEngine subject = new JavaSpecEngine();
-				TestDescriptor returned = subject.discover(
-					classEngineDiscoveryRequest(AnonymousSpecClasses.oneSpec()),
-					UniqueId.forEngine(subject.getId())
-				);
+					TestDescriptor given = specClass.getChildren().iterator().next();
+					assertThat(given)
+						.hasIdEndingIn("given-block", "given")
+						.hasParent(specClass)
+						.isRegularContainer();
+				});
 
-				TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
-				assertThat(specClassDescriptor).hasChildren(1);
+				javaspec.pending("prepends the word 'given' onto the display name");
 
-				TestDescriptor specDescriptor = specClassDescriptor.getChildren().iterator().next();
-				assertThat(specDescriptor)
-					.hasIdEndingIn("test", "one spec")
-					.hasParent(specClassDescriptor)
-					.isJustATest();
-			});
+				javaspec.it("discovers specs declared inside a given block", () -> {
+					JavaSpecEngine subject = new JavaSpecEngine();
+					TestDescriptor returned = subject.discover(
+						classEngineDiscoveryRequest(AnonymousSpecClasses.givenWithOneSpec()),
+						UniqueId.forEngine(subject.getId())
+					);
 
-			javaspec.it("discovers a container for a describe block", () -> {
-				JavaSpecEngine subject = new JavaSpecEngine();
-				TestDescriptor returned = subject.discover(
-					classEngineDiscoveryRequest(AnonymousSpecClasses.emptyDescribe()),
-					UniqueId.forEngine(subject.getId())
-				);
+					assertThat(returned).hasChildren(1);
 
-				assertThat(returned).hasChildren(1);
+					TestDescriptor specClass = returned.getChildren().iterator().next();
+					assertThat(specClass).hasChildrenNamed("given");
 
-				TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
-				assertThat(specClassDescriptor).hasChildren(1);
+					TestDescriptor given = specClass.getChildren().iterator().next();
+					assertThat(given).hasChildrenNamed("spec");
 
-				TestDescriptor describeDescriptor = specClassDescriptor.getChildren().iterator().next();
-				assertThat(describeDescriptor)
-					.hasDisplayName("something")
-					.hasIdEndingIn("describe-block", "something")
-					.hasParent(specClassDescriptor)
-					.isRegularContainer();
-			});
-
-			javaspec.it("discovers specs declared inside a describe block", () -> {
-				JavaSpecEngine subject = new JavaSpecEngine();
-				TestDescriptor returned = subject.discover(
-					classEngineDiscoveryRequest(AnonymousSpecClasses.describeWithOneSpec()),
-					UniqueId.forEngine(subject.getId())
-				);
-
-				TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
-				assertThat(specClassDescriptor).hasChildren(1);
-
-				TestDescriptor describeDescriptor = specClassDescriptor.getChildren().iterator().next();
-				assertThat(describeDescriptor).hasChildren(1);
-
-				TestDescriptor specDescriptor = describeDescriptor.getChildren().iterator().next();
-				assertThat(specDescriptor)
-					.hasDisplayName("works")
-					.isJustATest();
-			});
-
-			javaspec.it("discovers specs declared next to a describe block", () -> {
-				JavaSpecEngine subject = new JavaSpecEngine();
-				TestDescriptor returned = subject.discover(
-					classEngineDiscoveryRequest(AnonymousSpecClasses.describeThenSpec()),
-					UniqueId.forEngine(subject.getId())
-				);
-
-				TestDescriptor specClass = returned.getChildren().iterator().next();
-				assertThat(specClass).hasChildrenNamed("something", "spec");
-			});
-
-			javaspec.it("discovers a container for a given block", () -> {
-				JavaSpecEngine subject = new JavaSpecEngine();
-				TestDescriptor returned = subject.discover(
-					classEngineDiscoveryRequest(AnonymousSpecClasses.emptyGiven()),
-					UniqueId.forEngine(subject.getId())
-				);
-
-				assertThat(returned).hasChildren(1);
-
-				TestDescriptor specClass = returned.getChildren().iterator().next();
-				assertThat(specClass).hasChildrenNamed("given");
-
-				TestDescriptor given = specClass.getChildren().iterator().next();
-				assertThat(given)
-					.hasIdEndingIn("given-block", "given")
-					.hasParent(specClass)
-					.isRegularContainer();
-			});
-
-			javaspec.it("discovers specs declared inside a given block", () -> {
-				JavaSpecEngine subject = new JavaSpecEngine();
-				TestDescriptor returned = subject.discover(
-					classEngineDiscoveryRequest(AnonymousSpecClasses.givenWithOneSpec()),
-					UniqueId.forEngine(subject.getId())
-				);
-
-				assertThat(returned).hasChildren(1);
-
-				TestDescriptor specClass = returned.getChildren().iterator().next();
-				assertThat(specClass).hasChildrenNamed("given");
-
-				TestDescriptor given = specClass.getChildren().iterator().next();
-				assertThat(given).hasChildrenNamed("spec");
-
-				TestDescriptor spec = given.getChildren().iterator().next();
-				assertThat(spec)
-					.hasIdEndingIn("test", "spec")
-					.hasParent(given)
-					.isJustATest();
-			});
-
-			javaspec.it("doesn't get fooled by nested describe blocks", () -> {
-				JavaSpecEngine subject = new JavaSpecEngine();
-				TestDescriptor returned = subject.discover(
-					classEngineDiscoveryRequest(AnonymousSpecClasses.nestedDescribe()),
-					UniqueId.forEngine(subject.getId())
-				);
-
-				assertThat(returned).hasChildren(1);
-
-				TestDescriptor specClass = returned.getChildren().iterator().next();
-				assertThat(specClass).hasChildrenNamed("describe-outer");
-
-				TestDescriptor describeOuter = specClass.getChildren().iterator().next();
-				assertThat(describeOuter).hasChildrenNamed(
-					"describe-inner",
-					"describe-outer-spec"
-				);
+					TestDescriptor spec = given.getChildren().iterator().next();
+					assertThat(spec)
+						.hasIdEndingIn("test", "spec")
+						.hasParent(given)
+						.isJustATest();
+				});
 			});
 		});
 
