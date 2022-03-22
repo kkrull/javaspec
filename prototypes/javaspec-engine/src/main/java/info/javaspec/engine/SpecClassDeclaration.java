@@ -29,7 +29,7 @@ final class SpecClassDeclaration implements JavaSpec {
 	}
 
 	private TestDescriptor discover(UniqueId engineId, SpecClass declaringInstance) {
-		enterScope(SpecClassDescriptor.of(engineId, declaringInstance.getClass()));
+		enterScope(ContextDescriptor.declaringClass(engineId, declaringInstance.getClass()));
 		declaringInstance.declareSpecs(this);
 		return exitScope();
 	}
