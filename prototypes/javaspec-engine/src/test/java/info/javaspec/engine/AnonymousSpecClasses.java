@@ -51,6 +51,19 @@ public class AnonymousSpecClasses {
 		};
 	}
 
+	public static Class<? extends SpecClass> emptyGiven() {
+		return emptyGivenInstance().getClass();
+	}
+
+	private static SpecClass emptyGivenInstance() {
+		return new SpecClass() {
+			@Override
+			public void declareSpecs(JavaSpec javaspec) {
+				javaspec.given("a precondition", () -> {});
+			}
+		};
+	}
+
 	public static Class<? extends SpecClass> emptySpecClass() {
 		return emptySpecClassInstance().getClass();
 	}
@@ -59,6 +72,38 @@ public class AnonymousSpecClasses {
 		return new SpecClass() {
 			@Override
 			public void declareSpecs(JavaSpec javaspec) { /* Do nothing */ }
+		};
+	}
+
+	public static Class<? extends SpecClass> givenWithOneSpec() {
+		return givenWithOneSpecInstance().getClass();
+	}
+
+	private static SpecClass givenWithOneSpecInstance() {
+		return new SpecClass() {
+			@Override
+			public void declareSpecs(JavaSpec javaspec) {
+				javaspec.given("a precondition", () -> {
+					javaspec.pending("spec");
+				});
+			}
+		};
+	}
+
+	public static Class<? extends SpecClass> nestedDescribe() {
+		return nestedDescribeInstance().getClass();
+	}
+
+	private static SpecClass nestedDescribeInstance() {
+		return new SpecClass() {
+			@Override
+			public void declareSpecs(JavaSpec javaspec) {
+				javaspec.describe("describe-outer", () -> {
+					javaspec.describe("describe-inner", () -> {});
+					javaspec.pending("describe-outer-spec");
+					;
+				});
+			}
 		};
 	}
 
