@@ -45,24 +45,24 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 
 	@Override
 	public void describe(String what, BehaviorDeclaration declaration) {
-		declareInNewScope(
+		addChildContainer(
 			declaration,
-			current -> ContextDescriptor.describe(current.getUniqueId(), what)
+			parent -> ContextDescriptor.describe(parent.getUniqueId(), what)
 		);
 	}
 
 	@Override
 	public void given(String what, BehaviorDeclaration declaration) {
-		declareInNewScope(
+		addChildContainer(
 			declaration,
-			current -> ContextDescriptor.given(current.getUniqueId(), what)
+			parent -> ContextDescriptor.given(parent.getUniqueId(), what)
 		);
 	}
 
-	private void declareInNewScope(BehaviorDeclaration block, Function<TestDescriptor, ContextDescriptor> makeChild) {
-		TestDescriptor container = currentContainer();
-		ContextDescriptor child = makeChild.apply(container);
-		container.addChild(child);
+	private void addChildContainer(BehaviorDeclaration block, Function<TestDescriptor, ContextDescriptor> makeChild) {
+		TestDescriptor current = currentContainer();
+		ContextDescriptor child = makeChild.apply(current);
+		current.addChild(child);
 
 		enterScope(child);
 		block.declare();
@@ -73,17 +73,32 @@ final class SpecClassDescriptor extends AbstractTestDescriptor implements JavaSp
 
 	@Override
 	public void it(String behavior, Verification verification) {
-		TestDescriptor container = currentContainer();
-		SpecDescriptor specDescriptor = SpecDescriptor.of(container.getUniqueId(), behavior, verification);
-		container.addChild(specDescriptor);
+		addToCurrentContainer(
+			container -> SpecDescriptor.of(
+				container.getUniqueId(),
+				behavior,
+				verification
+			)
+		);
 	}
 
 	@Override
 	public void pending(String futureBehavior) {
+		addToCurrentContainer(
+			container -> PendingSpecDescriptor.of(
+				container.getUniqueId(),
+				futureBehavior
+			)
+		);
+	}
+
+	private void addToCurrentContainer(Function<TestDescriptor, TestDescriptor> makeChild) {
 		TestDescriptor container = currentContainer();
-		PendingSpecDescriptor specDescriptor = PendingSpecDescriptor.of(container.getUniqueId(), futureBehavior);
+		TestDescriptor specDescriptor = makeChild.apply(container);
 		container.addChild(specDescriptor);
 	}
+
+	/* Declaration scope */
 
 	private TestDescriptor currentContainer() {
 		return this.containersInScope.peek();
