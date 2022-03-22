@@ -29,8 +29,8 @@ public class JavaSpecEngine implements TestEngine {
 		discoveryRequest.getSelectorsByType(ClassSelector.class)
 			.stream()
 			.map(ClassSelector::getJavaClass)
-			.map(selectedClass -> new SpecClassDiscovery(selectedClass))
-			.map(discovery -> discovery.discover(engineId))
+			.map(selectedClass -> new SpecClassDeclaration(selectedClass))
+			.map(declaration -> declaration.run(engineId))
 			.filter(Optional::isPresent)
 			.map(Optional::orElseThrow)
 			.forEach(engineDescriptor::addChild);

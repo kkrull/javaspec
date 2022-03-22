@@ -10,16 +10,17 @@ import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 
 // Runs JavaSpec declarations in a SpecClass, converting them to TestDescriptors Jupiter can use.
-final class SpecClassDiscovery implements JavaSpec {
+final class SpecClassDeclaration implements JavaSpec {
 	private final Class<?> selectedClass;
 	private final Stack<TestDescriptor> containersInScope;
 
-	public SpecClassDiscovery(Class<?> selectedClass) {
+	public SpecClassDeclaration(Class<?> selectedClass) {
 		this.selectedClass = selectedClass;
 		this.containersInScope = new Stack<>();
 	}
 
-	public Optional<TestDescriptor> discover(UniqueId engineId) {
+	// Optional because the Jupiter-selected class often is not a SpecClass
+	public Optional<TestDescriptor> run(UniqueId engineId) {
 		return Optional.of(this.selectedClass)
 			.filter(SpecClass.class::isAssignableFrom)
 			.map(this::instantiate)
