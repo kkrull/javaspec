@@ -6,11 +6,10 @@ import info.javaspec.api.Verification;
 import java.lang.reflect.Constructor;
 import java.util.Optional;
 import java.util.Stack;
-import java.util.function.Function;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 
-// Discovers specs declared in a SpecClass, converting them to a TestDescriptor that Jupiter can recognize.
+// Runs JavaSpec declarations in a SpecClass, converting them to TestDescriptors Jupiter can use.
 final class SpecClassDiscovery implements JavaSpec {
 	private final Class<?> selectedClass;
 	private final Stack<TestDescriptor> containersInScope;
@@ -28,9 +27,15 @@ final class SpecClassDiscovery implements JavaSpec {
 			.map(declaringInstance -> this.discover(engineId, declaringInstance));
 	}
 
-	private Object instantiate(Class<?> clazz) {
+	private TestDescriptor discover(UniqueId engineId, SpecClass declaringInstance) {
+		enterScope(SpecClassDescriptor.of(engineId, declaringInstance.getClass()));
+		declaringInstance.declareSpecs(this);
+		return exitScope();
+	}
+
+	private Object instantiate(Class<?> specClass) {
 		try {
-			Constructor<?> constructor = clazz.getDeclaredConstructor();
+			Constructor<?> constructor = specClass.getDeclaredConstructor();
 			return constructor.newInstance();
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to instantiate spec class", e);
@@ -39,17 +44,9 @@ final class SpecClassDiscovery implements JavaSpec {
 
 	/* Context discovery */
 
-	// Entry point into the discovery process
-	private TestDescriptor discover(UniqueId engineId, SpecClass declaringInstance) {
-		enterScope(SpecClassDescriptor.of(engineId, declaringInstance.getClass()));
-		declaringInstance.declareSpecs(this);
-		return exitScope();
-	}
-
-	// TODO KDK: Do I like this?
 	@Override
 	public void describe(String what, BehaviorDeclaration declaration) {
-		addChildContainer(
+		pushChildContainer(
 			declaration,
 			parent -> ContextDescriptor.describe(parent.getUniqueId(), what)
 		);
@@ -57,20 +54,26 @@ final class SpecClassDiscovery implements JavaSpec {
 
 	@Override
 	public void given(String what, BehaviorDeclaration declaration) {
-		addChildContainer(
+		pushChildContainer(
 			declaration,
 			parent -> ContextDescriptor.given(parent.getUniqueId(), what)
 		);
 	}
 
-	private void addChildContainer(BehaviorDeclaration block, Function<TestDescriptor, ContextDescriptor> makeChild) {
+	private void pushChildContainer(BehaviorDeclaration block, ContainerDescriptorFactory factory) {
 		TestDescriptor current = currentContainer();
-		ContextDescriptor child = makeChild.apply(current);
+		ContextDescriptor child = factory.makeChildContainer(current);
 		current.addChild(child);
 
 		enterScope(child);
 		block.declare();
 		exitScope();
+	}
+
+	// Makes a TestDescriptor for a container, as a child of the given parent
+	@FunctionalInterface
+	private interface ContainerDescriptorFactory {
+		ContextDescriptor makeChildContainer(TestDescriptor parent);
 	}
 
 	/* Spec discovery */
@@ -96,10 +99,16 @@ final class SpecClassDiscovery implements JavaSpec {
 		);
 	}
 
-	private void addToCurrentContainer(Function<TestDescriptor, TestDescriptor> makeChild) {
+	private void addToCurrentContainer(TestDescriptorFactory factory) {
 		TestDescriptor container = currentContainer();
-		TestDescriptor specDescriptor = makeChild.apply(container);
+		TestDescriptor specDescriptor = factory.makeTestDescriptor(container);
 		container.addChild(specDescriptor);
+	}
+
+	// Makes a TestDescriptor for a spec, as a child of the given container
+	@FunctionalInterface
+	private interface TestDescriptorFactory {
+		TestDescriptor makeTestDescriptor(TestDescriptor parent);
 	}
 
 	/* Declaration scope */
