@@ -1,12 +1,12 @@
 package info.javaspec.engine;
 
-import info.javaspec.api.SpecClass;
-import java.lang.reflect.Constructor;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.ClassSelector;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
+// Orchestrates the process of discovering and running specs in a Jupiter runtime.
 public class JavaSpecEngine implements TestEngine {
 	private final EngineDiscoveryRequestListenerProvider loader;
 
@@ -29,27 +29,13 @@ public class JavaSpecEngine implements TestEngine {
 		discoveryRequest.getSelectorsByType(ClassSelector.class)
 			.stream()
 			.map(ClassSelector::getJavaClass)
-			.filter(anyClass -> SpecClass.class.isAssignableFrom(anyClass))
-			.map(specClass -> instantiate(specClass))
-			.map(SpecClass.class::cast)
-			.map(declaringInstance ->
-			{
-				SpecClassDescriptor specClassDescriptor = SpecClassDescriptor.of(engineId, declaringInstance);
-				specClassDescriptor.discover();
-				return specClassDescriptor;
-			})
+			.map(selectedClass -> new SpecClassDiscovery(selectedClass))
+			.map(discovery -> discovery.discover(engineId))
+			.filter(Optional::isPresent)
+			.map(Optional::orElseThrow)
 			.forEach(engineDescriptor::addChild);
 
 		return engineDescriptor;
-	}
-
-	private Object instantiate(Class<?> clazz) {
-		try {
-			Constructor<?> constructor = clazz.getDeclaredConstructor();
-			return constructor.newInstance();
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to instantiate spec class", e);
-		}
 	}
 
 	@Override
