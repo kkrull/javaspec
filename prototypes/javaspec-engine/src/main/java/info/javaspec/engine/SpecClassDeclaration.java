@@ -12,7 +12,7 @@ import org.junit.platform.engine.UniqueId;
 // Runs JavaSpec declarations in a SpecClass, converting them to TestDescriptors Jupiter can use.
 final class SpecClassDeclaration implements JavaSpec {
 	private final Class<?> selectedClass;
-	private final Stack<TestDescriptor> containersInScope;
+	private final Stack<ContextDescriptor> containersInScope;
 
 	public SpecClassDeclaration(Class<?> selectedClass) {
 		this.selectedClass = selectedClass;
@@ -28,7 +28,7 @@ final class SpecClassDeclaration implements JavaSpec {
 			.map(declaringInstance -> this.discover(engineId, declaringInstance));
 	}
 
-	private TestDescriptor discover(UniqueId engineId, SpecClass declaringInstance) {
+	private ContextDescriptor discover(UniqueId engineId, SpecClass declaringInstance) {
 		enterScope(ContextDescriptor.declaringClass(engineId, declaringInstance.getClass()));
 		declaringInstance.declareSpecs(this);
 		return exitScope();
@@ -62,7 +62,7 @@ final class SpecClassDeclaration implements JavaSpec {
 	}
 
 	private void pushChildContainer(BehaviorDeclaration block, ContainerDescriptorFactory factory) {
-		TestDescriptor current = currentContainer();
+		ContextDescriptor current = currentContainer();
 		ContextDescriptor child = factory.makeChildContainer(current);
 		current.addChild(child);
 
@@ -74,7 +74,7 @@ final class SpecClassDeclaration implements JavaSpec {
 	// Makes a TestDescriptor for a container, as a child of the given parent
 	@FunctionalInterface
 	private interface ContainerDescriptorFactory {
-		ContextDescriptor makeChildContainer(TestDescriptor parent);
+		ContextDescriptor makeChildContainer(ContextDescriptor parent);
 	}
 
 	/* Spec discovery */
@@ -101,7 +101,7 @@ final class SpecClassDeclaration implements JavaSpec {
 	}
 
 	private void addToCurrentContainer(TestDescriptorFactory factory) {
-		TestDescriptor container = currentContainer();
+		ContextDescriptor container = currentContainer();
 		TestDescriptor specDescriptor = factory.makeTestDescriptor(container);
 		container.addChild(specDescriptor);
 	}
@@ -109,20 +109,20 @@ final class SpecClassDeclaration implements JavaSpec {
 	// Makes a TestDescriptor for a spec, as a child of the given container
 	@FunctionalInterface
 	private interface TestDescriptorFactory {
-		TestDescriptor makeTestDescriptor(TestDescriptor parent);
+		TestDescriptor makeTestDescriptor(ContextDescriptor parent);
 	}
 
 	/* Declaration scope */
 
-	private TestDescriptor currentContainer() {
+	private ContextDescriptor currentContainer() {
 		return this.containersInScope.peek();
 	}
 
-	private void enterScope(TestDescriptor container) {
+	private void enterScope(ContextDescriptor container) {
 		this.containersInScope.push(container);
 	}
 
-	private TestDescriptor exitScope() {
+	private ContextDescriptor exitScope() {
 		return this.containersInScope.pop();
 	}
 }
