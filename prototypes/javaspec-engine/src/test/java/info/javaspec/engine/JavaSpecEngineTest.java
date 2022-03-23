@@ -316,6 +316,18 @@ public class JavaSpecEngineTest implements SpecClass {
 					);
 			});
 
+			javaspec.it("reports start and skipped events for skipped specs", () -> {
+				EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
+					.selectors(selectClass(AnonymousSpecClasses.skippedSpec()))
+					.execute();
+
+				results.allEvents()
+					.assertEventsMatchLooselyInOrder(
+						event(test(), started()),
+						event(test(), skippedWithReason("skipped"))
+					);
+			});
+
 			javaspec.it("reports start and successful finish events for passing specs", () -> {
 				EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
 					.selectors(selectClass(AnonymousSpecClasses.oneSpec()))
