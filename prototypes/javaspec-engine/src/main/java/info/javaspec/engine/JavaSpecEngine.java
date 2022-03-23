@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.ClassSelector;
-import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
 // Orchestrates the process of discovering and running specs in a Jupiter runtime.
 public class JavaSpecEngine implements TestEngine {
@@ -25,7 +24,7 @@ public class JavaSpecEngine implements TestEngine {
 		this.loader.findFirst()
 			.ifPresent(listener -> listener.onDiscover(discoveryRequest));
 
-		EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
+		ExecutableTestDescriptor engineDescriptor = ContextDescriptor.forEngine(engineId);
 		discoveryRequest.getSelectorsByType(ClassSelector.class)
 			.stream()
 			.map(ClassSelector::getJavaClass)
@@ -40,31 +39,8 @@ public class JavaSpecEngine implements TestEngine {
 
 	@Override
 	public void execute(ExecutionRequest request) {
-		TestDescriptor rootDescriptor = request.getRootTestDescriptor();
-		EngineExecutionListener listener = request.getEngineExecutionListener();
-		execute(rootDescriptor, listener);
-	}
-
-	private void execute(TestDescriptor descriptor, EngineExecutionListener listener) {
-		switch (descriptor.getType()) {
-		case CONTAINER:
-			listener.executionStarted(descriptor);
-
-			for (TestDescriptor child : descriptor.getChildren()) {
-				execute(child, listener);
-			}
-
-			listener.executionFinished(descriptor, TestExecutionResult.successful());
-			return;
-
-		case TEST:
-			JavaSpecDescriptor spec = JavaSpecDescriptor.class.cast(descriptor);
-			spec.execute(listener);
-			return;
-
-		default:
-			throw new UnsupportedOperationException(String.format("Unsupported TestDescriptor: %s", descriptor));
-		}
+		ExecutableTestDescriptor engineDescriptor = ExecutableTestDescriptor.class.cast(request.getRootTestDescriptor());
+		engineDescriptor.execute(request.getEngineExecutionListener());
 	}
 
 	@Override

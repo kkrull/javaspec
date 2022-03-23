@@ -4,9 +4,11 @@ import static info.javaspec.engine.DiscoverySelectorFactory.nullDiscoverySelecto
 import static info.javaspec.engine.EngineDiscoveryRequestFactory.classEngineDiscoveryRequest;
 import static info.javaspec.engine.EngineDiscoveryRequestFactory.nullEngineDiscoveryRequest;
 import static info.javaspec.engine.TestDescriptorAssert.assertThat;
+import static org.assertj.core.api.Assertions.allOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
+import static org.junit.platform.testkit.engine.Event.byTestDescriptor;
 import static org.junit.platform.testkit.engine.EventConditions.*;
 
 import info.javaspec.api.JavaSpec;
@@ -20,6 +22,7 @@ import org.junit.platform.engine.TestEngine;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.testkit.engine.EngineExecutionResults;
 import org.junit.platform.testkit.engine.EngineTestKit;
+import org.junit.platform.testkit.engine.Event;
 
 @Testable
 public class JavaSpecEngineTest implements SpecClass {
@@ -253,16 +256,24 @@ public class JavaSpecEngineTest implements SpecClass {
 				EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
 					.selectors(nullDiscoverySelector())
 					.execute();
+
 				results.containerEvents()
-					.assertEventsMatchExactly(event(engine(), started()), event(engine(), finishedSuccessfully()));
+					.assertEventsMatchExactly(
+						event(anyEngine(), started()),
+						event(anyEngine(), finishedSuccessfully())
+					);
 			});
 
 			javaspec.it("skips spec class containers that don't have any specs in them", () -> {
 				EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
 					.selectors(selectClass(AnonymousSpecClasses.emptySpecClass()))
 					.execute();
+
 				results.containerEvents()
-					.assertEventsMatchExactly(event(engine(), started()), event(engine(), finishedSuccessfully()));
+					.assertEventsMatchExactly(
+						event(anyEngine(), started()),
+						event(anyEngine(), finishedSuccessfully())
+					);
 			});
 
 			javaspec.it("reports execution events for spec class containers", () -> {
@@ -272,10 +283,10 @@ public class JavaSpecEngineTest implements SpecClass {
 
 				results.containerEvents()
 					.assertEventsMatchExactly(
-						event(engine(), started()),
+						event(anyEngine(), started()),
 						event(container(), started()),
 						event(container(), finishedSuccessfully()),
-						event(engine(), finishedSuccessfully())
+						event(anyEngine(), finishedSuccessfully())
 					);
 			});
 
@@ -314,10 +325,7 @@ public class JavaSpecEngineTest implements SpecClass {
 					.assertEventsMatchLooselyInOrder(
 						event(container(), started()),
 						event(test(), started()),
-						event(
-							test(),
-							finishedWithFailure(new Condition<>(RuntimeException.class::isInstance, "RuntimeException"))
-						),
+						event(test(), finishedWithFailure(isInstanceOf(RuntimeException.class))),
 						event(container(), finishedSuccessfully())
 					);
 			});
@@ -331,10 +339,7 @@ public class JavaSpecEngineTest implements SpecClass {
 					.assertEventsMatchLooselyInOrder(
 						event(container(), started()),
 						event(test(), started()),
-						event(
-							test(),
-							finishedWithFailure(new Condition<>(AssertionError.class::isInstance, "AssertionError"))
-						),
+						event(test(), finishedWithFailure(isInstanceOf(AssertionError.class))),
 						event(container(), finishedSuccessfully())
 					);
 			});
@@ -346,6 +351,30 @@ public class JavaSpecEngineTest implements SpecClass {
 				assertEquals("javaspec-engine", subject.getId());
 			});
 		});
+	}
+
+	// Accepts an event for any engine's TestDescriptor.
+	// EventConditions::engine only accepts EngineDescriptor.
+	private Condition<Event> anyEngine() {
+		Condition<Event> isRoot = new Condition<>(
+			byTestDescriptor(TestDescriptor::isRoot),
+			"is the root container"
+		);
+
+		Condition<Event> isEngine = new Condition<>(
+			byTestDescriptor(x ->
+			{
+				UniqueId.Segment firstIdSegment = x.getUniqueId().getSegments().get(0);
+				return "engine".equals(firstIdSegment.getType());
+			}),
+			"is an engine"
+		);
+
+		return allOf(isRoot, isEngine);
+	}
+
+	private Condition<Throwable> isInstanceOf(Class<?> aClass) {
+		return new Condition<>(aClass::isInstance, String.format("is an instance of %s", aClass.getName()));
 	}
 
 	private static final class MockEngineDiscoveryRequestListener implements EngineDiscoveryRequestListener {
