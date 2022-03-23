@@ -93,7 +93,7 @@ final class SpecClassDeclaration implements JavaSpec {
 	@Override
 	public void pending(String futureBehavior) {
 		addToCurrentContainer(
-			container -> PendingSpecDescriptor.pending(
+			container -> SkippedSpecDescriptor.pending(
 				container.getUniqueId(),
 				futureBehavior
 			)
@@ -103,7 +103,7 @@ final class SpecClassDeclaration implements JavaSpec {
 	@Override
 	public void skip(String intendedBehavior, Verification brokenVerification) {
 		addToCurrentContainer(
-			container -> PendingSpecDescriptor.disabled(
+			container -> SkippedSpecDescriptor.disabled(
 				container.getUniqueId(),
 				intendedBehavior
 			)
