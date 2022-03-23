@@ -164,4 +164,17 @@ public class AnonymousSpecClasses {
 			}
 		};
 	}
+
+	public static Class<? extends SpecClass> skippedSpec() {
+		return skippedSpecInstance().getClass();
+	}
+
+	private static SpecClass skippedSpecInstance() {
+		return new SpecClass() {
+			@Override
+			public void declareSpecs(JavaSpec javaspec) {
+				javaspec.skip("skipped spec", () -> {});
+			}
+		};
+	}
 }

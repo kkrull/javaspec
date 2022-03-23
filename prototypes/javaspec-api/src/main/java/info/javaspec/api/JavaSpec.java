@@ -9,6 +9,7 @@ public interface JavaSpec {
 	// Specs
 	void it(String behavior, Verification verification);
 	void pending(String futureBehavior);
+	void skip(String intendedBehavior, Verification brokenVerification);
 
 	@FunctionalInterface
 	interface BehaviorDeclaration {

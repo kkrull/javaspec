@@ -100,6 +100,11 @@ final class SpecClassDeclaration implements JavaSpec {
 		);
 	}
 
+	@Override
+	public void skip(String intendedBehavior, Verification brokenVerification) {
+		throw new UnsupportedOperationException("bang!");
+	}
+
 	private void addToCurrentContainer(TestDescriptorFactory factory) {
 		ContextDescriptor container = currentContainer();
 		TestDescriptor specDescriptor = factory.makeTestDescriptor(container);
