@@ -1,11 +1,14 @@
 package info.javaspec.engine;
 
 import info.javaspec.api.SpecClass;
+import org.junit.platform.engine.EngineExecutionListener;
+import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 
 //Adapter for various context blocks that makes it work like a Jupiter test container.
-final class ContextDescriptor extends AbstractTestDescriptor {
+final class ContextDescriptor extends AbstractTestDescriptor implements ExecutableTestDescriptor {
 	public static ContextDescriptor declaringClass(UniqueId parentId, Class<? extends SpecClass> declaringClass) {
 		return new ContextDescriptor(
 			parentId.append("class", declaringClass.getName()),
@@ -34,5 +37,19 @@ final class ContextDescriptor extends AbstractTestDescriptor {
 	@Override
 	public Type getType() {
 		return Type.CONTAINER;
+	}
+
+	/* JavaSpec */
+
+	@Override
+	public void execute(EngineExecutionListener listener) {
+		listener.executionStarted(this);
+
+		for (TestDescriptor child : this.getChildren()) {
+			ExecutableTestDescriptor executableChild = ExecutableTestDescriptor.class.cast(child);
+			executableChild.execute(listener);
+		}
+
+		listener.executionFinished(this, TestExecutionResult.successful());
 	}
 }
