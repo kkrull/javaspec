@@ -24,7 +24,7 @@ public class JavaSpecEngine implements TestEngine {
 		this.loader.findFirst()
 			.ifPresent(listener -> listener.onDiscover(discoveryRequest));
 
-		TestDescriptor engineDescriptor = ContextDescriptor.engine(engineId);
+		ExecutableTestDescriptor engineDescriptor = ContextDescriptor.engine(engineId);
 		discoveryRequest.getSelectorsByType(ClassSelector.class)
 			.stream()
 			.map(ClassSelector::getJavaClass)
@@ -39,19 +39,8 @@ public class JavaSpecEngine implements TestEngine {
 
 	@Override
 	public void execute(ExecutionRequest request) {
-		TestDescriptor rootDescriptor = request.getRootTestDescriptor();
-		EngineExecutionListener listener = request.getEngineExecutionListener();
-		execute(rootDescriptor, listener);
-	}
-
-	private void execute(TestDescriptor descriptor, EngineExecutionListener listener) {
-		if (descriptor instanceof ExecutableTestDescriptor) {
-			ExecutableTestDescriptor spec = ExecutableTestDescriptor.class.cast(descriptor);
-			spec.execute(listener);
-			return;
-		}
-
-		throw new UnsupportedOperationException(String.format("Unsupported TestDescriptor: %s", descriptor));
+		ExecutableTestDescriptor engineDescriptor = ExecutableTestDescriptor.class.cast(request.getRootTestDescriptor());
+		engineDescriptor.execute(request.getEngineExecutionListener());
 	}
 
 	@Override
