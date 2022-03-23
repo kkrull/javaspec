@@ -102,7 +102,12 @@ final class SpecClassDeclaration implements JavaSpec {
 
 	@Override
 	public void skip(String intendedBehavior, Verification brokenVerification) {
-		throw new UnsupportedOperationException("bang!");
+		addToCurrentContainer(
+			container -> PendingSpecDescriptor.of(
+				container.getUniqueId(),
+				intendedBehavior
+			)
+		);
 	}
 
 	private void addToCurrentContainer(TestDescriptorFactory factory) {
