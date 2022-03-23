@@ -93,7 +93,7 @@ public class JavaSpecEngineTest implements SpecClass {
 						.hasParent(returned);
 				});
 
-				javaspec.it("discovers a skipped test for each pending spec", () -> {
+				javaspec.it("discovers a test for each pending spec", () -> {
 					JavaSpecEngine subject = new JavaSpecEngine();
 					TestDescriptor returned = subject.discover(
 						classEngineDiscoveryRequest(AnonymousSpecClasses.pendingSpec()),
@@ -105,6 +105,20 @@ public class JavaSpecEngineTest implements SpecClass {
 
 					TestDescriptor specDescriptor = specClassDescriptor.getChildren().iterator().next();
 					assertThat(specDescriptor).hasIdEndingIn("test", "pending spec");
+				});
+
+				javaspec.it("discovers a test for each skipped spec", () -> {
+					JavaSpecEngine subject = new JavaSpecEngine();
+					TestDescriptor returned = subject.discover(
+						classEngineDiscoveryRequest(AnonymousSpecClasses.skippedSpec()),
+						UniqueId.forEngine(subject.getId())
+					);
+
+					TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
+					assertThat(specClassDescriptor).hasChildren(1);
+
+					TestDescriptor specDescriptor = specClassDescriptor.getChildren().iterator().next();
+					assertThat(specDescriptor).hasIdEndingIn("test", "skipped spec");
 				});
 
 				javaspec.it("discovers a test for each spec", () -> {
@@ -299,6 +313,18 @@ public class JavaSpecEngineTest implements SpecClass {
 					.assertEventsMatchLooselyInOrder(
 						event(test(), started()),
 						event(test(), skippedWithReason("pending"))
+					);
+			});
+
+			javaspec.it("reports start and skipped events for skipped specs", () -> {
+				EngineExecutionResults results = EngineTestKit.engine(new JavaSpecEngine())
+					.selectors(selectClass(AnonymousSpecClasses.skippedSpec()))
+					.execute();
+
+				results.allEvents()
+					.assertEventsMatchLooselyInOrder(
+						event(test(), started()),
+						event(test(), skippedWithReason("skipped"))
 					);
 			});
 
