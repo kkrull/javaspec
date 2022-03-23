@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.ClassSelector;
-import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
 // Orchestrates the process of discovering and running specs in a Jupiter runtime.
 public class JavaSpecEngine implements TestEngine {
@@ -25,7 +24,7 @@ public class JavaSpecEngine implements TestEngine {
 		this.loader.findFirst()
 			.ifPresent(listener -> listener.onDiscover(discoveryRequest));
 
-		EngineDescriptor engineDescriptor = new EngineDescriptor(engineId, "JavaSpec");
+		TestDescriptor engineDescriptor = ContextDescriptor.engine(engineId);
 		discoveryRequest.getSelectorsByType(ClassSelector.class)
 			.stream()
 			.map(ClassSelector::getJavaClass)
@@ -46,17 +45,6 @@ public class JavaSpecEngine implements TestEngine {
 	}
 
 	private void execute(TestDescriptor descriptor, EngineExecutionListener listener) {
-		if (descriptor.isRoot()) {
-			listener.executionStarted(descriptor);
-
-			for (TestDescriptor child : descriptor.getChildren()) {
-				execute(child, listener);
-			}
-
-			listener.executionFinished(descriptor, TestExecutionResult.successful());
-			return;
-		}
-
 		if (descriptor instanceof ExecutableTestDescriptor) {
 			ExecutableTestDescriptor spec = ExecutableTestDescriptor.class.cast(descriptor);
 			spec.execute(listener);

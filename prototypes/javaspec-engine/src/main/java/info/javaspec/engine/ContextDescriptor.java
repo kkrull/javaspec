@@ -23,6 +23,10 @@ final class ContextDescriptor extends AbstractTestDescriptor implements Executab
 		);
 	}
 
+	public static ContextDescriptor engine(UniqueId engineId) {
+		return new ContextDescriptor(engineId, "JavaSpec");
+	}
+
 	public static ContextDescriptor given(UniqueId parentId, String what) {
 		return new ContextDescriptor(
 			parentId.append("given-block", what),
