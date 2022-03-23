@@ -9,7 +9,11 @@ import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 
 //Adapter for various context blocks that makes it work like a Jupiter test container.
 final class ContextDescriptor extends AbstractTestDescriptor implements ExecutableTestDescriptor {
-	public static ContextDescriptor declaringClass(UniqueId parentId, Class<? extends SpecClass> declaringClass) {
+	public static ContextDescriptor forEngine(UniqueId engineId) {
+		return new ContextDescriptor(engineId, "JavaSpec");
+	}
+
+	public static ContextDescriptor forDeclaringClass(UniqueId parentId, Class<? extends SpecClass> declaringClass) {
 		return new ContextDescriptor(
 			parentId.append("class", declaringClass.getName()),
 			declaringClass.getName()
@@ -21,10 +25,6 @@ final class ContextDescriptor extends AbstractTestDescriptor implements Executab
 			parentId.append("describe-block", what),
 			what
 		);
-	}
-
-	public static ContextDescriptor engine(UniqueId engineId) {
-		return new ContextDescriptor(engineId, "JavaSpec");
 	}
 
 	public static ContextDescriptor given(UniqueId parentId, String what) {

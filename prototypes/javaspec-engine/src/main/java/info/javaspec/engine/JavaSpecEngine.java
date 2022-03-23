@@ -24,7 +24,7 @@ public class JavaSpecEngine implements TestEngine {
 		this.loader.findFirst()
 			.ifPresent(listener -> listener.onDiscover(discoveryRequest));
 
-		ExecutableTestDescriptor engineDescriptor = ContextDescriptor.engine(engineId);
+		ExecutableTestDescriptor engineDescriptor = ContextDescriptor.forEngine(engineId);
 		discoveryRequest.getSelectorsByType(ClassSelector.class)
 			.stream()
 			.map(ClassSelector::getJavaClass)
