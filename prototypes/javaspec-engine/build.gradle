@@ -15,6 +15,12 @@ dependencies {
 //  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
 }
 
+task printTestRuntimeClasspath() {
+	doLast {
+		println configurations.testRuntimeClasspath.asPath
+	}
+}
+
 test {
 	useJUnitPlatform()
 
