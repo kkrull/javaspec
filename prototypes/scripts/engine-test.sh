@@ -8,7 +8,6 @@ project_dir="$(realpath "$scripts_dir/..")"
 lib_dir="$project_dir/lib"
 junit_console_jar="$lib_dir/junit-platform-console-standalone-1.8.1.jar"
 
-# Make sure jars are up to date: ./gradlew :javaspec-api:assemble :javaspec-engine:assemble
 cd "$project_dir"
 
 engine_with_service_descriptor='javaspec-engine/build/libs/javaspec-engine-0.0.1.jar'
