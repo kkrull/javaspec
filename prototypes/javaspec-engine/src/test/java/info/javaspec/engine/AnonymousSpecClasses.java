@@ -52,10 +52,10 @@ public class AnonymousSpecClasses {
 	}
 
 	public static Class<? extends SpecClass> emptyDescribeAClass() {
-		return emptyDescribeAClassInstance();
+		return emptyDescribeAClassInstance().getClass();
 	}
 
-	private static Class<? extends SpecClass> emptyDescribeAClassInstance() {
+	private static SpecClass emptyDescribeAClassInstance() {
 		return new SpecClass() {
 			@Override
 			public void declareSpecs(JavaSpec javaspec) {
