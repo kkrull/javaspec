@@ -28,7 +28,7 @@ import org.junit.platform.testkit.engine.Event;
 public class JavaSpecEngineTest implements SpecClass {
 	@Override
 	public void declareSpecs(JavaSpec javaspec) {
-		javaspec.describe(JavaSpecEngine.class.getSimpleName(), () -> {
+		javaspec.describe(JavaSpecEngine.class, () -> {
 			javaspec.it("can be loaded with ServiceLoader and located by ID", () -> {
 				EngineTestKit.engine("javaspec-engine")
 					.selectors(selectClass(AnonymousSpecClasses.emptySpecClass()))
