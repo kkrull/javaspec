@@ -28,7 +28,6 @@ import org.junit.platform.testkit.engine.Event;
 public class JavaSpecEngineTest implements SpecClass {
 	@Override
 	public void declareSpecs(JavaSpec javaspec) {
-		// TODO KDK: Add variant of #describe that just takes the class
 		javaspec.describe(JavaSpecEngine.class.getSimpleName(), () -> {
 			javaspec.it("can be loaded with ServiceLoader and located by ID", () -> {
 				EngineTestKit.engine("javaspec-engine")
@@ -142,7 +141,7 @@ public class JavaSpecEngineTest implements SpecClass {
 				});
 
 				javaspec.given("a selected SpecClass with a describe block", () -> {
-					javaspec.it("discovers a container for a describe block", () -> {
+					javaspec.it("discovers a container for a string-describe block", () -> {
 						JavaSpecEngine subject = new JavaSpecEngine();
 						TestDescriptor returned = subject.discover(
 							classEngineDiscoveryRequest(AnonymousSpecClasses.emptyDescribe()),
@@ -158,6 +157,22 @@ public class JavaSpecEngineTest implements SpecClass {
 						assertThat(describeDescriptor)
 							.hasDisplayName("something")
 							.hasIdEndingIn("describe-block", "something")
+							.hasParent(specClassDescriptor)
+							.isRegularContainer();
+					});
+
+					javaspec.it("discovers a container for a class-describe block", () -> {
+						JavaSpecEngine subject = new JavaSpecEngine();
+						TestDescriptor returned = subject.discover(
+							classEngineDiscoveryRequest(AnonymousSpecClasses.emptyDescribeAClass()),
+							UniqueId.forEngine(subject.getId())
+						);
+
+						TestDescriptor specClassDescriptor = returned.getChildren().iterator().next();
+						TestDescriptor describeDescriptor = specClassDescriptor.getChildren().iterator().next();
+						assertThat(describeDescriptor)
+							.hasDisplayName("TheOracle")
+							.hasIdEndingIn("describe-block", "TheOracle")
 							.hasParent(specClassDescriptor)
 							.isRegularContainer();
 					});
