@@ -5,7 +5,11 @@ plugins {
 	id 'com.diffplug.spotless'
 }
 
-version '0.0.1'
+version '0.0.1' //Has to go above other tasks that refer to it
+
+sourceSets {
+	console {}
+}
 
 dependencies {
 	implementation project(':javaspec-api')
@@ -15,6 +19,8 @@ dependencies {
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
 	testImplementation 'org.junit.platform:junit-platform-testkit:1.8.2'
 //  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
+
+	consoleImplementation 'org.junit.platform:junit-platform-console-standalone:1.8.1'
 }
 
 task printTestRuntimeClasspath() {
@@ -33,7 +39,7 @@ task testEngineWithJUnitConsole(type: JavaExec) {
 	def test_sources = project.sourceSets.test.output.asPath
 	def test_sources_dependencies = configurations.testRuntimeClasspath.asPath
 
-	classpath = files('../lib/junit-platform-console-standalone-1.8.1.jar')
+	classpath = files(project.sourceSets.console.compileClasspath.asPath)
 	args = [
 		'--classpath=' + engine_with_service_descriptor,
 		'--classpath=' + test_sources,
