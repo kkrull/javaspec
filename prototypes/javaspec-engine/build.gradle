@@ -8,7 +8,8 @@ plugins {
 version '0.0.1' //Has to go above other tasks that refer to it
 
 sourceSets {
-	console {}
+	//Add a sourceset for the sake of declaring a dependency on JUnit Console
+	console { }
 }
 
 dependencies {
@@ -21,12 +22,6 @@ dependencies {
 //  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
 
 	consoleImplementation 'org.junit.platform:junit-platform-console-standalone:1.8.1'
-}
-
-task printTestRuntimeClasspath() {
-	doLast {
-		println configurations.testRuntimeClasspath.asPath
-	}
 }
 
 task testEngineWithJUnitConsole(type: JavaExec) {
