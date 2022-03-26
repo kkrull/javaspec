@@ -43,7 +43,6 @@ task testEngineWithJUnitConsole(type: JavaExec) {
 	]
 
 	doFirst {
-		println 'Working directory: ' + workingDir.getAbsolutePath()
 		println 'Command Line Components:'
 		commandLine.each { println it }
 	}
