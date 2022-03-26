@@ -22,7 +22,7 @@ task printTestRuntimeClasspath() {
 }
 
 task testEngineWithJUnitConsole(type: JavaExec) {
-	dependsOn 'jar'
+	dependsOn jar
 	description 'Use javaspec-engine to run its own specs in an external JUnit Console process'
 
 	def engine_with_service_descriptor = 'build/libs/javaspec-engine-0.0.1.jar'
@@ -39,13 +39,9 @@ task testEngineWithJUnitConsole(type: JavaExec) {
 	]
 
 	doFirst {
+		println 'Working directory: ' + workingDir.getAbsolutePath()
 		println 'Command Line Components:'
 		commandLine.each { println it }
-	}
-
-	doFirst {
-		println 'Is this the same filename used in the command?'
-		println jar.archiveFile.get().asFile
 	}
 }
 
