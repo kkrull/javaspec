@@ -39,7 +39,7 @@ task testEngineWithJUnitConsole(type: JavaExec) {
 	def test_sources = project.sourceSets.test.output.asPath
 	def test_sources_dependencies = configurations.testRuntimeClasspath.asPath
 
-	classpath = files(project.sourceSets.console.compileClasspath.asPath)
+	classpath = files(project.sourceSets.console.compileClasspath)
 	args = [
 		'--classpath=' + engine_with_service_descriptor,
 		'--classpath=' + test_sources,
