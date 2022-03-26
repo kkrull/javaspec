@@ -5,6 +5,8 @@ plugins {
 	id 'com.diffplug.spotless'
 }
 
+version '0.0.1'
+
 dependencies {
 	implementation project(':javaspec-api')
 	implementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
@@ -27,8 +29,7 @@ task testEngineWithJUnitConsole(type: JavaExec) {
 	dependsOn compileTestJava
 	description 'Use javaspec-engine to run its own specs in an external JUnit Console process'
 
-def verz = "0.0.1"
-	def engine_with_service_descriptor = "build/libs/javaspec-engine-0.0.1.jar"
+	def engine_with_service_descriptor = jar.archivePath
 	def test_sources = 'build/classes/java/test'
 	def test_sources_dependencies = configurations.testRuntimeClasspath.asPath
 
@@ -61,5 +62,3 @@ test {
 testlogger {
 	theme 'plain'
 }
-
-version '0.0.1'
