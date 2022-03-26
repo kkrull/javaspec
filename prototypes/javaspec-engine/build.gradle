@@ -41,11 +41,6 @@ task testEngineWithJUnitConsole(type: JavaExec) {
 		'--include-engine=' + 'javaspec-engine',
 		'--select-class=' + 'info.javaspec.engine.JavaSpecEngineTest'
 	]
-
-	doFirst {
-		println 'Command Line Components:'
-		commandLine.each { println it }
-	}
 }
 
 test {
