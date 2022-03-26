@@ -30,7 +30,7 @@ task testEngineWithJUnitConsole(type: JavaExec) {
 	description 'Use javaspec-engine to run its own specs in an external JUnit Console process'
 
 	def engine_with_service_descriptor = jar.archivePath
-	def test_sources = 'build/classes/java/test'
+	def test_sources = project.sourceSets.test.output.asPath
 	def test_sources_dependencies = configurations.testRuntimeClasspath.asPath
 
 	classpath = files('../lib/junit-platform-console-standalone-1.8.1.jar')
