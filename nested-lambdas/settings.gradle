@@ -1,4 +1,4 @@
-rootProject.name = 'prototypes'
+rootProject.name = 'nested-lambdas'
 include 'jupiter-adapters'
 include 'jupiter-freestanding'
 include 'jupiter-test-execution-listener'
