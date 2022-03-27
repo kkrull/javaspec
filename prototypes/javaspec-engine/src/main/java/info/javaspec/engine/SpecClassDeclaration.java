@@ -46,6 +46,14 @@ final class SpecClassDeclaration implements JavaSpec {
 	/* Context discovery */
 
 	@Override
+	public void describe(Class<?> aClass, BehaviorDeclaration declaration) {
+		pushChildContainer(
+			declaration,
+			parent -> ContextDescriptor.describe(parent.getUniqueId(), aClass.getSimpleName())
+		);
+	}
+
+	@Override
 	public void describe(String what, BehaviorDeclaration declaration) {
 		pushChildContainer(
 			declaration,

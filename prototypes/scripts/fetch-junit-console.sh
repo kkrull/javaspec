@@ -1,9 +1,9 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 set -e
 
-scripts_dir=$(greadlink -f "$(dirname -- "${BASH_SOURCE[0]}")")
-project_dir=$(greadlink -f "$scripts_dir/..")
+scripts_dir="${0:a:h}"
+project_dir="$(realpath "$scripts_dir/..")"
 
 lib_dir="$project_dir/lib"
 
