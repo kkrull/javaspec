@@ -1,9 +1,3 @@
-rootProject.name = 'nested-lambdas'
+rootProject.name = 'prototypes'
 include 'jupiter-adapters'
 include 'jupiter-freestanding'
-include 'jupiter-test-execution-listener'
-
-include 'javaspec-api'
-include 'javaspec-client'
-include 'javaspec-engine'
-include 'javaspec-engine-discovery-request-listener'
