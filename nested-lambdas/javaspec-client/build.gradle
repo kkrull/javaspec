@@ -20,15 +20,7 @@ dependencies {
 //Suspected issue: Gradle groups tests by 'default-package' and 'UnknownClass'.
 //Related Github issue: https://github.com/cucumber/cucumber-jvm/issues/2176
 test {
-	useJUnitPlatform {
-		//Jupiter will find this engine even if it's omitted, as long as it's on the classpath.
-		includeEngines 'javaspec-engine'
-	}
-
-	//Show all output: the specs themselves *and* the TestEngine
-	onOutput { _descriptor, TestOutputEvent engineEvent ->
-		logger.lifecycle(engineEvent.message.trim())
-	}
+	useJUnitPlatform()
 }
 
 version '0.0.1'
