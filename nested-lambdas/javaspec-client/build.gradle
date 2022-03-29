@@ -1,4 +1,4 @@
-//Code that uses JavaSpec's API to write specs
+//Example showing how to use JavaSpec to write specs with nested lambdas.
 plugins {
 	id 'java'
 	id 'com.adarshr.test-logger'
@@ -15,6 +15,13 @@ dependencies {
 	//Debugging
 //  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
 //  testRuntimeOnly project(':jupiter-test-execution-listener')
+}
+
+java {
+	jar {
+		//Example sources only.  Not meant to be published as an artifact.
+		enabled = false
+	}
 }
 
 //Suspected issue: Gradle groups tests by 'default-package' and 'UnknownClass'.
