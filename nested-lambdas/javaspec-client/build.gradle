@@ -10,12 +10,14 @@ dependencies {
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
 
 	testRuntimeOnly project(':javaspec-engine')
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+
+	//Debugging
 //  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
 //  testRuntimeOnly project(':jupiter-test-execution-listener')
-	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
-//Suspected Gradle issue Gradle groups tests by 'default-package' and 'UnknownClass'.
+//Suspected issue: Gradle groups tests by 'default-package' and 'UnknownClass'.
 //Related Github issue: https://github.com/cucumber/cucumber-jvm/issues/2176
 test {
 	useJUnitPlatform {
@@ -27,12 +29,6 @@ test {
 	onOutput { _descriptor, TestOutputEvent engineEvent ->
 		logger.lifecycle(engineEvent.message.trim())
 	}
-}
-
-//https://github.com/radarsh/gradle-test-logger-plugin
-testlogger {
-	theme 'mocha-parallel' //Override at runtime with: -Dtestlogger.theme=plain-parallel
-	showSimpleNames true
 }
 
 version '0.0.1'

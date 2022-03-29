@@ -1,4 +1,18 @@
-//Service provider for EngineDiscoveryRequestListener
+/**
+	Service provider for reporting the EngineDiscoveryRequest to the console.
+
+	Add this as a testRuntimeOnly dependency, along the following:
+
+	test {
+		useJUnitPlatform()
+
+		//Show all output: the specs themselves *and* the TestEngine
+		onOutput { _descriptor, TestOutputEvent engineEvent ->
+			logger.lifecycle(engineEvent.message.trim())
+		}
+	}
+ */
+
 plugins {
 	id 'java-library'
 	id 'com.diffplug.spotless'
