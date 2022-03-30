@@ -13,50 +13,56 @@ import org.junit.platform.commons.annotation.Testable;
 @Testable
 public class MinimaxSpecs implements SpecClass {
 	public void declareSpecs(JavaSpec javaspec) {
-		javaspec.it("scores a game ending in a draw as 0", () -> {
-			Minimax subject = new Minimax("Max", "Min");
-			GameState game = GameWithKnownState.draw();
-			assertEquals(0, subject.score(game, "Max"));
-		});
+		javaspec.describe(Minimax.class, () -> {
+			javaspec.it("scores a game ending in a draw as 0", () -> {
+				Minimax subject = new Minimax("Max", "Min");
+				GameState game = GameWithKnownState.draw();
+				assertEquals(0, subject.score(game, "Max"));
+			});
 
-		javaspec.it("scores a game won by the maximizer as +1", () -> {
-			Minimax subject = new Minimax("Max", "Min");
-			GameState game = GameWithKnownState.wonBy("Max");
-			assertEquals(+1, subject.score(game, "Max"));
-		});
+			javaspec.it("scores a game won by the maximizer as +1", () -> {
+				Minimax subject = new Minimax("Max", "Min");
+				GameState game = GameWithKnownState.wonBy("Max");
+				assertEquals(+1, subject.score(game, "Max"));
+			});
 
-		javaspec.it("scores a game won by the minimizer as -1", () -> {
-			Minimax subject = new Minimax("Max", "Min");
-			GameState game = GameWithKnownState.wonBy("Min");
-			assertEquals(-1, subject.score(game, "Max"));
-		});
+			javaspec.it("scores a game won by the minimizer as -1", () -> {
+				Minimax subject = new Minimax("Max", "Min");
+				GameState game = GameWithKnownState.wonBy("Min");
+				assertEquals(-1, subject.score(game, "Max"));
+			});
 
-		javaspec.it("given a game ending in 1 move, the maximizer picks the move with the highest score", () -> {
-			Minimax subject = new Minimax("Max", "Min");
-			GameWithKnownState game = GameWithKnownState.stillGoing();
-			game.addKnownState("ThenDraw", GameWithKnownState.draw());
-			game.addKnownState("ThenMaxWins", GameWithKnownState.wonBy("Max"));
-			assertEquals(+1, subject.score(game, "Max"));
-		});
+			javaspec.given("a game ending in 1 move", () -> {
+				javaspec.it("the maximizer picks the move with the highest score", () -> {
+					Minimax subject = new Minimax("Max", "Min");
+					GameWithKnownState game = GameWithKnownState.stillGoing();
+					game.addKnownState("ThenDraw", GameWithKnownState.draw());
+					game.addKnownState("ThenMaxWins", GameWithKnownState.wonBy("Max"));
+					assertEquals(+1, subject.score(game, "Max"));
+				});
 
-		javaspec.it("given a game ending in 1 move, the minimizer picks the move with the lowest score", () -> {
-			Minimax subject = new Minimax("Max", "Min");
-			GameWithKnownState game = GameWithKnownState.stillGoing();
-			game.addKnownState("ThenDraw", GameWithKnownState.draw());
-			game.addKnownState("ThenMinWins", GameWithKnownState.wonBy("Min"));
-			assertEquals(-1, subject.score(game, "Min"));
-		});
+				javaspec.it("the minimizer picks the move with the lowest score", () -> {
+					Minimax subject = new Minimax("Max", "Min");
+					GameWithKnownState game = GameWithKnownState.stillGoing();
+					game.addKnownState("ThenDraw", GameWithKnownState.draw());
+					game.addKnownState("ThenMinWins", GameWithKnownState.wonBy("Min"));
+					assertEquals(-1, subject.score(game, "Min"));
+				});
+			});
 
-		javaspec.it("given a game ending in 2+ moves, the maximizer assumes the minimizer picks the lowest score", () -> {
-			Minimax subject = new Minimax("Max", "Min");
-			GameState game = gameWithTwoMovesLeft();
-			assertEquals(0, subject.score(game, "Max"));
-		});
+			javaspec.given("a game ending in 2 or more moves", () -> {
+				javaspec.it("the maximizer assumes the minimizer picks the lowest score", () -> {
+					Minimax subject = new Minimax("Max", "Min");
+					GameState game = gameWithTwoMovesLeft();
+					assertEquals(0, subject.score(game, "Max"));
+				});
 
-		javaspec.it("given a game ending in 2+ moves, the minimizer assumes the maximizer picks the highest score", () -> {
-			Minimax subject = new Minimax("Max", "Min");
-			GameState game = gameWithTwoMovesLeft();
-			assertEquals(0, subject.score(game, "Min"));
+				javaspec.it("the minimizer assumes the maximizer picks the highest score", () -> {
+					Minimax subject = new Minimax("Max", "Min");
+					GameState game = gameWithTwoMovesLeft();
+					assertEquals(0, subject.score(game, "Min"));
+				});
+			});
 		});
 	}
 
@@ -75,51 +81,7 @@ public class MinimaxSpecs implements SpecClass {
 		return game;
 	}
 
-	public static class Minimax {
-		private final String maximizer;
-		private final String minimizer;
-
-		public Minimax(String maximizer, String minimizer) {
-			this.maximizer = maximizer;
-			this.minimizer = minimizer;
-		}
-
-		public int score(GameState game, String player) {
-			if (game.hasWon(this.maximizer)) {
-				return +1;
-			} else if (game.hasWon(this.minimizer)) {
-				return -1;
-			} else if (game.isOver()) {
-				return 0;
-			}
-
-			if (this.minimizer.equals(player)) {
-				int minScore = +999;
-				for (String nextMove : game.nextMoves()) {
-					GameState nextGame = game.nextState(nextMove);
-					int score = score(nextGame, this.maximizer);
-					if (score < minScore) {
-						minScore = score;
-					}
-				}
-
-				return minScore;
-			} else {
-				int maxScore = -999;
-				for (String nextMove : game.nextMoves()) {
-					GameState nextGame = game.nextState(nextMove);
-					int score = score(nextGame, this.minimizer);
-					if (score > maxScore) {
-						maxScore = score;
-					}
-				}
-
-				return maxScore;
-			}
-		}
-	}
-
-	public static class GameWithKnownState implements GameState {
+	private static class GameWithKnownState implements GameState {
 		private final boolean isOver;
 		private final String winner;
 		private final Map<String, GameState> nextMoves;
@@ -161,12 +123,5 @@ public class MinimaxSpecs implements SpecClass {
 		public GameState nextState(String move) {
 			return this.nextMoves.get(move);
 		}
-	}
-
-	public interface GameState {
-		boolean hasWon(String player);
-		boolean isOver();
-		List<String> nextMoves();
-		GameState nextState(String move);
 	}
 }
