@@ -1,5 +1,7 @@
 package info.javaspec.client;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
 import org.junit.platform.commons.annotation.Testable;
@@ -19,12 +21,5 @@ public class GreeterSpecs implements SpecClass {
 				});
 			});
 		});
-	}
-
-	private static void assertEquals(String expected, String actual) {
-		if (expected.equals(actual))
-			return;
-
-		throw new AssertionError(String.format("Expected <%s>, but was <%s>", expected, actual));
 	}
 }
