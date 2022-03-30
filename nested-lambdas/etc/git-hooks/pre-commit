@@ -5,7 +5,7 @@ exec 1>&2
 
 checkCodeFormat() {
   echo "[$0] Making sure code is formatted"
-  cd prototypes
+  cd nested-lambdas
   exec ./gradlew spotlessCheck
 }
 

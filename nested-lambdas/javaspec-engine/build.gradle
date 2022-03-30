@@ -1,4 +1,4 @@
-//JUnit TestEngine that is discovered at runtime and runs specs under JUnit Jupiter
+//TestEngine that is discovered at runtime and runs specs under Jupiter
 plugins {
 	id 'java-library'
 	id 'com.adarshr.test-logger'
@@ -13,6 +13,8 @@ sourceSets {
 }
 
 dependencies {
+	consoleImplementation 'org.junit.platform:junit-platform-console-standalone:1.8.1'
+
 	implementation project(':javaspec-api')
 	implementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 
@@ -20,8 +22,6 @@ dependencies {
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
 	testImplementation 'org.junit.platform:junit-platform-testkit:1.8.2'
 //  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
-
-	consoleImplementation 'org.junit.platform:junit-platform-console-standalone:1.8.1'
 }
 
 task testEngineWithJUnitConsole(type: JavaExec) {
@@ -30,15 +30,15 @@ task testEngineWithJUnitConsole(type: JavaExec) {
 	dependsOn compileTestJava
 	description 'Use javaspec-engine to run its own specs in an external JUnit Console process'
 
-	def engine_with_service_descriptor = jar.archivePath
-	def test_sources = project.sourceSets.test.output.asPath
-	def test_sources_dependencies = configurations.testRuntimeClasspath.asPath
+	def engineWithServiceDescriptor = jar.archivePath
+	def testSources = project.sourceSets.test.output.asPath
+	def testSourcesDependencies = configurations.testRuntimeClasspath.asPath
 
 	classpath = files(project.sourceSets.console.compileClasspath)
 	args = [
-		'--classpath=' + engine_with_service_descriptor,
-		'--classpath=' + test_sources,
-		'--classpath=' + test_sources_dependencies,
+		'--classpath=' + engineWithServiceDescriptor,
+		'--classpath=' + testSources,
+		'--classpath=' + testSourcesDependencies,
 		'--include-engine=' + 'javaspec-engine',
 		'--select-class=' + 'info.javaspec.engine.JavaSpecEngineTest'
 	]
@@ -46,14 +46,4 @@ task testEngineWithJUnitConsole(type: JavaExec) {
 
 test {
 	useJUnitPlatform()
-
-	//Show all output: the specs themselves *and* the TestEngine
-	onOutput { _descriptor, TestOutputEvent engineEvent ->
-		logger.lifecycle(engineEvent.message.trim())
-	}
-}
-
-//https://github.com/radarsh/gradle-test-logger-plugin
-testlogger {
-	theme 'plain'
 }

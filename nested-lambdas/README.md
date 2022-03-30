@@ -1,6 +1,6 @@
-# JUnit5 Prototypes for JavaSpec
+# JavaSpec for JUnit Jupiter
 
-Prototypes to figure out how the next version of JavaSpec might work.
+The next version of JavaSpec.
 
 * [Problem statement](./docs/problems.md)
 
@@ -15,7 +15,7 @@ any violations.
 Install it by copying the hook to your `.git` directory in this repository.  From the repository
 root:
 
-    $ cp prototypes/etc/git-hooks/* .git/hooks
+    $ cp nested-lambdas/etc/git-hooks/* .git/hooks
 
 Or use easy mode:
 

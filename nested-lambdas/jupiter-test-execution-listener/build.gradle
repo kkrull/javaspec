@@ -1,4 +1,4 @@
-//Exports a service that reports test execution events to the console
+//Service provider for reporting test execution events to the console
 plugins {
 	id 'java-library'
 	id 'com.diffplug.spotless'

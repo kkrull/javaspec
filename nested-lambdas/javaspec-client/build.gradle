@@ -1,0 +1,33 @@
+//Example showing how to use JavaSpec to write specs with nested lambdas.
+plugins {
+	id 'java'
+	id 'com.adarshr.test-logger'
+	id 'com.diffplug.spotless'
+}
+
+dependencies {
+	testImplementation project(':javaspec-api')
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+
+	testRuntimeOnly project(':javaspec-engine')
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+
+	//Debugging
+//  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
+//  testRuntimeOnly project(':jupiter-test-execution-listener')
+}
+
+java {
+	jar {
+		//Example sources only.  Not meant to be published as an artifact.
+		enabled = false
+	}
+}
+
+//Suspected issue: Gradle groups tests by 'default-package' and 'UnknownClass'.
+//Related Github issue: https://github.com/cucumber/cucumber-jvm/issues/2176
+test {
+	useJUnitPlatform()
+}
+
+version '0.0.1'
