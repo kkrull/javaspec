@@ -1,5 +1,8 @@
 # JavaSpec for JUnit Jupiter
 
+TODO KDK: Update this.  Tell how to use it (here) and how to start developing on it (separate
+document).
+
 The next version of JavaSpec.
 
 * [Problem statement](./docs/problems.md)
