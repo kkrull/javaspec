@@ -11,12 +11,15 @@ tell you how to address any violations.
 Install it by copying the hook to your `.git` directory in this repository.
 From the repository root:
 
-    $ cp nested-lambdas/etc/git-hooks/* .git/hooks
+```shell
+$ cp nested-lambdas/etc/git-hooks/* .git/hooks
+```
 
 Or use easy mode:
 
-    $ ./gradlew installGitHook
-
+```shell
+$ ./gradlew installGitHook
+```
 
 ## Gradle and Java JDKs
 
