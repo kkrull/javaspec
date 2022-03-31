@@ -17,6 +17,9 @@ world.
     lambdas to organize specs.
   * It's intended to look a lot like Mocha / Jasmine.
 * Artifacts
+  * As with JUnit, add test section with useJUnitPlatform as usual.
+  * As with JUnit, add dependencies on `org.junit.jupiter:junit-jupiter-api` and
+    `org.junit.jupiter:junit-jupiter-engine` like you always would.
   * API artifact needed to declare specs - testCompile
   * Engine artifact needed at runtime to run them - testRuntimeOnly
   * JVM requirements - Java 11+?
@@ -24,6 +27,8 @@ world.
 * Writing specs (must haves)
   * Make any Java class.  It doesn't have to end in Spec or Test, but Spec or
     Specs is recommended.
+  * Optional: Add `@Testable` to get your IDE to pick up on it.  What artifact
+    does this come from?  It should be `testImplmenntation`, right?
   * Implement SpecClass and #declareSpecs
   * #it with a description and a lambda, and you're off and running.  This is
     all you really have to have.
@@ -44,7 +49,7 @@ world.
 * Support
   * File an issue in Github.
   * HMU on Twitter?  Discord?
-  * Optional listeners for debugging - how to add them as Gradle dependencies.
+  * Optional listeners for debugging - see the readme for that project.
 * Known issues
   * Gradle reports the name of the test class at the bottom, instead of the top.
     Make Github issue for this.
