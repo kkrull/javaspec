@@ -3,6 +3,8 @@
 _Bringing the Java testing community to the 21st century, using technology from
 the 1960's._
 
+_Knocks the fat out of JUnit tests._
+
 This is the next version of JavaSpec.  It's the one that's going to change the
 world.
 
