@@ -1,10 +1,16 @@
-*.iml
-*.swp
+#Gradle
 .gradle/
-.idea/
-.yardoc/
-checkstyle-8.18-all.jar
 build/
-out/
+
+#Maven
 target/
-tmp/
+
+#Script dependencies
+lib/
+
+#VSCode
+.classpath
+.project
+.settings/
+.vscode/
+bin/
