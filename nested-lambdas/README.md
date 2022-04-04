@@ -93,3 +93,4 @@ world.
     issue for this.
 * Developing on JavaSpec
   * [Setting up Your Development Environment](./doc/development-environment.md)
+  * Common tasks -- go through gradle tasks like spotless and build/test/etc
