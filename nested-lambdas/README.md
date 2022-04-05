@@ -34,29 +34,29 @@ world.
   * Watch out for 1.x artifacts - that is for a whole different syntax, from an
     older version.
   * JVM requirements - Java 11+?
-  * License requiremeents - compatible with JUnit and Jupiter?
+  * License requirements - compatible with JUnit and Jupiter?
   * What version of JUnit?  JUnit 5.
 * Writing specs (must haves)
   * Make any Java class.  It doesn't have to end in Spec or Test, but Spec or
     Specs is recommended.
   * Optional: Add `@Testable` to get your IDE to pick up on it.  What artifact
-    does this come from?  It should be `testImplmenntation`, right?
+    does this come from?  It should be `testImplementation`, right?
   * Implement SpecClass and #declareSpecs
   * #it with a description and a lambda, and you're off and running.  This is
     all you really have to have.
-  * Use JUnit's build-in assertions, another library like hamcrest, or make your
+  * Use JUnit's build-in assertions, another library like Hamcrest, or make your
     own like you would in JUnit.
 * Writing specs (nice to haves)
-  * Recommend #describe for the class and method you want, to organine specs.
+  * Recommend #describe for the class and method you want, to organize specs.
   * #pending for anything you haven't written yet and #skip for anything to
     skip. (as-needed)
   * #given and #describe for context / flavor (optional)
 * Running specs
   * ./gradlew test like usual, as long as you have the engine as a runtime
-    depdendency.
+    dependency.
   * testlogger looks nice -- recommended.
   * JUnit Console works too: add --include-engine and classpaths for API,
-    engine, test code, prod code, test dependencies (assertj) and prod
+    engine, test code, prod code, test dependencies (AssertJ) and prod
     dependencies.
 * How does it work?
   * Tries to be transparent.
@@ -76,7 +76,7 @@ world.
   * **Transparent**: You shouldn't have to keep any caveats in mind when writing
     test code.
   * There are many testing libraries out there with some of these
-    characteristics, but expresiveness does not need to come at the cost of
+    characteristics, but expressiveness does not need to come at the cost of
     adding complexity.  For example you can write your tests in Ruby or Groovy
     (as the author once considered), but now you're adding more components
     between your test and production code, adding new dependencies, and losing
