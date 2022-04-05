@@ -18,10 +18,13 @@ different versions or if you are performing an upgrade.
 
 ## Start by installing a compatible Java Development Kit (JDK)
 
-Installing and using the JDK is no longer as straightforward as it once was.  As
-of the time of this writing, OpenJDK 11 is the latest LTS release of Java.
+Installing a Java Development Kit (JDK) is a little more complex than it used to
+be.  There are official versions from Oracle that require subscriptions, and
+there are a number of free, open-source alternatives that implement the same
+standards.  This project uses one of the free, open-source varieties:
+[Adoptium's OpenJDK 11 LTS][adoptium-releases].
 
-Homebrew users will need to add a tap first, before installing OpenJDK.
+Homebrew users will need to add a tap first, before installing the JDK:
 
 ```shell
 # Install the tap
@@ -33,14 +36,15 @@ $ brew search jdk #Should list openjdk@11
 $ brew install openjdk@11
 ```
 
+[adoptium-releases]: https://adoptium.net/temurin/releases
+
 
 ## Manage your Java environment with `jenv` (recommended)
 
 If you have multiple JDKs installed on your system, it's easy to get mixed up
 and use a different version of the JDK than is used to develop this project.  An
-environment manager like [`jenv`](https://www.jenv.be/) can help.  It sets
-environment variables like `JAVA_HOME` to the version specified in
-`.java-version`.
+environment manager like [`jenv`][jenv] can help.  It sets environment variables
+like `JAVA_HOME` to the version specified in `.java-version`.
 
 Homebrew users can install it as follows:
 
@@ -62,13 +66,24 @@ $ jenv doctor
 [OK]    Jenv is correctly loaded
 ```
 
+[jenv]: https://www.jenv.be/
 
-## Use `gradle` for just about everything else
 
-This project uses Gradle in the traditional fashion by using the included
-scripts (`gradlew` and `gradlew.bat`).  These scripts automatically download and
-use a pinned version of Gradle that is known to be compatible with the code and
-the configured JDK.
+## Use Gradle for just about everything else
+
+This project uses [Gradle][gradle-what-is-gradle] in the traditional fashion by
+using the included scripts (`gradlew` and `gradlew.bat`).  These scripts
+automatically download and use a pinned version of Gradle that is known to be
+compatible with the code and the configured JDK.
+
+This project is a [multi-project build][gradle-multi-project], with configuration in the following files:
+
+* `settings.gradle`: For the most part, this just lists the sub-projects to
+  build.
+* `build.gradle`: Defines tasks and plugin settings that apply to most (or all)
+  sub-projects.
+* `<sub-project>/build.gradle`: Defines tasks and plugin settings that apply to
+  a sub-project.
 
 There are a couple of things that come in handy, if you are new to Gradle:
 
@@ -80,21 +95,21 @@ $ ./gradlew -v
 $ ./gradlew tasks --all
 ```
 
+[gradle-multi-project]: https://docs.gradle.org/current/samples/sample_building_java_applications_multi_project.html
+[gradle-what-is-gradle]: https://docs.gradle.org/current/userguide/what_is_gradle.html
+
 
 ## Install `git` hooks to enforce standards (recommended)
 
-There's a pre-commit hook that verifies that the code is formatted.  It will
-tell you how to address any violations.
+There's a [pre-commit hook][git-custom-hooks] that verifies that the code is
+formatted.  It will stop the commit and tell you about any violations, if any
+code is not formatted correctly.
 
 Install it by copying the hook to your `.git` directory in this repository.
-From the repository root:
-
-```shell
-$ cp nested-lambdas/etc/git-hooks/* .git/hooks
-```
-
-Or use this Gradle task to do it for you:
+There is a Gradle task that automates this:
 
 ```shell
 $ ./gradlew installGitHook
 ```
+
+[git-custom-hooks]: https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks
