@@ -21,6 +21,11 @@ For more details:
 - [JavaSpec for JUnit Jupiter](#javaspec-for-junit-jupiter)
   - [What is JavaSpec?](#what-is-javaspec)
   - [Getting Started](#getting-started)
+    - [Add dependencies](#add-dependencies)
+    - [Run specs on the Jupiter platform (Gradle)](#run-specs-on-the-jupiter-platform-gradle)
+    - [Run specs with JUnit Console](#run-specs-with-junit-console)
+    - [Basic spec syntax](#basic-spec-syntax)
+    - [More spec syntax](#more-spec-syntax)
   - [Support](#support)
 
 - [Installation](./doc/installation.md)
@@ -102,10 +107,64 @@ you.
 
 
 ## Getting Started
+### Add dependencies
 
-* Installation briefing
-  * _Brief_ example of which dependencies to add.  Link to installation guide
-    for details.
+To start using JavaSpec, add the following dependencies:
+
+1. `testImplementation 'info.javaspec:javaspec-api'`: the syntax you need to
+   declare specs.  This needs to be on the classpath you use for compiling test
+   sources and on the one you use when running tests.
+1. `testRuntimeOnly 'info.javaspec:javaspec-engine'`: the Jupiter `TestEngine`
+   that runs specs.  This only needs to be on the classpath you use when running
+   tests.
+1. some kind of library for assertions.  For example:
+   `testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'`
+
+In Gradle, that means adding the following to your `build.gradle` file:
+
+```gradle
+//build.gradle
+dependencies {
+  //Add these dependencies for JavaSpec
+  testImplementation 'info.javaspec:javaspec-api:<version>'
+  testRuntimeOnly 'info.javaspec:javaspec-engine:<version>'
+
+  //Add an assertion library (JUnit 5's assertions shown here)
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+}
+```
+
+
+### Run specs on the Jupiter platform (Gradle)
+
+Once you have the right dependencies, you need a way to run specs on the JUnit /
+Jupiter platform.
+
+If you are accustomed to using JUnit in Gradle projects already, you should
+continue to add this to your `build.gradle`:
+
+```gradle
+//build.gradle
+test {
+	useJUnitPlatform()
+}
+```
+
+Then it's `./gradlew test` to run specs, like usual.
+
+For extra-pretty console output, try adding `id 'com.adarshr.test-logger'` to
+your `plugins` section.
+
+
+### Run specs with JUnit Console
+
+  * JUnit Console works too: add --include-engine and classpaths for API,
+    engine, test code, prod code, test dependencies (AssertJ) and prod
+    dependencies.
+
+
+### Basic spec syntax
+
 * Writing specs (must haves)
   * Make any Java class.  It doesn't have to end in Spec or Test, but Spec or
     Specs is recommended.
@@ -116,13 +175,10 @@ you.
     all you really have to have.
   * Use JUnit's build-in assertions, another library like Hamcrest, or make your
     own like you would in JUnit.
-* Running specs
-  * ./gradlew test like usual, as long as you have the engine as a runtime
-    dependency.
-  * testlogger looks nice -- recommended.
-  * JUnit Console works too: add --include-engine and classpaths for API,
-    engine, test code, prod code, test dependencies (AssertJ) and prod
-    dependencies.
+
+
+### More spec syntax
+
 * Writing specs (nice to haves)
   * Recommend #describe for the class and method you want, to organize specs.
   * #pending for anything you haven't written yet and #skip for anything to
