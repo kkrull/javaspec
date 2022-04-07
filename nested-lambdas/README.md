@@ -23,6 +23,7 @@ For more details:
   - [Getting Started](#getting-started)
     - [Add dependencies](#add-dependencies)
     - [Run specs in Gradle](#run-specs-in-gradle)
+    - [Run specs in your favorite JUnit-enabled IDE](#run-specs-in-your-favorite-junit-enabled-ide)
     - [Run specs with JUnit Console](#run-specs-with-junit-console)
     - [Basic spec syntax](#basic-spec-syntax)
     - [More spec syntax](#more-spec-syntax)
@@ -155,6 +156,32 @@ For extra-pretty console output, try adding `id 'com.adarshr.test-logger'` to
 your `plugins` section.
 
 
+### Run specs in your favorite JUnit-enabled IDE
+
+If you have an IDE that can already run JUnit 5 tests, there's a good chance that
+it can also run JavaSpec by:
+
+1. Add `@Testable` to your `SpecClass`, as a hint to your IDE that this class
+   contains tests.
+2. Add the Jupiter dependency that contains this.
+
+As usual, `javaspec-engine` and `javaspec-api` need to be on your classpath at
+runtime.
+
+For example:
+
+```java
+@Testable //Add this IDE hint
+public class GreeterSpecs implements SpecClass {
+	public void declareSpecs(JavaSpec javaspec) {
+		javaspec.describe(Greeter.class, () -> {
+      ...
+		});
+	}
+}
+```
+
+
 ### Run specs with JUnit Console
 
 Since this is just another `TestEngine` for Jupiter, you can also run specs on
@@ -183,8 +210,6 @@ in addition to whichever options you are already using:
 * Writing specs (must haves)
   * Make any Java class.  It doesn't have to end in Spec or Test, but Spec or
     Specs is recommended.
-  * Optional: Add `@Testable` to get your IDE to pick up on it.  What artifact
-    does this come from?  It should be `testImplementation`, right?
   * Implement SpecClass and #declareSpecs
   * #it with a description and a lambda, and you're off and running.  This is
     all you really have to have.
