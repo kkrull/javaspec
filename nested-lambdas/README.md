@@ -37,11 +37,68 @@ different syntax than [JavaSpec 1.x][javaspec-1x].
 
 ## What is JavaSpec?
 
-* What is JavaSpec (brief)?
-  * What does it do?  It helps you write specs that run on JUnit / Jupiter as
-    tests.
-  * Intended audience / why use it?  If you like describing behavior with text
-    and don't mind lambdas, this is for you.
+JavaSpec helps you take a JUnit test that looks like this:
+
+```java
+class GreeterTest {
+	@Nested
+	@DisplayName("#greet")
+	class greet {
+		@Test
+		@DisplayName("greets the world, given no name")
+		void givenNoNameGreetsTheWorld() {
+			Greeter subject = new Greeter();
+			assertEquals("Hello world!", subject.greet());
+		}
+
+		@Test
+		@DisplayName("greets a person by name, given a name")
+		void givenANameGreetsThePersonByName() {
+			Greeter subject = new Greeter();
+			assertEquals("Hello Adventurer!", subject.greet("Adventurer"));
+		}
+	}
+}
+```
+
+and turn declare it with lambdas instead, like this:
+
+```java
+@Testable
+public class GreeterSpecs implements SpecClass {
+	public void declareSpecs(JavaSpec javaspec) {
+		javaspec.describe(Greeter.class, () -> {
+			javaspec.describe("#greet", () -> {
+				javaspec.it("greets the world, given no name", () -> {
+					Greeter subject = new Greeter();
+					assertEquals("Hello world!", subject.greet());
+				});
+
+				javaspec.it("greets a person by name, given a name", () -> {
+					Greeter subject = new Greeter();
+					assertEquals("Hello Adventurer!", subject.greet("Adventurer"));
+				});
+			});
+		});
+	}
+}
+```
+
+This results in test output that looks like this:
+
+```
+Greeter
+
+  #greet
+
+    ✔ greets the world, given no name
+    ✔ greets a person by name, given a name
+```
+
+Using this syntax, you can describe behavior with plain language without having
+to add extra decorators or name tests twice.  So if you're into testing, like
+being descriptive, and don't mind lambdas: this might be the testing library for
+you.
 
 
 ## Getting Started
