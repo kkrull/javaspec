@@ -1,25 +1,38 @@
 # JavaSpec for JUnit Jupiter
 
-_Brings Java tests into the 21st century, using technology from the 1960's._
-_Knocks the fat out of JUnit tests._
+_Uses technology from the 1960s to bring Java testing into the 21st century._
 
-This is the next version of JavaSpec, which uses nested lambda functions to
-organize specs.  It uses a different syntax than the 1.x release.
-
-* Top line
+* TODO KDK Top line
   * Build status?
   * Test coverage?
-  * This documentation is for JavaSpec 2.0.  If you are looking for a different
-    version, please see the [JavaSpec documentation site](http://javaspec.info).
-  * _Brief_ summary of the goals: descriptive and concise being the most
-    important.  There are more goals, but those are less important.
-* Table of Contents
-  * [What is JavaSpec?](#what-is-javaspec)
-  * [Getting Started](#getting-started)
-  * [Installation and toolchain](./doc/installation.md)
-  * [Support and known issues](#support)
-  * [Goals and development philosophy](./doc/goals.md)
-  * [Developing JavaSpec](./doc/developing-javaspec.md)
+
+JavaSpec 2 is a plugin for the JUnit 5 (Jupiter) platform that lets you write
+specifications (unit tests) with lambda functions instead of annotated test
+methods.  It does the same thing you can do with regular JUnit, but with a
+syntax that is more descriptive–and more concise–than its JUnit counterpart.
+
+JavaSpec 2 should work everywhere JUnit 5 works.  It runs in Gradle, IDEs, and
+the JUnit Console just like regular JUnit tests do.  All you have to do is add a
+couple of small dependencies: one at compile time for the new test syntax and
+one at runtime for the `TestEngine` that turns the new syntax into Jupiter
+tests.
+
+_TL;DR - it's kind of like the syntax from Jest/Mocha/Jasmine, but for Java._
+
+For more details:
+
+- [JavaSpec for JUnit Jupiter](#javaspec-for-junit-jupiter)
+  - [What is JavaSpec?](#what-is-javaspec)
+  - [Getting Started](#getting-started)
+  - [Support](#support)
+
+- [Installation](./doc/installation.md)
+- [Goals and development philosophy](./doc/goals.md)
+
+**Note that this documentation is for the new version of JavaSpec**.  It uses a
+different syntax than [JavaSpec 1.x][javaspec-1x].
+
+[javaspec-1x]: http://javaspec.info
 
 
 ## What is JavaSpec?
