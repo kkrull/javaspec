@@ -22,7 +22,7 @@ For more details:
   - [What is JavaSpec?](#what-is-javaspec)
   - [Getting Started](#getting-started)
     - [Add dependencies](#add-dependencies)
-    - [Run specs on the Jupiter platform (Gradle)](#run-specs-on-the-jupiter-platform-gradle)
+    - [Run specs in Gradle](#run-specs-in-gradle)
     - [Run specs with JUnit Console](#run-specs-with-junit-console)
     - [Basic spec syntax](#basic-spec-syntax)
     - [More spec syntax](#more-spec-syntax)
@@ -135,13 +135,12 @@ dependencies {
 ```
 
 
-### Run specs on the Jupiter platform (Gradle)
+### Run specs in Gradle
 
 Once you have the right dependencies, you need a way to run specs on the JUnit /
-Jupiter platform.
+Jupiter platform.  This section describes how to do that in a Gradle project.
 
-If you are accustomed to using JUnit in Gradle projects already, you should
-continue to add this to your `build.gradle`:
+As with JUnit, you still need to add this to your `build.gradle`:
 
 ```gradle
 //build.gradle
@@ -158,9 +157,25 @@ your `plugins` section.
 
 ### Run specs with JUnit Console
 
-  * JUnit Console works too: add --include-engine and classpaths for API,
-    engine, test code, prod code, test dependencies (AssertJ) and prod
-    dependencies.
+Since this is just another `TestEngine` for Jupiter, you can also run specs on
+the JUnit Console as seen in this shell snippet:
+
+```shell
+junit_console_jar='junit-platform-console-standalone-1.8.1.jar'
+java -jar "$junit_console_jar" \
+  --classpath=info.javaspec.javaspec-api-0.0.1.jar \
+  --classpath=<compiled production code and its dependencies> \
+  --classpath=<compiled specs and their dependencies> \
+  --classpath=info.javaspec.javaspec-engine-0.0.1.jar \
+  --include-engine=javaspec-engine \
+  ...
+```
+
+Specifically, this means running adding the following options to JUnit Console,
+in addition to whichever options you are already using:
+
+* `--classpath` for `javaspec-api` and `javaspec-engine`
+* `--include-engine=javaspec-engine`
 
 
 ### Basic spec syntax
