@@ -1,10 +1,6 @@
 # JavaSpec for JUnit Jupiter
 
-_Uses technology from the 1960s to bring Java testing into the 21st century._
-
-* TODO KDK Top line
-  * Build status?
-  * Test coverage?
+![JavaSpec build status](https://github.com/kkrull/javaspec/actions/workflows/gradle.yml/badge.svg)
 
 JavaSpec 2 is a plugin for the JUnit 5 (Jupiter) platform that lets you write
 specifications (unit tests) with lambda functions instead of annotated test
@@ -17,7 +13,8 @@ couple of small dependencies: one at compile time for the new test syntax and
 one at runtime for the `TestEngine` that turns the new syntax into Jupiter
 tests.
 
-_TL;DR - it's kind of like the syntax from Jest/Mocha/Jasmine, but for Java._
+_TL;DR - it's kind of like the syntax from
+[Jest][jest] / [Mocha][mocha] / [Jasmine][jasmine], but for Java._
 
 For more details:
 
@@ -32,7 +29,10 @@ For more details:
 **Note that this documentation is for the new version of JavaSpec**.  It uses a
 different syntax than [JavaSpec 1.x][javaspec-1x].
 
+[jasmine]: https://jasmine.github.io/
 [javaspec-1x]: http://javaspec.info
+[jest]: https://jestjs.io/
+[mocha]: https://mochajs.org/
 
 
 ## What is JavaSpec?
