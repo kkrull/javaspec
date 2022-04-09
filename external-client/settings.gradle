@@ -1,2 +1,2 @@
 rootProject.name = 'javaspec-external-client'
-include('lib')
+include('lambda-user')
