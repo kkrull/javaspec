@@ -23,8 +23,8 @@ _TL;DR - it's kind of like the syntax from
   - [Run specs with Gradle](#run-specs-with-gradle)
   - [Run specs in your IDE](#run-specs-in-your-ide)
   - [Run specs with JUnit Platform Console](#run-specs-with-junit-platform-console)
-  - [Basic spec syntax](#basic-spec-syntax)
-  - [More spec syntax](#more-spec-syntax)
+  - [Writing Specs](#writing-specs)
+  - [More helpful syntax](#more-helpful-syntax)
 - [Support](#support)
 
 - [Installation](./doc/installation.md)
@@ -217,25 +217,74 @@ Platform Console, on top of whichever options you are already using:
 [junit-console-launcher]: https://junit.org/junit5/docs/current/user-guide/#running-tests-console-launcher
 
 
-### Basic spec syntax
+### Writing Specs
 
-* Writing specs (must haves)
-  * Make any Java class.  It doesn't have to end in Spec or Test, but Spec or
-    Specs is recommended.
-  * Implement SpecClass and #declareSpecs
-  * #it with a description and a lambda, and you're off and running.  This is
-    all you really have to have.
-  * Use JUnit's build-in assertions, another library like Hamcrest, or make your
-    own like you would in JUnit.
+Start writing specs with JavaSpec the same way you would with JUnit: by making a
+new class.  It is often helpful for the name of that class to end in something
+like `Specs`, but JavaSpec does not require following any particular convention.
+
+Once you have your new spec class:
+
+1. Implement `SpecClass` (`info.javaspec:javaspec-api`) and
+   `#declareSpecs(JavaSpec)`.
+2. Call `JavaSpec#describe` with:
+   1. some description of what you are testing (or the class itself)
+   2. a lambda to hold all the specifications for what you're describing
+3. Call `JavaSpec#it` with:
+   1. some description of the expected behavior
+   2. a lambda with [Arrange Act Assert][c2wiki-arrange-act-assert] in it, like
+      in any other test
+
+Put it all together, and a basic spec class looks something like this:
+
+```java
+import info.javaspec.api.JavaSpec;
+import info.javaspec.api.SpecClass;
+
+public class GreeterSpecs implements SpecClass {
+  public void declareSpecs(JavaSpec javaspec) {
+    javaspec.describe(Greeter.class, () -> {
+      javaspec.describe("#greet", () -> {
+        javaspec.it("greets the world, given no name", () -> {
+          Greeter subject = new Greeter();
+          assertEquals("Hello world!", subject.greet());
+        });
+      });
+    });
+  }
+}
+```
+
+[c2wiki-arrange-act-assert]: http://wiki.c2.com/?ArrangeActAssert
 
 
-### More spec syntax
+### More helpful syntax
 
-* Writing specs (nice to haves)
-  * Recommend #describe for the class and method you want, to organize specs.
-  * #pending for anything you haven't written yet and #skip for anything to
-    skip. (as-needed)
-  * #given and #describe for context / flavor (optional)
+The JavaSpec API supports a few more things that developers often need to do
+while testing:
+
+* `JavaSpec#pending`: Stub in a pending / todo item reminding you to test
+  something later.  JUnit Platform skips the resulting test.
+* `JavaSpec#skip`: Skip running a spec that already has a defined procedure.
+  This can be useful for allowing a spec to be _temporarily_ disabled while you
+  fix something else.
+
+The API also has a variety of ways to help you organize your specs:
+
+* `JavaSpec#describe` is used most often to define the class and methods being
+  tested, but it is really just a general-purpose container with no special
+  behavior of its own.
+* `JavaSpec#context` can be useful for defining any circumstances under which
+  some specifications apply.  It's not implemented any differently from
+  `#describe`, so use `#context` if you feel like it reads better.
+* `JavaSpec#given` is like the other containers, except that it adds the word
+  "given" before your description.  For example
+  `javaspec.given("a name", () -> ...)`
+  results in a container called `given a name`.
+
+Note that these containers exist simply to help you be as descriptive and
+organized as you need to be.  Try to use them judiciously to enhance
+human readability.
 
 
 ## Support
