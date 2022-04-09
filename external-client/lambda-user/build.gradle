@@ -2,17 +2,23 @@ plugins {
 	id 'java-library'
 }
 
+dependencies {
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+}
+
+java {
+	jar {
+		//Example sources not meant for publication as an artifact
+		enabled = false
+	}
+}
+
 repositories {
 	mavenCentral()
 }
 
-dependencies {
-	// Use JUnit Jupiter for testing.
-	testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
-	api 'org.apache.commons:commons-math3:3.6.1'
-	implementation 'com.google.guava:guava:30.1.1-jre'
-}
-
-tasks.named('test') {
+test {
 	useJUnitPlatform()
 }
+
+version '2.0.0-SNAPSHOT'
