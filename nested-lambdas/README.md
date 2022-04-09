@@ -26,9 +26,9 @@ _TL;DR - it's kind of like the syntax from
   - [Writing Specs](#writing-specs)
   - [More helpful syntax](#more-helpful-syntax)
 - [Support](#support)
+  - [Known Issues](#known-issues)
+  - [More?](#more)
 
-- [Installation](./doc/installation.md)
-- [Goals and development philosophy](./doc/goals.md)
 
 **Note that this documentation is for the new version of JavaSpec**.  It uses a
 different syntax than [JavaSpec 1.x][javaspec-1x].
@@ -289,13 +289,27 @@ human readability.
 
 ## Support
 
-* Support
-  * File an issue in Github.
-  * HMU on Twitter?  Discord?
-  * Optional listeners for debugging - see the readme for that project.
-* Known issues and limitations
-  * No beforeEach or afterEach yet.
-  * Gradle reports the name of the test class at the bottom, instead of the top.
-    Make Github issue for this.
-  * Reports as default package and unknown class in JUnit report.  Make Github
-    issue for this.
+Feel free to file an [Issue on Github][github-javaspec-issues] if you have any
+questions about using JavaSpec, or if something is not working the way you
+expected.
+
+[github-javaspec-issues]: https://github.com/kkrull/javaspec/issues
+
+
+### Known Issues
+
+* There is not an equivalent of `@BeforeEach` and `@AfterEach` yet, for defining
+  shared setup and teardown around a series of related specs.
+* Running specs in Gradle causes specs to be reported under `default-package`
+  and `UnknownClass` instead of their actual package and class names.  This
+  applies to HTML test reports in `build/reports/tests/test`.
+* Running specs in Gradle with the [Gradle Test Logger
+  Plugin][github-gradle-test-logger-plugin] causes the name of the spec class to
+  be printed _after_ all the specs in the class have run, instead of _before_
+  it.
+
+
+### More?
+
+- [Installation](./doc/installation.md)
+- [Goals and development philosophy](./doc/goals.md)
