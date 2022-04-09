@@ -15,9 +15,14 @@ public class GreeterSpecs implements SpecClass {
 	public void declareSpecs(JavaSpec javaspec) {
 		javaspec.describe(Greeter.class, () -> {
 			javaspec.describe("#greet", () -> {
-				javaspec.it("greets the world", () -> {
+				javaspec.it("greets the world, given no name", () -> {
 					Greeter subject = new Greeter();
 					assertEquals("Hello world!", subject.greet());
+				});
+
+				javaspec.it("greets a person by name, given a name", () -> {
+					Greeter subject = new Greeter();
+					assertEquals("Hello Adventurer!", subject.greet("Adventurer"));
 				});
 			});
 		});

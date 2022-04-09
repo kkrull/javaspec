@@ -140,7 +140,7 @@ class WidgetTest {
     Because of = () -> returned = subject.sayHello();
     It says_hello = () -> assertEquals("Hello World!", returned);
   }
-  
+
   class bar {
     class given_a_multiple_of_3 {
       It prints_fizz = () -> assertEquals("fizz", subject.bar(3));
