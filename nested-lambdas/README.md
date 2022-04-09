@@ -27,7 +27,6 @@ _TL;DR - it's kind of like the syntax from
   - [More helpful syntax](#more-helpful-syntax)
 - [Support](#support)
   - [Known Issues](#known-issues)
-  - [More?](#more)
 
 
 **Note that this documentation is for the new version of JavaSpec**.  It uses a
@@ -307,9 +306,3 @@ expected.
   Plugin][github-gradle-test-logger-plugin] causes the name of the spec class to
   be printed _after_ all the specs in the class have run, instead of _before_
   it.
-
-
-### More?
-
-- [Installation](./doc/installation.md)
-- [Goals and development philosophy](./doc/goals.md)
