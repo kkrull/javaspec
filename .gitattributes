@@ -3,6 +3,7 @@
 LICENSE         text
 pom.xml         text
 
+*.bat           text eol=crlf
 *.feature       text
 *.java          text diff=java
 *.md            text
