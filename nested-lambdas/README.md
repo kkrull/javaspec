@@ -20,10 +20,10 @@ _TL;DR - it's kind of like the syntax from
 - [What is JavaSpec?](#what-is-javaspec)
 - [Getting Started](#getting-started)
   - [Add dependencies](#add-dependencies)
+  - [Write Specs](#write-specs)
   - [Run specs with Gradle](#run-specs-with-gradle)
   - [Run specs in your IDE](#run-specs-in-your-ide)
   - [Run specs with JUnit Platform Console](#run-specs-with-junit-platform-console)
-  - [Writing Specs](#writing-specs)
   - [More helpful syntax](#more-helpful-syntax)
 - [Support](#support)
   - [Known Issues](#known-issues)
@@ -100,7 +100,7 @@ Greeter
 
 Using this syntax, you can describe behavior with plain language without having
 to add extra decorators or name tests twice (one machine-readable method name
-and onc human readable `@DisplayName`).
+and one human readable `@DisplayName`).
 
 If you're into testing, like being descriptive, and don't mind lambdas: this
 might be the testing library for you.
@@ -133,6 +133,47 @@ dependencies {
   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
 }
 ```
+
+
+### Write Specs
+
+Start writing specs with JavaSpec the same way you would with JUnit: by making a
+new class.  It is often helpful for the name of that class to end in something
+like `Specs`, but JavaSpec does not require following any particular convention.
+
+Once you have your new spec class:
+
+1. Implement `SpecClass` (`info.javaspec:javaspec-api`) and
+   `#declareSpecs(JavaSpec)`.
+2. Inside `declareSpecs`, call `JavaSpec#describe` with:
+   1. some description of what you are testing (or the class itself)
+   2. a lambda to hold all the specifications for what you're describing
+3. Inside the `describe` lambda, call `JavaSpec#it` with:
+   1. some description of the expected behavior
+   2. a lambda with [Arrange Act Assert][c2wiki-arrange-act-assert] in it, like
+      in any other test
+
+Put it all together, and a basic spec class looks something like this:
+
+```java
+import info.javaspec.api.JavaSpec;
+import info.javaspec.api.SpecClass;
+
+public class GreeterSpecs implements SpecClass {
+  public void declareSpecs(JavaSpec javaspec) {
+    javaspec.describe(Greeter.class, () -> {
+      javaspec.describe("#greet", () -> {
+        javaspec.it("greets the world, given no name", () -> {
+          Greeter subject = new Greeter();
+          assertEquals("Hello world!", subject.greet());
+        });
+      });
+    });
+  }
+}
+```
+
+[c2wiki-arrange-act-assert]: http://wiki.c2.com/?ArrangeActAssert
 
 
 ### Run specs with Gradle
@@ -214,47 +255,6 @@ Platform Console, on top of whichever options you are already using:
 * `--include-engine=javaspec-engine`
 
 [junit-console-launcher]: https://junit.org/junit5/docs/current/user-guide/#running-tests-console-launcher
-
-
-### Writing Specs
-
-Start writing specs with JavaSpec the same way you would with JUnit: by making a
-new class.  It is often helpful for the name of that class to end in something
-like `Specs`, but JavaSpec does not require following any particular convention.
-
-Once you have your new spec class:
-
-1. Implement `SpecClass` (`info.javaspec:javaspec-api`) and
-   `#declareSpecs(JavaSpec)`.
-2. Call `JavaSpec#describe` with:
-   1. some description of what you are testing (or the class itself)
-   2. a lambda to hold all the specifications for what you're describing
-3. Call `JavaSpec#it` with:
-   1. some description of the expected behavior
-   2. a lambda with [Arrange Act Assert][c2wiki-arrange-act-assert] in it, like
-      in any other test
-
-Put it all together, and a basic spec class looks something like this:
-
-```java
-import info.javaspec.api.JavaSpec;
-import info.javaspec.api.SpecClass;
-
-public class GreeterSpecs implements SpecClass {
-  public void declareSpecs(JavaSpec javaspec) {
-    javaspec.describe(Greeter.class, () -> {
-      javaspec.describe("#greet", () -> {
-        javaspec.it("greets the world, given no name", () -> {
-          Greeter subject = new Greeter();
-          assertEquals("Hello world!", subject.greet());
-        });
-      });
-    });
-  }
-}
-```
-
-[c2wiki-arrange-act-assert]: http://wiki.c2.com/?ArrangeActAssert
 
 
 ### More helpful syntax
