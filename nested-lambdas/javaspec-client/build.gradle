@@ -5,6 +5,8 @@ plugins {
 	id 'com.diffplug.spotless'
 }
 
+version '2.0.0-SNAPSHOT'
+
 dependencies {
 	testImplementation project(':javaspec-api')
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
@@ -29,5 +31,3 @@ java {
 test {
 	useJUnitPlatform()
 }
-
-version '0.0.1'

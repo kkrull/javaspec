@@ -4,10 +4,10 @@ plugins {
 	id 'com.diffplug.spotless'
 }
 
+version '2.0.0-SNAPSHOT'
+
 dependencies { }
 
 test {
 	useJUnitPlatform()
 }
-
-version '0.0.1'
