@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
 	testImplementation 'info.javaspec:javaspec-api:2.0.0-SNAPSHOT'
+	testRuntimeOnly 'info.javaspec:javaspec-engine:2.0.0-SNAPSHOT'
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 }
 

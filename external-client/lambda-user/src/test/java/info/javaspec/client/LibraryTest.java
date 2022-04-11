@@ -19,7 +19,7 @@ class LibraryTest implements SpecClass {
 			javaspec.describe("#someLibraryMethod", () -> {
 				javaspec.it("returns true", () -> {
 					Library subject = new Library();
-					assertTrue(subject.someLibraryMethod());
+					assertFalse(subject.someLibraryMethod());
 				});
 			});
 		});
