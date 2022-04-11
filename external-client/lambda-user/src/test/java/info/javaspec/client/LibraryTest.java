@@ -6,7 +6,7 @@ import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
 import org.junit.jupiter.api.Test;
 
-class LibraryTest implements SpecClass {
+public class LibraryTest implements SpecClass {
 	@Test
 	void someLibraryMethodReturnsTrue() {
 		Library subject = new Library();
