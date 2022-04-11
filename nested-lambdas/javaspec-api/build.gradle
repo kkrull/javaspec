@@ -8,7 +8,7 @@ version '2.0.0-SNAPSHOT'
 
 dependencies { }
 
-description 'Code needed to declare specs'
+description 'Everything needed to declare specs'
 
 publishing {
 	publications {
@@ -16,7 +16,25 @@ publishing {
 			from components.java
 			pom {
 				description = project.description
+				developers {
+					developer {
+						id = 'kkrull'
+						name = 'Kyle Krull'
+					}
+				}
+
+				issueManagement {
+					system = 'GitHub'
+					url = 'https://github.com/kkrull/javaspec/issues'
+				}
+
 				name = 'JavaSpec API'
+				scm {
+					connection = 'scm:git:git://github.com/kkrull/javaspec.git'
+					developerConnection = 'scm:git:git@github.com:kkrull/javaspec.git'
+					url = 'https://github.com/kkrull/javaspec'
+				}
+
 				url = 'https://javaspec.info'
 			}
 		}
