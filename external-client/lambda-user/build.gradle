@@ -1,12 +1,17 @@
 plugins {
 	id 'java-library'
+	id 'com.adarshr.test-logger'
 }
+
+version '2.0.0-SNAPSHOT'
 
 dependencies {
 	testImplementation 'info.javaspec:javaspec-api:2.0.0-SNAPSHOT'
 	testRuntimeOnly 'info.javaspec:javaspec-engine:2.0.0-SNAPSHOT'
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 }
+
+description 'Runs specs with JavaSpec 2.x nested lambdas'
 
 java {
 	jar {
@@ -15,12 +20,6 @@ java {
 	}
 }
 
-repositories {
-	mavenCentral()
-}
-
 test {
 	useJUnitPlatform()
 }
-
-version '2.0.0-SNAPSHOT'
