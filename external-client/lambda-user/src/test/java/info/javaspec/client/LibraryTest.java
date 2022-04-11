@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
-import org.junit.jupiter.api.Test;
 
 public class LibraryTest implements SpecClass {
 	@Override
