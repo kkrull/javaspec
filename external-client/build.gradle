@@ -10,6 +10,7 @@ subprojects {
 	group 'info.javaspec'
 
 	repositories {
+		mavenLocal()
 		mavenCentral()
 	}
 

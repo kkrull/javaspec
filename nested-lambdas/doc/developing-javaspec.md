@@ -6,6 +6,7 @@
   * Contribution guide: Please make an effort to test, but feel free to ask for
     help
 
+
 ## Publish jars to Maven Central
 
 Use the [Maven Publish plugin][gradle-publishing-maven] to generate POM files
@@ -20,6 +21,7 @@ For example:
 
 ```shell
 $ ./gradlew generatePomFileForMavenPublication
+$ ./gradlew publishMavenPublicationToMavenLocal
 ```
 
 [gradle-publishing-maven]: https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
