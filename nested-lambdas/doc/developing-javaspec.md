@@ -7,7 +7,7 @@
     help
 
 
-## Publish jars to Maven Central
+## Publish jars to Maven Local
 
 Use the [Maven Publish plugin][gradle-publishing-maven] to generate POM files
 for project artifacts that are compatible for use with Maven.  Configure this
@@ -22,6 +22,17 @@ For example:
 ```shell
 $ ./gradlew generatePomFileForMavenPublication
 $ ./gradlew publishMavenPublicationToMavenLocal
+```
+
+Gradle needs to be configured to resolve dependencies locally, after installing
+them:
+
+```gradle
+//build.gradle
+repositories {
+  mavenLocal()
+  ...
+}
 ```
 
 [gradle-publishing-maven]: https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
