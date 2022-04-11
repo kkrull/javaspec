@@ -1,4 +1,3 @@
-//Example showing how to use JavaSpec to write specs with nested lambdas.
 plugins {
 	id 'java'
 	id 'com.adarshr.test-logger'
@@ -18,6 +17,8 @@ dependencies {
 //  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
 //  testRuntimeOnly project(':jupiter-test-execution-listener')
 }
+
+description 'Example showing how to use JavaSpec to write specs with nested lambdas'
 
 java {
 	jar {

@@ -11,7 +11,7 @@ dependencies {
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 }
 
-description 'Runs specs with JavaSpec 2.x nested lambdas'
+description 'Example of how to use JavaSpec 2.x with nested lambdas'
 
 java {
 	jar {

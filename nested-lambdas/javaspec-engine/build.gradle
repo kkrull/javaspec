@@ -1,4 +1,3 @@
-//TestEngine that is discovered at runtime and runs specs under Jupiter
 plugins {
 	id 'java-library'
 	id 'maven-publish'
@@ -25,7 +24,7 @@ dependencies {
 //  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
 }
 
-description 'Runs specs on JUnit Jupiter'
+description 'TestEngine for JUnit Jupiter that runs specs'
 
 publishing {
 	publications {
