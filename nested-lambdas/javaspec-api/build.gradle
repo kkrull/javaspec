@@ -1,12 +1,21 @@
 //Code that JavaSpec clients use to write (not run) their specs
 plugins {
 	id 'java-library'
+	id 'maven-publish'
 	id 'com.diffplug.spotless'
 }
 
 version '2.0.0-SNAPSHOT'
 
 dependencies { }
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			from components.java
+		}
+	}
+}
 
 test {
 	useJUnitPlatform()
