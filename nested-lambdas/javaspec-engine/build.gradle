@@ -1,8 +1,8 @@
 plugins {
 	id 'java-library'
 	id 'javaspec.java-format-convention'
-	id 'javaspec.java-library-convention'
 	id 'javaspec.java-junit-convention'
+	id 'javaspec.maven-publish-convention'
 }
 
 version '2.0.0-SNAPSHOT' //Has to go above other tasks that refer to it
