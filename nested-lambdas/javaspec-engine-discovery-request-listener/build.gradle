@@ -1,7 +1,5 @@
 /**
-	Service provider for reporting the EngineDiscoveryRequest to the console.
-
-	Add this as a testRuntimeOnly dependency, along the following:
+	Add this as a testRuntimeOnly dependency, along with the following:
 
 	test {
 		useJUnitPlatform()
@@ -18,13 +16,15 @@ plugins {
 	id 'com.diffplug.spotless'
 }
 
+version '2.0.0-SNAPSHOT'
+
 dependencies {
 	implementation project(':javaspec-engine')
 	implementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
+description 'Service Provider: an EngineDiscoveryRequestListener that reports DiscoveryRequests to the console'
+
 test {
 	useJUnitPlatform()
 }
-
-version '0.0.1'

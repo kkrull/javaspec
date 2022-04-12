@@ -1,9 +1,10 @@
-//Example showing how to use JavaSpec to write specs with nested lambdas.
 plugins {
 	id 'java'
 	id 'com.adarshr.test-logger'
 	id 'com.diffplug.spotless'
 }
+
+version '2.0.0-SNAPSHOT'
 
 dependencies {
 	testImplementation project(':javaspec-api')
@@ -17,6 +18,8 @@ dependencies {
 //  testRuntimeOnly project(':jupiter-test-execution-listener')
 }
 
+description 'Example project that uses JavaSpec for its tests'
+
 java {
 	jar {
 		//Example sources only.  Not meant to be published as an artifact.
@@ -29,5 +32,3 @@ java {
 test {
 	useJUnitPlatform()
 }
-
-version '0.0.1'

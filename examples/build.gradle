@@ -1,4 +1,4 @@
-//The version of JavaSpec that uses nested lambdas to organize specs
+//Uses JavaSpec from a different Gradle project, to verify dependency resolution.
 plugins {
 	id 'com.adarshr.test-logger' version '3.1.0' apply false
 
@@ -6,12 +6,13 @@ plugins {
 	id 'com.diffplug.spotless' version '6.3.0' apply false
 }
 
-description 'JavaSpec 2.x'
+description 'JavaSpec example projects'
 
 subprojects {
 	group 'info.javaspec'
 
 	repositories {
+		mavenLocal()
 		mavenCentral()
 	}
 
@@ -28,15 +29,5 @@ subprojects {
 			importOrder()
 			eclipse().configFile('../etc/eclipse-format.xml')
 		}
-	}
-}
-
-task installGitHook(type: Copy) {
-	description 'Installs pre-commit hook in .git/hooks'
-	from 'etc/git-hooks'
-	into '../.git/hooks'
-
-	doLast {
-		println "Installed Git hooks in ${destinationDir}"
 	}
 }

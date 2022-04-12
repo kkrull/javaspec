@@ -1,15 +1,16 @@
-//Service provider for reporting test execution events to the console
 plugins {
 	id 'java-library'
 	id 'com.diffplug.spotless'
 }
 
+version '2.0.0-SNAPSHOT'
+
 dependencies {
 	implementation 'org.junit.platform:junit-platform-launcher:1.8.1'
 }
 
+description 'Service Provider: a TestExecutionListener that reports test execution events to the console'
+
 test {
 	useJUnitPlatform()
 }
-
-version '0.0.1'

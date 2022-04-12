@@ -8,6 +8,9 @@ target/
 #Script dependencies
 lib/
 
+#vim
+*.swp
+
 #VSCode
 .classpath
 .project

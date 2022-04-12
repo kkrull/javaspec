@@ -1,13 +1,46 @@
-//Code that JavaSpec clients use to write (not run) their specs
 plugins {
 	id 'java-library'
+	id 'maven-publish'
 	id 'com.diffplug.spotless'
 }
 
+version '2.0.0-SNAPSHOT'
+
 dependencies { }
+
+description 'Everything needed to declare specs'
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			from components.java
+			pom {
+				description = project.description
+				developers {
+					developer {
+						id = 'kkrull'
+						name = 'Kyle Krull'
+					}
+				}
+
+				issueManagement {
+					system = 'GitHub'
+					url = 'https://github.com/kkrull/javaspec/issues'
+				}
+
+				name = 'JavaSpec API'
+				scm {
+					connection = 'scm:git:git://github.com/kkrull/javaspec.git'
+					developerConnection = 'scm:git:git@github.com:kkrull/javaspec.git'
+					url = 'https://github.com/kkrull/javaspec'
+				}
+
+				url = 'https://javaspec.info'
+			}
+		}
+	}
+}
 
 test {
 	useJUnitPlatform()
 }
-
-version '0.0.1'
