@@ -56,7 +56,3 @@ task testEngineWithJUnitConsole(type: JavaExec) {
 		'--select-class=' + 'info.javaspec.engine.JavaSpecEngineTest'
 	]
 }
-
-test {
-	useJUnitPlatform()
-}
