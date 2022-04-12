@@ -4,6 +4,8 @@ plugins {
 
 dependencies {
 	implementation 'com.adarshr:gradle-test-logger-plugin:3.1.0'
+
+	implementation 'com.diffplug.spotless:spotless-plugin-gradle:6.3.0'
 }
 
 description 'Conventions for JavaSpec projects'

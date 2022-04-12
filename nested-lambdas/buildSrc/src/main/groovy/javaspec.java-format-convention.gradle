@@ -1,0 +1,14 @@
+//Conventions for formatting Java sources
+plugins {
+	id 'java'
+	id 'com.diffplug.spotless'
+}
+
+//https://github.com/diffplug/spotless/tree/main/plugin-gradle#java
+spotless {
+	java {
+		removeUnusedImports()
+		importOrder()
+		eclipse().configFile('../etc/eclipse-format.xml') //TODO KDK: Pass in as configuration to maintain project-specific configuration
+	}
+}

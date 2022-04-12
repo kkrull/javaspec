@@ -1,7 +1,7 @@
 plugins {
 	id 'java-library'
+	id 'javaspec.java-format-convention'
 	id 'javaspec.java-library-convention'
-	id 'com.diffplug.spotless'
 }
 
 version '2.0.0-SNAPSHOT'
