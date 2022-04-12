@@ -1,4 +1,5 @@
 plugins {
+	id 'javaspec.java-library-convention'
 	id 'java-library'
 	id 'maven-publish'
 	id 'com.diffplug.spotless'
@@ -16,26 +17,7 @@ publishing {
 			from components.java
 			pom {
 				description = project.description
-				developers {
-					developer {
-						id = 'kkrull'
-						name = 'Kyle Krull'
-					}
-				}
-
-				issueManagement {
-					system = 'GitHub'
-					url = 'https://github.com/kkrull/javaspec/issues'
-				}
-
 				name = 'JavaSpec API'
-				scm {
-					connection = 'scm:git:git://github.com/kkrull/javaspec.git'
-					developerConnection = 'scm:git:git@github.com:kkrull/javaspec.git'
-					url = 'https://github.com/kkrull/javaspec'
-				}
-
-				url = 'https://javaspec.info'
 			}
 		}
 	}

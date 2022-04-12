@@ -1,0 +1,32 @@
+plugins {
+	id 'java-library'
+	id 'maven-publish'
+}
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			pom {
+				developers {
+					developer {
+						id = 'kkrull'
+						name = 'Kyle Krull'
+					}
+				}
+
+				issueManagement {
+					system = 'GitHub'
+					url = 'https://github.com/kkrull/javaspec/issues'
+				}
+
+				scm {
+					connection = 'scm:git:git://github.com/kkrull/javaspec.git'
+					developerConnection = 'scm:git:git@github.com:kkrull/javaspec.git'
+					url = 'https://github.com/kkrull/javaspec'
+				}
+
+				url = 'https://javaspec.info'
+			}
+		}
+	}
+}
