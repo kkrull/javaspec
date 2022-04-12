@@ -1,0 +1,14 @@
+//Conventions for Java projects with JUnit tests
+plugins {
+	id 'java'
+	id 'com.adarshr.test-logger'
+}
+
+test {
+	useJUnitPlatform()
+}
+
+testlogger {
+	//Customize at runtime ./gradlew -Dtestlogger.theme=plain ...
+	theme 'mocha'
+}

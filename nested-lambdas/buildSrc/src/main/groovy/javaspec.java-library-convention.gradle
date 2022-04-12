@@ -1,7 +1,6 @@
+//Conventions for Java projects that publish Maven artifacts
 plugins {
-	id 'java-library'
 	id 'maven-publish'
-	id 'com.adarshr.test-logger'
 }
 
 publishing {
@@ -30,13 +29,4 @@ publishing {
 			}
 		}
 	}
-}
-
-test {
-	useJUnitPlatform()
-}
-
-testlogger {
-	//Customize at runtime ./gradlew -Dtestlogger.theme=plain ...
-	theme 'mocha'
 }

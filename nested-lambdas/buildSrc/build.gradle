@@ -6,7 +6,7 @@ dependencies {
 	implementation 'com.adarshr:gradle-test-logger-plugin:3.1.0'
 }
 
-description 'Conventions for JavaSpec libraries'
+description 'Conventions for JavaSpec projects'
 
 repositories {
 	gradlePluginPortal()
