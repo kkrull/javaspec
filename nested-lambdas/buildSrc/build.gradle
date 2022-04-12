@@ -2,4 +2,12 @@ plugins {
 	id 'groovy-gradle-plugin'
 }
 
+dependencies {
+	implementation 'com.adarshr:gradle-test-logger-plugin:3.1.0'
+}
+
 description 'Conventional plugins for JavaSpec development'
+
+repositories {
+	gradlePluginPortal()
+}

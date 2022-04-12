@@ -1,6 +1,5 @@
 plugins {
 	id 'javaspec.java-library-convention'
-	id 'com.adarshr.test-logger'
 	id 'com.diffplug.spotless'
 }
 
