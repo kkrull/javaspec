@@ -23,7 +23,7 @@ dependencies {
 	implementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
-description 'Service provider for reporting the EngineDiscoveryRequest to the conosle'
+description 'Service Provider: an EngineDiscoveryRequestListener that reports DiscoveryRequests to the console'
 
 test {
 	useJUnitPlatform()

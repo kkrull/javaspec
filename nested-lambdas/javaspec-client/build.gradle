@@ -18,7 +18,7 @@ dependencies {
 //  testRuntimeOnly project(':jupiter-test-execution-listener')
 }
 
-description 'Example showing how to use JavaSpec to write specs with nested lambdas'
+description 'Example project that uses JavaSpec for its tests'
 
 java {
 	jar {

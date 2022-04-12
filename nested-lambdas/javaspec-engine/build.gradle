@@ -24,7 +24,7 @@ dependencies {
 //  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
 }
 
-description 'TestEngine for JUnit Jupiter that runs specs'
+description 'Service Provider: A TestEngine that runs specs on JUnit Jupiter'
 
 publishing {
 	publications {
