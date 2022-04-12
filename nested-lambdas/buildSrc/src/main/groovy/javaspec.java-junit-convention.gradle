@@ -4,10 +4,12 @@ plugins {
 	id 'com.adarshr.test-logger'
 }
 
+//https://docs.gradle.org/current/userguide/java_testing.html
 test {
 	useJUnitPlatform()
 }
 
+//https://github.com/radarsh/gradle-test-logger-plugin
 testlogger {
 	//Customize at runtime ./gradlew -Dtestlogger.theme=plain ...
 	theme 'mocha'
