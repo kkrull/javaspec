@@ -20,6 +20,6 @@ spotless {
 	java {
 		removeUnusedImports()
 		importOrder()
-		eclipse().configFile('../etc/eclipse-format.xml') //TODO KDK: Pass in as configuration to maintain project-specific configuration
+		eclipse().configFile(extension.eclipseConfigFile.get())
 	}
 }

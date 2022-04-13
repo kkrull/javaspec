@@ -25,6 +25,10 @@ dependencies {
 //  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
 }
 
+javaspecJavaFormat {
+	eclipseConfigFile = file('../etc/eclipse-format.xml')
+}
+
 publishing {
 	publications {
 		maven(MavenPublication) {

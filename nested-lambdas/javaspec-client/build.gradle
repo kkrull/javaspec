@@ -22,3 +22,7 @@ java {
 		enabled = false
 	}
 }
+
+javaspecJavaFormat {
+	eclipseConfigFile = file('../etc/eclipse-format.xml')
+}
