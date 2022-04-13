@@ -25,12 +25,25 @@ $ ./gradlew projects #List projects for API, engine, etc...
 $ ./gradlew tasks [--all] #List available tasks for the project/modules
 ```
 
+[gradle]: https://gradle.org/
+
+
+### Use conventional plugins for shared configuration
+
 Since there are multiple projects in this Gradle project, some of them wind up
 sharing the same configuration.  Much of this shared configuration exists in the
-form of [pre-compiled, custom plugins][gradle-custom-plugins].  Sources for
-these are in `buildSrc/`.
+form of [pre-compiled, custom plugins][gradle-custom-plugins].
 
-[gradle]: https://gradle.org/
+Much like with the top-level projects themselves, each plugin tries to be as
+independent (and make as few assumptions) as possible.  For example the
+`javaspec.maven-publish-convention` allows you to publish artifacts, without
+specifically mandating they be derived from Java sources.
+
+_TL;DR - some configuration is required, in the name of being easier to apply
+individually._
+
+See sources in `buildSrc/` for details.
+
 [gradle-custom-plugins]: https://docs.gradle.org/current/userguide/custom_plugins.html#sec:precompiled_plugins
 
 
