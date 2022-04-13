@@ -1,46 +1,20 @@
 plugins {
 	id 'java-library'
-	id 'maven-publish'
-	id 'com.diffplug.spotless'
+	id 'local.java-format-convention'
+	id 'local.maven-publish-convention'
 }
 
+description 'Everything needed to declare specs'
 version '2.0.0-SNAPSHOT'
 
 dependencies { }
 
-description 'Everything needed to declare specs'
-
-publishing {
-	publications {
-		maven(MavenPublication) {
-			from components.java
-			pom {
-				description = project.description
-				developers {
-					developer {
-						id = 'kkrull'
-						name = 'Kyle Krull'
-					}
-				}
-
-				issueManagement {
-					system = 'GitHub'
-					url = 'https://github.com/kkrull/javaspec/issues'
-				}
-
-				name = 'JavaSpec API'
-				scm {
-					connection = 'scm:git:git://github.com/kkrull/javaspec.git'
-					developerConnection = 'scm:git:git@github.com:kkrull/javaspec.git'
-					url = 'https://github.com/kkrull/javaspec'
-				}
-
-				url = 'https://javaspec.info'
-			}
-		}
-	}
+localJavaFormatConvention {
+	eclipseConfigFile = file('../etc/eclipse-format.xml')
 }
 
-test {
-	useJUnitPlatform()
+localMavenPublishConvention {
+	publicationDescription = project.description
+	publicationFrom = components.java
+	publicationName = 'JavaSpec API'
 }

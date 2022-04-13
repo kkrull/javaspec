@@ -1,11 +1,3 @@
-//The version of JavaSpec that uses nested lambdas to organize specs
-plugins {
-	id 'com.adarshr.test-logger' version '3.1.0' apply false
-
-	//https://github.com/diffplug/spotless/tree/main/plugin-gradle#java
-	id 'com.diffplug.spotless' version '6.3.0' apply false
-}
-
 description 'JavaSpec 2.x'
 
 subprojects {
@@ -13,21 +5,6 @@ subprojects {
 
 	repositories {
 		mavenCentral()
-	}
-
-	//Customize at runtime ./gradlew -Dtestlogger.theme=plain ...
-	apply plugin: 'com.adarshr.test-logger'
-	testlogger {
-		theme 'mocha'
-	}
-
-	apply plugin: 'com.diffplug.spotless'
-	spotless {
-		java {
-			removeUnusedImports()
-			importOrder()
-			eclipse().configFile('../etc/eclipse-format.xml')
-		}
 	}
 }
 

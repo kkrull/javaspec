@@ -4,9 +4,13 @@
 exec 1>&2
 
 checkCodeFormat() {
-  echo "[$0] Making sure code is formatted"
-  cd nested-lambdas
-  exec ./gradlew spotlessCheck
+  local project_directory="$1"
+  echo "[$0] Checking code format: $project_directory"
+  pushd . > /dev/null
+  cd "$project_directory"
+  ./gradlew -q spotlessCheck
+  popd > /dev/null
 }
 
-checkCodeFormat
+checkCodeFormat 'examples'
+checkCodeFormat 'nested-lambdas'

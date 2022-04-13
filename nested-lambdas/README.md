@@ -122,7 +122,7 @@ To start using JavaSpec, add the following dependencies:
 
 In Gradle, that means adding the following to your `build.gradle` file:
 
-```gradle
+```groovy
 //build.gradle
 dependencies {
   //Add these dependencies for JavaSpec
@@ -183,7 +183,7 @@ Platform.  This section describes how to do that in a Gradle project.
 
 As with regular JUnit tests, you still need to add this to your `build.gradle`:
 
-```gradle
+```groovy
 //build.gradle
 test {
   useJUnitPlatform()

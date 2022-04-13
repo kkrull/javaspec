@@ -1,34 +1,28 @@
 plugins {
 	id 'java'
-	id 'com.adarshr.test-logger'
-	id 'com.diffplug.spotless'
+	id 'local.java-format-convention'
+	id 'local.java-junit-convention'
 }
 
+description 'Example project that uses JavaSpec for its tests'
 version '2.0.0-SNAPSHOT'
 
 dependencies {
 	testImplementation project(':javaspec-api')
-	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
-
 	testRuntimeOnly project(':javaspec-engine')
-	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 
 	//Debugging
 //  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
 //  testRuntimeOnly project(':jupiter-test-execution-listener')
 }
 
-description 'Example project that uses JavaSpec for its tests'
+localJavaFormatConvention {
+	eclipseConfigFile = file('../etc/eclipse-format.xml')
+}
 
 java {
 	jar {
 		//Example sources only.  Not meant to be published as an artifact.
 		enabled = false
 	}
-}
-
-//Suspected issue: Gradle groups tests by 'default-package' and 'UnknownClass'.
-//Related Github issue: https://github.com/cucumber/cucumber-jvm/issues/2176
-test {
-	useJUnitPlatform()
 }

@@ -1,10 +1,11 @@
 plugins {
 	id 'java-library'
-	id 'maven-publish'
-	id 'com.adarshr.test-logger'
-	id 'com.diffplug.spotless'
+	id 'local.java-format-convention'
+	id 'local.java-junit-convention'
+	id 'local.maven-publish-convention'
 }
 
+description 'Service Provider: A TestEngine that runs specs on JUnit Jupiter'
 version '2.0.0-SNAPSHOT' //Has to go above other tasks that refer to it
 
 sourceSets {
@@ -24,37 +25,14 @@ dependencies {
 //  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
 }
 
-description 'Service Provider: A TestEngine that runs specs on JUnit Jupiter'
+localJavaFormatConvention {
+	eclipseConfigFile = file('../etc/eclipse-format.xml')
+}
 
-publishing {
-	publications {
-		maven(MavenPublication) {
-			from components.java
-			pom {
-				description = project.description
-				developers {
-					developer {
-						id = 'kkrull'
-						name = 'Kyle Krull'
-					}
-				}
-
-				issueManagement {
-					system = 'GitHub'
-					url = 'https://github.com/kkrull/javaspec/issues'
-				}
-
-				name = 'JavaSpec API'
-				scm {
-					connection = 'scm:git:git://github.com/kkrull/javaspec.git'
-					developerConnection = 'scm:git:git@github.com:kkrull/javaspec.git'
-					url = 'https://github.com/kkrull/javaspec'
-				}
-
-				url = 'https://javaspec.info'
-			}
-		}
-	}
+localMavenPublishConvention {
+	publicationDescription = project.description
+	publicationFrom = components.java
+	publicationName = 'JavaSpec Engine'
 }
 
 task testEngineWithJUnitConsole(type: JavaExec) {
@@ -75,8 +53,4 @@ task testEngineWithJUnitConsole(type: JavaExec) {
 		'--include-engine=' + 'javaspec-engine',
 		'--select-class=' + 'info.javaspec.engine.JavaSpecEngineTest'
 	]
-}
-
-test {
-	useJUnitPlatform()
 }

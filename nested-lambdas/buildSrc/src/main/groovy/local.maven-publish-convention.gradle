@@ -1,0 +1,45 @@
+//Conventions for Java projects that publish Maven artifacts
+plugins {
+	id 'maven-publish'
+}
+
+import info.javaspec.MavenPublishConventionExtension
+def extension = project.extensions.create('localMavenPublishConvention', MavenPublishConventionExtension)
+
+//Support deferred configuration
+//https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:deferred_configuration
+afterEvaluate {
+	//https://docs.gradle.org/current/userguide/publishing_maven.html
+	publishing {
+		publications {
+			maven(MavenPublication) {
+				from extension.publicationFrom.get()
+
+				pom {
+					description = extension.publicationDescription.get()
+					name = extension.publicationName.get()
+
+					developers {
+						developer {
+							id = 'kkrull'
+							name = 'Kyle Krull'
+						}
+					}
+
+					issueManagement {
+						system = 'GitHub'
+						url = 'https://github.com/kkrull/javaspec/issues'
+					}
+
+					scm {
+						connection = 'scm:git:git://github.com/kkrull/javaspec.git'
+						developerConnection = 'scm:git:git@github.com:kkrull/javaspec.git'
+						url = 'https://github.com/kkrull/javaspec'
+					}
+
+					url = 'https://javaspec.info'
+				}
+			}
+		}
+	}
+}

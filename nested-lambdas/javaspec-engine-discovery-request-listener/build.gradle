@@ -1,21 +1,9 @@
-/**
-	Add this as a testRuntimeOnly dependency, along with the following:
-
-	test {
-		useJUnitPlatform()
-
-		//Show all output: the specs themselves *and* the TestEngine
-		onOutput { _descriptor, TestOutputEvent engineEvent ->
-			logger.lifecycle(engineEvent.message.trim())
-		}
-	}
- */
-
 plugins {
 	id 'java-library'
-	id 'com.diffplug.spotless'
+	id 'local.java-format-convention'
 }
 
+description 'Service Provider: an EngineDiscoveryRequestListener that reports DiscoveryRequests to the console'
 version '2.0.0-SNAPSHOT'
 
 dependencies {
@@ -23,8 +11,6 @@ dependencies {
 	implementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
-description 'Service Provider: an EngineDiscoveryRequestListener that reports DiscoveryRequests to the console'
-
-test {
-	useJUnitPlatform()
+localJavaFormatConvention {
+	eclipseConfigFile = file('../etc/eclipse-format.xml')
 }

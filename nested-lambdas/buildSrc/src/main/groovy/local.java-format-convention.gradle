@@ -1,0 +1,17 @@
+//Conventions for formatting Java sources
+plugins {
+	id 'java'
+	id 'com.diffplug.spotless'
+}
+
+import info.javaspec.JavaFormatConventionExtension
+def extension = project.extensions.create('localJavaFormatConvention', JavaFormatConventionExtension)
+
+//https://github.com/diffplug/spotless/tree/main/plugin-gradle#java
+spotless {
+	java {
+		removeUnusedImports()
+		importOrder()
+		eclipse().configFile(extension.eclipseConfigFile.get())
+	}
+}

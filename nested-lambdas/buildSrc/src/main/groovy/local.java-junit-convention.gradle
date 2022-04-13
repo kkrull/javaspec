@@ -1,0 +1,21 @@
+//Conventions for Java projects with JUnit tests
+plugins {
+	id 'java'
+	id 'com.adarshr.test-logger'
+}
+
+dependencies {
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+}
+
+//https://docs.gradle.org/current/userguide/java_testing.html
+test {
+	//Suspected issue: Gradle groups tests by 'default-package' and 'UnknownClass'.
+	//Related Github issue: https://github.com/cucumber/cucumber-jvm/issues/2176
+	useJUnitPlatform()
+}
+
+//https://github.com/radarsh/gradle-test-logger-plugin
+testlogger {
+	theme 'mocha'
+}
