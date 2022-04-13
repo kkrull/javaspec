@@ -4,6 +4,7 @@ plugins {
 }
 
 interface MavenPublishConventionExtension {
+	Property<String> getPublicationDescription();
 	Property<String> getPublicationName();
 }
 
@@ -16,6 +17,7 @@ publishing {
 				//Support deferred configuration
 				//https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:deferred_configuration
 				afterEvaluate {
+					description = extension.publicationDescription.get()
 					name = extension.publicationName.get()
 				}
 

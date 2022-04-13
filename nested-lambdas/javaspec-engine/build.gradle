@@ -30,6 +30,7 @@ localJavaFormatConvention {
 }
 
 localMavenPublishConvention {
+	publicationDescription = project.description
 	publicationName = 'JavaSpec Engine'
 }
 
@@ -37,9 +38,6 @@ publishing {
 	publications {
 		maven(MavenPublication) {
 			from components.java
-			pom {
-				description = project.description
-			}
 		}
 	}
 }
