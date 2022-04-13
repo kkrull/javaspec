@@ -3,11 +3,22 @@ plugins {
 	id 'maven-publish'
 }
 
+interface MavenPublishConventionExtension {
+	Property<String> getPublicationName();
+}
+
 //https://docs.gradle.org/current/userguide/publishing_maven.html
+def extension = project.extensions.create('localMavenPublishConvention', MavenPublishConventionExtension)
 publishing {
 	publications {
 		maven(MavenPublication) {
 			pom {
+				//Support deferred configuration
+				//https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:deferred_configuration
+				afterEvaluate {
+					name = extension.publicationName.get()
+				}
+
 				developers {
 					developer {
 						id = 'kkrull'

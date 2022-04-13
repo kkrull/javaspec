@@ -29,13 +29,16 @@ localJavaFormatConvention {
 	eclipseConfigFile = file('../etc/eclipse-format.xml')
 }
 
+localMavenPublishConvention {
+	publicationName = 'JavaSpec Engine'
+}
+
 publishing {
 	publications {
 		maven(MavenPublication) {
 			from components.java
 			pom {
 				description = project.description
-				name = 'JavaSpec Engine'
 			}
 		}
 	}

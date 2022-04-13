@@ -13,13 +13,16 @@ localJavaFormatConvention {
 	eclipseConfigFile = file('../etc/eclipse-format.xml')
 }
 
+localMavenPublishConvention {
+	publicationName = 'JavaSpec API'
+}
+
 publishing {
 	publications {
 		maven(MavenPublication) {
 			from components.java
 			pom {
 				description = project.description
-				name = 'JavaSpec API'
 			}
 		}
 	}
