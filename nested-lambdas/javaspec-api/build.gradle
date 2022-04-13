@@ -1,7 +1,7 @@
 plugins {
 	id 'java-library'
 	id 'local.java-format-convention'
-	id 'javaspec.maven-publish-convention'
+	id 'local.maven-publish-convention'
 }
 
 description 'Everything needed to declare specs'

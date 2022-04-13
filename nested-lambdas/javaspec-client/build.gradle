@@ -1,7 +1,7 @@
 plugins {
 	id 'java'
 	id 'local.java-format-convention'
-	id 'javaspec.java-junit-convention'
+	id 'local.java-junit-convention'
 }
 
 description 'Example project that uses JavaSpec for its tests'

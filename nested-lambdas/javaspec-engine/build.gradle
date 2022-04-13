@@ -1,8 +1,8 @@
 plugins {
 	id 'java-library'
 	id 'local.java-format-convention'
-	id 'javaspec.java-junit-convention'
-	id 'javaspec.maven-publish-convention'
+	id 'local.java-junit-convention'
+	id 'local.maven-publish-convention'
 }
 
 description 'Service Provider: A TestEngine that runs specs on JUnit Jupiter'
