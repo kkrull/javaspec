@@ -4,11 +4,10 @@ plugins {
 	id 'javaspec.maven-publish-convention'
 }
 
+description 'Everything needed to declare specs'
 version '2.0.0-SNAPSHOT'
 
 dependencies { }
-
-description 'Everything needed to declare specs'
 
 publishing {
 	publications {

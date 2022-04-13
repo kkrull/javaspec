@@ -5,6 +5,7 @@ plugins {
 	id 'javaspec.maven-publish-convention'
 }
 
+description 'Service Provider: A TestEngine that runs specs on JUnit Jupiter'
 version '2.0.0-SNAPSHOT' //Has to go above other tasks that refer to it
 
 sourceSets {
@@ -23,8 +24,6 @@ dependencies {
 	testImplementation 'org.junit.platform:junit-platform-testkit:1.8.2'
 //  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
 }
-
-description 'Service Provider: A TestEngine that runs specs on JUnit Jupiter'
 
 publishing {
 	publications {
