@@ -157,3 +157,42 @@ $ ./gradlew -Dtestlogger.theme=plain test
 
 [github-gradle-test-logger]: https://github.com/radarsh/gradle-test-logger-plugin
 [gradle-java-testing]: https://docs.gradle.org/current/userguide/java_testing.html
+
+
+### Log a `DiscoveryRequest` with `javaspec-engine-discovery-request-listener`
+
+Add this dependency if you need to have a look at the `DiscoveryRequest` that
+`JavaSpecEngine` receives, when it is looking for specs:
+
+```gradle
+//build.gradle
+dependencies {
+  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
+}
+```
+
+You also need to add some more configuration so that Gradle and/or JUnit
+Platform allow the `TestEngine` to write to the console.
+
+```gradle
+//build.gradle
+test {
+  //Show all output: the specs themselves *and* the TestEngine
+  onOutput { _descriptor, TestOutputEvent engineEvent ->
+    logger.lifecycle(engineEvent.message.trim())
+  }
+}
+```
+
+
+### Log test execution events with `jupiter-test-execution-listener`
+
+You can add this dependency at runtime to get some more information about what
+is happening when `JavaSpecEngine` is running specs.
+
+```gradle
+//build.gradle
+dependencies {
+  testRuntimeOnly project(':jupiter-test-execution-listener')
+}
+```
