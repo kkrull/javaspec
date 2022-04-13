@@ -52,13 +52,16 @@ See sources in `buildSrc/` for details.
 Add the `javaspec.java-format-convention` plugin to a project, to add Gradle
 tasks for validating and fixing the format of Java sources:
 
-```gradle
+```groovy
 plugins {
 	id 'javaspec.java-format-convention'
 }
-```
 
-TODO KDK: Show how to configure
+localJavaFormatConvention {
+  //File that holds the Eclipse Formatter configuration
+	eclipseConfigFile = file('../etc/eclipse-format.xml')
+}
+```
 
 The [Spotless plugin][github-diffplug-spotless] creates and configures the
 Gradle tasks for formatting source code.  The actual formatting is done by the
@@ -86,13 +89,17 @@ See `buildSrc/javaspec.java-format-convention.gradle` for details.
 Add the `javaspec.maven-publish-convention` plugin to a project, to add Gradle
 tasks for publishing project artifacts to Maven repositories.
 
-```gradle
+```groovy
 plugins {
 	id 'javaspec.maven-publish-convention'
 }
-```
 
-TODO KDK: Show how to configure
+localMavenPublishConvention {
+	publicationDescription = project.description
+	publicationFrom = components.java
+	publicationName = '<human readable name for your artifact>'
+}
+```
 
 The [Maven Publish plugin][gradle-publishing-maven] provides the Maven tasks to
 do things like generate POM files and push to Maven repositories.  Each project
@@ -114,7 +121,7 @@ $ ./gradlew publishToMavenLocal
 
 Dependent projects need to be configured to resolve dependencies locally:
 
-```gradle
+```groovy
 //build.gradle
 repositories {
   mavenLocal()
@@ -132,7 +139,7 @@ See `buildSrc/javaspec.maven-publish-convention.gradle` for details.
 Add the `javaspec.java-junit-convention` plugin to a project, to add Gradle
 tasks for running automated unit tests.
 
-```gradle
+```groovy
 plugins {
 	id 'javaspec.java-junit-convention'
 }
@@ -168,7 +175,7 @@ $ ./gradlew -Dtestlogger.theme=plain test
 Add this dependency if you need to have a look at the `DiscoveryRequest` that
 `JavaSpecEngine` receives, when it is looking for specs:
 
-```gradle
+```groovy
 //build.gradle
 dependencies {
   testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
@@ -178,7 +185,7 @@ dependencies {
 You also need to add some more configuration so that Gradle and/or JUnit
 Platform allow the `TestEngine` to write to the console.
 
-```gradle
+```groovy
 //build.gradle
 test {
   //Show all output: the specs themselves *and* the TestEngine
@@ -194,7 +201,7 @@ test {
 You can add this dependency at runtime to get some more information about what
 is happening when `JavaSpecEngine` is running specs.
 
-```gradle
+```groovy
 //build.gradle
 dependencies {
   testRuntimeOnly project(':jupiter-test-execution-listener')
