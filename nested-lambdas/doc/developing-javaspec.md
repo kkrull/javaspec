@@ -91,7 +91,7 @@ For example:
 # Creates <project>/build/publications/maven/pom-default.xml.
 $ ./gradlew generatePomFile
 
-# Publish everything to ~/.m2/repository (similar to `mvn install`)
+# Publish all artifacts to ~/.m2/repository (similar to `mvn install`)
 $ ./gradlew publishToMavenLocal
 ```
 
@@ -130,6 +130,17 @@ Once applied to a project:
 Note that some projects additionally use JavaSpec (which runs on the JUnit
 Platform) for their own tests, by adding the appropriate dependencies in much
 the same fashion that a regular user would.
+
+Put it all together, and you get:
+
+```shell
+# Run tests with default test-logger theme
+$ ./gradlew test
+
+# Customize test-logger
+$ ./gradlew -Dtestlogger.theme=plain test
+```
+
 
 [github-gradle-test-logger]: https://github.com/radarsh/gradle-test-logger-plugin
 [gradle-java-testing]: https://docs.gradle.org/current/userguide/java_testing.html
