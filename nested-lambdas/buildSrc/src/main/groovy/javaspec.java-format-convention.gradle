@@ -5,13 +5,13 @@ plugins {
 }
 
 interface JavaFormatPluginExtension {
-	Property<String> getMessage()
+	RegularFileProperty getEclipseConfigFile()
 }
 
 def extension = project.extensions.create('javaspecJavaFormat', JavaFormatPluginExtension)
 task('greet') {
 	doLast {
-		println "Configuration message: ${extension.message.get()}"
+		println "Configuration file: ${extension.eclipseConfigFile.get()}"
 	}
 }
 
