@@ -4,12 +4,10 @@ plugins {
 	id 'com.diffplug.spotless'
 }
 
-interface JavaFormatConventionExtension {
-	RegularFileProperty getEclipseConfigFile()
-}
+import info.javaspec.JavaFormatConventionExtension
+def extension = project.extensions.create('localJavaFormatConvention', JavaFormatConventionExtension)
 
 //https://github.com/diffplug/spotless/tree/main/plugin-gradle#java
-def extension = project.extensions.create('localJavaFormatConvention', JavaFormatConventionExtension)
 spotless {
 	java {
 		removeUnusedImports()
