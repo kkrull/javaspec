@@ -30,8 +30,8 @@ localJavaFormatConvention {
 }
 
 localMavenPublishConvention {
-	from = components.java
 	publicationDescription = project.description
+	publicationFrom = components.java
 	publicationName = 'JavaSpec Engine'
 }
 

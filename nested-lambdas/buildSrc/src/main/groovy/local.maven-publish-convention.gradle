@@ -4,8 +4,8 @@ plugins {
 }
 
 interface MavenPublishConventionExtension {
-	Property<Object> getFrom();
 	Property<String> getPublicationDescription();
+	Property<Object> getPublicationFrom();
 	Property<String> getPublicationName();
 }
 
@@ -15,7 +15,7 @@ publishing {
 	publications {
 		maven(MavenPublication) {
 			afterEvaluate {
-				from extension.from.get()
+				from extension.publicationFrom.get()
 			}
 
 			pom {
