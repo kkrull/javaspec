@@ -3,12 +3,7 @@ plugins {
 	id 'maven-publish'
 }
 
-interface MavenPublishConventionExtension {
-	Property<String> getPublicationDescription();
-	Property<Object> getPublicationFrom();
-	Property<String> getPublicationName();
-}
-
+import info.javaspec.MavenPublishConventionExtension
 def extension = project.extensions.create('localMavenPublishConvention', MavenPublishConventionExtension)
 
 //Support deferred configuration
