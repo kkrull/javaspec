@@ -54,12 +54,12 @@ tasks for validating and fixing the format of Java sources:
 
 ```groovy
 plugins {
-	id 'javaspec.java-format-convention'
+  id 'javaspec.java-format-convention'
 }
 
 localJavaFormatConvention {
   //File that holds the Eclipse Formatter configuration
-	eclipseConfigFile = file('../etc/eclipse-format.xml')
+  eclipseConfigFile = file('../etc/eclipse-format.xml')
 }
 ```
 
@@ -91,13 +91,13 @@ tasks for publishing project artifacts to Maven repositories.
 
 ```groovy
 plugins {
-	id 'javaspec.maven-publish-convention'
+  id 'javaspec.maven-publish-convention'
 }
 
 localMavenPublishConvention {
-	publicationDescription = project.description
-	publicationFrom = components.java
-	publicationName = '<human readable name for your artifact>'
+  publicationDescription = project.description
+  publicationFrom = components.java
+  publicationName = '<human readable name for your artifact>'
 }
 ```
 
@@ -141,7 +141,7 @@ tasks for running automated unit tests.
 
 ```groovy
 plugins {
-	id 'javaspec.java-junit-convention'
+  id 'javaspec.java-junit-convention'
 }
 ```
 
