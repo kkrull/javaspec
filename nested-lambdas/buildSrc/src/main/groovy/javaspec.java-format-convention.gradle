@@ -8,14 +8,8 @@ interface JavaFormatPluginExtension {
 	RegularFileProperty getEclipseConfigFile()
 }
 
-def extension = project.extensions.create('javaspecJavaFormat', JavaFormatPluginExtension)
-task('greet') {
-	doLast {
-		println "Configuration file: ${extension.eclipseConfigFile.get()}"
-	}
-}
-
 //https://github.com/diffplug/spotless/tree/main/plugin-gradle#java
+def extension = project.extensions.create('javaspecJavaFormat', JavaFormatPluginExtension)
 spotless {
 	java {
 		removeUnusedImports()
