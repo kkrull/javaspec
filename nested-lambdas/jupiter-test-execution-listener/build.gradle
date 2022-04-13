@@ -10,6 +10,6 @@ dependencies {
 	implementation 'org.junit.platform:junit-platform-launcher:1.8.1'
 }
 
-javaspecJavaFormat {
+localJavaFormatConvention {
 	eclipseConfigFile = file('../etc/eclipse-format.xml')
 }

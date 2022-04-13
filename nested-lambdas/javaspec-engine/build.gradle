@@ -25,7 +25,7 @@ dependencies {
 //  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
 }
 
-javaspecJavaFormat {
+localJavaFormatConvention {
 	eclipseConfigFile = file('../etc/eclipse-format.xml')
 }
 
