@@ -1,6 +1,6 @@
 plugins {
 	id 'java-library'
-	id 'javaspec.java-format-convention'
+	id 'local.java-format-convention'
 }
 
 description 'Service Provider: a TestExecutionListener that reports test execution events to the console'

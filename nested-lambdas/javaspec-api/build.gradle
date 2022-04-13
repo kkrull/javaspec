@@ -1,6 +1,6 @@
 plugins {
 	id 'java-library'
-	id 'javaspec.java-format-convention'
+	id 'local.java-format-convention'
 	id 'javaspec.maven-publish-convention'
 }
 
