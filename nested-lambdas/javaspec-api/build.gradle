@@ -14,14 +14,7 @@ localJavaFormatConvention {
 }
 
 localMavenPublishConvention {
+	from = components.java
 	publicationDescription = project.description
 	publicationName = 'JavaSpec API'
-}
-
-publishing {
-	publications {
-		maven(MavenPublication) {
-			from components.java
-		}
-	}
 }

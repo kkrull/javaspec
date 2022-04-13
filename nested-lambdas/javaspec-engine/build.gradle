@@ -30,16 +30,9 @@ localJavaFormatConvention {
 }
 
 localMavenPublishConvention {
+	from = components.java
 	publicationDescription = project.description
 	publicationName = 'JavaSpec Engine'
-}
-
-publishing {
-	publications {
-		maven(MavenPublication) {
-			from components.java
-		}
-	}
 }
 
 task testEngineWithJUnitConsole(type: JavaExec) {

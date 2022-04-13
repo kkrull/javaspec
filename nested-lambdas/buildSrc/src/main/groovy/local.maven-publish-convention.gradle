@@ -4,6 +4,7 @@ plugins {
 }
 
 interface MavenPublishConventionExtension {
+	Property<Object> getFrom();
 	Property<String> getPublicationDescription();
 	Property<String> getPublicationName();
 }
@@ -13,6 +14,10 @@ def extension = project.extensions.create('localMavenPublishConvention', MavenPu
 publishing {
 	publications {
 		maven(MavenPublication) {
+			afterEvaluate {
+				from extension.from.get()
+			}
+
 			pom {
 				//Support deferred configuration
 				//https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:deferred_configuration
