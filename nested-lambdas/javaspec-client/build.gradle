@@ -1,3 +1,4 @@
+//TODO KDK: Add junit plugin and get rid of duplicate configuration
 plugins {
 	id 'java'
 	id 'com.adarshr.test-logger'
