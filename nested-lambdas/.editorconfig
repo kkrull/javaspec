@@ -9,6 +9,9 @@ trim_trailing_whitespace = true
 [*.gradle]
 indent_style = tab
 
+[*.groovy]
+indent_style = tab
+
 [*.java]
 indent_style = tab
 
