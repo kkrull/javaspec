@@ -4,6 +4,17 @@ plugins {
 	id 'com.diffplug.spotless'
 }
 
+interface JavaFormatPluginExtension {
+	Property<String> getMessage()
+}
+
+def extension = project.extensions.create('javaspecJavaFormat', JavaFormatPluginExtension)
+task('greet') {
+	doLast {
+		println "Configuration message: ${extension.message.get()}"
+	}
+}
+
 //https://github.com/diffplug/spotless/tree/main/plugin-gradle#java
 spotless {
 	java {
