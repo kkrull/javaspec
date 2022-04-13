@@ -58,6 +58,8 @@ plugins {
 }
 ```
 
+TODO KDK: Show how to configure
+
 The [Spotless plugin][github-diffplug-spotless] creates and configures the
 Gradle tasks for formatting source code.  The actual formatting is done by the
 [Eclipse Formatter][github-diffplug-spotless-eclipse], according to the format
@@ -89,6 +91,8 @@ plugins {
 	id 'javaspec.maven-publish-convention'
 }
 ```
+
+TODO KDK: Show how to configure
 
 The [Maven Publish plugin][gradle-publishing-maven] provides the Maven tasks to
 do things like generate POM files and push to Maven repositories.  Each project
