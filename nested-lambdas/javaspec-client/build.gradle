@@ -17,11 +17,8 @@ dependencies {
 //  testRuntimeOnly project(':jupiter-test-execution-listener')
 }
 
-localJavaFormatConvention {
-	eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
-}
-
-localLicenseConvention.licenseFile = rootProject.file('../LICENSE')
+javaFormatConvention.eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
+licenseConvention.licenseFile = rootProject.file('../LICENSE')
 
 java {
 	jar {

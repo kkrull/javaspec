@@ -58,7 +58,7 @@ plugins {
   id 'local.license-convention'
 }
 
-localLicenseConvention.licenseFile = rootProject.file('../LICENSE')
+licenseConvention.licenseFile = rootProject.file('../LICENSE')
 ```
 
 The [`license-gradle-plugin`][github-license-gradle-plugin] creates and
@@ -88,10 +88,8 @@ plugins {
   id 'local.java-format-convention'
 }
 
-localJavaFormatConvention {
-  //File that holds the Eclipse Formatter configuration
-  eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
-}
+//File that holds the Eclipse Formatter configuration
+javaFormatConvention.eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
 ```
 
 The [Spotless plugin][github-diffplug-spotless] creates and configures the
@@ -126,7 +124,7 @@ plugins {
   id 'local.maven-publish-convention'
 }
 
-localMavenPublishConvention {
+mavenPublishConvention {
   publicationDescription = project.description
   publicationFrom = components.java
   publicationName = '<human readable name for your artifact>'

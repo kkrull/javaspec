@@ -26,13 +26,9 @@ dependencies {
 //  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
 }
 
-localJavaFormatConvention {
-	eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
-}
-
-localLicenseConvention.licenseFile = rootProject.file('../LICENSE')
-
-localMavenPublishConvention {
+javaFormatConvention.eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
+licenseConvention.licenseFile = rootProject.file('../LICENSE')
+mavenPublishConvention {
 	publicationDescription = project.description
 	publicationFrom = components.java
 	publicationName = 'JavaSpec Engine'

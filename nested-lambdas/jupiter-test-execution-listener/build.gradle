@@ -11,8 +11,5 @@ dependencies {
 	implementation 'org.junit.platform:junit-platform-launcher:1.8.1'
 }
 
-localJavaFormatConvention {
-	eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
-}
-
-localLicenseConvention.licenseFile = rootProject.file('../LICENSE')
+javaFormatConvention.eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
+licenseConvention.licenseFile = rootProject.file('../LICENSE')

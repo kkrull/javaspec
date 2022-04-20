@@ -12,8 +12,5 @@ dependencies {
 	implementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
-localJavaFormatConvention {
-	eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
-}
-
-localLicenseConvention.licenseFile = rootProject.file('../LICENSE')
+javaFormatConvention.eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
+licenseConvention.licenseFile = rootProject.file('../LICENSE')

@@ -4,7 +4,7 @@ plugins {
 }
 
 import info.javaspec.LicenseConventionExtension
-def licenseExtension = project.extensions.create('localLicenseConvention', LicenseConventionExtension)
+def licenseExtension = project.extensions.create('licenseConvention', LicenseConventionExtension)
 
 afterEvaluate {
 	//https://github.com/hierynomus/license-gradle-plugin/tree/v0.16.1

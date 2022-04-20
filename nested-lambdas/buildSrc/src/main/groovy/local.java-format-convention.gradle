@@ -5,7 +5,7 @@ plugins {
 }
 
 import info.javaspec.JavaFormatConventionExtension
-def extension = project.extensions.create('localJavaFormatConvention', JavaFormatConventionExtension)
+def extension = project.extensions.create('javaFormatConvention', JavaFormatConventionExtension)
 
 //https://github.com/diffplug/spotless/tree/main/plugin-gradle#java
 spotless {
