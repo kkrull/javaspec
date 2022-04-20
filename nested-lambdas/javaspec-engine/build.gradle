@@ -2,6 +2,7 @@ plugins {
 	id 'java-library'
 	id 'local.java-format-convention'
 	id 'local.java-junit-convention'
+	id 'local.license-convention'
 	id 'local.maven-publish-convention'
 }
 
@@ -28,6 +29,8 @@ dependencies {
 localJavaFormatConvention {
 	eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
 }
+
+localLicenseConvention.licenseFile = rootProject.file('../LICENSE')
 
 localMavenPublishConvention {
 	publicationDescription = project.description
