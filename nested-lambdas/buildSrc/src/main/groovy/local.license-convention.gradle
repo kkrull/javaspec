@@ -9,6 +9,7 @@ def licenseExtension = project.extensions.create('licenseConvention', LicenseCon
 afterEvaluate {
 	//https://github.com/hierynomus/license-gradle-plugin/tree/v0.16.1
 	license {
+		exclude 'META-INF/services/*'
 		header licenseExtension.licenseFile.get().asFile
 		strictCheck true
 	}
