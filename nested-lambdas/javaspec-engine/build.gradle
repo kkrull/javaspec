@@ -2,6 +2,7 @@ plugins {
 	id 'java-library'
 	id 'local.java-format-convention'
 	id 'local.java-junit-convention'
+	id 'local.license-convention'
 	id 'local.maven-publish-convention'
 }
 
@@ -25,11 +26,9 @@ dependencies {
 //  testRuntimeOnly project(':javaspec-engine-discovery-request-listener')
 }
 
-localJavaFormatConvention {
-	eclipseConfigFile = file('../etc/eclipse-format.xml')
-}
-
-localMavenPublishConvention {
+javaFormatConvention.eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
+licenseConvention.licenseFile = rootProject.file('../LICENSE')
+mavenPublishConvention {
 	publicationDescription = project.description
 	publicationFrom = components.java
 	publicationName = 'JavaSpec Engine'

@@ -36,7 +36,7 @@ form of [pre-compiled, custom plugins][gradle-custom-plugins].
 
 Much like with the top-level projects themselves, each plugin tries to be as
 independent (and make as few assumptions) as possible.  For example the
-`javaspec.maven-publish-convention` allows you to publish artifacts, without
+`local.maven-publish-convention` allows you to publish artifacts, without
 specifically mandating they be derived from Java sources.
 
 _TL;DR - some configuration is required, in the name of being easier to apply
@@ -47,20 +47,49 @@ See sources in `buildSrc/` for details.
 [gradle-custom-plugins]: https://docs.gradle.org/current/userguide/custom_plugins.html#sec:precompiled_plugins
 
 
-## Format Java sources with Spotless
+## Add license and copyright notices to source files with `license-gradle-plugin`
 
-Add the `javaspec.java-format-convention` plugin to a project, to add Gradle
-tasks for validating and fixing the format of Java sources:
+Add the `local.license-convention` plugin to a project, to add Gradle tasks for
+checking and updating license and copyright headers in source files:
 
 ```groovy
+//build.gradle
 plugins {
-	id 'javaspec.java-format-convention'
+  id 'local.license-convention'
 }
 
-localJavaFormatConvention {
-  //File that holds the Eclipse Formatter configuration
-	eclipseConfigFile = file('../etc/eclipse-format.xml')
+licenseConvention.licenseFile = rootProject.file('../LICENSE')
+```
+
+The [`license-gradle-plugin`][github-license-gradle-plugin] creates and
+configures Gradle tasks for adding headers to source files, to clarify who owns
+the copyright for each source file and how it may be used.   This adds the
+following tasks:
+
+```shell
+$ ./gradlew check #lifecycle task that also runs licenseCheck
+$ ./gradlew licenseCheck #Make sure source file headers are the same as the LICENSE file
+$ ./gradlew licenseFormat #Re-apply the contents of LICENSE to source file headers
+```
+
+See `buildSrc/local.license-convention.gradle` for details.
+
+[github-license-gradle-plugin]: https://github.com/hierynomus/license-gradle-plugin/tree/v0.16.1
+
+
+## Format Java sources with Spotless
+
+Add the `local.java-format-convention` plugin to a project, to add Gradle tasks
+for validating and fixing the format of Java sources:
+
+```groovy
+//build.gradle
+plugins {
+  id 'local.java-format-convention'
 }
+
+//File that holds the Eclipse Formatter configuration
+javaFormatConvention.eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
 ```
 
 The [Spotless plugin][github-diffplug-spotless] creates and configures the
@@ -78,7 +107,7 @@ $ ./gradlew spotlessCheck #Fail if sources are not format-compliant
 $ ./gradlew spotlessApply #Re-format sources
 ```
 
-See `buildSrc/javaspec.java-format-convention.gradle` for details.
+See `buildSrc/local.java-format-convention.gradle` for details.
 
 [github-diffplug-spotless]: https://github.com/diffplug/spotless
 [github-diffplug-spotless-eclipse]: https://github.com/diffplug/spotless/tree/main/plugin-gradle#eclipse-jdt
@@ -86,18 +115,19 @@ See `buildSrc/javaspec.java-format-convention.gradle` for details.
 
 ## Publish SNAPSHOT jars to Maven Local
 
-Add the `javaspec.maven-publish-convention` plugin to a project, to add Gradle
+Add the `local.maven-publish-convention` plugin to a project, to add Gradle
 tasks for publishing project artifacts to Maven repositories.
 
 ```groovy
+//build.gradle
 plugins {
-	id 'javaspec.maven-publish-convention'
+  id 'local.maven-publish-convention'
 }
 
-localMavenPublishConvention {
-	publicationDescription = project.description
-	publicationFrom = components.java
-	publicationName = '<human readable name for your artifact>'
+mavenPublishConvention {
+  publicationDescription = project.description
+  publicationFrom = components.java
+  publicationName = '<human readable name for your artifact>'
 }
 ```
 
@@ -129,19 +159,20 @@ repositories {
 }
 ```
 
-See `buildSrc/javaspec.maven-publish-convention.gradle` for details.
+See `buildSrc/local.maven-publish-convention.gradle` for details.
 
 [gradle-publishing-maven]: https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
 
 
 ## Test Java code with the JUnit Platform
 
-Add the `javaspec.java-junit-convention` plugin to a project, to add Gradle
-tasks for running automated unit tests.
+Add the `local.java-junit-convention` plugin to a project, to add Gradle tasks
+for running automated unit tests.
 
 ```groovy
+//build.gradle
 plugins {
-	id 'javaspec.java-junit-convention'
+  id 'local.java-junit-convention'
 }
 ```
 
@@ -207,3 +238,42 @@ dependencies {
   testRuntimeOnly project(':jupiter-test-execution-listener')
 }
 ```
+
+
+### Visualize Gradle task dependencies
+
+The [gradle-task-tree plugin][github-gradle-task-tree] can help you visualize
+Gradle task dependencies.  Start by temporarily adding this plugin:
+
+```groovy
+//build.gradle
+plugins {
+  id 'com.dorongold.task-tree' version '2.1.0'
+}
+```
+
+Then run the plugin task, as in the following example:
+
+```shell
+$ ./gradlew <task> taskTree
+$ ./gradlew build taskTree
+:build
++--- :assemble
+|    \--- :jar
+|         \--- :classes
+|              +--- :compileJava
+|              \--- :processResources
+\--- :check
+     \--- :test
+          +--- :classes
+          |    +--- :compileJava
+          |    \--- :processResources
+          \--- :testClasses
+               +--- :compileTestJava
+               |    \--- :classes
+               |         +--- :compileJava
+               |         \--- :processResources
+               \--- :processTestResources
+```
+
+[github-gradle-task-tree]: https://github.com/dorongold/gradle-task-tree

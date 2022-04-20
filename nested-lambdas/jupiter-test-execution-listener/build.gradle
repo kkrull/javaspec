@@ -1,6 +1,7 @@
 plugins {
 	id 'java-library'
 	id 'local.java-format-convention'
+	id 'local.license-convention'
 }
 
 description 'Service Provider: a TestExecutionListener that reports test execution events to the console'
@@ -10,6 +11,5 @@ dependencies {
 	implementation 'org.junit.platform:junit-platform-launcher:1.8.1'
 }
 
-localJavaFormatConvention {
-	eclipseConfigFile = file('../etc/eclipse-format.xml')
-}
+javaFormatConvention.eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
+licenseConvention.licenseFile = rootProject.file('../LICENSE')

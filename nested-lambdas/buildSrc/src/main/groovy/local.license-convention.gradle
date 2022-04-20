@@ -1,0 +1,16 @@
+//Conventions for adding copyright and license notifications to source files
+plugins {
+	id 'com.github.hierynomus.license'
+}
+
+import info.javaspec.LicenseConventionExtension
+def licenseExtension = project.extensions.create('licenseConvention', LicenseConventionExtension)
+
+afterEvaluate {
+	//https://github.com/hierynomus/license-gradle-plugin/tree/v0.16.1
+	license {
+		exclude 'META-INF/services/*'
+		header licenseExtension.licenseFile.get().asFile
+		strictCheck true
+	}
+}
