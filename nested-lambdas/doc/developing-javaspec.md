@@ -207,3 +207,42 @@ dependencies {
   testRuntimeOnly project(':jupiter-test-execution-listener')
 }
 ```
+
+
+### Visualize Gradle task dependencies
+
+The [gradle-task-tree plugin][github-gradle-task-tree] can help you visualize
+Gradle task dependencies.  Start by temporarily adding this plugin:
+
+```groovy
+//build.gradle
+plugins {
+  id 'com.dorongold.task-tree' version '2.1.0'
+}
+```
+
+Then run the plugin task, as in the following example:
+
+```shell
+$ ./gradlew <task> taskTree
+$ ./gradlew build taskTree
+:build
++--- :assemble
+|    \--- :jar
+|         \--- :classes
+|              +--- :compileJava
+|              \--- :processResources
+\--- :check
+     \--- :test
+          +--- :classes
+          |    +--- :compileJava
+          |    \--- :processResources
+          \--- :testClasses
+               +--- :compileTestJava
+               |    \--- :classes
+               |         +--- :compileJava
+               |         \--- :processResources
+               \--- :processTestResources
+```
+
+[github-gradle-task-tree]: https://github.com/dorongold/gradle-task-tree
