@@ -14,9 +14,7 @@ localJavaFormatConvention {
 	eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
 }
 
-localLicenseConvention{
-	licenseFile = rootProject.file('../LICENSE')
-}
+localLicenseConvention.licenseFile = rootProject.file('../LICENSE')
 
 localMavenPublishConvention {
 	publicationDescription = project.description
