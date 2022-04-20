@@ -1,3 +1,5 @@
+/* Copyright (c) 2014–2022 Kyle Krull.  All rights reserved. */
+
 package info.javaspec.api;
 
 //Entrypoint for all syntax used to write specs in JavaSpec

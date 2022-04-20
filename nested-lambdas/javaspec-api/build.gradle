@@ -8,6 +8,40 @@ plugins {
 description 'Everything needed to declare specs'
 version '2.0.0-SNAPSHOT'
 
+copyrightr {
+	// If set to true (default), this will only log what would have been
+	// changed, if set to false, this will over-write the files __without__
+	// warning
+	dryRun = false
+
+	// This will be part of the regular expression that is searched for.
+	// This helps to narrow down the lines that will be updated, useful
+	// where there may be other companies that have copyright information
+	copyrightHolder = 'Kyle Krull'
+
+	// Which files are to be included, by default the included files are
+	// - src/**/*.java, and
+	// - src/**/*.groovy
+	// includes = [
+	// 	"src/**/*.java",
+	// 	"src/**/*.groovy"
+	// ]
+
+	// which files are to be excluded, by default there are no exclusions
+	// excludes = [ "**/*.class" ]
+
+	// whether to only replace the first found instance, by default this
+	// is set to true
+	onlyReplaceFirst = true
+
+	// the year separator to use
+	yearSeparator = " - "
+
+	// Whether to fail the build on any missing copyright notifications, by
+	// default, this is set to false
+	failOnMissing = false
+}
+
 dependencies { }
 
 localJavaFormatConvention {
