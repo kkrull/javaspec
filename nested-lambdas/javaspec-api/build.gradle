@@ -9,16 +9,11 @@ description 'Everything needed to declare specs'
 version '2.0.0-SNAPSHOT'
 
 copyrightr {
-	// This will be part of the regular expression that is searched for.
-	// This helps to narrow down the lines that will be updated, useful
-	// where there may be other companies that have copyright information
-	copyrightHolder = 'Kyle Krull'
-
-	// log what would have been changed, or over-write files without warning
+	copyrightHolder = 'Kyle Krull' //Used for search and replacement
 	dryRun = false
-	// excludes = [ "**/*.class" ]
-	failOnMissing = false
+	excludes = []
 
+	failOnMissing = true
 	includes = [
 		"src/**/*.java"
 	]
