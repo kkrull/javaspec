@@ -1,4 +1,7 @@
-/* Copyright (c) 2014–2022 Kyle Krull.  All rights reserved. */
+/*
+ * Copyright (c) 2014–2022 Kyle Krull.
+ * All rights reserved.
+ */
 
 package info.javaspec.api;
 
