@@ -1,5 +1,7 @@
 description 'JavaSpec 2.x'
 
+
+//TODO KDK: Make sure LICENSE gets included in the jar files under META-INF
 subprojects {
 	group 'info.javaspec'
 
