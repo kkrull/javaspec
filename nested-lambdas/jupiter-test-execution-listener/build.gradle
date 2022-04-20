@@ -11,5 +11,5 @@ dependencies {
 }
 
 localJavaFormatConvention {
-	eclipseConfigFile = file('../etc/eclipse-format.xml')
+	eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
 }

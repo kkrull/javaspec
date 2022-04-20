@@ -59,7 +59,7 @@ plugins {
 
 localJavaFormatConvention {
   //File that holds the Eclipse Formatter configuration
-  eclipseConfigFile = file('../etc/eclipse-format.xml')
+  eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
 }
 ```
 
