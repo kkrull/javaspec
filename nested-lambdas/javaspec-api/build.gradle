@@ -20,25 +20,20 @@ copyrightr {
 	copyrightHolder = 'Kyle Krull'
 
 	// Which files are to be included, by default the included files are
-	// - src/**/*.java, and
-	// - src/**/*.groovy
-	// includes = [
-	// 	"src/**/*.java",
-	// 	"src/**/*.groovy"
-	// ]
+	includes = [
+		"src/**/*.java"
+	]
 
 	// which files are to be excluded, by default there are no exclusions
 	// excludes = [ "**/*.class" ]
 
-	// whether to only replace the first found instance, by default this
-	// is set to true
+	// whether to only replace the first found instance
 	onlyReplaceFirst = true
 
 	// the year separator to use
-	yearSeparator = " - "
+	yearSeparator = "–"
 
-	// Whether to fail the build on any missing copyright notifications, by
-	// default, this is set to false
+	// Whether to fail the build on any missing copyright notifications
 	failOnMissing = false
 }
 
