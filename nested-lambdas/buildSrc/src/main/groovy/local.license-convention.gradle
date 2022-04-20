@@ -1,0 +1,4 @@
+//Conventions for adding copyright and license notifications to source files
+plugins {
+	id 'com.github.hierynomus.license'
+}

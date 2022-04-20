@@ -1,9 +1,8 @@
 plugins {
 	id 'java-library'
 	id 'local.java-format-convention'
+	id 'local.license-convention'
 	id 'local.maven-publish-convention'
-	id 'com.github.hierynomus.license' version '0.16.1'
-	id 'com.dorongold.task-tree' version '2.1.0'
 }
 
 description 'Everything needed to declare specs'
