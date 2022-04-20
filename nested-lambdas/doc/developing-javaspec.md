@@ -36,7 +36,7 @@ form of [pre-compiled, custom plugins][gradle-custom-plugins].
 
 Much like with the top-level projects themselves, each plugin tries to be as
 independent (and make as few assumptions) as possible.  For example the
-`javaspec.maven-publish-convention` allows you to publish artifacts, without
+`local.maven-publish-convention` allows you to publish artifacts, without
 specifically mandating they be derived from Java sources.
 
 _TL;DR - some configuration is required, in the name of being easier to apply
@@ -79,13 +79,13 @@ See `buildSrc/local.license-convention.gradle` for details.
 
 ## Format Java sources with Spotless
 
-Add the `javaspec.java-format-convention` plugin to a project, to add Gradle
-tasks for validating and fixing the format of Java sources:
+Add the `local.java-format-convention` plugin to a project, to add Gradle tasks
+for validating and fixing the format of Java sources:
 
 ```groovy
 //build.gradle
 plugins {
-  id 'javaspec.java-format-convention'
+  id 'local.java-format-convention'
 }
 
 localJavaFormatConvention {
@@ -109,7 +109,7 @@ $ ./gradlew spotlessCheck #Fail if sources are not format-compliant
 $ ./gradlew spotlessApply #Re-format sources
 ```
 
-See `buildSrc/javaspec.java-format-convention.gradle` for details.
+See `buildSrc/local.java-format-convention.gradle` for details.
 
 [github-diffplug-spotless]: https://github.com/diffplug/spotless
 [github-diffplug-spotless-eclipse]: https://github.com/diffplug/spotless/tree/main/plugin-gradle#eclipse-jdt
@@ -117,13 +117,13 @@ See `buildSrc/javaspec.java-format-convention.gradle` for details.
 
 ## Publish SNAPSHOT jars to Maven Local
 
-Add the `javaspec.maven-publish-convention` plugin to a project, to add Gradle
+Add the `local.maven-publish-convention` plugin to a project, to add Gradle
 tasks for publishing project artifacts to Maven repositories.
 
 ```groovy
 //build.gradle
 plugins {
-  id 'javaspec.maven-publish-convention'
+  id 'local.maven-publish-convention'
 }
 
 localMavenPublishConvention {
@@ -161,20 +161,20 @@ repositories {
 }
 ```
 
-See `buildSrc/javaspec.maven-publish-convention.gradle` for details.
+See `buildSrc/local.maven-publish-convention.gradle` for details.
 
 [gradle-publishing-maven]: https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
 
 
 ## Test Java code with the JUnit Platform
 
-Add the `javaspec.java-junit-convention` plugin to a project, to add Gradle
-tasks for running automated unit tests.
+Add the `local.java-junit-convention` plugin to a project, to add Gradle tasks
+for running automated unit tests.
 
 ```groovy
 //build.gradle
 plugins {
-  id 'javaspec.java-junit-convention'
+  id 'local.java-junit-convention'
 }
 ```
 
