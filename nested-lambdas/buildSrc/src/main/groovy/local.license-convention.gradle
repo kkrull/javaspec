@@ -2,3 +2,15 @@
 plugins {
 	id 'com.github.hierynomus.license'
 }
+
+import info.javaspec.LicenseConventionExtension
+def licenseExtension = project.extensions.create('localLicenseConvention', LicenseConventionExtension)
+
+afterEvaluate {
+	//https://github.com/hierynomus/license-gradle-plugin/tree/v0.16.1
+	license {
+		header licenseExtension.licenseFile.get().asFile
+		strictCheck true
+	}
+}
+

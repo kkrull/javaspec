@@ -10,13 +10,12 @@ version '2.0.0-SNAPSHOT'
 
 dependencies { }
 
-license {
-	header rootProject.file('../LICENSE')
-	strictCheck true
-}
-
 localJavaFormatConvention {
 	eclipseConfigFile = file('../etc/eclipse-format.xml')
+}
+
+localLicenseConvention{
+	licenseFile = rootProject.file('../LICENSE')
 }
 
 localMavenPublishConvention {
