@@ -9,6 +9,8 @@ plugins {
 description 'Everything needed to declare specs'
 version '2.0.0-SNAPSHOT'
 
+check.dependsOn('copyrightr')
+
 copyrightr {
 	copyrightHolder = 'Kyle Krull' //Used for search and replacement
 	dryRun = false
