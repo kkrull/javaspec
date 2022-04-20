@@ -1,6 +1,7 @@
 plugins {
 	id 'java-library'
 	id 'local.java-format-convention'
+	id 'local.license-convention'
 }
 
 description 'Service Provider: an EngineDiscoveryRequestListener that reports DiscoveryRequests to the console'
@@ -14,3 +15,5 @@ dependencies {
 localJavaFormatConvention {
 	eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
 }
+
+localLicenseConvention.licenseFile = rootProject.file('../LICENSE')
