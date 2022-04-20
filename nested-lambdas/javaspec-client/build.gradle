@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'local.java-format-convention'
 	id 'local.java-junit-convention'
+	id 'local.license-convention'
 }
 
 description 'Example project that uses JavaSpec for its tests'
@@ -19,6 +20,8 @@ dependencies {
 localJavaFormatConvention {
 	eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
 }
+
+localLicenseConvention.licenseFile = rootProject.file('../LICENSE')
 
 java {
 	jar {
