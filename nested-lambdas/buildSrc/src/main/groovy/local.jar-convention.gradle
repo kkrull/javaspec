@@ -16,4 +16,10 @@ afterEvaluate {
 
 		withSourcesJar()
 	}
+
+	tasks.named('sourcesJar') {
+		into('META-INF') {
+			from extension.licenseFile.get().asFile
+		}
+	}
 }
