@@ -1,0 +1,8 @@
+//Conventions for publishing artifacts as JARs
+plugins {
+	id 'java'
+}
+
+jar {
+	from '../../LICENSE'
+}
