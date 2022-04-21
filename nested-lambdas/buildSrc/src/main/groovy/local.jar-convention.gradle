@@ -7,9 +7,11 @@ import info.javaspec.JarConventionExtension
 def extension = project.extensions.create('jarConvention', JarConventionExtension)
 
 afterEvaluate {
-	jar {
-		into('META-INF') {
-			from extension.licenseFile.get().asFile
+	java {
+		jar {
+			into('META-INF') {
+				from extension.licenseFile.get().asFile
+			}
 		}
 	}
 }
