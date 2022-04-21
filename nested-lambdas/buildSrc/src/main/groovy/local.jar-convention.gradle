@@ -13,5 +13,7 @@ afterEvaluate {
 				from extension.licenseFile.get().asFile
 			}
 		}
+
+		withSourcesJar()
 	}
 }
