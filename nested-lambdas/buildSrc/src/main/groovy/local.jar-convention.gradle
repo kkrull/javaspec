@@ -8,6 +8,8 @@ def extension = project.extensions.create('jarConvention', JarConventionExtensio
 
 afterEvaluate {
 	jar {
-		from extension.licenseFile.get().asFile
+		into('META-INF') {
+			from extension.licenseFile.get().asFile
+		}
 	}
 }
