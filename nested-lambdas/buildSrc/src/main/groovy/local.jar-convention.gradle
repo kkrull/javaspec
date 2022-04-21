@@ -3,6 +3,11 @@ plugins {
 	id 'java'
 }
 
-jar {
-	from '../../LICENSE'
+import info.javaspec.JarConventionExtension
+def extension = project.extensions.create('jarConvention', JarConventionExtension)
+
+afterEvaluate {
+	jar {
+		from extension.licenseFile.get().asFile
+	}
 }
