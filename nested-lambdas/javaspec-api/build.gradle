@@ -13,6 +13,10 @@ dependencies { }
 
 jarConvention.licenseFile = rootProject.file('../LICENSE')
 
+java {
+	withSourcesJar()
+}
+
 javaFormatConvention.eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
 
 licenseConvention.licenseFile = rootProject.file('../LICENSE')
