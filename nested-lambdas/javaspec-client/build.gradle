@@ -17,12 +17,13 @@ dependencies {
 //  testRuntimeOnly project(':jupiter-test-execution-listener')
 }
 
-javaFormatConvention.eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
-licenseConvention.licenseFile = rootProject.file('../LICENSE')
-
 java {
 	jar {
 		//Example sources only.  Not meant to be published as an artifact.
 		enabled = false
 	}
 }
+
+javaFormatConvention.eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
+
+licenseConvention.licenseFile = rootProject.file('../LICENSE')
