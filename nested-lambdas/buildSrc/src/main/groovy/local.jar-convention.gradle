@@ -14,12 +14,12 @@ afterEvaluate {
 			}
 		}
 
+		//Build a -sources jar too, including a standalone license file
 		withSourcesJar()
-	}
-
-	tasks.named('sourcesJar') {
-		into('META-INF') {
-			from extension.licenseFile.get().asFile
+		tasks.named('sourcesJar') {
+			into('META-INF') {
+				from extension.licenseFile.get().asFile
+			}
 		}
 	}
 }
