@@ -23,7 +23,7 @@
  */
 package info.javaspec.api;
 
-//Entrypoint for all syntax used to write specs in JavaSpec
+/** Entrypoint for all syntax used to write specs in JavaSpec */
 public interface JavaSpec {
 	// Context
 	void describe(Class<?> aClass, BehaviorDeclaration declaration);
@@ -35,6 +35,9 @@ public interface JavaSpec {
 	void pending(String futureBehavior);
 	void skip(String intendedBehavior, Verification brokenVerification);
 
+	/**
+	 * A lambda containing specs that are related to each other, or more containers
+	 */
 	@FunctionalInterface
 	interface BehaviorDeclaration {
 		void declare();
