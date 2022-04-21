@@ -131,12 +131,13 @@ mavenPublishConvention {
 }
 ```
 
-The [Maven Publish plugin][gradle-publishing-maven] provides the Maven tasks to
-do things like generate POM files and push to Maven repositories.  Each project
-that wishes to publish an artifact does so by creating a single `maven`
-publication.  The `maven-publish` plugin therefore has several tasks with the
-word `Maven` in it, that are meant for that sole publication.  There are also
-aggregator tasks with fixed names, that process all publications.
+The [Maven Publish plugin [for Gradle]][gradle-publishing-maven] provides the
+Gradle tasks to do things like generate POM files and push to Maven
+repositories.  Each project that wishes to publish an artifact does so by
+creating a single `maven` publication.  The `maven-publish` plugin therefore has
+several tasks with the word `Maven` in it, that are meant for that sole
+publication.  There are also aggregator tasks with fixed names, that process all
+publications.
 
 For example:
 
