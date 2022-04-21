@@ -77,6 +77,35 @@ See `buildSrc/local.license-convention.gradle` for details.
 [github-license-gradle-plugin]: https://github.com/hierynomus/license-gradle-plugin/tree/v0.16.1
 
 
+## Assemble JARs with Gradle
+
+Add the `local.jar-convention` plugin to a project, to configure Gradle tasks
+for building JAR artifacts.  Specifically, published artifacts need to include
+the license and copyright notices that are included in this repository.
+
+```groovy
+//build.gradle
+plugins {
+  id 'local.jar-convention'
+}
+
+jarConvention.licenseFile = rootProject.file('../LICENSE')
+```
+
+The [`jar task`][gradle-bundling] builds JAR files like normal, adding the
+additional files that are required for the convention.  Use the task like you
+always would:
+
+```shell
+$ ./gradlew assemble #Build artifacts for each project
+$ jar tf build/libs/<.jar file> #Should include LICENSE file
+```
+
+See `buildSrc/local.jar-convention.gradle` for details.
+
+[gradle-bundling]: https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.Jar.html
+
+
 ## Format Java sources with Spotless
 
 Add the `local.java-format-convention` plugin to a project, to add Gradle tasks
