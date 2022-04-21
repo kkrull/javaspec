@@ -80,8 +80,8 @@ See `buildSrc/local.license-convention.gradle` for details.
 ## Assemble JARs with Gradle
 
 Add the `local.jar-convention` plugin to a project, to configure Gradle tasks
-for building JAR artifacts.  Specifically, published artifacts need to include
-the license and copyright notices that are included in this repository.
+for building JAR artifacts that you need when deploying to the Maven Central
+Repository.
 
 ```groovy
 //build.gradle
@@ -92,13 +92,18 @@ plugins {
 jarConvention.licenseFile = rootProject.file('../LICENSE')
 ```
 
+This includes the customary JAR with compiled code, along with `-javadoc` and
+`-sources` JARs that contain Javadoc and raw sources, respectively.  Each
+published artifact also includes the license and copyright notices that are in
+this repository.
+
 The [`jar task`][gradle-bundling] builds JAR files like normal, adding the
 additional files that are required for the convention.  Use the task like you
 always would:
 
 ```shell
 $ ./gradlew assemble #Build artifacts for each project
-$ jar tf build/libs/<.jar file> #Should include LICENSE file
+$ jar tf build/libs/<.jar file> #Should include a META-INF/LICENSE file
 ```
 
 See `buildSrc/local.jar-convention.gradle` for details.
