@@ -30,12 +30,12 @@ public interface SpecClass {
 	/**
 	 * Implement this method to declare specs in JavaSpec, using the given API.
 	 *
-	 * @param javaspec The API you need to declare specs.  Start with
-	 * {@link JavaSpec#describe(Class, info.javaspec.api.JavaSpec.BehaviorDeclaration)}
-	 * or
-	 * {@link JavaSpec#describe(String, info.javaspec.api.JavaSpec.BehaviorDeclaration)}
-	 * and then declare 1 or more specs with
-	 * {@link JavaSpec#it(String, Verification)}.
+	 * @param javaspec The API you need to declare specs. Start with
+	 *                 {@link JavaSpec#describe(Class, info.javaspec.api.JavaSpec.BehaviorDeclaration)}
+	 *                 or
+	 *                 {@link JavaSpec#describe(String, info.javaspec.api.JavaSpec.BehaviorDeclaration)}
+	 *                 and then declare 1 or more specs with
+	 *                 {@link JavaSpec#it(String, Verification)}.
 	 */
 	void declareSpecs(JavaSpec javaspec);
 }

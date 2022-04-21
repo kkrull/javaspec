@@ -24,13 +24,13 @@
 package info.javaspec.api;
 
 /**
- * A procedure that verifies the behavior under test.  This is where you write
+ * A procedure that verifies the behavior under test. This is where you write
  * the code to Arrange, Act, and Assert.
  */
 @FunctionalInterface
 public interface Verification {
 	/**
-	 * Lambda containing the contents of the specification.  Throw unchecked
+	 * Lambda containing the contents of the specification. Throw unchecked
 	 * throwables like AssertionError and the like to indicate test failures, like
 	 * you would do in JUnit.
 	 */
