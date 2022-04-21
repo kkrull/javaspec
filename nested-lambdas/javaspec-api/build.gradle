@@ -17,3 +17,7 @@ mavenPublishConvention {
 	publicationFrom = components.java
 	publicationName = 'JavaSpec API'
 }
+
+jar {
+	from '../../LICENSE'
+}
