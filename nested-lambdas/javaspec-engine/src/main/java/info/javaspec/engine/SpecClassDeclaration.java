@@ -33,7 +33,7 @@ import java.util.Stack;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 
-// Runs JavaSpec declarations in a SpecClass, converting them to TestDescriptors Jupiter can use.
+//Runs JavaSpec declarations in a SpecClass, converting them to TestDescriptors Jupiter can use.
 final class SpecClassDeclaration implements JavaSpec {
 	private final Class<?> selectedClass;
 	private final Stack<ContextDescriptor> containersInScope;
