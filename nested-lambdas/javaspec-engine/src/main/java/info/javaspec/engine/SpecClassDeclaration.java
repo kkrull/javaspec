@@ -23,6 +23,7 @@
  */
 package info.javaspec.engine;
 
+import info.javaspec.api.BehaviorDeclaration;
 import info.javaspec.api.JavaSpec;
 import info.javaspec.api.SpecClass;
 import info.javaspec.api.Verification;

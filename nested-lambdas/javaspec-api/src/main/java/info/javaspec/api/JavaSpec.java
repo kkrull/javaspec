@@ -112,17 +112,4 @@ public interface JavaSpec {
 	 *                           fixing something else right now.
 	 */
 	void skip(String intendedBehavior, Verification brokenVerification);
-
-	/**
-	 * A lambda with specs that are related to each other, or more containers. Call
-	 * {@link JavaSpec#it(String, Verification)} inside of this.
-	 */
-	@FunctionalInterface
-	interface BehaviorDeclaration {
-		/**
-		 * A lambda with specs that are related to each other, or more containers. Call
-		 * {@link JavaSpec#it(String, Verification)} inside of this.
-		 */
-		void declare();
-	}
 }
