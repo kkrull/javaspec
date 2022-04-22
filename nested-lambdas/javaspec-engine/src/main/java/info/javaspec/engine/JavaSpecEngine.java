@@ -23,6 +23,7 @@
  */
 package info.javaspec.engine;
 
+import info.javaspec.api.SpecClass;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import org.junit.platform.engine.*;
@@ -82,16 +83,52 @@ import org.junit.platform.engine.discovery.ClassSelector;
 public class JavaSpecEngine implements TestEngine {
 	private final EngineDiscoveryRequestListenerProvider loader;
 
+	/**
+	 * Default constructor called by the JUnit Platform. Configures itself to use
+	 * {@link ServiceLoader} to find an {@link EngineDiscoveryRequestListener}.
+	 */
 	public JavaSpecEngine() {
 		this.loader = () -> ServiceLoader
 			.load(EngineDiscoveryRequestListener.class)
 			.findFirst();
 	}
 
-	public JavaSpecEngine(EngineDiscoveryRequestListenerProvider loader) {
+	JavaSpecEngine(EngineDiscoveryRequestListenerProvider loader) {
 		this.loader = loader;
 	}
 
+	/**
+	 * Discovers specs in any instances of {@link SpecClass} that are identified by
+	 * each given {@link ClassSelector}. This causes JavaSpec syntax to be converted
+	 * into its JUnit counterparts:
+	 * <ul>
+	 * <li>JUnit test containers for each {@code SpecClass}</li>
+	 * <li>Nested JUnit test containers for context blocks like
+	 * {@link info.javaspec.api.JavaSpec#describe} and
+	 * {@link info.javaspec.api.JavaSpec#given}</li>
+	 * <li>JUnit tests for specs declared with
+	 * {@link info.javaspec.api.JavaSpec#it}</li>
+	 * </ul>
+	 *
+	 * <strong>Note: The JUnit Platform automatically prunes tests containers that
+	 * contain no tests.</strong> If a container is missing in the test output, it
+	 * may be due to not having declared any specs inside of it.
+	 *
+	 * <h2>Debugging</h2>
+	 *
+	 * Users may optionally provide a {@link EngineDiscoveryRequestListener} through
+	 * the {@link ServiceLoader} mechanism. When present, this will pass the given
+	 * {@link EngineDiscoveryRequest} to the listener for debugging purposes.
+	 *
+	 * <h2>Gradle note</h2>
+	 *
+	 * Gradle tends to select all classes in the test source set, even those that do
+	 * not end in {@code Spec} or {@code Test}. This engine therefore ignores any
+	 * selected class that is not a {@link SpecClass}.
+	 *
+	 * @return a {@link TestDescriptor} containing 0..n selected specs, which this
+	 *         engine can then execute later.
+	 */
 	@Override
 	public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId engineId) {
 		this.loader.findFirst()
@@ -110,12 +147,24 @@ public class JavaSpecEngine implements TestEngine {
 		return engineDescriptor;
 	}
 
+	/**
+	 * Runs the specs that this engine discovered.
+	 *
+	 * @param request Contains the root {@link TestDescriptor} returned from
+	 *                {@link #discover(EngineDiscoveryRequest, UniqueId)}, during
+	 *                the discovery process.
+	 */
 	@Override
 	public void execute(ExecutionRequest request) {
 		ExecutableTestDescriptor engineDescriptor = ExecutableTestDescriptor.class.cast(request.getRootTestDescriptor());
 		engineDescriptor.execute(request.getEngineExecutionListener());
 	}
 
+	/**
+	 * @return {@code "javaspec-engine"}. <strong>This is the string you will need
+	 *         to provide to the {@code includeEngine} option</strong>, when running
+	 *         specs under the JUnit Platform.
+	 */
 	@Override
 	public String getId() {
 		return "javaspec-engine";
