@@ -25,7 +25,23 @@ package info.javaspec.engine;
 
 import org.junit.platform.engine.EngineDiscoveryRequest;
 
-//Receives an EngineDiscoveryRequest, upon JavaSpecEngine#discover.
+/**
+ * A listener for what the JUnit Platform passes to {@link JavaSpecEngine} to
+ * configure the process of test discovery. Providing an implementation at
+ * runtime can help in debugging, by clarifying exactly what the platform is
+ * passing to the engine.
+ *
+ * <p>
+ * <strong>Note: This only works with JavaSpecEngine. It does not work with
+ * other JUnit TestEngines.</strong>
+ * </p>
+ */
 public interface EngineDiscoveryRequestListener {
+	/**
+	 * Receives an EngineDiscoveryRequest, upon
+	 * {@link JavaSpecEngine#discover(EngineDiscoveryRequest, UniqueId)}.
+	 *
+	 * @param request The discovery request received from the JUnit Platform
+	 */
 	void onDiscover(EngineDiscoveryRequest request);
 }

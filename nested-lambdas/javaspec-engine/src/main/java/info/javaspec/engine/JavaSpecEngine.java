@@ -28,7 +28,57 @@ import java.util.ServiceLoader;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.ClassSelector;
 
-// Orchestrates the process of discovering and running specs in a Jupiter runtime.
+/**
+ * Orchestrates the process of discovering and running specs on the JUnit
+ * Platform. Add the artifact containing this class to the runtime classpath, so
+ * that the JUnit Platform can find and execute specs using this engine.
+ *
+ * <h2>Use with JUnit Platform Console</h2>
+ *
+ * Users of the JUnit Platform Console can include the engine by adding
+ * classpaths for the JavaSpec API and this TestEngine, as in this script
+ * example:
+ *
+ * <pre>
+ * {@code
+ * junit_console_jar='junit-platform-console-standalone-1.8.1.jar'
+ * java -jar "$junit_console_jar" \
+ *   --classpath=info.javaspec.javaspec-api-0.0.1.jar \
+ *   --classpath=<compiled production code and its dependencies> \
+ *   --classpath=<compiled specs and their dependencies> \
+ *   --classpath=info.javaspec.javaspec-engine-0.0.1.jar \
+ *   --include-engine=javaspec-engine \
+ *   ...
+ * }
+ * </pre>
+ *
+ * <h2>Use with Gradle</h2>
+ *
+ * Users who are already using Gradle need to add some dependencies and tell
+ * Gradle to use the JUnit Platform for running tests:
+ *
+ * <pre>
+ * {@code
+ * //build.gradle
+ * plugins {
+ *   id 'java' //or one of the other Java plugins like 'java-library'
+ * }
+ *
+ * dependencies {
+ *   //Add these dependencies for JavaSpec
+ *   testImplementation 'info.javaspec:javaspec-api:<version>'
+ *   testRuntimeOnly 'info.javaspec:javaspec-engine:<version>'
+ *
+ *   //Add an assertion library (JUnit 5's assertions shown here)
+ *   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+ * }
+ *
+ * test {
+ *   useJUnitPlatform()
+ * }
+ * }
+ * </pre>
+ */
 public class JavaSpecEngine implements TestEngine {
 	private final EngineDiscoveryRequestListenerProvider loader;
 
