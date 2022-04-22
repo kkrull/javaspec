@@ -8,6 +8,11 @@ def extension = project.extensions.create('jarConvention', JarConventionExtensio
 
 afterEvaluate {
 	java {
+		tasks.named('javadoc', Javadoc) {
+			options.addStringOption('link', 'https://docs.oracle.com/javase/8/docs/api')
+			options.addStringOption('source', '1.8')
+		}
+
 		jar {
 			into('META-INF') {
 				from extension.licenseFile.get().asFile
