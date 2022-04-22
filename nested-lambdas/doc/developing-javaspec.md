@@ -47,7 +47,52 @@ See sources in `buildSrc/` for details.
 [gradle-custom-plugins]: https://docs.gradle.org/current/userguide/custom_plugins.html#sec:precompiled_plugins
 
 
-## Add license and copyright notices to source files with `license-gradle-plugin`
+### Visualize task dependencies
+
+If you're getting lost in which tasks trigger each other, the
+[gradle-task-tree plugin][github-gradle-task-tree] can help.  Start by
+temporarily adding this plugin:
+
+```groovy
+//build.gradle
+plugins {
+  id 'com.dorongold.task-tree' version '2.1.0'
+}
+```
+
+Then run the plugin task, as in the following example:
+
+```shell
+$ ./gradlew <task> taskTree
+$ ./gradlew build taskTree
+:build
++--- :assemble
+|    \--- :jar
+|         \--- :classes
+|              +--- :compileJava
+|              \--- :processResources
+\--- :check
+     \--- :test
+          +--- :classes
+          |    +--- :compileJava
+          |    \--- :processResources
+          \--- :testClasses
+               +--- :compileTestJava
+               |    \--- :classes
+               |         +--- :compileJava
+               |         \--- :processResources
+               \--- :processTestResources
+```
+
+[github-gradle-task-tree]: https://github.com/dorongold/gradle-task-tree
+
+
+## Common Development Tasks
+
+Gradle has tasks to handle many of the things you need to do as a developer.
+
+
+### Add license and copyright notices with `license-gradle-plugin`
 
 Add the `local.license-convention` plugin to a project, to add Gradle tasks for
 checking and updating license and copyright headers in source files:
@@ -63,12 +108,29 @@ licenseConvention.licenseFile = rootProject.file('../LICENSE')
 
 The [`license-gradle-plugin`][github-license-gradle-plugin] creates and
 configures Gradle tasks for adding headers to source files, to clarify who owns
-the copyright for each source file and how it may be used.   This adds the
-following tasks:
+the copyright for each source file and how it may be used.   This adds a task
+that parses source files to make sure they all have the same license header that
+is in the given `LICENSE` file.
 
 ```shell
 $ ./gradlew check #lifecycle task that also runs licenseCheck
 $ ./gradlew licenseCheck #Make sure source file headers are the same as the LICENSE file
+
+#Example output when something goes wrong
+Missing header in: javaspec-api/src/main/java/info/javaspec/api/BehaviorDeclaration.java
+> Task :javaspec-api:licenseMain FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':javaspec-api:licenseMain'.
+> License violations were found: javaspec-api/src/main/java/info/javaspec/api/BehaviorDeclaration.java}
+```
+
+There is also a Gradle task to add (or correct) the appropriate headers to
+source files:
+
+```shell
 $ ./gradlew licenseFormat #Re-apply the contents of LICENSE to source file headers
 ```
 
@@ -77,7 +139,41 @@ See `buildSrc/local.license-convention.gradle` for details.
 [github-license-gradle-plugin]: https://github.com/hierynomus/license-gradle-plugin/tree/v0.16.1
 
 
-## Format Java sources with Spotless
+### Assemble JARs
+
+Add the `local.jar-convention` plugin to a project, to configure Gradle tasks
+for building JAR artifacts that you need when deploying to the Maven Central
+Repository.
+
+```groovy
+//build.gradle
+plugins {
+  id 'local.jar-convention'
+}
+
+jarConvention.licenseFile = rootProject.file('../LICENSE')
+```
+
+This includes the customary JAR with compiled code, along with `-javadoc` and
+`-sources` JARs that contain Javadoc and raw sources, respectively.  Each
+published artifact also includes the license and copyright notices that are in
+this repository.
+
+The [`jar task`][gradle-bundling] builds JAR files like normal, adding the
+additional files that are required for the convention.  Use the task like you
+always would:
+
+```shell
+$ ./gradlew assemble #Build artifacts for each project
+$ jar tf build/libs/<.jar file> #Should include a META-INF/LICENSE file
+```
+
+See `buildSrc/local.jar-convention.gradle` for details.
+
+[gradle-bundling]: https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.Jar.html
+
+
+### Format Java sources with Spotless
 
 Add the `local.java-format-convention` plugin to a project, to add Gradle tasks
 for validating and fixing the format of Java sources:
@@ -113,7 +209,7 @@ See `buildSrc/local.java-format-convention.gradle` for details.
 [github-diffplug-spotless-eclipse]: https://github.com/diffplug/spotless/tree/main/plugin-gradle#eclipse-jdt
 
 
-## Publish SNAPSHOT jars to Maven Local
+### Publish SNAPSHOT jars to Maven Local
 
 Add the `local.maven-publish-convention` plugin to a project, to add Gradle
 tasks for publishing project artifacts to Maven repositories.
@@ -131,12 +227,13 @@ mavenPublishConvention {
 }
 ```
 
-The [Maven Publish plugin][gradle-publishing-maven] provides the Maven tasks to
-do things like generate POM files and push to Maven repositories.  Each project
-that wishes to publish an artifact does so by creating a single `maven`
-publication.  The `maven-publish` plugin therefore has several tasks with the
-word `Maven` in it, that are meant for that sole publication.  There are also
-aggregator tasks with fixed names, that process all publications.
+The [Maven Publish plugin [for Gradle]][gradle-publishing-maven] provides the
+Gradle tasks to do things like generate POM files and push to Maven
+repositories.  Each project that wishes to publish an artifact does so by
+creating a single `maven` publication.  The `maven-publish` plugin therefore has
+several tasks with the word `Maven` in it, that are meant for that sole
+publication.  There are also aggregator tasks with fixed names, that process all
+publications.
 
 For example:
 
@@ -164,7 +261,7 @@ See `buildSrc/local.maven-publish-convention.gradle` for details.
 [gradle-publishing-maven]: https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
 
 
-## Test Java code with the JUnit Platform
+### Test Java code with the JUnit Platform
 
 Add the `local.java-junit-convention` plugin to a project, to add Gradle tasks
 for running automated unit tests.
@@ -199,6 +296,12 @@ $ ./gradlew -Dtestlogger.theme=plain test
 
 [github-gradle-test-logger]: https://github.com/radarsh/gradle-test-logger-plugin
 [gradle-java-testing]: https://docs.gradle.org/current/userguide/java_testing.html
+
+
+## Debugging Tools
+
+There are some tools that can help to understand how JavaSpec is running under
+the JUnit Platform, if you get stuck.
 
 
 ### Log a `DiscoveryRequest` with `javaspec-engine-discovery-request-listener`
@@ -238,42 +341,3 @@ dependencies {
   testRuntimeOnly project(':jupiter-test-execution-listener')
 }
 ```
-
-
-### Visualize Gradle task dependencies
-
-The [gradle-task-tree plugin][github-gradle-task-tree] can help you visualize
-Gradle task dependencies.  Start by temporarily adding this plugin:
-
-```groovy
-//build.gradle
-plugins {
-  id 'com.dorongold.task-tree' version '2.1.0'
-}
-```
-
-Then run the plugin task, as in the following example:
-
-```shell
-$ ./gradlew <task> taskTree
-$ ./gradlew build taskTree
-:build
-+--- :assemble
-|    \--- :jar
-|         \--- :classes
-|              +--- :compileJava
-|              \--- :processResources
-\--- :check
-     \--- :test
-          +--- :classes
-          |    +--- :compileJava
-          |    \--- :processResources
-          \--- :testClasses
-               +--- :compileTestJava
-               |    \--- :classes
-               |         +--- :compileJava
-               |         \--- :processResources
-               \--- :processTestResources
-```
-
-[github-gradle-task-tree]: https://github.com/dorongold/gradle-task-tree

@@ -21,27 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package info.javaspec.engine;
-
-import org.junit.platform.engine.EngineDiscoveryRequest;
+package info.javaspec.api;
 
 /**
- * A listener for what the JUnit Platform passes to {@link JavaSpecEngine} to
- * configure the process of test discovery. Providing an implementation at
- * runtime can help in debugging, by clarifying exactly what the platform is
- * passing to the engine.
- *
- * <p>
- * <strong>Note: This only works with JavaSpecEngine. It does not work with
- * other JUnit TestEngines.</strong>
- * </p>
+ * A lambda with specs that are related to each other, or more containers. Call
+ * {@link JavaSpec#it(String, Verification)} inside of this.
  */
-public interface EngineDiscoveryRequestListener {
+@FunctionalInterface
+public interface BehaviorDeclaration {
 	/**
-	 * Receives an EngineDiscoveryRequest, upon
-	 * {@link JavaSpecEngine#discover(EngineDiscoveryRequest, UniqueId)}.
-	 *
-	 * @param request The discovery request received from the JUnit Platform
+	 * A lambda with specs that are related to each other, or more containers. Call
+	 * {@link JavaSpec#it(String, Verification)} inside of this.
 	 */
-	void onDiscover(EngineDiscoveryRequest request);
+	void declare();
 }

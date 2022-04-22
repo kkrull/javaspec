@@ -22,6 +22,7 @@ afterEvaluate {
 					developers {
 						developer {
 							id = 'kkrull'
+							email = 'kdkrull@gmail.com'
 							name = 'Kyle Krull'
 						}
 					}
@@ -29,6 +30,13 @@ afterEvaluate {
 					issueManagement {
 						system = 'GitHub'
 						url = 'https://github.com/kkrull/javaspec/issues'
+					}
+
+					licenses {
+						license {
+							name = 'MIT license'
+							url = 'https://spdx.org/licenses/MIT'
+						}
 					}
 
 					scm {

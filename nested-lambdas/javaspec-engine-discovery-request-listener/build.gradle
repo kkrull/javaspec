@@ -1,5 +1,6 @@
 plugins {
 	id 'java-library'
+	id 'local.jar-convention'
 	id 'local.java-format-convention'
 	id 'local.license-convention'
 }
@@ -12,5 +13,8 @@ dependencies {
 	implementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
+jarConvention.licenseFile = rootProject.file('../LICENSE')
+
 javaFormatConvention.eclipseConfigFile = rootProject.file('etc/eclipse-format.xml')
+
 licenseConvention.licenseFile = rootProject.file('../LICENSE')

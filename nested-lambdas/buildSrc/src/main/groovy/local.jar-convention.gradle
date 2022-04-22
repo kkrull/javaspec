@@ -1,0 +1,39 @@
+//Conventions for publishing artifacts as JARs
+plugins {
+	id 'java'
+}
+
+import info.javaspec.JarConventionExtension
+def extension = project.extensions.create('jarConvention', JarConventionExtension)
+
+afterEvaluate {
+	java {
+		tasks.named('javadoc', Javadoc) {
+			options.addStringOption('link', 'https://docs.oracle.com/javase/8/docs/api')
+			options.addStringOption('link', 'https://junit.org/junit5/docs/current/api/')
+			options.addStringOption('source', '1.8')
+		}
+
+		jar {
+			into('META-INF') {
+				from extension.licenseFile.get().asFile
+			}
+		}
+
+		//Build a -javadoc jar too, adding a standalone license file
+		withJavadocJar()
+		tasks.named('javadocJar') {
+			into('META-INF') {
+				from extension.licenseFile.get().asFile
+			}
+		}
+
+		//Build a -sources jar too, adding a standalone license file
+		withSourcesJar()
+		tasks.named('sourcesJar') {
+			into('META-INF') {
+				from extension.licenseFile.get().asFile
+			}
+		}
+	}
+}
