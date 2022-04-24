@@ -35,5 +35,9 @@ afterEvaluate {
 				from extension.licenseFile.get().asFile
 			}
 		}
+
+		artifacts {
+			archives javadocJar, sourcesJar
+		}
 	}
 }
