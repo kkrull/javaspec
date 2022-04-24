@@ -23,16 +23,12 @@
  */
 
 /**
- * The JavaSpec syntax used to write and organize specs.
+ * The <code>TestEngine</code> that runs specs written in JavaSpec on the JUnit
+ * Platform.
  *
  * <p>
- * To get started:
- * <ol>
- * <li>Create an implementation of @link {@link SpecClass} and use
- * {@link JavaSpec} to declare one or more specifications.</li>
- * <li>Add <code>javaspec-engine</code> to your test runtime classpath</li>
- * <li>Run specs using the JUnit Platform.</li>
- * </ol>
+ * Add <code>javaspec-engine</code> to the test runtime classpath while running
+ * JUnit, in order to discover and execute specs.
  * </p>
  */
-package info.javaspec.api;
+package info.javaspec.engine;
