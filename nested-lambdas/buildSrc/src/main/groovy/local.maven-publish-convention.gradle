@@ -24,6 +24,7 @@ afterEvaluate {
 							id = 'kkrull'
 							email = 'kdkrull@gmail.com'
 							name = 'Kyle Krull'
+							organizationUrl = 'https://github.com/kkrull'
 						}
 					}
 
@@ -41,7 +42,7 @@ afterEvaluate {
 
 					scm {
 						connection = 'scm:git:git://github.com/kkrull/javaspec.git'
-						developerConnection = 'scm:git:git@github.com:kkrull/javaspec.git'
+						developerConnection = 'scm:git:ssh://github.com:kkrull/javaspec.git'
 						url = 'https://github.com/kkrull/javaspec'
 					}
 
