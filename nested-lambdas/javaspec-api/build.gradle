@@ -4,6 +4,7 @@ plugins {
 	id 'local.java-format-convention'
 	id 'local.license-convention'
 	id 'local.maven-publish-convention'
+	id 'signing'
 }
 
 description 'Everything needed to declare specs'
@@ -21,4 +22,8 @@ mavenPublishConvention {
 	publicationDescription = project.description
 	publicationFrom = components.java
 	publicationName = 'JavaSpec API'
+}
+
+signing {
+	sign configurations.archives
 }
