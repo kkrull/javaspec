@@ -261,7 +261,7 @@ See `buildSrc/local.maven-publish-convention.gradle` for details.
 [gradle-publishing-maven]: https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
 
 
-### Sign JARs with `signing` and GNUPG
+### Sign JARs with `signing` and GPG
 
 TODO KDK: Add details here.
 
@@ -271,6 +271,18 @@ Sign assemblies with:
 $ ./gradlew signArchives
 ```
 
+The [signing
+plugin](https://docs.gradle.org/current/userguide/signing_plugin.html) handles
+the details of calling GPG to sign archives.  This means you will need to install GPG first and configure keys: https://central.sonatype.org/publish/requirements/gpg/
+
+If you get an error like this, it's probably because
+`$HOME/.gradle/gradle.properties` is missing or in the wrong place.
+
+```shell
+$ ./gradlew signArchives
+Execution failed for task ':javaspec-api:signArchives'.
+> Cannot perform signing task ':javaspec-api:signArchives' because it has no configured signatory
+```
 
 ### Test Java code with the JUnit Platform
 
