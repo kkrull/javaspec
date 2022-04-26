@@ -268,12 +268,13 @@ TODO KDK: Add details here.
 Sign assemblies with:
 
 ```shell
-$ ./gradlew signArchives
+$ ./gradlew sign
 ```
 
-The [signing
-plugin](https://docs.gradle.org/current/userguide/signing_plugin.html) handles
-the details of calling GPG to sign archives.  This means you will need to install GPG first and configure keys: https://central.sonatype.org/publish/requirements/gpg/
+The [signing plugin][gradle-signing-plugin] handles the details of calling GPG
+to sign artifacts, including JAR files and generated POM files.  This means you
+will need to install GPG first and configure keys in order to meet the [OSSRH
+publishing requirements][sonatype-gpg-requirements].
 
 If you get an error like this, it's probably because
 `$HOME/.gradle/gradle.properties` is missing or in the wrong place.
@@ -283,6 +284,10 @@ $ ./gradlew signArchives
 Execution failed for task ':javaspec-api:signArchives'.
 > Cannot perform signing task ':javaspec-api:signArchives' because it has no configured signatory
 ```
+
+[gradle-signing-plugin]: https://docs.gradle.org/current/userguide/signing_plugin.html
+[sonatype-gpg-requirements]: https://central.sonatype.org/publish/requirements/gpg/
+
 
 ### Test Java code with the JUnit Platform
 

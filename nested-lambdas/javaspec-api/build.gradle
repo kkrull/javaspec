@@ -25,14 +25,7 @@ mavenPublishConvention {
 }
 
 signing {
-	// sign configurations.archives
 	afterEvaluate {
 		sign publishing.publications['maven']
-	}
-}
-
-task printPublications() {
-	doLast {
-		publishing.publications.each { println it.name }
 	}
 }
