@@ -35,10 +35,5 @@ afterEvaluate {
 				from extension.licenseFile.get().asFile
 			}
 		}
-
-		artifacts {
-			//TODO KDK: Is this overwriting whatever the default value is?  It's not uploading the JAR with the compiled code in it.
-			archives javadocJar, sourcesJar
-		}
 	}
 }
