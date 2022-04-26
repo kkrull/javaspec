@@ -25,7 +25,5 @@ mavenPublishConvention {
 }
 
 signing {
-	afterEvaluate {
-		sign publishing.publications['maven']
-	}
+	sign publishing.publications['maven']
 }

@@ -39,12 +39,20 @@ independent (and make as few assumptions) as possible.  For example the
 `local.maven-publish-convention` allows you to publish artifacts, without
 specifically mandating they be derived from Java sources.
 
-_TL;DR - some configuration is required, in the name of being easier to apply
-individually._
+_TL;DR - conventional plugins still require some configuration, in the name of
+limiting dependencies among them._
+
+Also note that Gradle supports [deferred
+configuration][gradle-deferred-configuration], meaning it allows a build file or
+plugin to have forward references to configuration has not been processed yet.
+This is especially true of plugins that need to be configured via an extension,
+and rely upon `afterEvaluate` to defer fetching build configuration until it is
+available.
 
 See sources in `buildSrc/` for details.
 
 [gradle-custom-plugins]: https://docs.gradle.org/current/userguide/custom_plugins.html#sec:precompiled_plugins
+[gradle-deferred-configuration]: https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:deferred_configuration
 
 
 ### Visualize task dependencies
