@@ -33,6 +33,5 @@
  * <li>Add <code>javaspec-engine</code> to your test runtime classpath</li>
  * <li>Run specs using the JUnit Platform.</li>
  * </ol>
- * </p>
  */
 package info.javaspec.api;
