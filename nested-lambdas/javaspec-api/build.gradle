@@ -24,6 +24,7 @@ mavenPublishConvention {
 	publicationName = 'JavaSpec API'
 }
 
+//TODO KDK: Push down and apply to javaspec-engine too
 signing {
 	sign publishing.publications['maven']
 }
