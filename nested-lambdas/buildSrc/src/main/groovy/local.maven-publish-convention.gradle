@@ -1,6 +1,7 @@
 //Conventions for Java projects that publish Maven artifacts
 plugins {
 	id 'maven-publish'
+	id 'signing'
 }
 
 import info.javaspec.MavenPublishConventionExtension
@@ -64,4 +65,9 @@ publishing {
 			}
 		}
 	}
+}
+
+//https://docs.gradle.org/current/userguide/signing_plugin.html
+signing {
+	sign publishing.publications['maven']
 }
