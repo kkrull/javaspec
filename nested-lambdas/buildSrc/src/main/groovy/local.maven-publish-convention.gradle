@@ -54,8 +54,14 @@ publishing {
 
 	repositories {
 		maven {
-			name 'sonatype-oss'
+			name 'sonatype'
 			url = 'https://oss.sonatype.org/content/repositories/snapshots'
+			credentials {
+				afterEvaluate {
+					username = sonatypeUsername
+					password = sonatypePassword
+				}
+			}
 		}
 	}
 }
