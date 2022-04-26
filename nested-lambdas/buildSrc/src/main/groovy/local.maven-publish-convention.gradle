@@ -51,4 +51,11 @@ publishing {
 			}
 		}
 	}
+
+	repositories {
+		maven {
+			name 'sonatype-oss'
+			url = 'https://oss.sonatype.org/content/repositories/snapshots'
+		}
+	}
 }
