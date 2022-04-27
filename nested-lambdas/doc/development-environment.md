@@ -69,6 +69,28 @@ $ jenv doctor
 [jenv]: https://www.jenv.be/
 
 
+## Sign artifacts with GnuPG
+
+Install [GNU Privacy Guard][gnupg] to get the `gpg` command, which is used to sign artifacts (JARs,
+POMs).  This is only required for deploying artifacts; it is not needed for general development.
+MacOS Homebrew users can install the `gnupg` package as follows:
+
+```shell
+$ brew install gnupg
+```
+
+After installing `gpg`, you need to generate some keys.
+
+TODO KDK: Dsecribe how to generate keys
+
+You will also need to configure your credentials to Gradle in some fashion, in order to sign
+artifacts.  This is often accomplished by adding properties to your personal
+`~/.gradle/gradle.properties`, or through one of these [other methods][gradle-signing-credentials].
+
+[gnupg]: https://www.gnupg.org/
+[gradle-signing-credentials]: https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials
+
+
 ## Use Gradle for just about everything else
 
 This project uses [Gradle][gradle-what-is-gradle] in the traditional fashion by
@@ -113,3 +135,11 @@ $ ./gradlew installGitHook
 ```
 
 [git-custom-hooks]: https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks
+
+
+## Upload artifacts to Mavene Central using OSSRH
+
+TODO KDK: Talk about how Sonatype OSS is used, either here or in the developing document.  It's not
+meant for others to set up their own keys and accounts or to deploy artifacts on the project's
+behalf.  However, it would be useful to document how the author uses OSSRH to deploy the project's
+artifacts.
