@@ -71,3 +71,14 @@ publishing {
 signing {
 	sign publishing.publications['maven']
 }
+
+task signingCheckConfig() {
+	doLast {
+		println 'Checking GPG configuration...'
+		println '- signing.bogus: ' + project.hasProperty('signing.bogus')
+		println '- signing.gradleProperty: ' + project.hasProperty('signing.gradleProperty')
+		println '- signing.runtimeProperty: ' + project.hasProperty('signing.runtimeProperty')
+	}
+}
+
+signMavenPublication.dependsOn signingCheckConfig

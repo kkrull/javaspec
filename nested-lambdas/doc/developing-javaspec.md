@@ -285,7 +285,19 @@ will need to install GPG first and configure keys in order to meet the [OSSRH
 publishing requirements][sonatype-gpg-requirements].
 
 If you get an error like this, it's probably because
-`$HOME/.gradle/gradle.properties` is missing or in the wrong place.
+`$HOME/.gradle/gradle.properties` is missing or in the wrong place.  You need to define the following properties:
+
+```shell
+signing.keyId
+signing.password
+signing.secretKeyRingFile
+```
+
+Alternatively, you can define provide this configuration at runtime as follows:
+
+```shell
+$ ./gradlew sign -Psigning.keyId=<GPG keyId> ...
+```
 
 ```shell
 $ ./gradlew signArchives
