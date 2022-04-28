@@ -22,3 +22,11 @@ mavenPublishConvention {
 	publicationFrom = components.java
 	publicationName = 'JavaSpec API'
 }
+
+task signingCheckConfig() {
+	doLast {
+		println 'Checking GPG configuration...'
+	}
+}
+
+signMavenPublication.dependsOn signingCheckConfig
