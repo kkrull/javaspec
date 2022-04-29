@@ -73,19 +73,19 @@ signing {
 }
 
 task signingCheckConfig() {
-	doFirst {
-		println 'Checking GPG configuration...'
-		println '- signing.bogus: ' + project.hasProperty('signing.bogus')
-		println '- signing.gradleProperty: ' + project.hasProperty('signing.gradleProperty')
-		println '- signing.runtimeProperty: ' + project.hasProperty('signing.runtimeProperty')
-	}
+	description 'Make sure the signing plugin has gradle.properties (or system properties) it needs'
 
-	if(!project.hasProperty('signing.gradleProperty')) {
-		throw new InvalidUserDataException('Missing property needed to sign artifacts: ' + 'signing.gradleProperty')
-	}
-
-	if(!project.hasProperty('signing.runtimeProperty')) {
-		throw new InvalidUserDataException('Missing property needed to sign artifacts: ' + 'signing.runtimeProperty')
+	doLast {
+		def requiredProperties = [
+			'signing.keyId',
+			'signing.password',
+			'signing.secretKeyRingFile'
+		]
+		requiredProperties.forEach {
+			if(!project.hasProperty(it)) {
+				throw new InvalidUserDataException('Missing property needed to sign artifacts: ' + it)
+			}
+		}
 	}
 }
 
