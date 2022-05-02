@@ -69,26 +69,61 @@ $ jenv doctor
 [jenv]: https://www.jenv.be/
 
 
-## Sign artifacts with GnuPG
+## Sign artifacts with GnuPG (optional)
 
-Install [GNU Privacy Guard][gnupg] to get the `gpg` command, which is used to sign artifacts (JARs,
-POMs).  This is only required for deploying artifacts; it is not needed for general development.
-MacOS Homebrew users can install the `gnupg` package as follows:
+_You only need to do this if you are signing artifacts to publish to Sonatype._
+
+Install [GNU Privacy Guard][gnupg] to get the `gpg` command, which is used to
+sign artifacts (JARs, POMs).  MacOS Homebrew users can install the `gnupg`
+package as follows:
 
 ```shell
 $ brew install gnupg
 ```
 
-After installing `gpg`, you need to generate some keys.
+After installing `gpg`, you need to [generate some keys][sonatype-gpg].
 
-TODO KDK: Dsecribe how to generate keys
+```shell
+$ gpg --gen-key
+```
 
-You will also need to configure your credentials to Gradle in some fashion, in order to sign
-artifacts.  This is often accomplished by adding properties to your personal
-`~/.gradle/gradle.properties`, or through one of these [other methods][gradle-signing-credentials].
+Finally, you need to publish your public key so that others can use it to verify
+that published artifacts were actually signed by you:
+
+```shell
+gpg --list-keys
+$ gpg --keyserver keyserver.ubuntu.com --send-keys <key from listing above>
+```
 
 [gnupg]: https://www.gnupg.org/
 [gradle-signing-credentials]: https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials
+[sonatype-gpg]: https://central.sonatype.org/publish/requirements/gpg/
+
+
+## Publish artifacts to Sonatype OSS (optional)
+
+_You only need to do this if you are publishing to Sonatype._
+
+TODO KDK: Talk about how Sonatype OSS is used, either here or in the developing document.  It's not
+meant for others to set up their own keys and accounts or to deploy artifacts on the project's
+behalf.  However, it would be useful to document how the author uses OSSRH to deploy the project's
+artifacts.
+
+
+## Install `git` hooks to enforce standards (recommended)
+
+There's a [pre-commit hook][git-custom-hooks] that verifies that the code is
+formatted.  It will stop the commit and tell you about any violations, if any
+code is not formatted correctly.
+
+Install it by copying the hook to your `.git` directory in this repository.
+There is a Gradle task that automates this:
+
+```shell
+$ ./gradlew installGitHook
+```
+
+[git-custom-hooks]: https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks
 
 
 ## Use Gradle for just about everything else
@@ -98,7 +133,8 @@ using the included scripts (`gradlew` and `gradlew.bat`).  These scripts
 automatically download and use a pinned version of Gradle that is known to be
 compatible with the code and the configured JDK.
 
-This project is a [multi-project build][gradle-multi-project], with configuration in the following files:
+This project is a [multi-project build][gradle-multi-project], with
+configuration in the following files:
 
 * `settings.gradle`: For the most part, this just lists the sub-projects to
   build.
@@ -119,27 +155,3 @@ $ ./gradlew tasks --all
 
 [gradle-multi-project]: https://docs.gradle.org/current/samples/sample_building_java_applications_multi_project.html
 [gradle-what-is-gradle]: https://docs.gradle.org/current/userguide/what_is_gradle.html
-
-
-## Install `git` hooks to enforce standards (recommended)
-
-There's a [pre-commit hook][git-custom-hooks] that verifies that the code is
-formatted.  It will stop the commit and tell you about any violations, if any
-code is not formatted correctly.
-
-Install it by copying the hook to your `.git` directory in this repository.
-There is a Gradle task that automates this:
-
-```shell
-$ ./gradlew installGitHook
-```
-
-[git-custom-hooks]: https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks
-
-
-## Upload artifacts to Mavene Central using OSSRH
-
-TODO KDK: Talk about how Sonatype OSS is used, either here or in the developing document.  It's not
-meant for others to set up their own keys and accounts or to deploy artifacts on the project's
-behalf.  However, it would be useful to document how the author uses OSSRH to deploy the project's
-artifacts.

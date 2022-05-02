@@ -269,9 +269,28 @@ See `buildSrc/local.maven-publish-convention.gradle` for details.
 [gradle-publishing-maven]: https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
 
 
+### Publish to Sonatype
+
+TODO KDK: Show how to publish to remote repositories like Sonatype.  Defer configuration of gradle.properties to the other document.
+
+
 ### Sign JARs with `signing` and GPG
 
 TODO KDK: Add details here.
+
+After you have installed GPG and generated a key...
+
+TODO KDK: WORK HERE Move gradle configuration to the development-environment document.
+
+You will also need to provide configuration to Gradle at runtime, configure your credentials to Gradle in some fashion, in
+order to sign artifacts.  This is often accomplished by adding properties to
+your personal `~/.gradle/gradle.properties`, or through one of these [other
+methods][gradle-signing-credentials].
+
+[gnupg]: https://www.gnupg.org/
+[gradle-signing-credentials]: https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials
+[sonatype-gpg]: https://central.sonatype.org/publish/requirements/gpg/
+
 
 Sign assemblies with:
 
@@ -293,7 +312,8 @@ signing.password
 signing.secretKeyRingFile
 ```
 
-Alternatively, you can define provide this configuration at runtime as follows:
+Alternatively, you can define [provide this configuration at
+runtime][gradle-signing-credentials] as follows:
 
 ```shell
 $ ./gradlew sign -Psigning.keyId=<GPG keyId> ...
@@ -306,6 +326,7 @@ Execution failed for task ':javaspec-api:signArchives'.
 ```
 
 [gradle-signing-plugin]: https://docs.gradle.org/current/userguide/signing_plugin.html
+[gradle-signing-credentials]: https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials
 [sonatype-gpg-requirements]: https://central.sonatype.org/publish/requirements/gpg/
 
 
