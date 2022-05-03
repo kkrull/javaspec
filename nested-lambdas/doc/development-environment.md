@@ -132,8 +132,6 @@ _You only need to do this setup if you are signing publishing to Sonatype._
 
 ### Sign artifacts with GnuPG
 
-TODO KDK: Clean up the GnuPG section.
-
 Install [GNU Privacy Guard][gnupg] to get the `gpg` command, which is used to
 sign artifacts (JARs, POMs).  MacOS Homebrew users can install the `gnupg`
 package as follows:
@@ -142,36 +140,30 @@ package as follows:
 $ brew install gnupg
 ```
 
-After installing `gpg`, you need to [generate some keys][sonatype-gpg].
+After installing `gpg`, you need to [generate a key pair][sonatype-gpg] and
+publish your public key.  The keys must meet the [Sonatype OSS publishing
+requirements][sonatype-gpg-requirements]:
 
 ```shell
+# Generate a public/private key pair
 $ gpg --gen-key
-```
 
-Finally, you need to publish your public key so that others can use it to verify
-that published artifacts were actually signed by you:
-
-```shell
-gpg --list-keys
+# Look up your public key so you can publish it
+$ gpg --list-keys
 $ gpg --keyserver keyserver.ubuntu.com --send-keys <key from listing above>
 ```
 
-You will also need to provide configuration to Gradle at runtime, configure your
-credentials to Gradle in some fashion, in order to sign artifacts.  This is
-often accomplished by adding properties to your personal
-`~/.gradle/gradle.properties`, or through one of these [other
-methods][gradle-signing-credentials].
-
-You need to define the following properties:
+You will also need to configure Gradle to use these keys, so that it can sign
+artifacts.  This can be accomplished by adding properties to your personal
+`~/.gradle/gradle.properties` (create a new file if necessary), or by following
+one of these [other methods][gradle-signing-credentials].  Either way, you need
+to define the following properties:
 
 ```shell
 signing.keyId
 signing.password
 signing.secretKeyRingFile
 ```
-
-The keys must meet the [OSSRH publishing requirements][sonatype-gpg-requirements].
-
 
 [gnupg]: https://www.gnupg.org/
 [gradle-signing-credentials]: https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials
