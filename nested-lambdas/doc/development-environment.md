@@ -132,6 +132,8 @@ _You only need to do this setup if you are signing publishing to Sonatype._
 
 ### Sign artifacts with GnuPG
 
+TODO KDK: Clean up the GnuPG section.
+
 Install [GNU Privacy Guard][gnupg] to get the `gpg` command, which is used to
 sign artifacts (JARs, POMs).  MacOS Homebrew users can install the `gnupg`
 package as follows:
@@ -154,14 +156,30 @@ gpg --list-keys
 $ gpg --keyserver keyserver.ubuntu.com --send-keys <key from listing above>
 ```
 
+You will also need to provide configuration to Gradle at runtime, configure your
+credentials to Gradle in some fashion, in order to sign artifacts.  This is
+often accomplished by adding properties to your personal
+`~/.gradle/gradle.properties`, or through one of these [other
+methods][gradle-signing-credentials].
+
+You need to define the following properties:
+
+```shell
+signing.keyId
+signing.password
+signing.secretKeyRingFile
+```
+
+The keys must meet the [OSSRH publishing requirements][sonatype-gpg-requirements].
+
+
 [gnupg]: https://www.gnupg.org/
 [gradle-signing-credentials]: https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials
 [sonatype-gpg]: https://central.sonatype.org/publish/requirements/gpg/
+[sonatype-gpg-requirements]: https://central.sonatype.org/publish/requirements/gpg/
 
 
 ### Publish artifacts to Sonatype OSS
 
-TODO KDK: Talk about how Sonatype OSS is used, either here or in the developing
-document.  It's not meant for others to set up their own keys and accounts or to
-deploy artifacts on the project's behalf.  However, it would be useful to
-document how the author uses OSSRH to deploy the project's artifacts.
+TODO KDK: Talk about setting up a Sonatype account and what you need to
+configure in `gradle.properties`.
