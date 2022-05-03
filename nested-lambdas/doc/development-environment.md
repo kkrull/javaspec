@@ -1,4 +1,4 @@
-# JavaSpec: Setting up Your Development Environment
+# Setting up Your Development Environment
 
 Details how to set up your machine so that you can do development on JavaSpec.
 
@@ -6,7 +6,13 @@ See the sections below for details on how to install the development tools that
 are used on this project and how to use them.
 
 
-## A Note about Gradle-JDK compatibility
+## Setup for Development
+
+Follow these instructions to set up your environment for building the code in
+this project.
+
+
+### A Note about Gradle-JDK compatibility
 
 Gradle has recently been a bit finicky about which JDK it seems happy to use, so
 it is best (for now) to use the versions noted in this guide.  The [Gradle-Java
@@ -16,7 +22,7 @@ different versions or if you are performing an upgrade.
 [gradle-compatibility]: https://docs.gradle.org/current/userguide/compatibility.html
 
 
-## Start by installing a compatible Java Development Kit (JDK)
+### Start by installing a compatible Java Development Kit (JDK)
 
 Installing a Java Development Kit (JDK) is a little more complex than it used to
 be.  There are official versions from Oracle that require subscriptions, and
@@ -39,7 +45,7 @@ $ brew install openjdk@11
 [adoptium-releases]: https://adoptium.net/temurin/releases
 
 
-## Manage your Java environment with `jenv` (recommended)
+### Manage your Java environment with `jenv` (recommended)
 
 If you have multiple JDKs installed on your system, it's easy to get mixed up
 and use a different version of the JDK than is used to develop this project.  An
@@ -69,48 +75,7 @@ $ jenv doctor
 [jenv]: https://www.jenv.be/
 
 
-## Sign artifacts with GnuPG (optional)
-
-_You only need to do this if you are signing artifacts to publish to Sonatype._
-
-Install [GNU Privacy Guard][gnupg] to get the `gpg` command, which is used to
-sign artifacts (JARs, POMs).  MacOS Homebrew users can install the `gnupg`
-package as follows:
-
-```shell
-$ brew install gnupg
-```
-
-After installing `gpg`, you need to [generate some keys][sonatype-gpg].
-
-```shell
-$ gpg --gen-key
-```
-
-Finally, you need to publish your public key so that others can use it to verify
-that published artifacts were actually signed by you:
-
-```shell
-gpg --list-keys
-$ gpg --keyserver keyserver.ubuntu.com --send-keys <key from listing above>
-```
-
-[gnupg]: https://www.gnupg.org/
-[gradle-signing-credentials]: https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials
-[sonatype-gpg]: https://central.sonatype.org/publish/requirements/gpg/
-
-
-## Publish artifacts to Sonatype OSS (optional)
-
-_You only need to do this if you are publishing to Sonatype._
-
-TODO KDK: Talk about how Sonatype OSS is used, either here or in the developing document.  It's not
-meant for others to set up their own keys and accounts or to deploy artifacts on the project's
-behalf.  However, it would be useful to document how the author uses OSSRH to deploy the project's
-artifacts.
-
-
-## Install `git` hooks to enforce standards (recommended)
+### Install `git` hooks to enforce standards (recommended)
 
 There's a [pre-commit hook][git-custom-hooks] that verifies that the code is
 formatted.  It will stop the commit and tell you about any violations, if any
@@ -126,7 +91,7 @@ $ ./gradlew installGitHook
 [git-custom-hooks]: https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks
 
 
-## Use Gradle for just about everything else
+### Use Gradle for just about everything else
 
 This project uses [Gradle][gradle-what-is-gradle] in the traditional fashion by
 using the included scripts (`gradlew` and `gradlew.bat`).  These scripts
@@ -155,3 +120,48 @@ $ ./gradlew tasks --all
 
 [gradle-multi-project]: https://docs.gradle.org/current/samples/sample_building_java_applications_multi_project.html
 [gradle-what-is-gradle]: https://docs.gradle.org/current/userguide/what_is_gradle.html
+
+
+## Setup for Deployment (optional)
+
+There is some additional setup you need to do, if you are going to publish
+artifacts.  This is not required for day to day development.
+
+_You only need to do this setup if you are signing publishing to Sonatype._
+
+
+### Sign artifacts with GnuPG
+
+Install [GNU Privacy Guard][gnupg] to get the `gpg` command, which is used to
+sign artifacts (JARs, POMs).  MacOS Homebrew users can install the `gnupg`
+package as follows:
+
+```shell
+$ brew install gnupg
+```
+
+After installing `gpg`, you need to [generate some keys][sonatype-gpg].
+
+```shell
+$ gpg --gen-key
+```
+
+Finally, you need to publish your public key so that others can use it to verify
+that published artifacts were actually signed by you:
+
+```shell
+gpg --list-keys
+$ gpg --keyserver keyserver.ubuntu.com --send-keys <key from listing above>
+```
+
+[gnupg]: https://www.gnupg.org/
+[gradle-signing-credentials]: https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials
+[sonatype-gpg]: https://central.sonatype.org/publish/requirements/gpg/
+
+
+### Publish artifacts to Sonatype OSS
+
+TODO KDK: Talk about how Sonatype OSS is used, either here or in the developing
+document.  It's not meant for others to set up their own keys and accounts or to
+deploy artifacts on the project's behalf.  However, it would be useful to
+document how the author uses OSSRH to deploy the project's artifacts.

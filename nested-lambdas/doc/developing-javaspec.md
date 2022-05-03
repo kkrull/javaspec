@@ -147,7 +147,7 @@ See `buildSrc/local.license-convention.gradle` for details.
 [github-license-gradle-plugin]: https://github.com/hierynomus/license-gradle-plugin/tree/v0.16.1
 
 
-### Assemble JARs
+### Assemble JARs with the Java plugin
 
 Add the `local.jar-convention` plugin to a project, to configure Gradle tasks
 for building JAR artifacts that you need when deploying to the Maven Central
@@ -215,119 +215,6 @@ See `buildSrc/local.java-format-convention.gradle` for details.
 
 [github-diffplug-spotless]: https://github.com/diffplug/spotless
 [github-diffplug-spotless-eclipse]: https://github.com/diffplug/spotless/tree/main/plugin-gradle#eclipse-jdt
-
-
-### Publish SNAPSHOT jars to Maven Local
-
-Add the `local.maven-publish-convention` plugin to a project, to add Gradle
-tasks for publishing project artifacts to Maven repositories.
-
-```groovy
-//build.gradle
-plugins {
-  id 'local.maven-publish-convention'
-}
-
-mavenPublishConvention {
-  publicationDescription = project.description
-  publicationFrom = components.java
-  publicationName = '<human readable name for your artifact>'
-}
-```
-
-The [Maven Publish plugin [for Gradle]][gradle-publishing-maven] provides the
-Gradle tasks to do things like generate POM files and push to Maven
-repositories.  Each project that wishes to publish an artifact does so by
-creating a single `maven` publication.  The `maven-publish` plugin therefore has
-several tasks with the word `Maven` in it, that are meant for that sole
-publication.  There are also aggregator tasks with fixed names, that process all
-publications.
-
-For example:
-
-```shell
-# Generate POM files for all publications [in all sub-projects].
-# Creates <project>/build/publications/maven/pom-default.xml.
-$ ./gradlew generatePomFile
-
-# Publish all artifacts to ~/.m2/repository (similar to `mvn install`)
-$ ./gradlew publishToMavenLocal
-```
-
-Dependent projects need to be configured to resolve dependencies locally:
-
-```groovy
-//build.gradle
-repositories {
-  mavenLocal()
-  ...
-}
-```
-
-See `buildSrc/local.maven-publish-convention.gradle` for details.
-
-[gradle-publishing-maven]: https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
-
-
-### Publish to Sonatype
-
-TODO KDK: Show how to publish to remote repositories like Sonatype.  Defer configuration of gradle.properties to the other document.
-
-
-### Sign JARs with `signing` and GPG
-
-TODO KDK: Add details here.
-
-After you have installed GPG and generated a key...
-
-TODO KDK: WORK HERE Move gradle configuration to the development-environment document.
-
-You will also need to provide configuration to Gradle at runtime, configure your credentials to Gradle in some fashion, in
-order to sign artifacts.  This is often accomplished by adding properties to
-your personal `~/.gradle/gradle.properties`, or through one of these [other
-methods][gradle-signing-credentials].
-
-[gnupg]: https://www.gnupg.org/
-[gradle-signing-credentials]: https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials
-[sonatype-gpg]: https://central.sonatype.org/publish/requirements/gpg/
-
-
-Sign assemblies with:
-
-```shell
-$ ./gradlew sign
-```
-
-The [signing plugin][gradle-signing-plugin] handles the details of calling GPG
-to sign artifacts, including JAR files and generated POM files.  This means you
-will need to install GPG first and configure keys in order to meet the [OSSRH
-publishing requirements][sonatype-gpg-requirements].
-
-If you get an error like this, it's probably because
-`$HOME/.gradle/gradle.properties` is missing or in the wrong place.  You need to define the following properties:
-
-```shell
-signing.keyId
-signing.password
-signing.secretKeyRingFile
-```
-
-Alternatively, you can define [provide this configuration at
-runtime][gradle-signing-credentials] as follows:
-
-```shell
-$ ./gradlew sign -Psigning.keyId=<GPG keyId> ...
-```
-
-```shell
-$ ./gradlew signArchives
-Execution failed for task ':javaspec-api:signArchives'.
-> Cannot perform signing task ':javaspec-api:signArchives' because it has no configured signatory
-```
-
-[gradle-signing-plugin]: https://docs.gradle.org/current/userguide/signing_plugin.html
-[gradle-signing-credentials]: https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials
-[sonatype-gpg-requirements]: https://central.sonatype.org/publish/requirements/gpg/
 
 
 ### Test Java code with the JUnit Platform
@@ -410,3 +297,126 @@ dependencies {
   testRuntimeOnly project(':jupiter-test-execution-listener')
 }
 ```
+
+
+## Deployment Tasks
+
+If you maintain this repository or manage releases, you will need a way to sign
+and publish artifacts with Gradle.
+
+
+### Publish SNAPSHOT jars to Maven Local
+
+Add the `local.maven-publish-convention` plugin to a project, to add Gradle
+tasks for publishing project artifacts to Maven repositories.
+
+```groovy
+//build.gradle
+plugins {
+  id 'local.maven-publish-convention'
+}
+
+mavenPublishConvention {
+  publicationDescription = project.description
+  publicationFrom = components.java
+  publicationName = '<human readable name for your artifact>'
+}
+```
+
+The [Maven Publish plugin [for Gradle]][gradle-publishing-maven] provides the
+Gradle tasks to do things like generate POM files and push to Maven
+repositories.  Each project that wishes to publish an artifact does so by
+creating a single `maven` publication.  The `maven-publish` plugin therefore has
+several tasks with the word `Maven` in it, that are meant for that sole
+publication.  There are also aggregator tasks with fixed names, that process all
+publications.
+
+For example:
+
+```shell
+# Generate POM files for all publications [in all sub-projects].
+# Creates <project>/build/publications/maven/pom-default.xml.
+$ ./gradlew generatePomFile
+
+# Publish all artifacts to ~/.m2/repository (similar to `mvn install`)
+$ ./gradlew publishToMavenLocal
+```
+
+Dependent projects need to be configured to resolve dependencies locally:
+
+```groovy
+//build.gradle
+repositories {
+  mavenLocal()
+  ...
+}
+```
+
+See `buildSrc/local.maven-publish-convention.gradle` for details.
+
+[gradle-publishing-maven]: https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
+
+
+### Publish to Sonatype
+
+TODO KDK: Show how to publish to remote repositories like Sonatype.  Defer
+configuration of gradle.properties to the other document.
+
+
+### Sign JARs with `signing` and GPG
+
+TODO KDK: Add details here.
+
+After you have installed GPG and generated a key...
+
+TODO KDK: WORK HERE Move gradle configuration to the development-environment
+document.
+
+You will also need to provide configuration to Gradle at runtime, configure your
+credentials to Gradle in some fashion, in order to sign artifacts.  This is
+often accomplished by adding properties to your personal
+`~/.gradle/gradle.properties`, or through one of these [other
+methods][gradle-signing-credentials].
+
+[gnupg]: https://www.gnupg.org/
+[gradle-signing-credentials]: https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials
+[sonatype-gpg]: https://central.sonatype.org/publish/requirements/gpg/
+
+
+Sign assemblies with:
+
+```shell
+$ ./gradlew sign
+```
+
+The [signing plugin][gradle-signing-plugin] handles the details of calling GPG
+to sign artifacts, including JAR files and generated POM files.  This means you
+will need to install GPG first and configure keys in order to meet the [OSSRH
+publishing requirements][sonatype-gpg-requirements].
+
+If you get an error like this, it's probably because
+`$HOME/.gradle/gradle.properties` is missing or in the wrong place.  You need to
+define the following properties:
+
+```shell
+signing.keyId
+signing.password
+signing.secretKeyRingFile
+```
+
+Alternatively, you can define [provide this configuration at
+runtime][gradle-signing-credentials] as follows:
+
+```shell
+$ ./gradlew sign -Psigning.keyId=<GPG keyId> ...
+```
+
+```shell
+$ ./gradlew signArchives
+Execution failed for task ':javaspec-api:signArchives'.
+> Cannot perform signing task ':javaspec-api:signArchives' because it has no configured signatory
+```
+
+[gradle-signing-plugin]: https://docs.gradle.org/current/userguide/signing_plugin.html
+[gradle-signing-credentials]: https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials
+[sonatype-gpg-requirements]: https://central.sonatype.org/publish/requirements/gpg/
