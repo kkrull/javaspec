@@ -171,7 +171,22 @@ signing.secretKeyRingFile
 [sonatype-gpg-requirements]: https://central.sonatype.org/publish/requirements/gpg/
 
 
-### Publish artifacts to Sonatype OSS
+### Publish artifacts to Sonatype OSSRH
 
-TODO KDK: Talk about setting up a Sonatype account and what you need to
-configure in `gradle.properties`.
+Artifacts are hosted on Sonatype's OSSRH repository, which provides a way to
+distribute SNAPSHOT artifacts and publish release artifacts to the Maven Central
+Repository.
+
+If you are publishing artifacts, you need a Sonatype OSSRH account.  Get one by
+following the instructions in the [OSSRH Getting Started
+Guide][sonatype-publish-guide].
+
+Once completed, you will need to define the following properties at runtime
+(either in `$HOME/.gradle/gradle.properties` or as `-D` system properties):
+
+```shell
+sonatypeUsername
+sonatypePassword
+```
+
+[sonatype-publish-guide]: https://central.sonatype.org/publish/publish-guide/
