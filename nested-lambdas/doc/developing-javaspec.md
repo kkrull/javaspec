@@ -360,7 +360,7 @@ See `buildSrc/local.maven-publish-convention.gradle` for details.
 ### Publish artifacts to Sonatype
 
 Publishing to Sonatype OSS uses the same Gradle plugins and configuration that
-is needed to [publish SNAPSHOT artifacts](#publish-snapshot-jars-to-maven-local).
+is needed to [publish to Maven Local](#publish-artifacts-to-maven-local).
 
 Before you run the tasks, check the versions in each `build.gradle` file to make
 sure it is a SNAPSHOT or a regular release, as intended.
