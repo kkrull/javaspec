@@ -127,7 +127,7 @@ $ ./gradlew tasks --all
 There is some additional setup you need to do, if you are going to publish
 artifacts.  This is not required for day to day development.
 
-_You only need to do this setup if you are signing publishing to Sonatype._
+_You only need to do this setup if you are publishing to Sonatype._
 
 
 ### Sign artifacts with GnuPG
@@ -140,9 +140,8 @@ package as follows:
 $ brew install gnupg
 ```
 
-After installing `gpg`, you need to [generate a key pair][sonatype-gpg] and
-publish your public key.  The keys must meet the [Sonatype OSS publishing
-requirements][sonatype-gpg-requirements]:
+After installing `gpg`, you need to
+[generate a key pair][sonatype-gpg-generate-keys] and publish your public key:
 
 ```shell
 # Generate a public/private key pair
@@ -159,34 +158,36 @@ artifacts.  This can be accomplished by adding properties to your personal
 one of these [other methods][gradle-signing-credentials].  Either way, you need
 to define the following properties:
 
-```shell
-signing.keyId
-signing.password
-signing.secretKeyRingFile
+```ini
+#$HOME/.gradle/gradle.properties
+signing.keyId=...
+signing.password=...
+signing.secretKeyRingFile=...
 ```
 
 [gnupg]: https://www.gnupg.org/
 [gradle-signing-credentials]: https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials
-[sonatype-gpg]: https://central.sonatype.org/publish/requirements/gpg/
-[sonatype-gpg-requirements]: https://central.sonatype.org/publish/requirements/gpg/
+[sonatype-gpg-generate-keys]: https://central.sonatype.org/publish/requirements/gpg/#generating-a-key-pair
 
 
 ### Publish artifacts to Sonatype OSSRH
 
-Artifacts are hosted on Sonatype's OSSRH repository, which provides a way to
-distribute SNAPSHOT artifacts and publish release artifacts to the Maven Central
-Repository.
+Artifacts are hosted on Sonatype's [OSSRH repository][sonatype-nexus], which
+provides a way to distribute SNAPSHOT artifacts and publish release artifacts to
+the Maven Central Repository.
 
 If you are publishing artifacts, you need a Sonatype OSSRH account.  Get one by
-following the instructions in the [OSSRH Getting Started
-Guide][sonatype-publish-guide].
+following the instructions in the
+[OSSRH Getting Started Guide][sonatype-publish-guide].
 
 Once completed, you will need to define the following properties at runtime
 (either in `$HOME/.gradle/gradle.properties` or as `-D` system properties):
 
-```shell
-sonatypeUsername
-sonatypePassword
+```ini
+#$HOME/.gradle/gradle.properties
+sonatypeUsername=...
+sonatypePassword=...
 ```
 
+[sonatype-nexus]: https://oss.sonatype.org/
 [sonatype-publish-guide]: https://central.sonatype.org/publish/publish-guide/
