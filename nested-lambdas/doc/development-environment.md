@@ -144,12 +144,22 @@ After installing `gpg`, you need to
 [generate a key pair][sonatype-gpg-generate-keys] and publish your public key:
 
 ```shell
-# Generate a public/private key pair
+# Generate a public/private key pair and export the private keys
 $ gpg --gen-key
+$ gpg --keyring secring.gpg --export-secret-keys > ~/.gnupg/secring.gpg
+```
 
-# Look up your public key so you can publish it
-$ gpg --list-keys
-$ gpg --keyserver keyserver.ubuntu.com --send-keys <key from listing above>
+You can test signing with a file (`README.md`, for example):
+
+```shell
+# Sign some arbitrary file
+$ gpg -ab README.md #Creates README.md.asc
+
+# Verify the signature
+$ gpg --verify README.md.asc
+gpg: assuming signed data in 'README.md'
+gpg: Signature made ...
+gpg: Good signature from ...
 ```
 
 You will also need to configure Gradle to use these keys, so that it can sign
@@ -160,9 +170,26 @@ to define the following properties:
 
 ```ini
 #$HOME/.gradle/gradle.properties
+
+# Run: gpg --list-keys
+# Use the last 8 digits of the key ID
 signing.keyId=...
+
+# passphrase used to encrypt private key during gpg --gen-keys
 signing.password=...
+
+# Run: gpg --keyring secring.gpg --export-secret-keys > ~/.gnupg/secring.gpg
+# Use the absolute path to secring.gpg
 signing.secretKeyRingFile=...
+```
+
+Finally if you wish to distribute artifacts, you need to send your public key to
+a key server:
+
+```shell
+# Look up your public key so you can publish it
+$ gpg --list-keys
+$ gpg --keyserver keyserver.ubuntu.com --send-keys <key from listing above>
 ```
 
 [gnupg]: https://www.gnupg.org/
