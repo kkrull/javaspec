@@ -372,12 +372,18 @@ sure it is a SNAPSHOT or a regular release, as intended.
 $ ./gradlew publishAllPublicationsToSonatypeRepository
 ```
 
-If you get any error messages, remember that you need to setup a Sonatype
-account and tell Gradle how to access it.  See the
-[environment setup document](./development-environment.md#publish-artifacts-to-sonatype-ossrh)
-for details.
+Running this with a SNAPSHOT version will deploy this to the [Snapshots
+repository][sonatype-snapshots].  You can view the deployed artifacts on the Nexus webapp by going to:
+
+> Views/Repositories - Repositories - Snapshots - Browse Storage - info.javaspec
+
+If you get any error messages while deploying, remember that you need to setup a
+Sonatype account and tell Gradle how to access it.  See the [environment setup
+document](./development-environment.md#publish-artifacts-to-sonatype-ossrh) for
+details.
 
 [sonatype-nexus]: https://oss.sonatype.org/
+[sonatype-snapshots]: https://oss.sonatype.org/content/repositories/snapshots/
 
 
 ### Sign JARs with `signing` and GPG
