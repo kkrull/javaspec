@@ -1,3 +1,4 @@
+# Verifies the build and deploys SNAPSHOT artifacts for dog food
 name: Pull Request Create/Update
 
 # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
@@ -25,3 +26,8 @@ jobs:
       - name: Build
         working-directory: './nested-lambdas'
         run: ./gradlew --no-daemon build
+
+      - name: Sign
+        working-directory: './nested-lambdas'
+        #-Psigning.keyId= -Psigning.password= -Psigning.secretKeyRingFile=
+        run: ./gradlew --no-daemon signMavenPublication
