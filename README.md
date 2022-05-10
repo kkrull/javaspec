@@ -3,7 +3,7 @@
 Behavior-Driven Development testing for Java using lambdas.  Inspired by [RSpec](http://rspec.info) and
 [Machine.Specifications](https://github.com/machine/machine.specifications).
 
-![Build Status](https://github.com/kkrull/javaspec/actions/workflows/gradle.yml/badge.svg)
+![Build Status](https://github.com/kkrull/javaspec/actions/workflows/pull_request.yml/badge.svg)
 
 
 ## Why
