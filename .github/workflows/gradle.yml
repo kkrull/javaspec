@@ -1,11 +1,7 @@
-# Builds a Java project with Gradle, caching dependencies to run faster.
-# https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
-
 name: Tests
 
+# https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
 
