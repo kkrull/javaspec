@@ -18,6 +18,8 @@ jobs:
           cache: gradle
           distribution: 'adopt'
           java-version: '11'
+          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
 
       - name: Verify GPG configuration
         run: gpg --list-keys
