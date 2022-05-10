@@ -32,7 +32,7 @@ jobs:
         working-directory: './nested-lambdas'
         run: ./gradlew --no-daemon build
 
-      - name: Sign
+      - name: Sign Artifacts
         working-directory: './nested-lambdas'
         run: |
           ./gradlew --no-daemon \

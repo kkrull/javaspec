@@ -89,7 +89,7 @@ publishMavenPublicationToSonatypeRepository.dependsOn publishToSonatypeCheckConf
 
 /* Signing */
 
-//https://docs.gradle.org/current/userguide/signing_plugin.html
+//https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory-keys
 signing {
 	def signingKey = findProperty('signingKey')
 	def signingPassword = findProperty('signingPassword')
@@ -97,21 +97,20 @@ signing {
 	sign publishing.publications['maven']
 }
 
-// task signingCheckConfig() {
-// 	description 'Verify the signing configuration for signing artifacts'
+task signingCheckConfig() {
+	description 'Verify the signing configuration for signing artifacts'
 
-// 	doLast {
-// 		def requiredProperties = [
-// 			'signing.keyId',
-// 			'signing.password',
-// 			'signing.secretKeyRingFile'
-// 		]
-// 		requiredProperties.forEach {
-// 			if(!project.hasProperty(it)) {
-// 				throw new InvalidUserDataException('Missing property needed to sign artifacts: ' + it)
-// 			}
-// 		}
-// 	}
-// }
+	doLast {
+		def requiredProperties = [
+			'signingKey',
+			'signingPassword'
+		]
+		requiredProperties.forEach {
+			if(!project.hasProperty(it)) {
+				throw new InvalidUserDataException('Missing property needed to sign artifacts: ' + it)
+			}
+		}
+	}
+}
 
-// signMavenPublication.dependsOn signingCheckConfig
+signMavenPublication.dependsOn signingCheckConfig

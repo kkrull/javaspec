@@ -143,6 +143,8 @@ $ brew install gnupg
 After installing `gpg`, you need to
 [generate a key pair][sonatype-gpg-generate-keys] and publish your public key:
 
+TODO KDK: It has to be exported this way https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#gpg
+
 ```shell
 # Generate a public/private key pair and export the private keys
 $ gpg --gen-key
@@ -167,6 +169,8 @@ artifacts.  This can be accomplished by adding properties to your personal
 `~/.gradle/gradle.properties` (create a new file if necessary), or by following
 one of these [other methods][gradle-signing-credentials].  Either way, you need
 to define the following properties:
+
+TODO KDK: Fix the property example here
 
 ```ini
 #$HOME/.gradle/gradle.properties
