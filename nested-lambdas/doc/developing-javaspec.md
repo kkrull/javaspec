@@ -97,7 +97,11 @@ $ ./gradlew build taskTree
 
 ## Common Development Tasks
 
-Gradle has tasks to handle many of the things you need to do as a developer.
+This project uses Gradle to standardize the process of doing lots of common
+things, like formatting source code.  [Github Actions][github-actions] handle
+CI/CD (Continuous Integration/Continuous Delivery).
+
+[github-actions]: https://docs.github.com/en/actions
 
 
 ### Add license and copyright notices with `license-gradle-plugin`
@@ -179,6 +183,19 @@ $ jar tf build/libs/<.jar file> #Should include a META-INF/LICENSE file
 See `buildSrc/local.jar-convention.gradle` for details.
 
 [gradle-bundling]: https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.Jar.html
+
+
+### Continuous Integration/Delivery (CI/CD) with Github Actions
+
+The CI job that validates pull requests is in
+`.github/workflows/pull_request.yml`.  See [Github Actions
+Syntax][github-actions-syntax] for details.
+
+TODO KDK: Add CD job `push_main.yml` that publishes SNAPSHOT jars to Sonatype.
+Save release for a manual operation (clicking in Nexus or a separate
+manually-dispatched action that uses its REST API).
+
+[github-actions-syntax]: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
 
 
 ### Format Java sources with Spotless
