@@ -12,16 +12,16 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Set up JDK and Gradle
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
-          java-version: '11'
-          distribution: 'adopt'
           cache: gradle
+          distribution: 'adopt'
+          java-version: '11'
 
-      - name: Grant execute permission for gradlew
+      - name: Make scripts executable
         working-directory: './nested-lambdas'
         run: chmod +x gradlew
 
-      - name: Build with Gradle
+      - name: Build
         working-directory: './nested-lambdas'
         run: ./gradlew build
