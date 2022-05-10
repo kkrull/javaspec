@@ -30,12 +30,12 @@ jobs:
 
       - name: Build
         working-directory: './nested-lambdas'
-        run: ./gradlew --no-daemon build
+        run: ./gradlew build
 
       - name: Sign Artifacts
         working-directory: './nested-lambdas'
         run: |
-          ./gradlew --no-daemon \
-          -PsigningKey="${{ secrets.GPG_PRIVATE_KEY }}" \
-          -PsigningPassword="${{ secrets.GPG_PASSPHRASE }}" \
+          ./gradlew \
+          -Psigning.key="${{ secrets.GPG_PRIVATE_KEY }}" \
+          -Psigning.passphrase="${{ secrets.GPG_PASSPHRASE }}" \
           signMavenPublication

@@ -91,9 +91,9 @@ publishMavenPublicationToSonatypeRepository.dependsOn publishToSonatypeCheckConf
 
 //https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory-keys
 signing {
-	def signingKey = findProperty('signingKey')
-	def signingPassword = findProperty('signingPassword')
-	useInMemoryPgpKeys(signingKey, signingPassword)
+	def signingKey = findProperty('signing.key')
+	def signingPassphrase = findProperty('signing.passphrase')
+	useInMemoryPgpKeys(signingKey, signingPassphrase)
 	sign publishing.publications['maven']
 }
 
@@ -102,8 +102,8 @@ task signingCheckConfig() {
 
 	doLast {
 		def requiredProperties = [
-			'signingKey',
-			'signingPassword'
+			'signing.key',
+			'signing.passphrase'
 		]
 		requiredProperties.forEach {
 			if(!project.hasProperty(it)) {
