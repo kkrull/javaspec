@@ -61,8 +61,8 @@ publishing {
 			url = 'https://oss.sonatype.org/content/repositories/snapshots'
 			credentials {
 				afterEvaluate {
-					username = project.properties['sonatypeUsername']
-					password = project.properties['sonatypePassword']
+					username = findProperty('sonatype.username')
+					password = findProperty('sonatype.password')
 				}
 			}
 		}
@@ -74,8 +74,8 @@ task publishToSonatypeCheckConfig() {
 
 	doLast {
 		def requiredProperties = [
-			'sonatypeUsername',
-			'sonatypePassword'
+			'sonatype.username',
+			'sonatype.password'
 		]
 		requiredProperties.forEach {
 			if(!project.hasProperty(it)) {
