@@ -143,15 +143,13 @@ $ brew install gnupg
 After installing `gpg`, you need to
 [generate a key pair][sonatype-gpg-generate-keys] and publish your public key:
 
-TODO KDK: It has to be exported this way https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#gpg
-
 ```shell
-# Generate a public/private key pair and export the private keys
+# Generate a public/private key pair and export the private key
 $ gpg --gen-key
-$ gpg --keyring secring.gpg --export-secret-keys > ~/.gnupg/secring.gpg
+$ gpg --armor --export-secret-keys
 ```
 
-You can test signing with a file (`README.md`, for example):
+You can now use the keys to generate and verify a signature for a file:
 
 ```shell
 # Sign some arbitrary file
@@ -170,21 +168,15 @@ artifacts.  This can be accomplished by adding properties to your personal
 one of these [other methods][gradle-signing-credentials].  Either way, you need
 to define the following properties:
 
-TODO KDK: Fix the property example here
-
 ```ini
 #$HOME/.gradle/gradle.properties
 
-# Run: gpg --list-keys
-# Use the last 8 digits of the key ID
-signing.keyId=...
+# Run: gpg --armor --export-secret-keys
+# ASCII-armored private key, including comments
+signing.key=...
 
-# passphrase used to encrypt private key during gpg --gen-keys
-signing.password=...
-
-# Run: gpg --keyring secring.gpg --export-secret-keys > ~/.gnupg/secring.gpg
-# Use the absolute path to secring.gpg
-signing.secretKeyRingFile=...
+# Passphrase used to encrypt private key during gpg --gen-keys
+signing.passphrase=...
 ```
 
 Finally if you wish to distribute artifacts, you need to send your public key to

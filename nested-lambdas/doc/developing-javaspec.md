@@ -394,7 +394,7 @@ to sign artifacts, including JAR files and generated POM files.
 After you have installed GPG and generated a key, you can sign assemblies with:
 
 ```shell
-$ ./gradlew sign
+$ ./gradlew signMavenPublication
 ```
 
 You may get an error message that looks like this:
@@ -411,7 +411,7 @@ Alternatively, you can define [provide this configuration at
 runtime][gradle-signing-credentials] as follows:
 
 ```shell
-$ ./gradlew sign -Psigning.keyId=<GPG keyId> ...
+$ ./gradlew signMavenPublication -Psigning.key=<ASCII armored private key> ...
 ```
 
 [gradle-signing-plugin]: https://docs.gradle.org/current/userguide/signing_plugin.html
