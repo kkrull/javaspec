@@ -21,9 +21,6 @@ jobs:
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
 
-      - name: Export GPG for signing plugin
-        run: gpg --keyring secring.gpg --export-secret-keys > ~/.gnupg/secring.gpg
-
       - name: Verify GPG configuration
         run: gpg --list-keys
 
@@ -39,7 +36,6 @@ jobs:
         working-directory: './nested-lambdas'
         run: |
           ./gradlew --no-daemon \
-          -Psigning.keyId="${{ secrets.GPG_KEY_ID }}" \
-          -Psigning.password="${{ secrets.GPG_PASSPHRASE }}" \
-          -Psigning.secretKeyRingFile="~/.gnupg/secring.gpg" \
+          -signingKey="${{ secrets.GPG_PRIVATE_KEY }}" \
+          -signingPassword="${{ secrets.GPG_PASSPHRASE }}" \
           signMavenPublication
