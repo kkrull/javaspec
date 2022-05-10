@@ -1,4 +1,4 @@
-name: Tests
+name: Pull Request Create/Update
 
 # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
 on:
