@@ -33,15 +33,8 @@ jobs:
         working-directory: './nested-lambdas'
         run: ./gradlew build
 
-      # - name: Sign Artifacts
-      #   working-directory: './nested-lambdas'
-      #   run: |
-      #     ./gradlew \
-      #     -Psigning.key="${{ secrets.GPG_PRIVATE_KEY }}" \
-      #     -Psigning.passphrase="${{ secrets.GPG_PASSPHRASE }}" \
-      #     signMavenPublication
-
       - name: Publish Artifacts
+        #TODO KDK: Add secrets here for Sonatype
         working-directory: './nested-lambdas'
         run: |
           ./gradlew \

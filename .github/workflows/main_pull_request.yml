@@ -21,9 +21,6 @@ jobs:
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
 
-      - name: Verify GPG configuration
-        run: gpg --list-keys
-
       - name: Make scripts executable
         working-directory: './nested-lambdas'
         run: chmod +x gradlew
