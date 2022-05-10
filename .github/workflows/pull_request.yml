@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up JDK and Gradle
+      - name: Setup JDK and Gradle
         uses: actions/setup-java@v3
         with:
           cache: gradle
@@ -24,4 +24,4 @@ jobs:
 
       - name: Build
         working-directory: './nested-lambdas'
-        run: ./gradlew build
+        run: ./gradlew --no-daemon build
