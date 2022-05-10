@@ -1,10 +1,11 @@
 # Verifies the build and deploys SNAPSHOT artifacts for dog food
-name: 'main: Pull Request create/update'
+name: 'main: update via merge/push'
 
 # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
 on:
-  pull_request:
+  push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -32,10 +33,18 @@ jobs:
         working-directory: './nested-lambdas'
         run: ./gradlew build
 
-      - name: Sign Artifacts
+      # - name: Sign Artifacts
+      #   working-directory: './nested-lambdas'
+      #   run: |
+      #     ./gradlew \
+      #     -Psigning.key="${{ secrets.GPG_PRIVATE_KEY }}" \
+      #     -Psigning.passphrase="${{ secrets.GPG_PASSPHRASE }}" \
+      #     signMavenPublication
+
+      - name: Publish Artifacts
         working-directory: './nested-lambdas'
         run: |
           ./gradlew \
           -Psigning.key="${{ secrets.GPG_PRIVATE_KEY }}" \
           -Psigning.passphrase="${{ secrets.GPG_PASSPHRASE }}" \
-          signMavenPublication
+          publish
