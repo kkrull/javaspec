@@ -39,12 +39,20 @@ independent (and make as few assumptions) as possible.  For example the
 `local.maven-publish-convention` allows you to publish artifacts, without
 specifically mandating they be derived from Java sources.
 
-_TL;DR - some configuration is required, in the name of being easier to apply
-individually._
+_TL;DR - conventional plugins still require some configuration, in the name of
+limiting dependencies among them._
+
+Also note that Gradle supports [deferred
+configuration][gradle-deferred-configuration], meaning it allows a build file or
+plugin to have forward references to configuration has not been processed yet.
+This is especially true of plugins that need to be configured via an extension,
+and rely upon `afterEvaluate` to defer fetching build configuration until it is
+available.
 
 See sources in `buildSrc/` for details.
 
 [gradle-custom-plugins]: https://docs.gradle.org/current/userguide/custom_plugins.html#sec:precompiled_plugins
+[gradle-deferred-configuration]: https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:deferred_configuration
 
 
 ### Visualize task dependencies
@@ -139,7 +147,7 @@ See `buildSrc/local.license-convention.gradle` for details.
 [github-license-gradle-plugin]: https://github.com/hierynomus/license-gradle-plugin/tree/v0.16.1
 
 
-### Assemble JARs
+### Assemble JARs with the Java plugin
 
 Add the `local.jar-convention` plugin to a project, to configure Gradle tasks
 for building JAR artifacts that you need when deploying to the Maven Central
@@ -207,58 +215,6 @@ See `buildSrc/local.java-format-convention.gradle` for details.
 
 [github-diffplug-spotless]: https://github.com/diffplug/spotless
 [github-diffplug-spotless-eclipse]: https://github.com/diffplug/spotless/tree/main/plugin-gradle#eclipse-jdt
-
-
-### Publish SNAPSHOT jars to Maven Local
-
-Add the `local.maven-publish-convention` plugin to a project, to add Gradle
-tasks for publishing project artifacts to Maven repositories.
-
-```groovy
-//build.gradle
-plugins {
-  id 'local.maven-publish-convention'
-}
-
-mavenPublishConvention {
-  publicationDescription = project.description
-  publicationFrom = components.java
-  publicationName = '<human readable name for your artifact>'
-}
-```
-
-The [Maven Publish plugin [for Gradle]][gradle-publishing-maven] provides the
-Gradle tasks to do things like generate POM files and push to Maven
-repositories.  Each project that wishes to publish an artifact does so by
-creating a single `maven` publication.  The `maven-publish` plugin therefore has
-several tasks with the word `Maven` in it, that are meant for that sole
-publication.  There are also aggregator tasks with fixed names, that process all
-publications.
-
-For example:
-
-```shell
-# Generate POM files for all publications [in all sub-projects].
-# Creates <project>/build/publications/maven/pom-default.xml.
-$ ./gradlew generatePomFile
-
-# Publish all artifacts to ~/.m2/repository (similar to `mvn install`)
-$ ./gradlew publishToMavenLocal
-```
-
-Dependent projects need to be configured to resolve dependencies locally:
-
-```groovy
-//build.gradle
-repositories {
-  mavenLocal()
-  ...
-}
-```
-
-See `buildSrc/local.maven-publish-convention.gradle` for details.
-
-[gradle-publishing-maven]: https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
 
 
 ### Test Java code with the JUnit Platform
@@ -341,3 +297,122 @@ dependencies {
   testRuntimeOnly project(':jupiter-test-execution-listener')
 }
 ```
+
+
+## Deployment Tasks
+
+If you maintain this repository or manage releases, you will need a way to sign
+and publish artifacts with Gradle.
+
+
+### Publish artifacts to Maven Local
+
+Add the `local.maven-publish-convention` plugin to a project, to add Gradle
+tasks for publishing project artifacts to Maven repositories.
+
+```groovy
+//build.gradle
+plugins {
+  id 'local.maven-publish-convention'
+}
+
+mavenPublishConvention {
+  publicationDescription = project.description
+  publicationFrom = components.java
+  publicationName = '<human readable name for your artifact>'
+}
+```
+
+The [Maven Publish plugin [for Gradle]][gradle-publishing-maven] provides the
+Gradle tasks to do things like generate POM files and push to Maven
+repositories.  Each project that wishes to publish an artifact does so by
+creating a single `maven` publication.  The `maven-publish` plugin therefore has
+several tasks with the word `Maven` in it, that are meant for that sole
+publication.  There are also aggregator tasks with fixed names, that process all
+publications.
+
+For example:
+
+```shell
+# Generate POM files for all publications [in all sub-projects].
+# Creates <project>/build/publications/maven/pom-default.xml.
+$ ./gradlew generatePomFile
+
+# Publish all artifacts to ~/.m2/repository (similar to `mvn install`)
+$ ./gradlew publishToMavenLocal
+```
+
+Dependent projects need to be configured to resolve dependencies locally:
+
+```groovy
+//build.gradle
+repositories {
+  mavenLocal()
+  ...
+}
+```
+
+See `buildSrc/local.maven-publish-convention.gradle` for details.
+
+[gradle-publishing-maven]: https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
+
+
+### Publish artifacts to Sonatype
+
+Publishing to [Sonatype OSSRH][sonatype-nexus] uses the same Gradle plugins and
+configuration that is needed to [publish to Maven
+Local](#publish-artifacts-to-maven-local).  The conventional plugin configures a
+single `sonatype` repository, which leads to creating several Gradle tasks
+containing the word `Sonatype`.
+
+Before you run the tasks, check the versions in each `build.gradle` file to make
+sure it is a SNAPSHOT or a regular release, as intended.
+
+```shell
+$ ./gradlew publishAllPublicationsToSonatypeRepository
+```
+
+Running this with a SNAPSHOT version will deploy this to the [Snapshots
+repository][sonatype-snapshots].  You can view the deployed artifacts on the Nexus webapp by going to:
+
+> Views/Repositories - Repositories - Snapshots - Browse Storage - info.javaspec
+
+If you get any error messages while deploying, remember that you need to setup a
+Sonatype account and tell Gradle how to access it.  See the [environment setup
+document](./development-environment.md#publish-artifacts-to-sonatype-ossrh) for
+details.
+
+[sonatype-nexus]: https://oss.sonatype.org/
+[sonatype-snapshots]: https://oss.sonatype.org/content/repositories/snapshots/
+
+
+### Sign JARs with `signing` and GPG
+
+The [signing plugin][gradle-signing-plugin] handles the details of calling GPG
+to sign artifacts, including JAR files and generated POM files.
+
+After you have installed GPG and generated a key, you can sign assemblies with:
+
+```shell
+$ ./gradlew signMavenPublication
+```
+
+You may get an error message that looks like this:
+
+```shell
+$ ./gradlew signArchives
+Execution failed for task ':javaspec-api:signArchives'.
+> Cannot perform signing task ':javaspec-api:signArchives' because it has no configured signatory
+```
+
+If you get an error message like that, [double-check your GPG keys and Gradle
+configuration](./development-environment.md#sign-artifacts-with-gnupg).
+Alternatively, you can define [provide this configuration at
+runtime][gradle-signing-credentials] as follows:
+
+```shell
+$ ./gradlew signMavenPublication -Psigning.key=<ASCII armored private key> ...
+```
+
+[gradle-signing-plugin]: https://docs.gradle.org/current/userguide/signing_plugin.html
+[gradle-signing-credentials]: https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials

@@ -1,53 +1,116 @@
 //Conventions for Java projects that publish Maven artifacts
 plugins {
 	id 'maven-publish'
+	id 'signing'
 }
 
 import info.javaspec.MavenPublishConventionExtension
 def extension = project.extensions.create('mavenPublishConvention', MavenPublishConventionExtension)
 
-//Support deferred configuration
-//https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:deferred_configuration
-afterEvaluate {
-	//https://docs.gradle.org/current/userguide/publishing_maven.html
-	publishing {
-		publications {
-			maven(MavenPublication) {
-				from extension.publicationFrom.get()
+/* Publication */
 
-				pom {
+//https://docs.gradle.org/current/userguide/publishing_maven.html
+publishing {
+	publications {
+		maven(MavenPublication) {
+			afterEvaluate {
+				from extension.publicationFrom.get()
+			}
+
+			pom {
+				afterEvaluate {
 					description = extension.publicationDescription.get()
 					name = extension.publicationName.get()
+				}
 
-					developers {
-						developer {
-							id = 'kkrull'
-							email = 'kdkrull@gmail.com'
-							name = 'Kyle Krull'
-						}
+				developers {
+					developer {
+						id = 'kkrull'
+						email = 'kdkrull@gmail.com'
+						name = 'Kyle Krull'
+						organizationUrl = 'https://github.com/kkrull'
 					}
+				}
 
-					issueManagement {
-						system = 'GitHub'
-						url = 'https://github.com/kkrull/javaspec/issues'
+				issueManagement {
+					system = 'GitHub'
+					url = 'https://github.com/kkrull/javaspec/issues'
+				}
+
+				licenses {
+					license {
+						name = 'MIT license'
+						url = 'https://spdx.org/licenses/MIT'
 					}
+				}
 
-					licenses {
-						license {
-							name = 'MIT license'
-							url = 'https://spdx.org/licenses/MIT'
-						}
-					}
+				scm {
+					connection = 'scm:git:git://github.com/kkrull/javaspec.git'
+					developerConnection = 'scm:git:ssh://github.com:kkrull/javaspec.git'
+					url = 'https://github.com/kkrull/javaspec'
+				}
 
-					scm {
-						connection = 'scm:git:git://github.com/kkrull/javaspec.git'
-						developerConnection = 'scm:git:git@github.com:kkrull/javaspec.git'
-						url = 'https://github.com/kkrull/javaspec'
-					}
+				url = 'https://javaspec.info'
+			}
+		}
+	}
 
-					url = 'https://javaspec.info'
+	repositories {
+		maven {
+			name 'sonatype'
+			url = 'https://oss.sonatype.org/content/repositories/snapshots'
+			credentials {
+				afterEvaluate {
+					username = findProperty('sonatype.username')
+					password = findProperty('sonatype.password')
 				}
 			}
 		}
 	}
 }
+
+task publishToSonatypeCheckConfig() {
+	description 'Verify the maven-publish configuration for pushing to Sonatype'
+
+	doLast {
+		def requiredProperties = [
+			'sonatype.username',
+			'sonatype.password'
+		]
+		requiredProperties.forEach {
+			if(!project.hasProperty(it)) {
+				throw new InvalidUserDataException('Missing property needed to publish artifacts to Sonatype: ' + it)
+			}
+		}
+	}
+}
+
+publishMavenPublicationToSonatypeRepository.dependsOn publishToSonatypeCheckConfig
+
+/* Signing */
+
+//https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory-keys
+signing {
+	def signingKey = findProperty('signing.key')
+	def signingPassphrase = findProperty('signing.passphrase')
+	useInMemoryPgpKeys(signingKey, signingPassphrase)
+	sign publishing.publications['maven']
+}
+
+task signingCheckConfig() {
+	description 'Verify the signing configuration for signing artifacts'
+
+	doLast {
+		def requiredProperties = [
+			'signing.key',
+			'signing.passphrase'
+		]
+		requiredProperties.forEach {
+			if(!project.hasProperty(it)) {
+				throw new InvalidUserDataException('Missing property needed to sign artifacts: ' + it)
+			}
+		}
+	}
+}
+
+signMavenPublication.dependsOn signingCheckConfig
