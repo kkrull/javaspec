@@ -97,7 +97,11 @@ $ ./gradlew build taskTree
 
 ## Common Development Tasks
 
-Gradle has tasks to handle many of the things you need to do as a developer.
+This project uses Gradle to standardize the process of doing lots of common
+things, like formatting source code.  [Github Actions][github-actions] handle
+CI/CD (Continuous Integration/Continuous Delivery).
+
+[github-actions]: https://docs.github.com/en/actions
 
 
 ### Add license and copyright notices with `license-gradle-plugin`
@@ -179,6 +183,27 @@ $ jar tf build/libs/<.jar file> #Should include a META-INF/LICENSE file
 See `buildSrc/local.jar-convention.gradle` for details.
 
 [gradle-bundling]: https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.Jar.html
+
+
+### Continuous Integration/Delivery (CI/CD) with Github Actions
+
+This project uses Github Actions for Continuous Integration (CI) and Continuous
+Delivery (CD).  See [Github Actions Syntax][github-actions-syntax] for details.
+
+This project has the following workflows, which are defined in
+`.github/workflows/`:
+
+* `main_pull_request.yml`: Runs when a Pull Request is created or updated.  it
+  builds the project, runs tests and other checks, and assembles artifacts.
+* `main_push.yml`: Runs when there is any kind of merge (or direct push) back
+  into `main`.  It signs and deploys SNAPSHOT artifacts to Sonatype OSSRH so
+  that developers can test the entire process of fetching and using
+  dependencies, with the latest version of the project.
+* _To be determined_: Deploy release artifacts to a Sonatype OSSRH staging
+  repository, for eventual promotion to the Maven Central Repository (i.e.
+  public availability).
+
+[github-actions-syntax]: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
 
 
 ### Format Java sources with Spotless
