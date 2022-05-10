@@ -19,6 +19,9 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
 
+      - name: Verify GPG configuration
+        run: gpg --list-keys
+
       - name: Make scripts executable
         working-directory: './nested-lambdas'
         run: chmod +x gradlew
