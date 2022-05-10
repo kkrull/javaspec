@@ -188,10 +188,10 @@ See `buildSrc/local.jar-convention.gradle` for details.
 ### Continuous Integration/Delivery (CI/CD) with Github Actions
 
 The CI job that validates pull requests is in
-`.github/workflows/pull_request.yml`.  See [Github Actions
+`.github/workflows/main_pull_request.yml`.  See [Github Actions
 Syntax][github-actions-syntax] for details.
 
-TODO KDK: Add CD job `push_main.yml` that publishes SNAPSHOT jars to Sonatype.
+TODO KDK: Add CD job `main_push.yml` that publishes SNAPSHOT jars to Sonatype.
 Save release for a manual operation (clicking in Nexus or a separate
 manually-dispatched action that uses its REST API).
 
