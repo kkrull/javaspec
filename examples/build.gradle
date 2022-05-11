@@ -11,9 +11,15 @@ description 'JavaSpec example projects'
 subprojects {
 	group 'info.javaspec'
 
+	//TODO KDK: Replace mavenLocal with Sonatype repository https://oss.sonatype.org/content/repositories/snapshots
+	//See https://stackoverflow.com/questions/20574111/add-maven-repository-to-build-gradle
+	//Seehttps://help.sonatype.com/repomanager2/maven-and-other-build-tools/gradle
 	repositories {
-		mavenLocal()
+		// mavenLocal()
 		mavenCentral()
+		maven {
+			url 'https://oss.sonatype.org/content/repositories/snapshots'
+		}
 	}
 
 	//Customize at runtime ./gradlew -Dtestlogger.theme=plain ...

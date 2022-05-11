@@ -5,6 +5,7 @@ plugins {
 
 version '2.0.0-SNAPSHOT'
 
+//TODO KDK: Check where these are coming from.  Something like ./gradlew lambda-user:dependencies
 dependencies {
 	testImplementation 'info.javaspec:javaspec-api:2.0.0-SNAPSHOT'
 	testRuntimeOnly 'info.javaspec:javaspec-engine:2.0.0-SNAPSHOT'
