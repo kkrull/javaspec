@@ -34,10 +34,11 @@ jobs:
         run: ./gradlew build
 
       - name: Publish Artifacts
-        #TODO KDK: Add secrets here for Sonatype
         working-directory: './nested-lambdas'
         run: |
           ./gradlew \
           -Psigning.key="${{ secrets.GPG_PRIVATE_KEY }}" \
           -Psigning.passphrase="${{ secrets.GPG_PASSPHRASE }}" \
+          -Psonatype.username=${{ secrets.SONATYPE_USERNAME }} \
+          -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }} \
           publish
