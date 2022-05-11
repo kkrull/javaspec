@@ -5,7 +5,6 @@ plugins {
 
 version '2.0.0-SNAPSHOT'
 
-//TODO KDK: Check where these are coming from.  Something like ./gradlew lambda-user:dependencies
 dependencies {
 	testImplementation 'info.javaspec:javaspec-api:2.0.0-SNAPSHOT'
 	testRuntimeOnly 'info.javaspec:javaspec-engine:2.0.0-SNAPSHOT'
@@ -18,6 +17,15 @@ java {
 	jar {
 		//Example sources not meant for publication as an artifact
 		enabled = false
+	}
+}
+
+task printDependencies() {
+	description 'Print out paths to dependencies to verify they are coming from remote/local, as intended'
+
+	doLast {
+		println 'testRuntimeClasspath'
+		configurations.testRuntimeClasspath.each { println it }
 	}
 }
 
