@@ -24,18 +24,42 @@
 package info.javaspec.api;
 
 /**
- * The JavaSpec syntax used to write and organize specs.
+ * The JavaSpec syntax used to write and organize specs. The JavaSpec Engine
+ * provides an instance of this to you when you implement {@link SpecClass}.
+ * <p>
+ * Use this as follows:
+ * <ol>
+ * <li>Add a top-level {@link #describe} block to identify your test subject
+ * (usually a class object or a class name).</li>
+ * <li>(Optional) Add another {@link #describe} block inside of that with the
+ * name of the method you are testing.</li>
+ * <li>Add {@link #it} blocks inside of that, for each behavior that you want to
+ * to describe and verify. Use {@link #pending} instead of {@link #it} when you
+ * are not ready to write the test procedure yet.</li>
+ * <li>Add more {@link #describe} blocks to test more methods in the same
+ * class.</li>
+ * </ol>
  *
- * Start by describing a class {@link #describe(Class, BehaviorDeclaration)} or
- * any subject in general {@link #describe(String, BehaviorDeclaration)}, then
- * add 1 or more specifications inside of that block with
- * {@link #it(String, Verification)}.
+ * <h2>Example</h2>
  *
- * Use {@link #pending(String)} or {@link #skip(String, Verification)} for any
- * specs that you are not ready to run yet, and additional
- * {@link #describe(String, BehaviorDeclaration)} and
- * {@link #given(String, BehaviorDeclaration)} containers to organize specs, as
- * desired.
+ * <pre>
+ * {@code
+ * public void declareSpecs(JavaSpec javaspec) {
+ *  javaspec.describe(Greeter.class, () -> { //Step 1
+ *    javaspec.describe("#greet", () -> { //Step 2 (Optional)
+ *      javaspec.it("greets the world, given no name", () -> { //Step 3
+ *        Greeter subject = new Greeter();
+ *        assertEquals("Hello world!", subject.greet());
+ *      });
+ *
+ *      javaspec.it("greets a person by name, given a name", () -> {
+ *        Greeter subject = new Greeter();
+ *        assertEquals("Hello Adventurer!", subject.greet("Adventurer"));
+ *      });
+ *    });
+ *  });
+ * }
+ * </pre>
  */
 public interface JavaSpec {
 	/* Context */
