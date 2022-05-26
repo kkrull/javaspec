@@ -59,6 +59,7 @@ package info.javaspec.api;
  *    });
  *  });
  *}
+ *}
  * </pre>
  */
 public interface JavaSpec {
