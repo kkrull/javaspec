@@ -20,3 +20,4 @@ lib/
 .settings/
 .vscode/
 bin/
+.envrc
