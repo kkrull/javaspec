@@ -29,13 +29,13 @@ package info.javaspec.api;
  * <p>
  * Use this as follows:
  * <ol>
- * <li>Add a top-level {@link #describe} block to identify your test subject
- * (usually a class object or a class name).</li>
- * <li>(Optional) Add another {@link #describe} block inside of that with the
+ * <li>Start with a top-level {@link #describe} block to identify your test
+ * subject (usually a class object or a class name).</li>
+ * <li>(Optional) Add another {@link #describe} block inside of that, with the
  * name of the method you are testing.</li>
  * <li>Add {@link #it} blocks inside of that, for each behavior that you want to
- * to describe and verify. Use {@link #pending} instead of {@link #it} when you
- * are not ready to write the test procedure yet.</li>
+ * describe and verify. Use {@link #pending} instead of {@link #it} when you are
+ * not ready to write the test procedure yet.</li>
  * <li>Add more {@link #describe} blocks to test more methods in the same
  * class.</li>
  * </ol>
@@ -58,7 +58,7 @@ package info.javaspec.api;
  *      });
  *    });
  *  });
- * }
+ *}
  * </pre>
  */
 public interface JavaSpec {
