@@ -6,7 +6,7 @@ plugins {
 }
 
 description 'Service Provider: a TestExecutionListener that reports test execution events to the console'
-version '2.0.0-SNAPSHOT'
+version '2.0.0'
 
 dependencies {
 	implementation 'org.junit.platform:junit-platform-launcher:1.8.1'

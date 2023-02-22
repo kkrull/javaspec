@@ -8,7 +8,7 @@ plugins {
 }
 
 description 'Service Provider: A TestEngine that runs specs on JUnit Jupiter'
-version '2.0.0-SNAPSHOT' //Has to go above other tasks that refer to it
+version '2.0.0' //Has to go above other tasks that refer to it
 
 sourceSets {
 	//Add a sourceset for the sake of declaring a dependency on JUnit Console
