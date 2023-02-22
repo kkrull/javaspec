@@ -1,176 +1,299 @@
+<!-- omit in toc -->
 # JavaSpec
 
-Behavior-Driven Development testing for Java using lambdas.  Inspired by [RSpec](http://rspec.info) and
-[Machine.Specifications](https://github.com/machine/machine.specifications).
+JavaSpec 2 is a library for the Java Virtual Machine that lets you use lambdas
+to write specifications (unit tests) that run on the JUnit Platform.
+Specifications run anywhere JUnit 5 runs: Gradle, JUnit Platform Console, or
+your favorite IDE.  It does the same thing you can do with JUnit 5, but with a
+syntax that is more descriptive–and more concise–than its JUnit counterpart.
 
-## Why
+JavaSpec 2 should work just about anywhere JUnit 5 works.  All you have to do is
+add a compile dependency for the API (providing the new spec syntax) and a
+runtime dependency for a JUnit Test Engine that knows how to turn specifications
+into JUnit tests.
 
-*Why create another testing framework for Java, and why use lambdas?*
+_TL;DR - it's kind of like the syntax from [Jest][jest], [Mocha][mocha], and
+[Jasmine][jasmine], but for Java._
 
-JavaSpec attempts to be:
+**Note that this documentation is for the new version of JavaSpec**.  It uses a
+different syntax than [JavaSpec 1.x][javaspec-1x].
 
-* **Concise**: Simple behavior should be simple to test and describe in a small amount of space.
-* **Searchable**: Finding call sites in Java code is easy.  Finding where a test calls your code should be just as easy.
-* **Transparent**: You shouldn't have to keep any caveats in mind when writing test code.
+- [What does JavaSpec do?](#what-does-javaspec-do)
+- [Getting Started](#getting-started)
+  - [Add dependencies](#add-dependencies)
+  - [Write Specs](#write-specs)
+  - [Run specs with Gradle](#run-specs-with-gradle)
+  - [Run specs in your IDE](#run-specs-in-your-ide)
+  - [Run specs with JUnit Platform Console](#run-specs-with-junit-platform-console)
+  - [More helpful syntax](#more-helpful-syntax)
+- [Support](#support)
+  - [Known Issues](#known-issues)
 
-There are many testing libraries out there with some of these characteristics, but expresiveness does not need to come
-at the cost of adding complexity.  For example you can write your tests in Ruby or Groovy (as the author once
-considered), but now you're adding more components between your test and production code, adding new dependencies, and
-losing out on searchability.
+![Build Status](https://github.com/kkrull/javaspec/actions/workflows/verify.yml/badge.svg?branch=main)
 
-Lambdas are the weapon of choice for turning simple expressions into one-liners.  A test with one assertion can be 1
-line instead of several for tagging and creating whole, new test method.
+[jasmine]: https://jasmine.github.io/
+[javaspec-1x]: http://javaspec.info
+[jest]: https://jestjs.io/
+[mocha]: https://mochajs.org/
 
-## Installation
+## What does JavaSpec do?
 
-JavaSpec is located in the Maven Central Repository, under the following coordinates:
-
-```xml
-<dependency>
-  <groupId>info.javaspec</groupId>
-  <artifactId>javaspec-runner</artifactId>
-  <version>1.0.1</version>
-</dependency>
-```
-
-It depends upon JUnit 4 and Java 8+.
-
-## Getting started
-
-There's no magic in how JavaSpec works.  This guide describes JavaSpec in terms of its similarities to popular libraries
-instead of pretending like these are radical, never-before-seen ideas.
-
-### It runs on JUnit
-
-In JUnit, you create a test class and put `@Test` methods in it.  JavaSpec is similar:
-
-* Make a test class.
-* Tag it with `@RunWith(JavaSpecRunner.class)`.
-* Include 1 or more `It` fields in the class and assign a no-arg lambda to it.  Put whatever code you would normally run
-  in the `@Test` method in this lambda.
-* Run your tests anywhere you run JUnit.  Maven (surefire plugin) and Eclipse Luna work.
-
-A simple "Hello World" test looks like this:
+JavaSpec helps you take a JUnit test that looks like this...
 
 ```java
-@RunWith(JavaSpecRunner.class)
 class GreeterTest {
-  It says_hello = () -> assertEquals("Hello World!", new Greeter().sayHello());
-}
-```
-
-As with JUnit, you get 1 instance of your test class per test.  Each `It` is its own test.
-
-Finally, note that the `It` field is named `says_hello` instead of the conventional `saysHello`.  This is done so that
-JavaSpec can convert that verb phrase into a human readable form by replacing underscores with spaces.  When you run
-this test, JUnit will report results for `says hello`.
-
-### It's like Machine.Specifications
-
-Machine.Specifications and JavaSpec represent the different steps of a test the same way:
-
-* An `Establish` lambda runs the Arrange part of your test.  This runs first, when present.
-* A `Because` lambda runs the Act part of your test.  This runs next, when present.
-* An `It` lambda does the Assert part of your test.
-* A `Cleanup` lambda - when present - always runs, even if a prior step failed.
-* If any step throws an exception, the test fails.
-
-You can think of `Establish` and `Because` as what a `@Before` method would do in JUnit.  These lambdas run before each
-`It` lambda in the same class (and also before `It` fields in inner classes).  `Cleanup` is like `@After` in JUnit,
-running after each `It` in the same test class.
-
-Unlike MSpec, your lambdas execute in an *instance* of the class in which they are declared.  Non-static helper methods
-in your test class are fair game to be called from any step.
-
-A JavaSpec test fixture looks like this:
-
-```java
-@RunWith(JavaSpecRunner.class)
-class GreeterWithFixtureTest {
-  private final PrintStreamSpy printStreamSpy = new PrintStreamSpy();
-  private Widget subject;
-  private String returned;
-
-  Establish that = () -> subject = new Widget(printStreamSpy);
-  Because of = () -> returned = subject.foo();
-  Cleanup close_streams = () -> {
-    if(subject != null)
-      subject.close();
-  };
-
-  It returns_bar = () -> assertEquals("bar", returned);
-  It prints_baz = () -> assertEquals("baz", printStreamSpy.getWhatWasPrinted());
-}
-```
-
-### It's like RSpec
-
-RSpec lets you organize hierarchies of tests and fixtures with `describe` and `context`, and each level in the tree can
-have its own `before` and `after` methods to work the test fixture.  JavaSpec provides nested contexts by nesting
-*context classes* (inner, **non-static** classes) in the top-level test class.
-
-Each class can have as many `It` lambdas as you want, plus up to 1 of each type of fixture lambda (`Establish`,
-`Because`, and `Cleanup`) to build up the test fixture.  As with RSpec, setup runs outside-in and cleanup runs
-inside-out.  If you happen to have an `Because` in an outer class and an `Establish` in an inner class and wonder which
-one runs first, the outer class lambdas run first (i.e. `Because` runs first).
-
-An example of using nested contexts:
-
-```java
-@RunWith(JavaSpecRunner.class)
-class WidgetTest {
-  private Widget subject;
-  Establish that = () -> subject = new Widget();
-
-  class foo {
-    private String returned;
-    Because of = () -> returned = subject.sayHello();
-    It says_hello = () -> assertEquals("Hello World!", returned);
-  }
-
-  class bar {
-    class given_a_multiple_of_3 {
-      It prints_fizz = () -> assertEquals("fizz", subject.bar(3));
+  @Nested
+  @DisplayName("#greet")
+  class greet {
+    @Test
+    @DisplayName("greets the world, given no name")
+    void givenNoNameGreetsTheWorld() {
+      Greeter subject = new Greeter();
+      assertEquals("Hello world!", subject.greet());
     }
 
-    class given_a_multiple_of_5 {
-      It prints_buzz = () -> assertEquals("buzz", subject.bar(5));
+    @Test
+    @DisplayName("greets a person by name, given a name")
+    void givenANameGreetsThePersonByName() {
+      Greeter subject = new Greeter();
+      assertEquals("Hello Adventurer!", subject.greet("Adventurer"));
     }
   }
 }
 ```
 
-In short:
+...and declare it with lambdas instead:
 
-* Only tag the outer-most class with `@RunWith(JavaSpecRunner.class)`.  Don't tag any inner classes with this.
-* Make as many contexts as you like by making nested, non-static classes.
-* Add up to 1 each of `Establish`, `Because` and `Cleanup` to each context class.
-* Make as many tests as you want in each context class with `It` lambdas.
+```java
+@Testable
+public class GreeterSpecs implements SpecClass {
+  public void declareSpecs(JavaSpec javaspec) {
+    javaspec.describe(Greeter.class, () -> {
+      javaspec.describe("#greet", () -> {
+        javaspec.it("greets the world, given no name", () -> {
+          Greeter subject = new Greeter();
+          assertEquals("Hello world!", subject.greet());
+        });
 
-### If you have any other questions
+        javaspec.it("greets a person by name, given a name", () -> {
+          Greeter subject = new Greeter();
+          assertEquals("Hello Adventurer!", subject.greet("Adventurer"));
+        });
+      });
+    });
+  }
+}
+```
 
-Hopefully JavaSpec works like you think it does.
+This results in test output that looks like this:
 
-For times when it doesn't, start by looking at the tests on
-[`JavaSpecRunner`](https://github.com/kkrull/javaspec/blob/main/src/test/java/info/javaspec/runner/JavaSpecRunnerTest.java)
-and related classes.
+```text
+Greeter
 
-If that still doesn't do the trick, feel free to [post an issue](https://github.com/kkrull/javaspec/issues) or submit a
-pull request with any suggested modifications.
+  #greet
 
-## Future work
+    ✔ greets the world, given no name
+    ✔ greets a person by name, given a name
+```
 
-*Work is underway to make a new 2.0 release with an entirely different syntax that looks more like
-Mocha or Jasmine than like .NET's Machine.Specifications.*
+Using this syntax, you can describe behavior with plain language without having
+to add extra decorators or name tests twice (one machine-readable method name
+and one human readable `@DisplayName`).
 
-## Release history
+If you're into testing, like being descriptive, and don't mind lambdas: this
+might be the testing library for you.
 
-* [1.0.1](doc/1.0.1/README.md): Fixed [Issue 5](https://github.com/kkrull/javaspec/issues/5), catching some errors in initializing test classes.
-* 1.0: Full release.  Renamed artifact to `info.javaspec::javaspec-runner`.
-* 0.5: Fixed an issue where specs with the same field / context class name were showing up as still running in IntelliJ.
-  Also renamed JUnit test display names to human-readable names, replacing snake case underscores with spaces.
-* 0.4.2: Fixed [Issue 2](https://github.com/kkrull/javaspec/issues/2), so that only one instance of a context class is
-  created for each test.
-* 0.4.1: Fixed [Issue 1](https://github.com/kkrull/javaspec/issues/1), dealing with being able to instantiate non-public
-  context classes.
-* 0.4.0: Initial release
+## Getting Started
+
+### Add dependencies
+
+To start using JavaSpec, add the following dependencies:
+
+1. `testImplementation 'info.javaspec:javaspec-api'`: the syntax you need to
+   declare specs.  This needs to be on the classpath you use for compiling test
+   sources and on the one you use when running tests.
+1. `testRuntimeOnly 'info.javaspec:javaspec-engine'`: the `TestEngine` that runs
+   specs.  This only needs to be on the classpath you use at runtime when
+   running tests.
+1. some kind of library for assertions.  For example:
+   `testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'`
+
+In Gradle, that means adding the following to your `build.gradle` file:
+
+```groovy
+//build.gradle
+dependencies {
+  //Add these dependencies for JavaSpec
+  testImplementation 'info.javaspec:javaspec-api:<version>'
+  testRuntimeOnly 'info.javaspec:javaspec-engine:<version>'
+
+  //Add an assertion library (JUnit 5's assertions shown here)
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+}
+```
+
+### Write Specs
+
+Start writing specs with JavaSpec the same way you would with JUnit: by making a
+new class.  It is often helpful for the name of that class to end in something
+like `Specs`, but JavaSpec does not require following any particular convention.
+
+Once you have your new spec class:
+
+1. Implement `SpecClass` (`info.javaspec:javaspec-api`) and
+   `#declareSpecs(JavaSpec)`.
+2. Inside `declareSpecs`, call `JavaSpec#describe` with:
+   1. some description of what you are testing (or the class itself)
+   2. a lambda to hold all the specifications for what you're describing
+3. Inside the `describe` lambda, call `JavaSpec#it` with:
+   1. some description of the expected behavior
+   2. a lambda with [Arrange Act Assert][c2wiki-arrange-act-assert] in it, like
+      in any other test
+
+Put it all together, and a basic spec class looks something like this:
+
+```java
+import info.javaspec.api.JavaSpec;
+import info.javaspec.api.SpecClass;
+
+public class GreeterSpecs implements SpecClass {
+  public void declareSpecs(JavaSpec javaspec) {
+    javaspec.describe(Greeter.class, () -> {
+      javaspec.describe("#greet", () -> {
+        javaspec.it("greets the world, given no name", () -> {
+          Greeter subject = new Greeter();
+          assertEquals("Hello world!", subject.greet());
+        });
+      });
+    });
+  }
+}
+```
+
+[c2wiki-arrange-act-assert]: http://wiki.c2.com/?ArrangeActAssert
+
+### Run specs with Gradle
+
+Once you have the right dependencies, you need a way to run specs on the JUnit
+Platform.  This section describes how to do that in a Gradle project.
+
+As with regular JUnit tests, you still need to add this to your `build.gradle`:
+
+```groovy
+//build.gradle
+test {
+  useJUnitPlatform()
+}
+```
+
+Then it's `./gradlew test` to run specs, like usual.
+
+For extra-pretty console output, try adding the [Gradle Test Logger
+Plugin][github-gradle-test-logger-plugin] with the `mocha` theme.
+
+[github-gradle-test-logger-plugin]: https://github.com/radarsh/gradle-test-logger-plugin
+
+### Run specs in your IDE
+
+If you have an IDE that can already run JUnit 5 tests, there's a good chance
+that it can also run JavaSpec by following these steps:
+
+1. Make sure you have added the dependencies listed in
+   [Add Dependencies](#add-dependencies).
+2. Add the JUnit Platform Commons dependency:
+   `testImplementation 'org.junit.platform:junit-platform-commons:<version>'`
+3. Add `@Testable` to each `SpecClass` that contains specifications, as a hint
+   to your IDE that this class contains some sort of tests that run on a
+   `TestEngine`.
+
+This is usually enough for your IDE to indicate that it can run tests in a
+class, once it has had time to download any new dependencies and index your
+sources.
+
+For example:
+
+```java
+import org.junit.platform.commons.annotation.Testable;
+
+@Testable //Add this IDE hint
+public class GreeterSpecs implements SpecClass {
+  public void declareSpecs(JavaSpec javaspec) {
+    javaspec.describe(Greeter.class, () -> {
+      ...
+    });
+  }
+}
+```
+
+### Run specs with JUnit Platform Console
+
+Since this is just another `TestEngine` for the JUnit Platform, you can also run
+specs on the [JUnit Platform Console][junit-console-launcher] as seen in this
+shell snippet:
+
+```shell
+junit_console_jar='junit-platform-console-standalone-1.8.1.jar'
+java -jar "$junit_console_jar" \
+  --classpath=info.javaspec.javaspec-api-0.0.1.jar \
+  --classpath=<compiled production code and its dependencies> \
+  --classpath=<compiled specs and their dependencies> \
+  --classpath=info.javaspec.javaspec-engine-0.0.1.jar \
+  --include-engine=javaspec-engine \
+  ...
+```
+
+Specifically, this means running passing the following arguments to JUnit
+Platform Console, on top of whichever options you are already using:
+
+- `--classpath` for `javaspec-api` and `javaspec-engine`
+- `--include-engine=javaspec-engine`
+
+[junit-console-launcher]: https://junit.org/junit5/docs/current/user-guide/#running-tests-console-launcher
+
+### More helpful syntax
+
+The JavaSpec API supports a few more things that developers often need to do
+while testing:
+
+- `JavaSpec#pending`: Stub in a pending / todo item reminding you to test
+  something later.  JUnit Platform skips the resulting test.
+- `JavaSpec#skip`: Skip running a spec that already has a defined procedure.
+  This can be useful for allowing a spec to be _temporarily_ disabled while you
+  fix something else.
+
+The API also has a variety of ways to help you organize your specs:
+
+- `JavaSpec#describe` is used most often to define the class and methods being
+  tested, but it is really just a general-purpose container with no special
+  behavior of its own.
+- `JavaSpec#context` can be useful for defining any circumstances under which
+  some specifications apply.  It's not implemented any differently from
+  `#describe`, so use `#context` if you feel like it reads better.
+- `JavaSpec#given` is like the other containers, except that it adds the word
+  "given" before your description.  For example
+  `javaspec.given("a name", () -> ...)`
+  results in a container called `given a name`.
+
+Note that these containers exist simply to help you be as descriptive and
+organized as you need to be.  Try to use them judiciously to enhance human
+readability.
+
+## Support
+
+Feel free to file an [Issue on Github][github-javaspec-issues] if you have any
+questions about using JavaSpec, or if something is not working the way you
+expected.
+
+[github-javaspec-issues]: https://github.com/kkrull/javaspec/issues
+
+### Known Issues
+
+- There is not an equivalent of `@BeforeEach` and `@AfterEach` yet, for defining
+  shared setup and teardown around a series of related specs.
+- Running specs in Gradle causes specs to be reported under `default-package`
+  and `UnknownClass` instead of their actual package and class names.  This
+  applies to HTML test reports in `build/reports/tests/test`.
+- Running specs in Gradle with the [Gradle Test Logger
+  Plugin][github-gradle-test-logger-plugin] causes the name of the spec class to
+  be printed _after_ all the specs in the class have run, instead of _before_
+  it.

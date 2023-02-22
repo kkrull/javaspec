@@ -1,4 +1,4 @@
-# JavaSpec v1.0.1
+# JavaSpec 1.x
 
 Behavior-Driven Development testing for Java using lambdas.  Inspired by [RSpec](http://rspec.info) and
 [Machine.Specifications](https://github.com/machine/machine.specifications).
@@ -6,10 +6,7 @@ Behavior-Driven Development testing for Java using lambdas.  Inspired by [RSpec]
 **This documentation is for JavaSpec 1.0.1.**  If you are looking for a different version, please see
 the [JavaSpec documentation site][github-io-javaspec].
 
-[![Build Status](https://travis-ci.org/kkrull/javaspec.svg?tag=v1.0.1)](https://travis-ci.org/kkrull/javaspec)
-
 [github-io-javaspec]: http://javaspec.info
-
 
 ## Why
 
@@ -29,7 +26,6 @@ losing out on searchability.
 Lambdas are the weapon of choice for turning simple expressions into one-liners.  A test with one assertion can be 1
 line instead of several for tagging and creating whole, new test method.
 
-
 ## Installation
 
 JavaSpec is located in the Maven Central Repository, under the following coordinates:
@@ -44,14 +40,12 @@ JavaSpec is located in the Maven Central Repository, under the following coordin
 
 It depends upon JUnit 4 and Java 8+.
 
-
-# Getting started
+## Getting started
 
 There's no magic in how JavaSpec works.  This guide describes JavaSpec in terms of its similarities to popular libraries
 instead of pretending like these are radical, never-before-seen ideas.
 
-
-## It runs on JUnit
+### It runs on JUnit
 
 In JUnit, you create a test class and put `@Test` methods in it.  JavaSpec is similar:
 
@@ -76,8 +70,7 @@ Finally, note that the `It` field is named `says_hello` instead of the conventio
 JavaSpec can convert that verb phrase into a human readable form by replacing underscores with spaces.  When you run
 this test, JUnit will report results for `says hello`.
 
-
-## It's like Machine.Specifications
+### It's like Machine.Specifications
 
 Machine.Specifications and JavaSpec represent the different steps of a test the same way:
 
@@ -115,8 +108,7 @@ class GreeterWithFixtureTest {
 }
 ```
 
-
-## It's like RSpec
+### It's like RSpec
 
 RSpec lets you organize hierarchies of tests and fixtures with `describe` and `context`, and each level in the tree can
 have its own `before` and `after` methods to work the test fixture.  JavaSpec provides nested contexts by nesting
@@ -160,8 +152,7 @@ In short:
 * Add up to 1 each of `Establish`, `Because` and `Cleanup` to each context class.
 * Make as many tests as you want in each context class with `It` lambdas.
 
-
-## If you have any other questions
+### If you have any other questions
 
 Hopefully JavaSpec works like you think it does.
 
@@ -171,3 +162,20 @@ and related classes.
 
 If that still doesn't do the trick, feel free to [post an issue](https://github.com/kkrull/javaspec/issues) or submit a
 pull request with any suggested modifications.
+
+## Future work
+
+*Work is underway to make a new 2.0 release with an entirely different syntax that looks more like
+Mocha or Jasmine than like .NET's Machine.Specifications.*
+
+## Release history
+
+* [1.0.1](doc/1.0.1/README.md): Fixed [Issue 5](https://github.com/kkrull/javaspec/issues/5), catching some errors in initializing test classes.
+* 1.0: Full release.  Renamed artifact to `info.javaspec::javaspec-runner`.
+* 0.5: Fixed an issue where specs with the same field / context class name were showing up as still running in IntelliJ.
+  Also renamed JUnit test display names to human-readable names, replacing snake case underscores with spaces.
+* 0.4.2: Fixed [Issue 2](https://github.com/kkrull/javaspec/issues/2), so that only one instance of a context class is
+  created for each test.
+* 0.4.1: Fixed [Issue 1](https://github.com/kkrull/javaspec/issues/1), dealing with being able to instantiate non-public
+  context classes.
+* 0.4.0: Initial release
