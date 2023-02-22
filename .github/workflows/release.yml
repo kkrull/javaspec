@@ -1,0 +1,59 @@
+name: Publish Java Libraries
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    env:
+      working-directory: nested-lambdas
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Java setup
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'adopt'
+        java-version: '11'
+
+    - name: Java configuration
+      run: |
+        java -version
+      working-directory: ${{env.working-directory}}
+
+    - name: Gradle wrapper validation
+      uses: gradle/wrapper-validation-action@8d49e559aae34d3e0eb16cde532684bc9702762b
+
+    - name: Gradle check
+      uses: gradle/gradle-build-action@v2.3.3
+      with:
+        arguments: check
+        build-root-directory: ${{env.working-directory}}
+
+    # https://docs.github.com/en/actions/publishing-packages/publishing-java-packages-with-gradle
+    - name: Gradle publish
+      uses: gradle/gradle-build-action@v2.3.3
+      env:
+        GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        GPG_SIGNING_PASSPHRASE: ${{ secrets.GPG_SIGNING_PASSPHRASE }}
+        MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+        MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+      with:
+        arguments: publish
+        build-root-directory: ${{env.working-directory}}
+
+    - name: Upload Gradle artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: javaspec-build
+        path: |
+          ${{env.working-directory}}/**/build/docs/
+          ${{env.working-directory}}/**/build/libs/
+          ${{env.working-directory}}/**/build/publications/

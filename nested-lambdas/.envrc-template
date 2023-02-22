@@ -1,0 +1,12 @@
+## GPG
+
+#Note the special syntax for the multiline string
+# https://stackoverflow.com/a/51619439/112682
+export GPG_PRIVATE_KEY=$'Respect\nNewlines\nSingle quotes and the dollar sign are your friend, here.'
+export GPG_SIGNING_PASSPHRASE=
+
+## Maven
+
+# https://oss.sonatype.org
+export MAVEN_USERNAME=
+export MAVEN_PASSWORD=
