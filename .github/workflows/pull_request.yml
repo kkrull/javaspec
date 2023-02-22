@@ -42,6 +42,6 @@ jobs:
       with:
         name: javaspec-build
         path: |
-          ${{env.working-directory}}/build/docs/
-          ${{env.working-directory}}/build/libs/
-          ${{env.working-directory}}/build/publications/
+          ${{env.working-directory}}/**/build/docs/
+          ${{env.working-directory}}/**/build/libs/
+          ${{env.working-directory}}/**/build/publications/
