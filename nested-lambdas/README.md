@@ -1,23 +1,24 @@
 <!-- omit in toc -->
 # JavaSpec for JUnit Jupiter
 
-![JavaSpec build status](https://github.com/kkrull/javaspec/actions/workflows/gradle.yml/badge.svg)
+JavaSpec 2 is a library for the Java Virtual Machine that lets you use lambdas
+to write specifications (unit tests) that run on the JUnit Platform.
+Specifications run anywhere JUnit 5 runs: Gradle, JUnit Platform Console, or
+your favorite IDE.  It does the same thing you can do with JUnit 5, but with a
+syntax that is more descriptive–and more concise–than its JUnit counterpart.
 
-JavaSpec 2 helps you write specifications (unit tests) that run on the JUnit
-Platform (aka JUnit 5), using lambdas instead of annotated test methods.  It
-does the same thing you can do with JUnit 5, but with a syntax that is more
-descriptive–and more concise–than its JUnit counterpart.
+JavaSpec 2 should work just about anywhere JUnit 5 works.  All you have to do is
+add a compile dependency for the API (providing the new spec syntax) and a
+runtime dependency for a JUnit Test Engine that knows how to turn specifications
+into JUnit tests.
 
-JavaSpec 2 should work everywhere JUnit 5 works.  It runs in Gradle, IDEs, and
-the JUnit Platform Console just like regular JUnit tests do.  All you have to do
-is add one compile dependency for the new spec syntax and one runtime dependency
-for the `TestEngine` that turns the new syntax into tests that run on the JUnit
-Platform.
+_TL;DR - it's kind of like the syntax from [Jest][jest], [Mocha][mocha], and
+[Jasmine][jasmine], but for Java._
 
-_TL;DR - it's kind of like the syntax from
-[Jest][jest] / [Mocha][mocha] / [Jasmine][jasmine], but for Java._
+**Note that this documentation is for the new version of JavaSpec**.  It uses a
+different syntax than [JavaSpec 1.x][javaspec-1x].
 
-- [What is JavaSpec?](#what-is-javaspec)
+- [What does JavaSpec do?](#what-does-javaspec-do)
 - [Getting Started](#getting-started)
   - [Add dependencies](#add-dependencies)
   - [Write Specs](#write-specs)
@@ -28,17 +29,14 @@ _TL;DR - it's kind of like the syntax from
 - [Support](#support)
   - [Known Issues](#known-issues)
 
-
-**Note that this documentation is for the new version of JavaSpec**.  It uses a
-different syntax than [JavaSpec 1.x][javaspec-1x].
+![Build Status](https://github.com/kkrull/javaspec/actions/workflows/verify.yml/badge.svg?branch=main)
 
 [jasmine]: https://jasmine.github.io/
 [javaspec-1x]: http://javaspec.info
 [jest]: https://jestjs.io/
 [mocha]: https://mochajs.org/
 
-
-## What is JavaSpec?
+## What does JavaSpec do?
 
 JavaSpec helps you take a JUnit test that looks like this...
 
@@ -89,7 +87,7 @@ public class GreeterSpecs implements SpecClass {
 
 This results in test output that looks like this:
 
-```
+```text
 Greeter
 
   #greet
@@ -105,8 +103,8 @@ and one human readable `@DisplayName`).
 If you're into testing, like being descriptive, and don't mind lambdas: this
 might be the testing library for you.
 
-
 ## Getting Started
+
 ### Add dependencies
 
 To start using JavaSpec, add the following dependencies:
@@ -133,7 +131,6 @@ dependencies {
   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
 }
 ```
-
 
 ### Write Specs
 
@@ -175,7 +172,6 @@ public class GreeterSpecs implements SpecClass {
 
 [c2wiki-arrange-act-assert]: http://wiki.c2.com/?ArrangeActAssert
 
-
 ### Run specs with Gradle
 
 Once you have the right dependencies, you need a way to run specs on the JUnit
@@ -196,7 +192,6 @@ For extra-pretty console output, try adding the [Gradle Test Logger
 Plugin][github-gradle-test-logger-plugin] with the `mocha` theme.
 
 [github-gradle-test-logger-plugin]: https://github.com/radarsh/gradle-test-logger-plugin
-
 
 ### Run specs in your IDE
 
@@ -230,7 +225,6 @@ public class GreeterSpecs implements SpecClass {
 }
 ```
 
-
 ### Run specs with JUnit Platform Console
 
 Since this is just another `TestEngine` for the JUnit Platform, you can also run
@@ -251,40 +245,38 @@ java -jar "$junit_console_jar" \
 Specifically, this means running passing the following arguments to JUnit
 Platform Console, on top of whichever options you are already using:
 
-* `--classpath` for `javaspec-api` and `javaspec-engine`
-* `--include-engine=javaspec-engine`
+- `--classpath` for `javaspec-api` and `javaspec-engine`
+- `--include-engine=javaspec-engine`
 
 [junit-console-launcher]: https://junit.org/junit5/docs/current/user-guide/#running-tests-console-launcher
-
 
 ### More helpful syntax
 
 The JavaSpec API supports a few more things that developers often need to do
 while testing:
 
-* `JavaSpec#pending`: Stub in a pending / todo item reminding you to test
+- `JavaSpec#pending`: Stub in a pending / todo item reminding you to test
   something later.  JUnit Platform skips the resulting test.
-* `JavaSpec#skip`: Skip running a spec that already has a defined procedure.
+- `JavaSpec#skip`: Skip running a spec that already has a defined procedure.
   This can be useful for allowing a spec to be _temporarily_ disabled while you
   fix something else.
 
 The API also has a variety of ways to help you organize your specs:
 
-* `JavaSpec#describe` is used most often to define the class and methods being
+- `JavaSpec#describe` is used most often to define the class and methods being
   tested, but it is really just a general-purpose container with no special
   behavior of its own.
-* `JavaSpec#context` can be useful for defining any circumstances under which
+- `JavaSpec#context` can be useful for defining any circumstances under which
   some specifications apply.  It's not implemented any differently from
   `#describe`, so use `#context` if you feel like it reads better.
-* `JavaSpec#given` is like the other containers, except that it adds the word
+- `JavaSpec#given` is like the other containers, except that it adds the word
   "given" before your description.  For example
   `javaspec.given("a name", () -> ...)`
   results in a container called `given a name`.
 
 Note that these containers exist simply to help you be as descriptive and
-organized as you need to be.  Try to use them judiciously to enhance
-human readability.
-
+organized as you need to be.  Try to use them judiciously to enhance human
+readability.
 
 ## Support
 
@@ -294,15 +286,14 @@ expected.
 
 [github-javaspec-issues]: https://github.com/kkrull/javaspec/issues
 
-
 ### Known Issues
 
-* There is not an equivalent of `@BeforeEach` and `@AfterEach` yet, for defining
+- There is not an equivalent of `@BeforeEach` and `@AfterEach` yet, for defining
   shared setup and teardown around a series of related specs.
-* Running specs in Gradle causes specs to be reported under `default-package`
+- Running specs in Gradle causes specs to be reported under `default-package`
   and `UnknownClass` instead of their actual package and class names.  This
   applies to HTML test reports in `build/reports/tests/test`.
-* Running specs in Gradle with the [Gradle Test Logger
+- Running specs in Gradle with the [Gradle Test Logger
   Plugin][github-gradle-test-logger-plugin] causes the name of the spec class to
   be printed _after_ all the specs in the class have run, instead of _before_
   it.
