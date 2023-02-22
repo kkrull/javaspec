@@ -6,7 +6,7 @@ plugins {
 }
 
 description 'Service Provider: an EngineDiscoveryRequestListener that reports DiscoveryRequests to the console'
-version '2.0.0-SNAPSHOT'
+version '2.0.0'
 
 dependencies {
 	implementation project(':javaspec-engine')
