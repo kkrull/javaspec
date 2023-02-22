@@ -17,6 +17,8 @@ publishing {
 				from extension.publicationFrom.get()
 			}
 
+			//Publishing to Maven Central via Sonatype OSSRH requires extra POM info
+			//https://central.sonatype.org/publish/requirements/
 			pom {
 				afterEvaluate {
 					description = extension.publicationDescription.get()
@@ -57,60 +59,35 @@ publishing {
 
 	repositories {
 		maven {
-			name 'sonatype'
-			url = 'https://oss.sonatype.org/content/repositories/snapshots'
+			//Publishing opens a staging repository in Sonatype Nexus:
+			// https://oss.sonatype.org/#stagingRepositories
+			//Closing and releasing the staging repository allows it to go here:
+			// https://central.sonatype.com/artifact/info.javaspec/greeter/0.0.1/versions
+			name 'OSSRH'
+
+			// url = 'https://oss.sonatype.org/content/repositories/snapshots'
+      url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+
 			credentials {
 				afterEvaluate {
-					username = findProperty('sonatype.username')
-					password = findProperty('sonatype.password')
+					username = System.getenv('MAVEN_USERNAME')
+					password = System.getenv('MAVEN_PASSWORD')
 				}
 			}
 		}
 	}
 }
 
-task publishToSonatypeCheckConfig() {
-	description 'Verify the maven-publish configuration for pushing to Sonatype'
-
-	doLast {
-		def requiredProperties = [
-			'sonatype.username',
-			'sonatype.password'
-		]
-		requiredProperties.forEach {
-			if(!project.hasProperty(it)) {
-				throw new InvalidUserDataException('Missing property needed to publish artifacts to Sonatype: ' + it)
-			}
-		}
-	}
-}
-
-publishMavenPublicationToSonatypeRepository.dependsOn publishToSonatypeCheckConfig
-
 /* Signing */
 
+//Artifacts published to Maven Central via Sonatype OSSRH have to be signed
 //https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory-keys
 signing {
-	def signingKey = findProperty('signing.key')
-	def signingPassphrase = findProperty('signing.passphrase')
+	def signingKey = System.getenv('GPG_PRIVATE_KEY')
+	def signingPassphrase = System.getenv('GPG_SIGNING_PASSPHRASE')
+
+	//In-memory keys have to be ASCII-armored: https://stackoverflow.com/a/58000485/112682
+	//Public keys need to be distributed: https://www.gnupg.org/gph/en/manual/x457.html
 	useInMemoryPgpKeys(signingKey, signingPassphrase)
 	sign publishing.publications['maven']
 }
-
-task signingCheckConfig() {
-	description 'Verify the signing configuration for signing artifacts'
-
-	doLast {
-		def requiredProperties = [
-			'signing.key',
-			'signing.passphrase'
-		]
-		requiredProperties.forEach {
-			if(!project.hasProperty(it)) {
-				throw new InvalidUserDataException('Missing property needed to sign artifacts: ' + it)
-			}
-		}
-	}
-}
-
-signMavenPublication.dependsOn signingCheckConfig

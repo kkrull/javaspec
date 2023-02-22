@@ -20,7 +20,7 @@ afterEvaluate {
 			}
 		}
 
-		//Build a -javadoc jar too, adding a standalone license file
+		//Add a -javadoc jar (Sonatype OSSRH requirement)
 		withJavadocJar()
 		tasks.named('javadocJar') {
 			into('META-INF') {
@@ -28,7 +28,7 @@ afterEvaluate {
 			}
 		}
 
-		//Build a -sources jar too, adding a standalone license file
+		//Add a -sources jar (Sonatype OSSRH requirement)
 		withSourcesJar()
 		tasks.named('sourcesJar') {
 			into('META-INF') {
