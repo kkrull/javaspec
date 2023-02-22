@@ -34,19 +34,7 @@ jobs:
     - name: Gradle build
       uses: gradle/gradle-build-action@v2.3.3
       with:
-        arguments: assemble
-        build-root-directory: ${{env.working-directory}}
-
-    - name: Gradle check
-      uses: gradle/gradle-build-action@v2.3.3
-      with:
-        arguments: check
-        build-root-directory: ${{env.working-directory}}
-
-    - name: Gradle javadoc
-      uses: gradle/gradle-build-action@v2.3.3
-      with:
-        arguments: javadoc
+        arguments: build
         build-root-directory: ${{env.working-directory}}
 
     - name: Upload Gradle artifacts
