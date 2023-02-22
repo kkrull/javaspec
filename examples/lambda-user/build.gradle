@@ -20,6 +20,15 @@ java {
 	}
 }
 
+task printDependencies() {
+	description 'Print out paths to dependencies to verify they are coming from remote/local, as intended'
+
+	doLast {
+		println 'testRuntimeClasspath'
+		configurations.testRuntimeClasspath.each { println it }
+	}
+}
+
 test {
 	useJUnitPlatform()
 }

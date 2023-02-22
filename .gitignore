@@ -1,20 +1,23 @@
-#Gradle
+# Dependencies
+lib/
+
+# direnv
+.envrc
+
+# Gradle
 .gradle/
 build/
 
-#IntelliJ
+# IntelliJ
 .idea/
 
-#Maven
+# Maven
 target/
 
-#Script dependencies
-lib/
-
-#vim
+# vim
 *.swp
 
-#VSCode
+# VSCode
 .classpath
 .project
 .settings/

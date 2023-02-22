@@ -24,14 +24,19 @@
 package info.javaspec.api;
 
 /**
- * A lambda with specs that are related to each other, or more containers. Call
- * {@link JavaSpec#it(String, Verification)} inside of this.
+ * A lambda with specs that are related to each other, or more containers. Make
+ * more calls to JavaSpec inside of this lambda:
+ * <ul>
+ * <li>Declare specs with {@link JavaSpec#it}, or placeholders with
+ * {@link JavaSpec#pending}.</li>
+ * <li>Group together related specs with additional calls to
+ * {@link JavaSpec#describe} and {@link JavaSpec#given}.</li>
+ * </ul>
  */
 @FunctionalInterface
 public interface BehaviorDeclaration {
 	/**
-	 * A lambda with specs that are related to each other, or more containers. Call
-	 * {@link JavaSpec#it(String, Verification)} inside of this.
+	 * A lambda with specs that are related to each other, or more containers.
 	 */
 	void declare();
 }

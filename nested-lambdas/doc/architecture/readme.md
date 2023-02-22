@@ -1,4 +1,6 @@
-# Project Goals
+# JavaSpec Architecture
+
+## Project Goals
 
 * What is JavaSpec (details)?
   * The big idea: Use strings to describe and contextualize behavior, use

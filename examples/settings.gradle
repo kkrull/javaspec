@@ -1,2 +1,2 @@
 rootProject.name = 'javaspec-examples'
-include('lambda-user')
+include 'lambda-user'
