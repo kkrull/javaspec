@@ -1,15 +1,13 @@
 package info.javaspec.client;
 
-import info.javaspec.api.JavaSpec;
-import info.javaspec.api.SpecClass;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import info.javaspec.api.JavaSpec;
+import info.javaspec.api.SpecClass;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.platform.commons.annotation.Testable;
 
 @Testable
