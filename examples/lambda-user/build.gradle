@@ -3,11 +3,11 @@ plugins {
 	id 'com.adarshr.test-logger'
 }
 
-version '2.0.0-SNAPSHOT'
+version '2.0.0'
 
 dependencies {
-	testImplementation 'info.javaspec:javaspec-api:2.0.0-SNAPSHOT'
-	testRuntimeOnly 'info.javaspec:javaspec-engine:2.0.0-SNAPSHOT'
+	testImplementation 'info.javaspec:javaspec-api:2.0.0'
+	testRuntimeOnly 'info.javaspec:javaspec-engine:2.0.0'
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 }
 
