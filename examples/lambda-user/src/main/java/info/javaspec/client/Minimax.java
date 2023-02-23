@@ -10,36 +10,31 @@ class Minimax {
 	}
 
 	public int score(Game game, Player player) {
+		if (player == this.maximizer) {
+			return +1 * negamaxScore(game, +1);
+		} else {
+			return -1 * negamaxScore(game, -1);
+		}
+	}
+
+	private int negamaxScore(Game game, int polarity) {
 		if (game.getWinner() == this.maximizer) {
-			return +1;
+			return polarity;
 		} else if (game.getWinner() == this.minimizer) {
-			return -1;
+			return -1 * polarity;
 		} else if (game.isOver()) {
 			return 0;
 		}
 
-		if (player == this.maximizer) {
-			int highestPossibleScore = -999;
-			for (String nextMove : game.availableMoves()) {
-				Game nextGameState = game.move(nextMove);
-				int nextScore = score(nextGameState, this.minimizer);
-				if (nextScore > highestPossibleScore) {
-					highestPossibleScore = nextScore;
-				}
+		int highestPossibleScore = -999;
+		for (String nextMove : game.availableMoves()) {
+			Game nextGameState = game.move(nextMove);
+			int nextScore = -1 * negamaxScore(nextGameState, -1 * polarity);
+			if (nextScore > highestPossibleScore) {
+				highestPossibleScore = nextScore;
 			}
-
-			return highestPossibleScore;
-		} else {
-			int lowestPossibleScore = +999;
-			for (String nextMove : game.availableMoves()) {
-				Game nextGameState = game.move(nextMove);
-				int nextScore = score(nextGameState, this.maximizer);
-				if (nextScore < lowestPossibleScore) {
-					lowestPossibleScore = nextScore;
-				}
-			}
-
-			return lowestPossibleScore;
 		}
+
+		return highestPossibleScore;
 	}
 }
