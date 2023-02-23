@@ -1,4 +1,4 @@
-//Uses JavaSpec from a different Gradle project, to verify dependency resolution.
+//Uses JavaSpec from a different Gradle project, to verify dependency resolution
 plugins {
 	id 'com.adarshr.test-logger' version '3.1.0' apply false
 
@@ -12,11 +12,11 @@ subprojects {
 	group 'info.javaspec'
 
 	repositories {
-		// mavenLocal()
 		mavenCentral()
-		maven {
-			url 'https://oss.sonatype.org/content/repositories/snapshots'
-		}
+		// mavenLocal()
+		// maven {
+		// 	url 'https://oss.sonatype.org/content/repositories/snapshots'
+		// }
 	}
 
 	//Customize at runtime ./gradlew -Dtestlogger.theme=plain ...
