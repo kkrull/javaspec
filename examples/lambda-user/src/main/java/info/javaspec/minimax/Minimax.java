@@ -1,4 +1,4 @@
-package info.javaspec.client;
+package info.javaspec.example.minimax;
 
 class Minimax {
 	private final Player maximizer;

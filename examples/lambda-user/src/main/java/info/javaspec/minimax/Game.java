@@ -1,4 +1,4 @@
-package info.javaspec.client;
+package info.javaspec.example.minimax;
 
 import java.util.List;
 

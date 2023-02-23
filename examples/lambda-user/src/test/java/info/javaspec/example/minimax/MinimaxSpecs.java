@@ -1,4 +1,4 @@
-package info.javaspec.client;
+package info.javaspec.example.minimax;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

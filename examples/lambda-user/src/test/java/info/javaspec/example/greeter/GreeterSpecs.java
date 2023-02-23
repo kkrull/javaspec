@@ -1,4 +1,4 @@
-package info.javaspec.client;
+package info.javaspec.example.greeter;
 
 import static org.junit.jupiter.api.Assertions.*;
 
