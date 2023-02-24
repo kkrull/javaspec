@@ -11,7 +11,7 @@ Sources for the main [JavaSpec website][javaspec].
 * `_config.yml`: Jekyll configuration.  Note that URLs should be written using
   the custom domain name and path (or lack thereof) that will be used to access
   the website, not it's raw location on GitHub Pages (e.g. https://javaspec.info
-  over kkrull.github.io).
+  over `<username>.github.io`).
 
 ### GitHub Pages
 
