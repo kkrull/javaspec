@@ -12,7 +12,7 @@ url: "https://javaspec.info" #protocol + base hostname, e.g. http://example.com
 twitter_username: KrullKyle
 
 #Build settings
-theme: minima
+theme: just-the-docs
 plugins:
   - jekyll-feed
 
@@ -28,3 +28,10 @@ plugins:
 #   - vendor/cache/
 #   - vendor/gems/
 #   - vendor/ruby/
+
+## just-the-docs
+
+aux_links:
+  "GitHub Repository":
+  - "//github.com/kkrull/javaspec"
+aux_links_new_tab: true
