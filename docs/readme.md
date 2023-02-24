@@ -50,6 +50,12 @@ This site is hosted on a custom domain, so that domain's DNS provider needs to b
   domain on which the content actually resides (`<username>.github.io`).  The
   `www` variant is needed too, or GitHub will complain.
 
+### GitHub
+
+Settings -> Pages: Tell GitHub the branch and path within the repository to use
+for GitHub Pages.  In this case, it's `main` and `docs/` so that the website can
+be kept up to date on the same branch as the code itself.
+
 ## Running locally
 
 ```shell
