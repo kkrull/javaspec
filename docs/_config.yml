@@ -11,10 +11,10 @@ title: JavaSpec 2.0
 url: "https://javaspec.info" #protocol + base hostname, e.g. http://example.com
 twitter_username: KrullKyle
 
-#Build settings
-theme: just-the-docs
+remote_theme: pages-themes/leap-day@v0.2.0
 plugins:
-  - jekyll-feed
+- jekyll-feed
+- jekyll-remote-theme # add this line to the plugins list if you already have one
 
 #Files to exclude from processing
 # exclude:
@@ -28,10 +28,3 @@ plugins:
 #   - vendor/cache/
 #   - vendor/gems/
 #   - vendor/ruby/
-
-## just-the-docs
-
-aux_links:
-  "GitHub Repository":
-  - "//github.com/kkrull/javaspec"
-aux_links_new_tab: true
