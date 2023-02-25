@@ -1,11 +1,8 @@
 ---
-# Feel free to add content and custom Front Matter to this file.
-# To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
-
-layout: home
-
+layout: default
 ---
 
+<!-- omit in toc -->
 # JavaSpec
 
 JavaSpec 2 is a library for the Java Virtual Machine that lets you use lambdas
@@ -25,17 +22,16 @@ _TL;DR - it's kind of like the syntax from [Jest][jest], [Mocha][mocha], and
 **Note that this documentation is for the new version of JavaSpec**.  It uses a
 different syntax than JavaSpec 1.x.
 
-- [JavaSpec](#javaspec)
-  - [What does JavaSpec do?](#what-does-javaspec-do)
-  - [Getting Started](#getting-started)
-    - [Add dependencies](#add-dependencies)
-    - [Write Specs](#write-specs)
-    - [Run specs with Gradle](#run-specs-with-gradle)
-    - [Run specs in your IDE](#run-specs-in-your-ide)
-    - [Run specs with JUnit Platform Console](#run-specs-with-junit-platform-console)
-    - [More helpful syntax](#more-helpful-syntax)
-  - [Support](#support)
-    - [Known Issues](#known-issues)
+- [What does JavaSpec do?](#what-does-javaspec-do)
+- [Getting Started](#getting-started)
+  - [Add dependencies](#add-dependencies)
+  - [Write Specs](#write-specs)
+  - [Run specs with Gradle](#run-specs-with-gradle)
+  - [Run specs in your IDE](#run-specs-in-your-ide)
+  - [Run specs with JUnit Platform Console](#run-specs-with-junit-platform-console)
+  - [More helpful syntax](#more-helpful-syntax)
+- [Support](#support)
+  - [Known Issues](#known-issues)
 
 ![Build Status](https://github.com/kkrull/javaspec/actions/workflows/verify.yml/badge.svg?branch=main)
 

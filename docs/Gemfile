@@ -9,6 +9,7 @@ gem "webrick", "~> 1.8"
 
 group :jekyll_plugins do
   gem "jekyll-feed", "~> 0.12"
+  gem 'jekyll-theme-leap-day', '~> 0.2.0'
 end
 
 ## Platform-specific
@@ -24,5 +25,3 @@ gem "wdm", "~> 0.1.1", :platforms => [:mingw, :x64_mingw, :mswin]
 
 #Lock http_parser version on JRuby, since newer versions lack a Java counterpart
 gem "http_parser.rb", "~> 0.6.0", :platforms => [:jruby]
-
-gem "just-the-docs", "~> 0.4.1"
