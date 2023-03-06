@@ -7,7 +7,7 @@ description: >-
   JavaSpec 2.x is a Java library that lets you use lambdas to write
   specifications that run on the JUnit 5 platform.
 github_username: kkrull
-google_analytics: UA-54933252-1
+google_analytics: G-RHQPKBC4T7
 title: JavaSpec 2.0
 url: "https://javaspec.info" #protocol + base hostname, e.g. http://example.com
 twitter_username: KrullKyle
