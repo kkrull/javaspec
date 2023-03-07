@@ -119,7 +119,7 @@ To start using JavaSpec, add the following dependencies:
    specs.  This only needs to be on the classpath you use at runtime when
    running tests.
 1. some kind of library for assertions.  For example:
-   `testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'`
+   `testImplementation 'org.junit.jupiter:junit-jupiter-api'`
 
 In Gradle, that means adding the following to your `build.gradle` file:
 
@@ -127,12 +127,37 @@ In Gradle, that means adding the following to your `build.gradle` file:
 //build.gradle
 dependencies {
   //Add these dependencies for JavaSpec
-  testImplementation 'info.javaspec:javaspec-api:<version>'
-  testRuntimeOnly 'info.javaspec:javaspec-engine:<version>'
+  testImplementation 'info.javaspec:javaspec-api:2.0.0'
+  testRuntimeOnly 'info.javaspec:javaspec-engine:2.0.0'
 
   //Add an assertion library (JUnit 5's assertions shown here)
   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
 }
+```
+
+Maven users add the same dependencies this way:
+
+```xml
+<dependency>
+  <groupId>info.javaspec</groupId>
+  <artifactId>javaspec-api</artifactId>
+  <version>2.0.0</version>
+  <scope>test</scope>
+</dependency>
+<dependency>
+  <groupId>info.javaspec</groupId>
+  <artifactId>javaspec-engine</artifactId>
+  <version>2.0.0</version>
+  <!-- Not needed to compile tests, but other scopes lead to transitive
+  dependencies in consumers: https://stackoverflow.com/a/27729783/112682 -->
+  <scope>test</scope>
+</dependency>
+<dependency>
+  <groupId>org.junit.jupiter</groupId>
+  <artifactId>junit-jupiter-api</artifactId>
+  <version>5.8.2</version>
+  <scope>test</scope>
+</dependency>
 ```
 
 ### Write Specs
@@ -237,10 +262,10 @@ shell snippet:
 ```shell
 junit_console_jar='junit-platform-console-standalone-1.8.1.jar'
 java -jar "$junit_console_jar" \
-  --classpath=info.javaspec.javaspec-api-0.0.1.jar \
+  --classpath=info.javaspec.javaspec-api-2.0.0.jar \
   --classpath=<compiled production code and its dependencies> \
   --classpath=<compiled specs and their dependencies> \
-  --classpath=info.javaspec.javaspec-engine-0.0.1.jar \
+  --classpath=info.javaspec.javaspec-engine-2.0.0.jar \
   --include-engine=javaspec-engine \
   ...
 ```
